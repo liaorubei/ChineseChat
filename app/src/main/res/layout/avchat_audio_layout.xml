@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/avchat_call_bg" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/avchat_audio_switch_video"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/video_audio_mode_switch_bg"
+            android:clickable="true"
+            android:descendantFocusability="blocksDescendants" >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                android:clickable="false"
+                android:drawableLeft="@drawable/avchat_switch_mode_video_icon"
+                android:drawablePadding="5dip"
+                android:shadowColor="#353738"
+                android:shadowDy="-1"
+                android:shadowRadius="1"
+                android:text="切换到视频"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:visibility="visible" />
+            <!-- </FrameLayout> -->
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/avchat_audio_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="60dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_launcher" />
+
+        <TextView
+            android:id="@+id/avchat_audio_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="昵称"
+            android:textColor="@color/white"
+            android:textSize="20sp" />
+
+        <Chronometer
+            android:id="@+id/avchat_audio_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:shadowColor="#fbfbf9"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/avchat_audio_notify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="5dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:paddingLeft="35dp"
+            android:paddingRight="35dp"
+            android:text="avchat_video_call_request"
+            android:textColor="@color/white"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/avchat_audio_wifi_unavailable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/avchat_audio_call_wifi_unavailable"
+            android:gravity="center_horizontal"
+            android:includeFontPadding="false"
+            android:paddingBottom="7dp"
+            android:paddingTop="15dp"
+            android:text="avchat_audio_call_wifi_unavailable_tip"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_12"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/avchat_audio_netunstable"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:drawablePadding="1dp"
+            android:drawableRight="@drawable/network_grade_1"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="avchat_network_grade_1"
+            android:textColor="@color/white"
+            android:textSize="17sp"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="45dp" >
+
+            <include
+                android:id="@+id/avchat_audio_mute_speaker_huangup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                layout="@layout/avchat_audio_control_layout"
+                android:visibility="visible" />
+
+            <include
+                android:id="@+id/avchat_audio_refuse_receive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                layout="@layout/avchat_refuse_receive_layout"
+                android:visibility="gone" />
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

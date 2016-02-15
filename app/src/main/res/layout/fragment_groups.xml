@@ -1,0 +1,19 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/avchat_call_bg" >
+
+    <Button
+        android:id="@+id/bt_broad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="群聊" />
+
+    <ListView
+        android:id="@id/listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/bt_broad" >
+    </ListView>
+
+</RelativeLayout>

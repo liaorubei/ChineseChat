@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_teacher_queue"
+        android:icon="@drawable/enqueue"
+        android:showAsAction="ifRoom"
+        android:title="排队"/>
+    <item
+        android:id="@+id/menu_refresh_teacher"
+        android:icon="@drawable/refresh"
+        android:showAsAction="always"
+        android:title="刷新"/>
+
+</menu>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <item name="viewpager" type="id"/>
+    <item name="listview" type="id"/>
+    <item name="gridView" type="id"/>
+    <item name="fl_native" type="id"/>
+    <item name="fl_remote" type="id"/>
+    <item name="bt_positive" type="id"/>
+</resources>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="com.voc.woyaoxue"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <!-- 访问网络状态 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <!-- 控制呼吸灯，振动器等，用于新消息提醒 -->
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
+    <!-- 外置存储存取权限 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <!-- 多媒体相关 -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+
+    <!-- 如果需要实时音视频通话模块，下面的权限也是必须的。否则，可以不加 -->
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
+    <!-- SDK 权限申明, 第三方 APP 接入时，请将 com.voc.woyaoxue 替换为自己的包名 -->
+    <!-- 和下面的 uses-permission 一起加入到你的 AndroidManifest 文件中。 -->
+    <permission
+        android:name="com.voc.woyaoxue.permission.RECEIVE_MSG"
+        android:protectionLevel="signature"/>
+
+    <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.voc.woyaoxue 替换为自己的包名 -->
+    <uses-permission android:name="com.voc.woyaoxue.permission.RECEIVE_MSG"/>
+
+    <application
+        android:name="com.newclass.woyaoxue.MyApplication"
+        android:allowBackup="true"
+        android:icon="${APPLICATION_ICON}"
+        android:label="${APPLICATION_LABEL}"
+        android:theme="@android:style/Theme.Holo.Light">
+
+        <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
+        <service
+            android:name="com.netease.nimlib.service.NimService"
+            android:process=":core"/>
+        <service
+            android:name="com.netease.nimlib.service.NimService$Aux"
+            android:process=":core"/>
+
+        <!-- 云信SDK的监视系统启动和网络变化的广播接收器，用户开机自启动以及网络变化时候重新登录， 保持和 NimService 同一进程 -->
+        <receiver
+            android:name="com.netease.nimlib.service.NimReceiver"
+            android:exported="false"
+            android:process=":core">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- 云信进程间通信 Receiver -->
+        <receiver android:name="com.netease.nimlib.service.ResponseReceiver"/>
+
+        <!-- 安卓保活配置 -->
+        <service
+            android:name="com.netease.cosine.core.CosineService"
+            android:process=":cosine">
+        </service>
+
+        <receiver
+            android:name="com.netease.cosine.target.CosineReceiver"
+            android:exported="true"
+            android:process=":cosine">
+        </receiver>
+
+        <!-- 申明实时音视频来电通知的广播接收器，第三方APP集成时，action中的com.netease.nim.demo请替换为自己的包名 -->
+        <receiver
+            android:name="com.netease.nimlib.receiver.AVChatBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.voc.woyaoxue.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION"/>
+                <action android:name="com.voc.woyaoxue.teacher.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION"/>
+                <action android:name="com.voc.woyaoxue.student.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
+
+        <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时音视频模块时，如果需要网络通话与本地电话互斥，请加上此接收器 -->
+        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE"/>
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.netease.cosine.target.receiver"
+            android:value="com.netease.nimlib.service.NimReceiver"/>
+
+        <activity
+            android:name="com.newclass.woyaoxue.MainActivity"
+            android:label="ChineseChat">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- 说明本应该是学生端还是老师端 -->
+        <meta-data
+            android:name="IS_RELEASE"
+            android:value="${IS_RELEASE}"/>
+
+        <!-- 说明本应该是学生端还是老师端 -->
+        <meta-data
+            android:name="release"
+            android:value="${release_value}"/>
+        <!--
+                   <activity
+                   android:name="com.newclass.woyaoxue.MainActivitya"
+                   android:label="学生">
+                   <intent-filter>
+                       <action android:name="android.intent.action.MAIN"/>
+
+                       <category android:name="android.intent.category.LAUNCHER"/>
+                   </intent-filter>
+               </activity>
+
+               <activity
+                   android:name="com.newclass.woyaoxue.MainActivityb"
+                   android:label="教师">
+                   <intent-filter>
+                       <action android:name="android.intent.action.MAIN"/>
+
+                       <category android:name="android.intent.category.LAUNCHER"/>
+                   </intent-filter>
+               </activity>
+        -->
+
+
+        <!-- 文件夹界面 -->
+        <activity android:name="com.newclass.woyaoxue.activity.DownDocsActivity"/>
+        <!-- 文件夹界面 -->
+        <activity android:name="com.newclass.woyaoxue.activity.DocsActivity"/>
+
+        <!-- 文件夹界面 -->
+        <activity android:name="com.newclass.woyaoxue.activity.FolderActivity"/>
+
+        <!-- 我的下载 -->
+        <activity android:name="com.newclass.woyaoxue.activity.DownFolderActivity"/>
+        <!-- 播放界面 -->
+        <activity android:name="com.newclass.woyaoxue.activity.PlayActivity"/>
+        <!-- 更多界面 -->
+        <activity android:name="com.newclass.woyaoxue.activity.MoreActivity"/>
+        <!-- 测试界面 -->
+        <activity android:name="com.newclass.woyaoxue.activity.TestActivity"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.SignInActivity"
+            android:label="用户登录"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.SignUpActivity"
+            android:label="注册帐号"/>
+        <activity android:name="com.newclass.woyaoxue.activity.MessageActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.LiveChatActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ContactActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.StudentActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.GroupCreate"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.CallActivity"
+            android:label="拨打电话"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.TakeActivity"
+            android:label="接听电话"
+            android:launchMode="singleTask"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.ChooseActivity"
+            android:label="自选教师"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.FriendActivity"
+            android:label="我的学友"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.FriendAddActivity"
+            android:label="添加学友"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.FriendSearchActivity"
+            android:label="查找学友"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.RandomActivity"
+            android:label="随机拨打"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.HistoryActivity"
+            android:label="学习记录"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.QuestionActivity"
+            android:label="问题列表"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.MoneyActivity"
+            android:label="充值记录"/>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.CardActivity"
+            android:label="@string/title_activity_card">
+        </activity>
+        <activity
+            android:name="com.newclass.woyaoxue.activity.SettingActivity"
+            android:label="@string/title_activity_settings">
+        </activity>
+        <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity">
+        </activity>
+        <activity android:name="com.newclass.woyaoxue.activity.PersonActivity"/>
+
+        <!-- 更新下载服务 -->
+        <service android:name="com.newclass.woyaoxue.service.AutoUpdateService"/>
+
+        <!-- 批量下载服务 -->
+        <service android:name="com.newclass.woyaoxue.service.DownloadService"/>
+
+
+    </application>
+
+</manifest>
