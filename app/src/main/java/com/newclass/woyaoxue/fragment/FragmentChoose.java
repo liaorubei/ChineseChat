@@ -19,14 +19,8 @@ public class FragmentChoose extends Fragment {
     private String TAG = "FragmentChoose";
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate: ");
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         Log.i(TAG, "onCreateView: StatusCode=" + NIMClient.getStatus());
         contentView = new ContentViewChoose(getActivity());
         return contentView;
@@ -46,6 +40,6 @@ public class FragmentChoose extends Fragment {
     @Override
     public void onResume() {
         contentView.onResume();
-       super.onResume();
+        super.onResume();
     }
 }

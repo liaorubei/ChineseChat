@@ -50,6 +50,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
     private LinearLayout ll_show, ll_edit;
     private TextView tv_nickname, tv_mobile, tv_email, tv_gender, tv_birth, tv_pick, tv_username, et_username;
     private EditText et_nickname, et_mobile, et_email, et_gender, et_birth;
+    private RadioGroup rg_gender;
     private RadioButton rb_male, rb_female;
     private ImageView iv_avater, iv_edit, iv_pick;
     private boolean isEdit = false;
@@ -63,6 +64,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
     private boolean isIconSwitch = false;
     private DatePickerDialog datePickerDialog;
     private SimpleDateFormat sdf;
+    private Bitmap tempBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         createDatePickerDialog();
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initData() {
@@ -97,12 +100,13 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         et_nickname.setText(model.Name);
         et_email.setText(model.Email);
         et_mobile.setText(model.Mobile);
-        rb_male.setChecked(model.Gender == 1);
-        rb_female.setChecked(model.Gender == 0);
+        rg_gender.check(model.Gender == 0 ? R.id.rb_female : R.id.rb_male);
         et_birth.setText(model.Birth);
     }
 
     private void initShow(ViewModel model) {
+
+        Log.i(TAG, "initShow: Avater=" + model.Avater);
         new BitmapUtils(this).display(iv_avater, NetworkUtil.getFullPath(model.Avater));
         tv_nickname.setText(model.Name);
         tv_email.setText(model.Email);
@@ -149,6 +153,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
 
         iv_pick = (ImageView) findViewById(R.id.iv_pick);
         iv_pick.setOnClickListener(this);
+        rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
         rb_male = (RadioButton) findViewById(R.id.rb_female);
         rb_female = (RadioButton) findViewById(R.id.rb_female);
 
@@ -240,7 +245,12 @@ public class PersonActivity extends Activity implements View.OnClickListener {
                     model.Birth = resp.info.Birth;
                     model.Mobile = resp.info.Mobile;
                     model.Gender = resp.info.Gender;
-                    initShow(model);
+                   // initShow(model);
+
+                    if (tempBitmap != null) {
+                        File avaterPNG = new File(getFilesDir(), model.Avater);
+                        saveBitmap(tempBitmap, avaterPNG);
+                    }
 
                 } else {
                     CommonUtil.toast("修改失败");
@@ -260,6 +270,22 @@ public class PersonActivity extends Activity implements View.OnClickListener {
             }
         });
 
+    }
+
+    private void saveBitmap(Bitmap tempBitmap, File avaterPNG) {
+        if (!avaterPNG.exists()) {
+            if (!avaterPNG.getParentFile().exists()) {
+                avaterPNG.getParentFile().mkdirs();
+            }
+            try {
+                OutputStream stream = new FileOutputStream(avaterPNG);
+                tempBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                stream.close();
+                Log.i(TAG, "saveBitmap: " + avaterPNG.getAbsolutePath());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -295,9 +321,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
     }
 
 
-    /*
-     * 选取图片
-     */
+    // 选取图片
     public void pick() {
         // 激活系统图库，选择一张图片
         Intent intent = new Intent(Intent.ACTION_PICK);
@@ -306,9 +330,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         startActivityForResult(intent, PHOTO_REQUEST_PICK);
     }
 
-    /*
-     * 剪切图片
-     */
+    //剪切图片
     private void crop(Uri uri) {
         // 裁剪图片意图
         Intent intent = new Intent("com.android.camera.action.CROP");
@@ -347,10 +369,12 @@ public class PersonActivity extends Activity implements View.OnClickListener {
                 // 从剪切图片返回的数据
                 if (data != null) {
                     try {
-                        Bitmap bitmap = data.getParcelableExtra("data");
+                        tempBitmap = data.getParcelableExtra("data");
                         OutputStream out = new FileOutputStream(tempIcon);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                        this.iv_edit.setImageBitmap(bitmap);
+                        tempBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+                        this.iv_edit.setImageBitmap(tempBitmap);
+                        this.iv_avater.setImageBitmap(tempBitmap);
+                        out.close();
                         isIconSwitch = true;
                     } catch (Exception e) {
                         isIconSwitch = false;

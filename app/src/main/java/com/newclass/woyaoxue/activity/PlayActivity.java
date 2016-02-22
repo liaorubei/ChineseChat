@@ -379,8 +379,8 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
 
             @Override
             public void onStopTrackingTouch(SeekBar sb) {
-
-                originPlayer.seekTo(sb.getProgress());
+if (    originPlayer!=null){
+                originPlayer.seekTo(sb.getProgress());}
 
             }
         });

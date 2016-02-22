@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
 
         //初始化云信铃声及添加来电观察者(注:不要放在Application里面,有些机子会出现异常)
         enableAVChat();
+
 
         // 下载任务服务
         Intent sIntent = new Intent(this, DownloadService.class);

@@ -158,4 +158,8 @@ public class ContentViewLineUp extends ContentView {
             adapter.notifyDataSetChanged();
         }
     }
+
+    public void onResume() {
+        refresh(true);
+    }
 }

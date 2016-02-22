@@ -19,18 +19,11 @@ public class FragmentLineUp extends android.support.v4.app.Fragment {
 
     private ContentViewLineUp l;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         l = new ContentViewLineUp(getActivity());
-
         return l;
     }
 
@@ -42,5 +35,11 @@ public class FragmentLineUp extends android.support.v4.app.Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return l.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        l.onResume();
     }
 }

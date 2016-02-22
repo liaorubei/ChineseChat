@@ -194,21 +194,11 @@ public class SignInActivity extends Activity implements OnClickListener {
                 if (response.code == 200) {
                     // 登录云信
                     signInNim(response.info.Accid, response.info.Token);
-                    // 保护登录信息
-                    Editor editor = SignInActivity.this.getSharedPreferences("user", MODE_PRIVATE).edit();
-                    editor.putInt("id", response.info.Id);
-                    editor.putString("accid", response.info.Accid);
-                    editor.putString("token", response.info.Token);
-                    editor.putString("nickname", response.info.NickName);
-                    editor.putInt("gender", response.info.Gender);
-                    editor.putString("avater", response.info.Avater);
-                    editor.putString("email", response.info.Email);
-                    editor.putString("birth", response.info.Birth);
-                    editor.putString("mobile", response.info.Mobile);
 
-                    editor.putString("username", username);
-                    editor.putString("password", password);
-                    editor.commit();
+                    // 保护登录信息
+                    response.info.UserName = username;
+                    response.info.PassWord = password;
+                    CommonUtil.saveUserToSP(SignInActivity.this, response.info);
                 } else {
                     Toast.makeText(MyApplication.getContext(), "登录失败,帐号密码不匹配", Toast.LENGTH_SHORT).show();
                 }

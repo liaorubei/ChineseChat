@@ -71,7 +71,7 @@ public class ContentViewChoose extends ContentView {
     }
 
     public static void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(menu.NONE, 1, 1, "刷新").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(Menu.NONE, 1, 1, "刷新").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -101,7 +101,7 @@ public class ContentViewChoose extends ContentView {
 
                 if (resp.code == 200 && resp.info.size() > 0) {
                     for (User user : resp.info) {
-                        user.NickName=user.Name;
+                        user.NickName = user.Name;
                         list.add(user);
                     }
                     adapterChoose.notifyDataSetChanged();

@@ -3,8 +3,11 @@ package com.newclass.woyaoxue.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.activity.HistoryActivity;
@@ -23,8 +30,15 @@ import com.newclass.woyaoxue.activity.PersonActivity;
 import com.newclass.woyaoxue.activity.SettingActivity;
 import com.newclass.woyaoxue.activity.SignInActivity;
 import com.newclass.woyaoxue.bean.User;
+import com.newclass.woyaoxue.util.FolderUtil;
+import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 
 public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
@@ -83,8 +97,36 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
 
             BitmapUtils bitmapUtils = new BitmapUtils(getActivity());
 
-            // 加载网络图片
-            bitmapUtils.display(iv_avater, NetworkUtil.getFullPath(avater));
+            final File avaterPNG = new File(FolderUtil.rootDir(getActivity()), avater);
+
+            if (avaterPNG.exists() && avaterPNG.isFile()) {
+                //加载本地图片
+                bitmapUtils.display(iv_avater, avaterPNG.getAbsolutePath());
+            } else {
+                if (!avaterPNG.getParentFile().exists()) {
+                    avaterPNG.getParentFile().mkdirs();
+                }
+
+                // 加载网络图片
+                bitmapUtils.display(iv_avater, NetworkUtil.getFullPath(avater), new BitmapLoadCallBack<ImageView>() {
+                    @Override
+                    public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+                        try {
+                            OutputStream stream = new FileOutputStream(avaterPNG);
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                            stream.close();
+                        } catch (Exception e) {
+                            Log.i(TAG, "onLoadCompleted: " + e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
+                        iv_avater.setImageResource(R.drawable.ic_launcher);
+                    }
+                });
+            }
+
         } else {
             tv_nickname.setText("未登录");
             tv_username.setText("未登录");

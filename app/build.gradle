@@ -10,15 +10,15 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "20160202"
-        manifestPlaceholders = [APPLICATION_ICON: "@drawable/ic_launcher_student", APPLICATION_LABEL: "汉问双端"]
+        manifestPlaceholders = [APPLICATION_ICON: "@drawable/ic_launcher_student"]
     }
 
     productFlavors {
         student {
-            manifestPlaceholders = [release_value: "student", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_student", APPLICATION_LABEL: "汉问学生端"]
+            manifestPlaceholders = [release_value: "student", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_student"]
         }
         teacher {
-            manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher", APPLICATION_LABEL: "汉问教师端"]
+            manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
         }
     }
 
@@ -53,8 +53,10 @@ dependencies {
     compile files('libs/cosinesdk.jar')
     compile files('libs/netty-4.0.23-for-yx.final.jar')
     compile files('libs/nim-sdk-1.7.0.jar')
-    compile 'com.android.support:support-v13:22.1.1'
+
+    compile 'com.android.support:support-v13:22.2.1'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.jiechic.library:xUtils:2.6.14'
     compile 'com.paypal.sdk:paypal-android-sdk:2.13.0'
+    compile 'com.android.support:support-v4:22.2.1'
 }

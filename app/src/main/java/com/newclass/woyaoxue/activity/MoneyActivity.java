@@ -9,12 +9,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
+import com.newclass.woyaoxue.MyApplication;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.util.Log;
 
@@ -28,7 +30,8 @@ import java.util.List;
 public class MoneyActivity extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MoneyActivity";
-    private RelativeLayout rl_ten;
+    private  RelativeLayout rl_record;
+    private LinearLayout ll_ctrl;
     private ListView listview;
     private List<Pay> list;
     private BaseAdapter<Pay> adapter;
@@ -41,9 +44,13 @@ public class MoneyActivity extends Activity implements View.OnClickListener {
 
         initView();
         initData();
+        getActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void initData() {
+        //是否显示充值的内容和按钮
+        ll_ctrl.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.INVISIBLE);
+
         list = new ArrayList<>();
         list.add(new Pay("1000学币", new BigDecimal(10), new BigDecimal(65)));
         list.add(new Pay("2000学币", new BigDecimal(20), new BigDecimal(130)));
@@ -62,19 +69,21 @@ public class MoneyActivity extends Activity implements View.OnClickListener {
     }
 
     private void initView() {
-        listview = (ListView) findViewById(R.id.listview);
-        rl_ten = (RelativeLayout) findViewById(R.id.rl_ten);
+        rl_record= (RelativeLayout) findViewById(R.id.rl_record);
 
-        rl_ten.setOnClickListener(this);
+        ll_ctrl = (LinearLayout) findViewById(R.id.ll_ctrl);
+        listview = (ListView) findViewById(R.id.listview);
+
+        rl_record.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rl_ten:
-                startActivity(new Intent(MoneyActivity.this, PaymentActivity.class));
-                break;
 
+            case R.id.rl_record:
+                startActivity(new Intent(MoneyActivity.this,RecordsActivity.class));
+                break;
         }
     }
 

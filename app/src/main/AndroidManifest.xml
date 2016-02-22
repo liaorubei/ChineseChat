@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.voc.woyaoxue"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="com.voc.woyaoxue"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -41,7 +42,7 @@
         android:name="com.newclass.woyaoxue.MyApplication"
         android:allowBackup="true"
         android:icon="${APPLICATION_ICON}"
-        android:label="${APPLICATION_LABEL}"
+        android:label="ChineseChat"
         android:theme="@android:style/Theme.Holo.Light">
 
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
@@ -120,29 +121,6 @@
         <meta-data
             android:name="release"
             android:value="${release_value}"/>
-        <!--
-                   <activity
-                   android:name="com.newclass.woyaoxue.MainActivitya"
-                   android:label="学生">
-                   <intent-filter>
-                       <action android:name="android.intent.action.MAIN"/>
-
-                       <category android:name="android.intent.category.LAUNCHER"/>
-                   </intent-filter>
-               </activity>
-
-               <activity
-                   android:name="com.newclass.woyaoxue.MainActivityb"
-                   android:label="教师">
-                   <intent-filter>
-                       <action android:name="android.intent.action.MAIN"/>
-
-                       <category android:name="android.intent.category.LAUNCHER"/>
-                   </intent-filter>
-               </activity>
-        -->
-
-
         <!-- 文件夹界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.DownDocsActivity"/>
         <!-- 文件夹界面 -->
@@ -200,20 +178,12 @@
         <activity
             android:name="com.newclass.woyaoxue.activity.QuestionActivity"
             android:label="问题列表"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.MoneyActivity"
-            android:label="充值记录"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.CardActivity"
-            android:label="@string/title_activity_card">
-        </activity>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.SettingActivity"
-            android:label="@string/title_activity_settings">
-        </activity>
-        <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity">
-        </activity>
+        <activity android:name="com.newclass.woyaoxue.activity.MoneyActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.CardActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.SettingActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.PersonActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity"/>
 
         <!-- 更新下载服务 -->
         <service android:name="com.newclass.woyaoxue.service.AutoUpdateService"/>
@@ -221,7 +191,7 @@
         <!-- 批量下载服务 -->
         <service android:name="com.newclass.woyaoxue.service.DownloadService"/>
 
-
+        <activity android:name="com.newclass.woyaoxue.activity.RecordsActivity"/>
     </application>
 
 </manifest>

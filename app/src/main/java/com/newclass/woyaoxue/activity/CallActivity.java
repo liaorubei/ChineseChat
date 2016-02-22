@@ -32,6 +32,7 @@ import com.newclass.woyaoxue.bean.NimSysNotice;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.Theme;
 import com.newclass.woyaoxue.bean.User;
+import com.newclass.woyaoxue.fragment.FragmentThemes;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.HttpUtil.Parameters;
@@ -175,6 +176,7 @@ public class CallActivity extends Activity implements OnClickListener {
     };
 
     private boolean IS_CHATTING = false;
+    private int requestcode_theme = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -319,7 +321,8 @@ public class CallActivity extends Activity implements OnClickListener {
                     return;
                 }
 
-                CardActivity.start(CallActivity.this, source.Accid, target.Accid);
+                //  CardActivity.start(CallActivity.this, source.Accid, target.Accid);
+                startActivityForResult(new Intent(this, ThemeActivity.class), requestcode_theme);
                 break;
             case R.id.bt_text:
                 // 创建文本消息
@@ -349,6 +352,36 @@ public class CallActivity extends Activity implements OnClickListener {
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == requestcode_theme) {
+            switch (resultCode) {
+                case FragmentThemes.RESULTCODE_CHOOSE:
+                    Theme theme = gson.fromJson(data.getStringExtra("theme"), new TypeToken<Theme>() {
+                    }.getType());
+                    // 构造自定义通知，指定接收者
+                    CustomNotification notification = new CustomNotification();
+                    notification.setSessionId(target.Accid);
+                    notification.setSessionType(SessionTypeEnum.P2P);
+
+                    NimSysNotice<Theme> i = new NimSysNotice<Theme>();
+                    i.info = theme;
+                    notification.setContent(gson.toJson(i));
+                    // 发送自定义通知
+                    NIMClient.getService(MsgService.class).sendCustomNotification(notification);
+
+                    break;
+
+                default:
+                    CommonUtil.toast("没有正确选择");
+                    break;
+            }
+
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
