@@ -1,7 +1,6 @@
 package com.newclass.woyaoxue.util;
 
 import com.newclass.woyaoxue.MyApplication;
-import com.newclass.woyaoxue.activity.SignInActivity;
 import com.newclass.woyaoxue.bean.User;
 
 import android.content.Context;

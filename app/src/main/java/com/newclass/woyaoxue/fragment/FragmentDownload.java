@@ -1,14 +1,5 @@
 package com.newclass.woyaoxue.fragment;
 
-import com.newclass.woyaoxue.activity.DownDocsActivity;
-import com.newclass.woyaoxue.base.BaseAdapter;
-import com.newclass.woyaoxue.bean.Folder;
-import com.newclass.woyaoxue.database.Database;
-import com.newclass.woyaoxue.util.FolderUtil;
-import com.newclass.woyaoxue.util.Log;
-import com.newclass.woyaoxue.view.ContentViewDownload;
-import com.voc.woyaoxue.R;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,7 +14,12 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import java.io.File;
+import com.newclass.woyaoxue.activity.ActivityDocument;
+import com.newclass.woyaoxue.base.BaseAdapter;
+import com.newclass.woyaoxue.bean.Folder;
+import com.newclass.woyaoxue.database.Database;
+import com.voc.woyaoxue.R;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +38,6 @@ public class FragmentDownload extends Fragment implements View.OnClickListener {
 
     @Override
     public void onResume() {
-        Log.i(TAG, "onResume: ");
         super.onResume();
         List<Folder> folders = database.folderSelectListWithDocsCount();
         list.clear();
@@ -52,22 +47,27 @@ public class FragmentDownload extends Fragment implements View.OnClickListener {
             }
         }
         adapter.notifyDataSetChanged();
+        ll_ctrl.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
         database.closeConnection();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.i(TAG, "onCreateOptionsMenu: ");
         menu.add(Menu.NONE, 1, 1, "删除").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == 1) {
+            for (ViewHelper v:list){
+                v.isVisible=true;
+            }
+            adapter.notifyDataSetChanged();
             ll_ctrl.setVisibility(View.VISIBLE);
         }
         return true;
@@ -75,6 +75,7 @@ public class FragmentDownload extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         View view = View.inflate(getActivity(), R.layout.activity_down, null);
         listview = (ListView) view.findViewById(R.id.listview);
 
@@ -101,8 +102,7 @@ public class FragmentDownload extends Fragment implements View.OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i("点击了3");
-                Intent intent = new Intent(getActivity(), DownDocsActivity.class);
+                Intent intent = new Intent(getActivity(), ActivityDocument.class);
                 intent.putExtra("FolderId", list.get(position).folder.Id);
                 intent.putExtra("FolderName", list.get(position).folder.Name);
                 getActivity().startActivity(intent);

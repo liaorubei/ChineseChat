@@ -3,9 +3,10 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
         android:layout_marginTop="25dp"
         android:orientation="vertical">
 
@@ -16,118 +17,158 @@
             android:layout_gravity="center"
             android:src="@drawable/ic_launcher"/>
 
-        <TextView
-            android:id="@+id/tv_nickname"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="10dp"
-            android:text="昵称"/>
+            android:layout_toRightOf="@id/iv_icon"
+            android:orientation="vertical">
 
-        <Chronometer
-            android:id="@+id/cm_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"/>
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tv_nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="5dp"
+                android:text="昵称:汉问学生001"/>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="5dp"
+                android:text="性别:男"/>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="5dp"
+                android:text="总时长:125小时"/>
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:padding="5dp"
+                android:text="次数:250次"/>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
 
     <LinearLayout
+        android:id="@+id/ll_theme"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="你的老板"
+            android:textSize="25sp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="1.你的老板是男的还是女的?"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2.你的老板大概多大了,看起来怎么样"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="3.你的老板结婚了吗"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="4.你的老板孩子在那个学校上学啊"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="5.你觉得你的老板怎么样"/>
+
+
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="75dp"
-            >
-
-            <LinearLayout
-                android:id="@+id/ll_others"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                >
-
-                <Button
-                    android:id="@+id/bt_hangup"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="挂断"/>
-
-                <Button
-                    android:id="@+id/bt_accept"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:text="接受"/>
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/bt_finish"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="结束"
-                android:visibility="invisible"/>
-        </FrameLayout>
+        android:layout_above="@id/ll_theme">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+
+            android:orientation="horizontal"
+            android:padding="10dp"
+            android:visibility="visible">
 
             <Button
-                android:id="@+id/bt_mute"
+                android:id="@+id/bt_hangup"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="静音"/>
+                android:text="挂断"/>
 
             <Button
-                android:id="@+id/bt_free"
+                android:id="@+id/bt_accept"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="免提"/>
+                android:text="接受"/>
+
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:padding="10dp"
+            android:visibility="invisible">
 
             <Button
-                android:id="@+id/bt_face"
+                android:id="@+id/bt_mute"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:text="历史"/>
+                android:text="静音"/>
 
             <Button
-                android:id="@+id/bt_text"
+                android:id="@+id/bt_finish"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:text="问题"/>
+                android:text="结束"
+                />
 
             <Button
-                android:id="@+id/bt_card"
+                android:id="@+id/bt_free"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:text="show"
-                android:visibility="invisible"/>
+                android:text="免提"/>
 
-            <Button
-                android:id="@+id/bt_more"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="..."
-                android:visibility="invisible"/>
+
         </LinearLayout>
-    </LinearLayout>
+    </FrameLayout>
+
 
 </RelativeLayout>

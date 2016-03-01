@@ -1,6 +1,21 @@
 package com.newclass.woyaoxue.activity;
 
-import java.util.List;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -12,7 +27,6 @@ import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.avchat.AVChatCallback;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.constant.AVChatTimeOutEvent;
-import com.netease.nimlib.sdk.avchat.model.AVChatCalleeAckEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatCommonEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
@@ -28,38 +42,20 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Chronometer;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.TextView;
+import java.util.List;
 
 /**
  * 电话接听界面
  *
  * @author liaorubei
  */
-public class TakeActivity extends Activity implements OnClickListener {
+public class ActivityTake extends Activity implements OnClickListener {
 
     public static String KEY_CHATDATA = "KEY_CHATDATA";
-    protected static final String TAG = "TakeActivity";
+    protected static final String TAG = "ActivityTake";
 
-    private Button bt_hangup, bt_accept, bt_finish, bt_mute, bt_free, bt_face, bt_text, bt_card, bt_more;
-    private LinearLayout ll_others;
-    private Chronometer cm_time;
+    private Button bt_hangup, bt_accept, bt_finish, bt_mute, bt_free;
+
     private Theme currentTheme = null;
     private Gson gson = new Gson();
     private ImageView iv_icon;
@@ -81,12 +77,9 @@ public class TakeActivity extends Activity implements OnClickListener {
 
         @Override
         public void onSuccess(Void arg0) {
-            cm_time.setBase(SystemClock.elapsedRealtime());
-            cm_time.start();
             isAccept = true;
             IS_CHATTING = true;
             bt_finish.setVisibility(View.VISIBLE);
-            ll_others.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -123,11 +116,7 @@ public class TakeActivity extends Activity implements OnClickListener {
 
         @Override
         public void onEvent(AVChatCommonEvent event) {
-            Log.i("logi", "对方已挂断 ChatId:" + event.getChatId());
-
-            cm_time.stop();
-
-
+            Log.i(TAG, "挂断: ChatId=" + event.getChatId() + " Account=" + event.getAccount());
             if (ratingDialog == null) {
                 createRatingDialog();
             }
@@ -181,7 +170,7 @@ public class TakeActivity extends Activity implements OnClickListener {
     private AVChatData avChatData;
 
     public static void start(Context context, AVChatData avChatData) {
-        Intent intent = new Intent(context, TakeActivity.class);
+        Intent intent = new Intent(context, ActivityTake.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(KEY_CHATDATA, avChatData);
         context.startActivity(intent);
@@ -217,8 +206,8 @@ public class TakeActivity extends Activity implements OnClickListener {
     }
 
     protected void createRatingDialog() {
-        Builder builder = new AlertDialog.Builder(TakeActivity.this);
-        View inflate = View.inflate(TakeActivity.this, R.layout.dialog_rating, null);
+        Builder builder = new AlertDialog.Builder(ActivityTake.this);
+        View inflate = View.inflate(ActivityTake.this, R.layout.dialog_rating, null);
         View bt_positive = inflate.findViewById(R.id.bt_positive);
         final RatingBar rb_score = (RatingBar) inflate.findViewById(R.id.rb_score);
 
@@ -258,16 +247,8 @@ public class TakeActivity extends Activity implements OnClickListener {
         bt_finish = (Button) findViewById(R.id.bt_finish);
         bt_mute = (Button) findViewById(R.id.bt_mute);
         bt_free = (Button) findViewById(R.id.bt_free);
-        bt_face = (Button) findViewById(R.id.bt_face);
-        bt_text = (Button) findViewById(R.id.bt_text);
-        bt_card = (Button) findViewById(R.id.bt_card);
-        bt_more = (Button) findViewById(R.id.bt_more);
-
-        ll_others = (LinearLayout) findViewById(R.id.ll_others);
 
         tv_nickname = (TextView) findViewById(R.id.tv_nickname);
-        cm_time = (Chronometer) findViewById(R.id.cm_time);
-        cm_time.stop();
 
         iv_icon = (ImageView) findViewById(R.id.iv_icon);
         iv_icon.setOnClickListener(this);
@@ -277,10 +258,6 @@ public class TakeActivity extends Activity implements OnClickListener {
         bt_finish.setOnClickListener(this);
         bt_mute.setOnClickListener(this);
         bt_free.setOnClickListener(this);
-        bt_face.setOnClickListener(this);
-        bt_text.setOnClickListener(this);
-        bt_card.setOnClickListener(this);
-        bt_more.setOnClickListener(this);
     }
 
     @Override
@@ -326,7 +303,7 @@ public class TakeActivity extends Activity implements OnClickListener {
                 break;
 
             case R.id.bt_face: {
-                HistoryActivity.start(TakeActivity.this, avChatData.getAccount());
+                HistoryActivity.start(ActivityTake.this, avChatData.getAccount());
             }
             break;
 

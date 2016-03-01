@@ -23,7 +23,7 @@ public class TeacherActivity extends Activity implements OnClickListener
 		setContentView(R.layout.activity_queue);
 		initView();
 		NIMClient.getService(AuthService.class).logout();
-		startActivity(new Intent(this, SignInActivity.class));
+		startActivity(new Intent(this, ActivitySignIn.class));
 	}
 
 	private void initView()

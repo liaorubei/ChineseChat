@@ -2,18 +2,11 @@ package com.newclass.woyaoxue.view;
 
 import android.content.Context;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.google.gson.Gson;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.msg.MsgService;
-import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
-import com.netease.nimlib.sdk.msg.model.CustomNotification;
-import com.newclass.woyaoxue.activity.CardActivity;
 import com.newclass.woyaoxue.adapter.AdapterCard;
 import com.newclass.woyaoxue.base.BaseAdapter;
-import com.newclass.woyaoxue.bean.NimSysNotice;
 import com.newclass.woyaoxue.bean.Theme;
 import com.voc.woyaoxue.R;
 

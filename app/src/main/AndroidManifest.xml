@@ -40,7 +40,6 @@
 
     <application
         android:name="com.newclass.woyaoxue.MyApplication"
-        android:allowBackup="true"
         android:icon="${APPLICATION_ICON}"
         android:label="ChineseChat"
         android:theme="@android:style/Theme.Holo.Light">
@@ -113,24 +112,19 @@
         </activity>
 
         <!-- 说明本应该是学生端还是老师端 -->
-        <meta-data
-            android:name="IS_RELEASE"
-            android:value="${IS_RELEASE}"/>
+        <!--    <meta-data
+                android:name="IS_RELEASE"
+                android:value="${IS_RELEASE}"/>-->
 
         <!-- 说明本应该是学生端还是老师端 -->
         <meta-data
             android:name="release"
             android:value="${release_value}"/>
         <!-- 文件夹界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.DownDocsActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityDocument"/>
         <!-- 文件夹界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.DocsActivity"/>
 
-        <!-- 文件夹界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.FolderActivity"/>
-
-        <!-- 我的下载 -->
-        <activity android:name="com.newclass.woyaoxue.activity.DownFolderActivity"/>
         <!-- 播放界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.PlayActivity"/>
         <!-- 更多界面 -->
@@ -138,23 +132,23 @@
         <!-- 测试界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.TestActivity"/>
         <activity
-            android:name="com.newclass.woyaoxue.activity.SignInActivity"
+            android:name="com.newclass.woyaoxue.activity.ActivitySignIn"
             android:label="用户登录"
             android:launchMode="singleTask"/>
         <activity
-            android:name="com.newclass.woyaoxue.activity.SignUpActivity"
+            android:name="com.newclass.woyaoxue.activity.ActivitySignUp"
             android:label="注册帐号"/>
         <activity android:name="com.newclass.woyaoxue.activity.MessageActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.LiveChatActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.ContactActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.StudentActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.GroupCreate"/>
+        <!--        <activity
+                    android:name="com.newclass.woyaoxue.activity.ActivityCall"
+                    android:label="拨打电话"
+                    android:launchMode="singleTask"/>-->
         <activity
-            android:name="com.newclass.woyaoxue.activity.CallActivity"
-            android:label="拨打电话"
-            android:launchMode="singleTask"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.TakeActivity"
+            android:name="com.newclass.woyaoxue.activity.ActivityTake"
             android:label="接听电话"
             android:launchMode="singleTask"/>
         <activity
@@ -178,8 +172,7 @@
         <activity
             android:name="com.newclass.woyaoxue.activity.QuestionActivity"
             android:label="问题列表"/>
-        <activity android:name="com.newclass.woyaoxue.activity.MoneyActivity"/>
-        <activity android:name="com.newclass.woyaoxue.activity.CardActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityMoney"/>
         <activity android:name="com.newclass.woyaoxue.activity.SettingActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.PersonActivity"/>
@@ -192,6 +185,11 @@
         <service android:name="com.newclass.woyaoxue.service.DownloadService"/>
 
         <activity android:name="com.newclass.woyaoxue.activity.RecordsActivity"/>
+        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version"/>
     </application>
 
 </manifest>

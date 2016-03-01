@@ -31,7 +31,7 @@ public class RandomActivity extends Activity implements OnClickListener
 		setContentView(R.layout.activity_random);
 		initView();
 
-		startActivity(new Intent(this, SignInActivity.class));
+		startActivity(new Intent(this, ActivitySignIn.class));
 	}
 
 	private void initView()
@@ -62,10 +62,10 @@ public class RandomActivity extends Activity implements OnClickListener
 					{}.getType());
 					if (response.code == 200)
 					{
-						Intent intent = new Intent(getApplication(), CallActivity.class);
-						intent.putExtra(CallActivity.KEY_TARGET_ID, response.info.Id);
-						intent.putExtra(CallActivity.KEY_TARGET_ACCID, response.info.Accid);
-						intent.putExtra(CallActivity.KEY_TARGET_NICKNAME, response.info.Name);
+						Intent intent = new Intent(getApplication(), ActivityCall.class);
+						intent.putExtra(ActivityCall.KEY_TARGET_ID, response.info.Id);
+						intent.putExtra(ActivityCall.KEY_TARGET_ACCID, response.info.Accid);
+						intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, response.info.Name);
 						startActivity(intent);
 					}
 					else

@@ -1,7 +1,15 @@
 package com.newclass.woyaoxue.fragment;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,17 +29,8 @@ import com.newclass.woyaoxue.view.ContentView;
 import com.newclass.woyaoxue.view.ContentView.ViewState;
 import com.voc.woyaoxue.R;
 
-import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FolderFragment extends Fragment {
     private static final String TAG = "FolderFragment";
@@ -42,12 +41,6 @@ public class FolderFragment extends Fragment {
     private ListView listview;
     private int mLevelId = -1;
 
-/*    public FolderFragment() {
-    }
-
-    public FolderFragment(int levelId) {
-        this.mLevelId = levelId;
-    }*/
 
     private void loadData() {
         String url = NetworkUtil.getFolders(mLevelId);
@@ -145,14 +138,14 @@ public class FolderFragment extends Fragment {
     @Override
     public void onDestroy() {
         if (database != null) {
-         //   database.closeConnection();
+            //   database.closeConnection();
         }
         super.onDestroy();
     }
 
     @Override
     public void onResume() {
-
+        Log.i(TAG, "onResume: ");
         super.onResume();
         loadData();
     }

@@ -44,7 +44,7 @@ public class StudentActivity extends FragmentActivity implements OnClickListener
 
 		if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password))
 		{}
-		startActivity(new Intent(this, SignInActivity.class));
+		startActivity(new Intent(this, ActivitySignIn.class));
 	}
 
 	private void initView()

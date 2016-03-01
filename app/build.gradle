@@ -9,7 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "20160202"
+        versionName "20160226"
         manifestPlaceholders = [APPLICATION_ICON: "@drawable/ic_launcher_student"]
     }
 
@@ -59,4 +59,5 @@ dependencies {
     compile 'com.jiechic.library:xUtils:2.6.14'
     compile 'com.paypal.sdk:paypal-android-sdk:2.13.0'
     compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

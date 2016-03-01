@@ -11,9 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,14 +19,13 @@ import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.HistoryActivity;
-import com.newclass.woyaoxue.activity.MoneyActivity;
+import com.newclass.woyaoxue.activity.ActivityMoney;
 import com.newclass.woyaoxue.activity.PersonActivity;
 import com.newclass.woyaoxue.activity.SettingActivity;
-import com.newclass.woyaoxue.activity.SignInActivity;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
@@ -36,17 +33,16 @@ import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 
 public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
-    private Button bt_histroy, bt_setting;
+    private View bt_histroy, bt_setting;
     private ImageView iv_avater, iv_gender;
     private TextView tv_nickname, tv_username;
     private RelativeLayout rl_money;
-    private LinearLayout ll_person;
+    private View ll_person;
     private User user;
 
     @Override
@@ -58,15 +54,17 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View inflate = inflater.inflate(R.layout.fragment_person, null);
-        ll_person = (LinearLayout) inflate.findViewById(R.id.ll_person);
+        ll_person = inflate.findViewById(R.id.ll_person);
         tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
         tv_username = (TextView) inflate.findViewById(R.id.tv_username);
         iv_avater = (ImageView) inflate.findViewById(R.id.iv_avater);
         iv_gender = (ImageView) inflate.findViewById(R.id.iv_gender);
 
         rl_money = (RelativeLayout) inflate.findViewById(R.id.rl_money);
-        bt_histroy = (Button) inflate.findViewById(R.id.bt_history);
-        bt_setting = (Button) inflate.findViewById(R.id.bt_setting);
+        bt_histroy = inflate.findViewById(R.id.rl_history);
+        bt_setting = inflate.findViewById(R.id.rl_setting);
+
+        inflate.findViewById(R.id.rl_topup).setOnClickListener(this);
 
         ll_person.setOnClickListener(this);
         rl_money.setOnClickListener(this);
@@ -139,22 +137,23 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.ll_person:
                 if (NIMClient.getStatus() != StatusCode.LOGINED) {
-                    startActivity(new Intent(getActivity(), SignInActivity.class));
+                    startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     return;
                 }
                 startActivity(new Intent(getActivity(), PersonActivity.class));
                 break;
-            case R.id.rl_money:
-                getActivity().startActivity(new Intent(getActivity(), MoneyActivity.class));
+            case R.id.rl_topup:
+                startActivity(new Intent(getActivity(), ActivityMoney.class));
                 break;
-            case R.id.bt_history:
+
+            case R.id.rl_history:
                 if (NIMClient.getStatus() != StatusCode.LOGINED) {
-                    startActivity(new Intent(getActivity(), SignInActivity.class));
+                    startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     return;
                 }
                 HistoryActivity.start(getActivity(), user.Accid);
                 break;
-            case R.id.bt_setting:
+            case R.id.rl_setting:
                 startActivity(new Intent(getActivity(), SettingActivity.class));
                 break;
         }

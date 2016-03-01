@@ -9,13 +9,14 @@
         android:id="@+id/cb_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/cb_delete"
+        android:layout_toLeftOf="@id/cb_delete"
         android:orientation="vertical">
 
         <RelativeLayout

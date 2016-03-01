@@ -1,16 +1,15 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,7 +17,6 @@ import android.widget.TextView;
 
 import com.newclass.woyaoxue.MyApplication;
 import com.newclass.woyaoxue.base.BaseAdapter;
-import com.newclass.woyaoxue.util.Log;
 
 import com.voc.woyaoxue.R;
 
@@ -26,15 +24,14 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class MoneyActivity extends Activity implements View.OnClickListener {
+//充值界面
+public class ActivityMoney extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MoneyActivity";
-    private  RelativeLayout rl_record;
-    private LinearLayout ll_ctrl;
     private ListView listview;
     private List<Pay> list;
     private BaseAdapter<Pay> adapter;
+    private Dialog paymentDialog;
 
 
     @Override
@@ -49,7 +46,6 @@ public class MoneyActivity extends Activity implements View.OnClickListener {
 
     private void initData() {
         //是否显示充值的内容和按钮
-        ll_ctrl.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.INVISIBLE);
 
         list = new ArrayList<>();
         list.add(new Pay("1000学币", new BigDecimal(10), new BigDecimal(65)));
@@ -63,27 +59,31 @@ public class MoneyActivity extends Activity implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Pay pay = list.get(position);
-                PaymentActivity.start(MoneyActivity.this, pay.subject, pay.usd, pay.cny);
+                if (paymentDialog == null) {
+                    paymentDialog = new Dialog(ActivityMoney.this);
+                    paymentDialog.setTitle("请选择你的支付方式");
+                    View inflate = getLayoutInflater().inflate(R.layout.dialog_payment, null);
+                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    paymentDialog.setContentView(inflate, params);
+                    paymentDialog.getWindow().setGravity(Gravity.BOTTOM);
+                    paymentDialog.setCanceledOnTouchOutside(false);
+                }
+                paymentDialog.show();
             }
         });
     }
 
     private void initView() {
-        rl_record= (RelativeLayout) findViewById(R.id.rl_record);
-
-        ll_ctrl = (LinearLayout) findViewById(R.id.ll_ctrl);
         listview = (ListView) findViewById(R.id.listview);
-
-        rl_record.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
-            case R.id.rl_record:
-                startActivity(new Intent(MoneyActivity.this,RecordsActivity.class));
-                break;
+         /*   case R.id.rl_record:
+                startActivity(new Intent(ActivityMoney.this, RecordsActivity.class));
+                break;*/
         }
     }
 
@@ -95,7 +95,7 @@ public class MoneyActivity extends Activity implements View.OnClickListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Pay item = getItem(position);
-            View inflate = View.inflate(MoneyActivity.this, R.layout.listitem_money, null);
+            View inflate = View.inflate(ActivityMoney.this, R.layout.listitem_money, null);
             TextView tv_subject = (TextView) inflate.findViewById(R.id.tv_subject);
             TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
 

@@ -1,81 +1,49 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+    >
 
-    <LinearLayout
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@color/gray7"
+        android:gravity="center"
+        android:text="选择充值金额"
+        android:textColor="#0f0"/>
+
+
+    <ListView
+        android:id="@id/listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp">
+        android:layout_below="@id/tv_title"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_history"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@id/listview">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            >
+            android:layout_height="wrap_content">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:text="我的余额"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="150学币"/>
-        </RelativeLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/gray7"
-            />
-
-        <RelativeLayout android:id="@+id/rl_record"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:text="交易记录"/>
+                android:layout_marginLeft="10dp"
+                android:text="充值记录"/>
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:src="@drawable/download_play"/>
+                android:src="@drawable/downward"/>
         </RelativeLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_ctrl"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/gray7"
-            android:gravity="center"
-
-            android:text="选择充值金额"
-            android:textColor="#0f0"/>
-
-
-        <ListView
-            android:id="@id/listview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </LinearLayout>
-
-
-</LinearLayout>
+    </RelativeLayout>
+</RelativeLayout>

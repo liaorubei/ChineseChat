@@ -1,37 +1,6 @@
 package com.newclass.woyaoxue.activity;
 
-import java.util.List;
-
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.RequestCallback;
-import com.netease.nimlib.sdk.StatusCode;
-import com.netease.nimlib.sdk.auth.AuthService;
-import com.netease.nimlib.sdk.auth.AuthServiceObserver;
-import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nimlib.sdk.avchat.AVChatManager;
-import com.netease.nimlib.sdk.avchat.model.AVChatData;
-import com.netease.nimlib.sdk.avchat.model.AVChatRingerConfig;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.newclass.woyaoxue.MyApplication;
-import com.newclass.woyaoxue.bean.Response;
-import com.newclass.woyaoxue.bean.User;
-import com.newclass.woyaoxue.util.CommonUtil;
-import com.newclass.woyaoxue.util.Log;
-import com.newclass.woyaoxue.util.NetworkUtil;
-import com.voc.woyaoxue.R;
-
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -44,13 +13,38 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallback;
+import com.netease.nimlib.sdk.auth.AuthService;
+import com.netease.nimlib.sdk.auth.LoginInfo;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
+import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.bean.Response;
+import com.newclass.woyaoxue.bean.User;
+import com.newclass.woyaoxue.util.CommonUtil;
+import com.newclass.woyaoxue.util.Log;
+import com.newclass.woyaoxue.util.NetworkUtil;
+import com.voc.woyaoxue.R;
+
+import java.util.List;
+
 /**
  * 用户登录界面
  *
  * @author liaorubei
  */
-public class SignInActivity extends Activity implements OnClickListener {
-    private static final String TAG = "SignInActivity";
+public class ActivitySignIn extends Activity implements OnClickListener {
+    private static final String TAG = "ActivitySignIn";
     public static final int SignUp = 0;
     private Button bt_login;
     private EditText et_username, et_password;
@@ -73,7 +67,7 @@ public class SignInActivity extends Activity implements OnClickListener {
         public void onSuccess(LoginInfo info) {
             Log.i(TAG, "云信登录成功,Account:" + info.getAccount() + " token=" + info.getToken());
 
-            Editor editor = SignInActivity.this.getSharedPreferences("user", MODE_PRIVATE).edit();
+            Editor editor = ActivitySignIn.this.getSharedPreferences("user", MODE_PRIVATE).edit();
             editor.putString("accid", info.getAccount());
             editor.putString("token", info.getToken());
             editor.commit();
@@ -93,20 +87,6 @@ public class SignInActivity extends Activity implements OnClickListener {
             }
         }
     };
-    private Observer<AVChatData> observerIncomingCall = new Observer<AVChatData>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public void onEvent(AVChatData avChatData) {
-            Log.i(TAG, "observeIncomingCall ChatId:" + avChatData.getChatId() + " Account:" + avChatData.getAccount());
-
-            TakeActivity.start(SignInActivity.this, avChatData);
-
-       /*     Intent intent = new Intent(getApplication(), TakeActivity.class);
-            intent.putExtra(TakeActivity.KEY_CHATDATA, avChatData);
-            startActivity(intent);*/
-        }
-    };
 
     private void initView() {
         et_username = (EditText) findViewById(R.id.et_username);
@@ -121,7 +101,7 @@ public class SignInActivity extends Activity implements OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SignUp && resultCode == SignUpActivity.SignUp && data != null) {
+        if (requestCode == SignUp && resultCode == ActivitySignUp.SignUp && data != null) {
             String username = data.getStringExtra("username");
             String password = data.getStringExtra("password");
             signIn(username, password);
@@ -138,7 +118,7 @@ public class SignInActivity extends Activity implements OnClickListener {
                 String password = et_password.getText().toString().trim();
 
                 if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-                    Toast.makeText(SignInActivity.this, "帐号或密码不能为空", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ActivitySignIn.this, "帐号或密码不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -148,7 +128,7 @@ public class SignInActivity extends Activity implements OnClickListener {
                 break;
 
             case R.id.tv_signup:
-                startActivityForResult(new Intent(SignInActivity.this, SignUpActivity.class), SignUp);
+                startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
                 break;
             default:
                 break;
@@ -198,7 +178,7 @@ public class SignInActivity extends Activity implements OnClickListener {
                     // 保护登录信息
                     response.info.UserName = username;
                     response.info.PassWord = password;
-                    CommonUtil.saveUserToSP(SignInActivity.this, response.info);
+                    CommonUtil.saveUserToSP(ActivitySignIn.this, response.info);
                 } else {
                     Toast.makeText(MyApplication.getContext(), "登录失败,帐号密码不匹配", Toast.LENGTH_SHORT).show();
                 }

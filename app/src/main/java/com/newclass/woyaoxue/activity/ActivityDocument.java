@@ -19,7 +19,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.format.Formatter;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -36,7 +35,8 @@ import android.widget.TextView;
  * @author liaorubei
  *
  */
-public class DownDocsActivity extends Activity implements OnClickListener {
+public class ActivityDocument extends Activity implements OnClickListener {
+	private static final String TAG = "ActivityDocument";
 	private List<ViewHelper> list;
 	private int folderId;
 	private ContentView contentView;
@@ -61,7 +61,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 
 			@Override
 			public View onCreateSuccessView() {
-				View view = View.inflate(DownDocsActivity.this, R.layout.activity_downdocs, null);
+				View view = View.inflate(ActivityDocument.this, R.layout.activity_downdocs, null);
 				tv_folder = (TextView) view.findViewById(R.id.tv_folder);
 				listview = (ListView) view.findViewById(R.id.listview);
 
@@ -99,7 +99,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				Intent play = new Intent(DownDocsActivity.this, PlayActivity.class);
+				Intent play = new Intent(ActivityDocument.this, PlayActivity.class);
 				play.putExtra("Id", list.get(position).document.Id);
 				startActivity(play);
 			}
@@ -113,7 +113,6 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 		cb_Invert.setOnClickListener(this);
 		tv_delete.setOnClickListener(this);
 		tv_cancel.setOnClickListener(this);
-
 	}
 
 	@Override
@@ -122,7 +121,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 		case android.R.id.home:
 			this.finish();
 			break;
-		case R.id.menu_delete:
+		case 1:
 			ll_ctrl.setVisibility(View.VISIBLE);
 
 			for (ViewHelper i : list) {
@@ -140,9 +139,10 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater menuInflater = getMenuInflater();
-		menuInflater.inflate(R.menu.menu_downdocs, menu);
-		return super.onCreateOptionsMenu(menu);
+		//MenuInflater menuInflater = getMenuInflater();
+		//menuInflater.inflate(R.menu.menu_downdocs, menu);
+		menu.add(Menu.NONE,1,1,"删除").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+		return true;
 	}
 
 	@Override
@@ -179,7 +179,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			final ViewHelper item = getItem(position);
 			if (convertView == null) {
-				convertView = View.inflate(DownDocsActivity.this, R.layout.listitem_downdocs, null);
+				convertView = View.inflate(ActivityDocument.this, R.layout.listitem_downdocs, null);
 				ViewHolder holder = new ViewHolder();
 				holder.tv_title_one = (TextView) convertView.findViewById(R.id.tv_title_one);
 				holder.tv_title_two = (TextView) convertView.findViewById(R.id.tv_title_two);
@@ -194,7 +194,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 			holder.tv_title_one.setText(item.document.Title);
 			holder.tv_title_two.setText(item.document.TitleTwo);
 			holder.tv_date.setText(item.document.DateString);
-			holder.tv_size.setText(Formatter.formatFileSize(DownDocsActivity.this, item.document.Length));
+			holder.tv_size.setText(Formatter.formatFileSize(ActivityDocument.this, item.document.Length));
 			holder.tv_time.setText(item.document.LengthString);
 
 			holder.cb_delete.setChecked(item.isChecked);
@@ -257,7 +257,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.tv_delete:
-			List<ViewHelper> removeList = new ArrayList<DownDocsActivity.ViewHelper>();// 被删除的集合
+			List<ViewHelper> removeList = new ArrayList<ActivityDocument.ViewHelper>();// 被删除的集合
 
 			for (ViewHelper viewHelper : list) {
 				if (viewHelper.isChecked) {
@@ -273,7 +273,7 @@ public class DownDocsActivity extends Activity implements OnClickListener {
 				database.docsDeleteById(viewHelper.document.Id);
 
 				// 从文件夹移除
-				File file = new File(FolderUtil.rootDir(DownDocsActivity.this), viewHelper.document.SoundPath);
+				File file = new File(FolderUtil.rootDir(ActivityDocument.this), viewHelper.document.SoundPath);
 				if (file.isFile() && file.exists()) {
 					file.delete();
 				}

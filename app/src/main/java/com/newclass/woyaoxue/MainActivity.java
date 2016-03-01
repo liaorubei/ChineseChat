@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -15,7 +14,7 @@ import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatRingerConfig;
-import com.newclass.woyaoxue.activity.TakeActivity;
+import com.newclass.woyaoxue.activity.ActivityTake;
 import com.newclass.woyaoxue.fragment.FragmentChoose;
 import com.newclass.woyaoxue.fragment.FragmentLineUp;
 import com.newclass.woyaoxue.fragment.FragmentPerson;
@@ -29,10 +28,10 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
     // Monkey测试代码
     // adb shell monkey -p com.voc.woyaoxue -s 500 --ignore-crashes --ignore-timeouts --monitor-native-crashes -v -v 10000 > E:\log.txt
     // gradlew assemblerelease
+    //代码折叠/展开[ctrl shift -+]
     protected static final String TAG = "MainActivity";
     private LinearLayout ll_ctrl;
     private TextView rb_random, rb_listen, rb_person;
-    private String release = "student";
     private int currentIndex = -1;
 
     @Override
@@ -75,13 +74,12 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
         AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
             @Override
             public void onEvent(AVChatData chatData) {
-                TakeActivity.start(MainActivity.this, chatData);
+                ActivityTake.start(MainActivity.this, chatData);
             }
         }, register);
     }
 
     private Fragment randomFragment, listenFragment, fragmentPerson;
-    private FragmentPagerAdapter kk;
 
     private void initView() {
         ll_ctrl = (LinearLayout) findViewById(R.id.ll_ctrl);
@@ -119,7 +117,8 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
                 currentIndex = 1;
                 resetButton();
                 if (listenFragment == null) {
-                    listenFragment = new ListenFragment(getSupportFragmentManager());
+
+                    listenFragment = new ListenFragment();
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, listenFragment).commit();
             }

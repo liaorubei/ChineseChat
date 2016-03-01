@@ -31,6 +31,7 @@ import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+//聊天记录
 public class HistoryActivity extends Activity {
     protected static final String TAG = "HistoryActivity";
     private static final String KEY_ACCID = "KEY_ACCID";

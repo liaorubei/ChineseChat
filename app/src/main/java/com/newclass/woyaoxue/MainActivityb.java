@@ -95,7 +95,7 @@ public class MainActivityb extends FragmentActivity implements OnClickListener {
                 currentIndex = 1;
                 resetButton();
                 if (listenFragment == null) {
-                    listenFragment = new ListenFragment(getSupportFragmentManager());
+                    listenFragment = new ListenFragment();
                 }
                 getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, listenFragment).commit();
             }

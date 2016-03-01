@@ -3,7 +3,7 @@ package com.newclass.woyaoxue.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.newclass.woyaoxue.activity.DownDocsActivity;
+import com.newclass.woyaoxue.activity.ActivityDocument;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Folder;
 import com.newclass.woyaoxue.database.Database;
@@ -65,7 +65,7 @@ public class ContentViewDownload extends ContentView
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
 				Log.i("点击了");
-				Intent intent = new Intent(getContext(), DownDocsActivity.class);
+				Intent intent = new Intent(getContext(), ActivityDocument.class);
 				intent.putExtra("FolderId", list.get(position).folder.Id);
 				intent.putExtra("FolderName", list.get(position).folder.Name);
 				getContext().startActivity(intent);

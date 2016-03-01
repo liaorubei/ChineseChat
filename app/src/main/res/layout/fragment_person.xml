@@ -4,7 +4,7 @@
               android:background="#fff"
               android:orientation="vertical">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll_person"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +17,15 @@
             android:layout_height="50dp"
             android:src="@drawable/ic_launcher_student"/>
 
-        <LinearLayout
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/download_play"
+            />
+
+        <LinearLayout android:layout_toRightOf="@id/iv_avater"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -51,7 +59,7 @@
                 android:text="13512345678"
                 />
         </LinearLayout>
-    </LinearLayout>
+    </RelativeLayout>
 
     <View
         android:layout_width="match_parent"
@@ -79,40 +87,107 @@
             android:layout_toRightOf="@id/iv_icon"
             android:text="学币"/>
 
-        <ImageView
-            android:id="@+id/iv_next"
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:padding="5dp"
-            android:src="@drawable/download_play"/>
+            android:text="150 学币"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_topup"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/selector_levels">
+
+        <ImageView
+            android:id="@+id/iv_topup"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_launcher_student"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/iv_next"
-            android:text="150 学币"/>
+            android:layout_toRightOf="@id/iv_topup"
+            android:text="充值"/>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/download_play"
+            />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/bt_history"
+    <RelativeLayout
+        android:id="@+id/rl_setting"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_levels"
-        android:gravity="left|center_vertical"
-        android:padding="5dp"
-        android:text="记录"/>
+        android:layout_height="40dp"
+        android:background="@drawable/selector_levels">
 
-    <Button
-        android:id="@+id/bt_setting"
+        <ImageView
+            android:id="@+id/iv_setting"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_launcher_student"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/iv_setting"
+            android:text="设置"/>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/download_play"
+            />
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/rl_history"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_levels"
-        android:gravity="left|center_vertical"
-        android:padding="5dp"
-        android:text="设置"/>
+        android:layout_height="40dp"
+        android:background="@drawable/selector_levels">
+
+        <ImageView
+            android:id="@+id/iv_record"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@drawable/ic_launcher_student"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/iv_record"
+            android:text="学习记录"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/download_play"
+            />
+    </RelativeLayout>
 
 
 </LinearLayout>

@@ -1,9 +1,14 @@
 package com.newclass.woyaoxue.view;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import android.content.Context;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,18 +26,10 @@ import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.LazyViewPager.OnPageChangeListener;
 import com.voc.woyaoxue.R;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.TextView;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class ContentViewListen extends ContentView {
     private static final String TAG = "ContentViewListen";
@@ -145,6 +142,7 @@ public class ContentViewListen extends ContentView {
         View inflate = View.inflate(getContext(), R.layout.contentview_listen, null);
         viewpager = (LazyViewPager) inflate.findViewById(R.id.viewpager);
         ll_levels = (RadioGroup) inflate.findViewById(R.id.ll_levels);
+
         return inflate;
     }
 

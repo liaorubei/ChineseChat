@@ -7,18 +7,16 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
-import com.newclass.woyaoxue.activity.CallActivity;
-import com.newclass.woyaoxue.activity.SignInActivity;
+import com.newclass.woyaoxue.activity.ActivityCall;
+import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.HttpUtil.Parameters;
-import com.newclass.woyaoxue.view.ContentView.ViewState;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -70,7 +68,7 @@ public class ContentViewRandom extends ContentView implements OnClickListener
 		case R.id.bt_call:
 			if (NIMClient.getStatus() != StatusCode.LOGINED)
 			{
-				getContext().startActivity(new Intent(getContext(), SignInActivity.class));
+				getContext().startActivity(new Intent(getContext(), ActivitySignIn.class));
 				return;
 			}
 
@@ -90,10 +88,10 @@ public class ContentViewRandom extends ContentView implements OnClickListener
 
 					if (response.code == 200)
 					{
-						Intent intent = new Intent(mContext, CallActivity.class);
-						intent.putExtra(CallActivity.KEY_TARGET_ID, response.info.Id);
-						intent.putExtra(CallActivity.KEY_TARGET_ACCID, response.info.Accid);
-						intent.putExtra(CallActivity.KEY_TARGET_NICKNAME, response.info.Name);
+						Intent intent = new Intent(mContext, ActivityCall.class);
+						intent.putExtra(ActivityCall.KEY_TARGET_ID, response.info.Id);
+						intent.putExtra(ActivityCall.KEY_TARGET_ACCID, response.info.Accid);
+						intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, response.info.Name);
 						mContext.startActivity(intent);
 					}
 					else

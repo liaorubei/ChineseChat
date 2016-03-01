@@ -4,16 +4,37 @@
               android:orientation="vertical">
 
     <Button
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_levels"
+        android:text="投诉/建议"/>
+
+    <Button
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_levels"
+        android:text="在Wifi环境下使用"/>
+
+    <Button
+        android:id="@+id/bt_clean"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_levels"
+        android:text="清理缓存"/>
+
+    <Button
+        android:id="@+id/bt_about"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_levels"
+        android:text="关于汉问"/>
+
+    <Button
         android:id="@+id/bt_login"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/selector_levels"
         android:text="登录"/>
-
-    <Button
-        android:id="@+id/bt_logout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_levels"
-        android:text="登出"/>
 </LinearLayout>

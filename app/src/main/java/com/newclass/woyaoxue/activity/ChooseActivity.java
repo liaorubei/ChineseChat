@@ -21,13 +21,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -157,10 +155,10 @@ public class ChooseActivity extends Activity
 						@Override
 						public void onSuccess(ResponseInfo<String> responseInfo)
 						{
-							Intent intent = new Intent(getApplication(), CallActivity.class);
-							intent.putExtra(CallActivity.KEY_TARGET_ACCID, user.Accid);
-							intent.putExtra(CallActivity.KEY_TARGET_NICKNAME, user.NickName);
-							intent.putExtra(CallActivity.CALL_TYPE_KEY, CallActivity.CALL_TYPE_AUDIO);
+							Intent intent = new Intent(getApplication(), ActivityCall.class);
+							intent.putExtra(ActivityCall.KEY_TARGET_ACCID, user.Accid);
+							intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, user.NickName);
+							intent.putExtra(ActivityCall.CALL_TYPE_KEY, ActivityCall.CALL_TYPE_AUDIO);
 							startActivity(intent);
 						}
 

@@ -17,7 +17,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
-import com.newclass.woyaoxue.activity.SignInActivity;
+import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.adapter.AdapterLineup;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Rank;
@@ -96,7 +96,7 @@ public class ContentViewLineUp extends ContentView {
         StatusCode status = NIMClient.getStatus();
         Log.i(TAG, "refresh: " + status);
         if (status != StatusCode.LOGINED) {
-            getContext().startActivity(new Intent(getContext(), SignInActivity.class));
+            getContext().startActivity(new Intent(getContext(), ActivitySignIn.class));
             return;
         }
 
@@ -121,7 +121,7 @@ public class ContentViewLineUp extends ContentView {
     private void lineup() {
         StatusCode status = NIMClient.getStatus();
         if (status != StatusCode.LOGINED) {
-            getContext().startActivity(new Intent(getContext(), SignInActivity.class));
+            getContext().startActivity(new Intent(getContext(), ActivitySignIn.class));
             return;
         }
 

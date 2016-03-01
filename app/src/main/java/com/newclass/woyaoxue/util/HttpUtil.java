@@ -9,12 +9,6 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
-import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.StatusCode;
-import com.newclass.woyaoxue.MyApplication;
-import com.newclass.woyaoxue.activity.SignInActivity;
-
-import android.content.Intent;
 
 public class HttpUtil
 {

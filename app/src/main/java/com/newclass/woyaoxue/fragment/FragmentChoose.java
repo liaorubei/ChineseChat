@@ -21,14 +21,13 @@ public class FragmentChoose extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        Log.i(TAG, "onCreateView: StatusCode=" + NIMClient.getStatus());
+
         contentView = new ContentViewChoose(getActivity());
         return contentView;
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        Log.i(TAG, "onCreateOptionsMenu: ");
         ContentViewChoose.onCreateOptionsMenu(menu, inflater);
     }
 

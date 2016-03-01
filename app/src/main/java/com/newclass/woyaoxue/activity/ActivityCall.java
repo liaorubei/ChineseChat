@@ -1,10 +1,29 @@
 package com.newclass.woyaoxue.activity;
 
-import java.util.ArrayList;
-import java.util.List;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.SystemClock;
+import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.Chronometer;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
-import org.apache.http.client.methods.HttpPost;
-
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
@@ -25,7 +44,6 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.newclass.woyaoxue.adapter.AdapterCard;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.CallLog;
 import com.newclass.woyaoxue.bean.NimSysNotice;
@@ -40,42 +58,27 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.SystemClock;
-import android.util.DisplayMetrics;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.WindowManager.LayoutParams;
-import android.widget.Button;
-import android.widget.Chronometer;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.TextView;
+import java.util.List;
 
 /**
  * 电话拨打界面
  *
  * @author liaorubei
  */
-public class CallActivity extends Activity implements OnClickListener {
+public class ActivityCall extends Activity implements OnClickListener {
     public static final int CALL_TYPE_AUDIO = 1;
     public static final String CALL_TYPE_KEY = "CALL_TYPE_KEY";
     public static final int CALL_TYPE_VIDEO = 2;
     public static final String KEY_TARGET_NICKNAME = "KEY_TARGET_NICKNAME";
     public static final String KEY_TARGET_ACCID = "KEY_TARGET_ACCID";
     public static final String KEY_TARGET_ID = "KEY_TARGET_ID";
-    public static final String TAG = "CallActivity";
+    public static final String TAG = "ActivityCall";
 
     private AVChatCallback<Void> callback_hangup;
     private AVChatCallback<AVChatData> callback_call;
-    private Button bt_hangup, bt_mute, bt_free, bt_face, bt_text, bt_card, bt_more;
+    private Button bt_hangup, bt_mute, bt_free, bt_face, bt_card;
+
+    private View ll_user, ll_ctrl, rl_main;
 
     private BaseAdapter<Theme> cardAdapter;
     private AlertDialog cardDialog;
@@ -177,13 +180,23 @@ public class CallActivity extends Activity implements OnClickListener {
 
     private boolean IS_CHATTING = false;
     private int requestcode_theme = 1;
+    private PopupWindow facePopupWindow;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
+    private Dialog faceDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_call_teacher);
+        setContentView(R.layout.activity_call);
         initView();
         initData();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void nimCall() {
@@ -238,7 +251,7 @@ public class CallActivity extends Activity implements OnClickListener {
     }
 
     public static void start(Context context, int id, String accId, String nickName, int callTypeAudio) {
-        Intent intent = new Intent(context, CallActivity.class);
+        Intent intent = new Intent(context, ActivityCall.class);
         intent.putExtra(KEY_TARGET_ID, id);
         intent.putExtra(KEY_TARGET_ACCID, accId);
         intent.putExtra(KEY_TARGET_NICKNAME, nickName);
@@ -272,9 +285,10 @@ public class CallActivity extends Activity implements OnClickListener {
         bt_mute = (Button) findViewById(R.id.bt_mute);
         bt_free = (Button) findViewById(R.id.bt_free);
         bt_face = (Button) findViewById(R.id.bt_face);
-        bt_text = (Button) findViewById(R.id.bt_text);
         bt_card = (Button) findViewById(R.id.bt_card);
-        bt_more = (Button) findViewById(R.id.bt_more);
+        ll_user = findViewById(R.id.ll_user);
+        ll_ctrl = findViewById(R.id.ll_ctrl);
+        rl_main = findViewById(R.id.rl_main);
 
         tv_nickname = (TextView) findViewById(R.id.tv_nickname);
         cm_time = (Chronometer) findViewById(R.id.cm_time);
@@ -284,9 +298,7 @@ public class CallActivity extends Activity implements OnClickListener {
         bt_mute.setOnClickListener(this);
         bt_free.setOnClickListener(this);
         bt_face.setOnClickListener(this);
-        bt_text.setOnClickListener(this);
         bt_card.setOnClickListener(this);
-        bt_more.setOnClickListener(this);
     }
 
     @Override
@@ -321,7 +333,7 @@ public class CallActivity extends Activity implements OnClickListener {
                     return;
                 }
 
-                //  CardActivity.start(CallActivity.this, source.Accid, target.Accid);
+                //  CardActivity.start(ActivityCall.this, source.Accid, target.Accid);
                 startActivityForResult(new Intent(this, ThemeActivity.class), requestcode_theme);
                 break;
             case R.id.bt_text:
@@ -348,6 +360,19 @@ public class CallActivity extends Activity implements OnClickListener {
 
                     }
                 });
+                break;
+            case R.id.bt_face:
+
+                if (faceDialog == null) {
+                    View face = getLayoutInflater().inflate(R.layout.window_face, null);
+                    faceDialog = new Dialog(this);
+                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                    faceDialog.setContentView(face, params);
+                    faceDialog.setCanceledOnTouchOutside(true);
+                    faceDialog.getWindow().setGravity(Gravity.BOTTOM);
+                }
+                faceDialog.show();
+
                 break;
             default:
                 break;

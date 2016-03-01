@@ -83,7 +83,7 @@ public class TeacherQueueActivity extends Activity
 		StatusCode status = NIMClient.getStatus();
 		if (status != StatusCode.LOGINED)
 		{
-			startActivity(new Intent(this, SignInActivity.class));
+			startActivity(new Intent(this, ActivitySignIn.class));
 			return;
 		}
 
@@ -111,7 +111,7 @@ public class TeacherQueueActivity extends Activity
 		StatusCode status = NIMClient.getStatus();
 		if (status != StatusCode.LOGINED)
 		{
-			startActivity(new Intent(this, SignInActivity.class));
+			startActivity(new Intent(this, ActivitySignIn.class));
 			return;
 		}
 

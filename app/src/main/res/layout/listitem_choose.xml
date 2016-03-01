@@ -1,13 +1,15 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
     <ImageView
         android:id="@+id/iv_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:src="@drawable/ic_launcher" />
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/ic_launcher"
+        />
 
     <Button
         android:id="@+id/bt_call"
@@ -15,32 +17,56 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:text="Call" />
+        android:text="Call"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@+id/bt_call"
         android:layout_toRightOf="@id/iv_icon"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/tv_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="昵称" />
+            android:text="昵称:全职教师"/>
 
         <TextView
             android:id="@+id/tv_username"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="用户名" />
+            android:text="用户名"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="类型" />
+            android:text="类型"
+            android:visibility="gone"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <ImageView
+                android:id="@+id/iv_voice"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/speaker"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@id/iv_voice"
+                android:text="简介:中共党员，毕业于四川师范大学外语系，英语副教授,基础部副主任，公共英语教研室主任。长期从事英语教学，先后承担了《大学英语》、《财经英语》、《英语听说》、大学英语二三级、专升本考前辅导等英语教学工作。积极探索教学教法，并参与多项科研活动，工作认真负责，教学效果好。"
+                android:textColor="@color/gray7"/>
+
+        </RelativeLayout>
+
+
     </LinearLayout>
 
 </RelativeLayout>
