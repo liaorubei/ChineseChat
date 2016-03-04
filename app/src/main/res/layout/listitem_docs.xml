@@ -3,27 +3,46 @@
                 xmlns:fylx="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:descendantFocusability="blocksDescendants"
-                android:padding="5dp">
+                android:background="#F0F0F0"
+                android:descendantFocusability="blocksDescendants">
 
-    <com.newclass.woyaoxue.view.CircularProgressBar
-        android:id="@+id/cpb"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:background="@drawable/download_notyet"
-        fylx:roundColor="@color/color_two"
-        fylx:roundProgressColor="@color/download_green"
-        fylx:roundWidth="2dp"
-        fylx:style="STROKE"
-        fylx:textIsDisplayable="false"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_ctrl"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true">
+
+
+        <ImageView
+            android:id="@+id/iv_down"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/download_disable"/>
+
+        <com.newclass.woyaoxue.view.CircularProgressBar
+            android:id="@+id/pb_down"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerInParent="true"
+            fylx:roundColor="@color/color_app_normal"
+            fylx:roundProgressColor="@color/color_app"
+            fylx:roundWidth="2dp"
+            fylx:style="STROKE"
+            fylx:textColor="@color/color_app"
+            fylx:textIsDisplayable="true"
+            fylx:textSize="10sp"/>
+
+    </RelativeLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
         android:layout_marginRight="5dp"
-        android:layout_toLeftOf="@id/cpb"
+        android:layout_toLeftOf="@id/rl_ctrl"
         android:orientation="vertical">
 
         <RelativeLayout

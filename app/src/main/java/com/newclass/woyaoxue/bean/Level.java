@@ -1,12 +1,12 @@
 package com.newclass.woyaoxue.bean;
 
-public class Level
-{
+import java.util.List;
 
-	public int Id;
-	public String Name;
-	public String LevelName;
-	public int DocCount;
-	public int Sort;
-	public int Show;
+public class Level {
+
+    public int Id;
+    public String Name;
+    public int Sort;
+    public int Show;
+    public List<Folder> Folders;
 }

@@ -1,51 +1,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fylx="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
+
+    <include layout="@layout/layout_title"/>
 
     <RelativeLayout
         android:id="@+id/rl_download"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="#100f" >
+        android:layout_height="60dp"
+        android:background="#88FAFAFA">
 
         <TextView
             android:id="@+id/tv_folder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:text="成语故事汇"
-            android:textColor="@color/color_one" />
+            android:layout_marginLeft="10dp"
+            android:text="L2.013《买工艺品》"
+            android:textColor="@color/color_app"
+            android:textSize="18sp"/>
 
-        <com.newclass.woyaoxue.view.CircularProgressBar
-            android:id="@+id/cpb_download"
-            fylx:style="STROKE"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+        <ImageView
+            android:id="@+id/ib_download"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/download_begin"
-            fylx:roundColor="@color/download_green"
-            fylx:roundWidth="2dp"
-            fylx:textIsDisplayable="false" />
+            android:layout_margin="10dp"
+            android:src="@drawable/download_pressed"/>
 
         <TextView
             android:id="@+id/tv_down"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/cpb_download"
+            android:layout_toLeftOf="@id/ib_download"
             android:text="全部下载"
-            android:textColor="@color/color_one" />
+            android:textColor="@color/color_app"
+            android:textSize="18sp"/>
     </RelativeLayout>
 
-    <com.newclass.woyaoxue.view.XListView
-        android:id="@+id/listview"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/srl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rl_download"
+            android:scrollbars="none"/>
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </LinearLayout>

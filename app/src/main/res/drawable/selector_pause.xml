@@ -3,6 +3,7 @@
 
     <item android:drawable="@drawable/pause_enable" android:state_pressed="true"/>
     <item android:drawable="@drawable/pause_enable" android:state_checked="true"/>
+    <item android:drawable="@drawable/pause_enable" android:state_selected="true"/>
     <item android:drawable="@drawable/pause_disable"/>
 
 </selector>

@@ -89,7 +89,7 @@ public class MoreActivity extends Activity
 				convertView = new TextView(MoreActivity.this);
 				convertView.setPadding(25, 25, 25, 25);
 			}
-			((TextView) convertView).setText(list.get(position).LevelName);
+			((TextView) convertView).setText(list.get(position).Name);
 			return convertView;
 		}
 	}

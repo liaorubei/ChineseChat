@@ -37,6 +37,7 @@ public class NetworkUtil {
     public static final String paymentVerifyPayPal = domain + "/Api/Payment/VerifyPayPal";
     public static final String paymentVerifyAliPay = domain + "/Api/Payment/VerifyAliPay";
     public static final String paymentOrderRecords = domain + "/Api/Payment/OrderRecords";
+    public static final String levelAndFolders = domain + "/api/Level/SelectLevelAndFolders";
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {
@@ -75,7 +76,7 @@ public class NetworkUtil {
     /**
      * 把一个网站的相对路径转为这个网站的标准HTTP全路径
      *
-     * @param soundPath
+     * @param path
      * @return
      */
     public static String getFullPath(String path) {

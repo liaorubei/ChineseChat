@@ -128,7 +128,7 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
         Intent intent = getIntent();
         documentId = intent.getIntExtra("Id", 429);
         // 显示返回按钮
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         database = new Database(this);
         initData();
@@ -241,7 +241,8 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
                     urlCache.Url = this.getRequestUrl();
                     urlCache.Json = responseInfo.result;
                     urlCache.UpdateAt = System.currentTimeMillis();
-                    database.cacheInsertOrUpdate(urlCache);
+                    if (database!=null){
+                    database.cacheInsertOrUpdate(urlCache);}
                 }
 
             });

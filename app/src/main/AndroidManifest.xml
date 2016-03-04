@@ -42,7 +42,7 @@
         android:name="com.newclass.woyaoxue.MyApplication"
         android:icon="${APPLICATION_ICON}"
         android:label="ChineseChat"
-        android:theme="@android:style/Theme.Holo.Light">
+        android:theme="@android:style/Theme.Light.NoTitleBar">
 
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
@@ -103,7 +103,8 @@
 
         <activity
             android:name="com.newclass.woyaoxue.MainActivity"
-            android:label="ChineseChat">
+            android:label="ChineseChat"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

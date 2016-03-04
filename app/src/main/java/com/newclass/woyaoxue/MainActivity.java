@@ -5,9 +5,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
+
+import android.support.v4.app.FragmentTabHost;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.netease.nimlib.sdk.Observer;
@@ -22,17 +28,15 @@ import com.newclass.woyaoxue.fragment.ListenFragment;
 import com.newclass.woyaoxue.service.AutoUpdateService;
 import com.newclass.woyaoxue.service.DownloadService;
 import com.newclass.woyaoxue.util.ConstantsUtil;
+import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
 
-public class MainActivity extends FragmentActivity implements OnClickListener {
+public class MainActivity extends FragmentActivity {
     // Monkey测试代码
     // adb shell monkey -p com.voc.woyaoxue -s 500 --ignore-crashes --ignore-timeouts --monitor-native-crashes -v -v 10000 > E:\log.txt
     // gradlew assemblerelease
     //代码折叠/展开[ctrl shift -+]
     protected static final String TAG = "MainActivity";
-    private LinearLayout ll_ctrl;
-    private TextView rb_random, rb_listen, rb_person;
-    private int currentIndex = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,11 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
         // 自动升级服务
         Intent service = new Intent(this, AutoUpdateService.class);
         startService(service);
+        DisplayMetrics metrics = new DisplayMetrics();
+        WindowManager WM = (WindowManager) this.getSystemService(WINDOW_SERVICE);
+        WM.getDefaultDisplay().getMetrics(metrics);
+        Log.i(TAG, "onCreate: heightPixels=" + metrics.density);
+        Log.i(TAG, "onCreate: scaledDensity=" + metrics.scaledDensity);
     }
 
     private void enableAVChat() {
@@ -79,69 +88,38 @@ public class MainActivity extends FragmentActivity implements OnClickListener {
         }, register);
     }
 
-    private Fragment randomFragment, listenFragment, fragmentPerson;
-
     private void initView() {
-        ll_ctrl = (LinearLayout) findViewById(R.id.ll_ctrl);
-        rb_random = (TextView) findViewById(R.id.rb_random);
-        rb_listen = (TextView) findViewById(R.id.rb_listen);
-        rb_person = (TextView) findViewById(R.id.rb_person);
-
-        rb_random.setOnClickListener(this);
-        rb_listen.setOnClickListener(this);
-        rb_person.setOnClickListener(this);
-
-        rb_listen.performClick();
+        FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        tabHost.setup(MainActivity.this, getSupportFragmentManager(), R.id.ff_content);
+        tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), MyApplication.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
+        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), ListenFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec("me").setIndicator(initIndicator("Me")), FragmentPerson.class, null);
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+            @Override
+            public void onTabChanged(String tabId) {
+                Log.i(TAG, "onTabChanged: tabId=" + tabId);
+            }
+        });
+        tabHost.setCurrentTabByTag("listen");
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.rb_random: {
-                if (currentIndex == 0) {
-                    return;
-                }
-                currentIndex = 0;
-                resetButton();
-
-                if (randomFragment == null) {
-                    randomFragment = MyApplication.isStudent() ? new FragmentChoose() : new FragmentLineUp();
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, randomFragment).commit();
-            }
-            break;
-            case R.id.rb_listen: {
-                if (currentIndex == 1) {
-                    return;
-                }
-                currentIndex = 1;
-                resetButton();
-                if (listenFragment == null) {
-
-                    listenFragment = new ListenFragment();
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, listenFragment).commit();
-            }
-            break;
-            case R.id.rb_person:
-                if (currentIndex == 2) {
-                    return;
-                }
-                currentIndex = 2;
-                resetButton();
-                if (fragmentPerson == null) {
-                    fragmentPerson = new FragmentPerson();
-                }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, fragmentPerson).commit();
+    private View initIndicator(String person) {
+        View inflate = getLayoutInflater().inflate(R.layout.tabhost_indicator, null);
+        TextView tabhost_title = (TextView) inflate.findViewById(R.id.tabhost_title);
+        tabhost_title.setText(person);
+        ImageView image = (ImageView) inflate.findViewById(R.id.tabhost_image);
+        switch (person) {
+            case "Me":
+                image.setImageResource(R.drawable.selector_tab_person);
                 break;
-            default:
+            case "Listen":
+                image.setImageResource(R.drawable.selector_tab_listen);
+                break;
+            case "Chat":
+                image.setImageResource(R.drawable.selector_tab_chat);
                 break;
         }
+        return inflate;
     }
 
-    private void resetButton() {
-        rb_random.setTextColor(currentIndex == 0 ? ConstantsUtil.ColorOne : ConstantsUtil.ColorTwo);
-        rb_listen.setTextColor(currentIndex == 1 ? ConstantsUtil.ColorOne : ConstantsUtil.ColorTwo);
-        rb_person.setTextColor(currentIndex == 2 ? ConstantsUtil.ColorOne : ConstantsUtil.ColorTwo);
-    }
 }

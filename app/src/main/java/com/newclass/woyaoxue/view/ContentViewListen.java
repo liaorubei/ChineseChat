@@ -3,7 +3,7 @@ package com.newclass.woyaoxue.view;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -17,7 +17,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.newclass.woyaoxue.bean.Level;
 import com.newclass.woyaoxue.bean.Response;
-import com.newclass.woyaoxue.fragment.FolderFragment;
+import com.newclass.woyaoxue.fragment.FragmentFolder;
 import com.newclass.woyaoxue.fragment.FragmentDownload;
 import com.newclass.woyaoxue.util.ConstantsUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
@@ -111,9 +111,9 @@ public class ContentViewListen extends ContentView {
                         child.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                         child.setTextColor(i == 0 ? ConstantsUtil.ColorOne : ConstantsUtil.ColorTwo);
                         ll_levels.addView(child, i, params);
-                        FolderFragment folderFragment = new FolderFragment();
-                        folderFragment.setLevelId(level.Id);
-                        fragments.add(folderFragment);
+                        FragmentFolder fragmentFolder = new FragmentFolder();
+
+                        fragments.add(fragmentFolder);
                     }
                     fragments.add(new FragmentDownload());
 
@@ -146,7 +146,7 @@ public class ContentViewListen extends ContentView {
         return inflate;
     }
 
-    private class MyAdapter extends FragmentPagerAdapter {
+    private class MyAdapter extends /*FragmentPagerAdapter*/ FragmentStatePagerAdapter {
 
         public MyAdapter(FragmentManager fm) {
             super(fm);
