@@ -37,7 +37,8 @@ public class RecordsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_records);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if( getActionBar()!=null){
+            getActionBar().setDisplayHomeAsUpEnabled(true);}
 
         initView();
         initData();

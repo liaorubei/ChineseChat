@@ -2,6 +2,7 @@ package com.newclass.woyaoxue.fragment;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -11,16 +12,21 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.bean.Folder;
 import com.newclass.woyaoxue.bean.Level;
 import com.newclass.woyaoxue.bean.Response;
+import com.newclass.woyaoxue.bean.UrlCache;
+import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
@@ -32,17 +38,16 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class ListenFragment extends Fragment {
+public class FragmentListen extends Fragment {
     private static final String TAG = "ListenFragment";
     private Gson gson = new Gson();
     private LinearLayout ll_ctrl;
     private ViewPager viewPager;
     private List<Fragment> fragments;
     private MyAdapter adapter;
-    int i = 0;
     private List<Level> levels;
 
-    public ListenFragment() {
+    public FragmentListen() {
         Log.i(TAG, "ListenFragment: " + getActivity());
     }
 
@@ -59,6 +64,12 @@ public class ListenFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        Log.i(TAG, "onResume: ");
+        super.onResume();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.i(TAG, "onCreateView: this=" + this);
         Log.i(TAG, "onCreateView: Activity=" + getActivity());
@@ -67,7 +78,7 @@ public class ListenFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        android.util.Log.i(TAG, "onViewCreated: ");
+        Log.i(TAG, "onViewCreated: ");
         ll_ctrl = (LinearLayout) view.findViewById(R.id.ll_ctrl);
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
 
@@ -84,8 +95,8 @@ public class ListenFragment extends Fragment {
             public void onPageSelected(int position) {
                 int childCount = ll_ctrl.getChildCount();
                 for (int i = 0; i < childCount; i++) {
-                    CheckBox childAt = (CheckBox) ll_ctrl.getChildAt(i);
-                    childAt.setChecked(position == i);
+                    TextView childAt = (TextView) ll_ctrl.getChildAt(i);
+                    childAt.setSelected(position == i);
                 }
             }
 
@@ -95,50 +106,88 @@ public class ListenFragment extends Fragment {
             }
         });
 
-        if (levels == null) {
-            HttpUtil.post(NetworkUtil.levelAndFolders, null, new RequestCallBack<String>() {
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Response<List<Level>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Level>>>() {
-                    }.getType());
+        Database database = new Database(getActivity());
+        String url = NetworkUtil.levelAndFolders;
+        UrlCache cache = database.cacheSelectByUrl(url);
+        database.closeConnection();
 
-                    levels = resp.info;
-                    Collections.sort(levels, new Comparator<Level>() {
-                        @Override
-                        public int compare(Level lhs, Level rhs) {
-                            return Integer.valueOf(rhs.Sort).compareTo(lhs.Sort);
-                        }
-                    });
-
-                    initTabs();
-                    Log.i(TAG, "onSuccess: " + responseInfo.result);
-                }
-
-                @Override
-                public void onFailure(HttpException error, String msg) {
-                    Log.i(TAG, "onFailure: " + msg);
-                    CommonUtil.toast("网络异常");
-                }
-            });
+        if (cache == null) {
+            lastJson(url);
         } else {
-            initTabs();
+            initTabs(cache.Json);
+            if (cache.UpdateAt < (System.currentTimeMillis() - 10 * 60 * 1000)) {
+                lastJson(url);
+            }
+
         }
+
     }
 
-    private void initTabs() {
+    private void lastJson(String url) {
+        HttpUtil.post(url, null, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                //保存到数据库
+                Response<List<Level>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Level>>>() {
+                }.getType());
+
+                if (resp.code == 200 && resp.info.size() > 0) {
+                    for (Level l : resp.info) {
+                        if (!MyApplication.getDatabase().levelExists(l.Id)) {
+                            MyApplication.getDatabase().levelInsert(l);
+                        }
+
+                        for (Folder f : l.Folders) {
+                            if (!MyApplication.getDatabase().folderExists(f.Id)) {
+                                MyApplication.getDatabase().folderInsert(f);
+                            }
+                        }
+
+                    }
+                }
+
+
+                initTabs(responseInfo.result);
+                Database database = new Database(MyApplication.getContext());
+                UrlCache urlCache = new UrlCache(this.getRequestUrl(), responseInfo.result, System.currentTimeMillis());
+                database.cacheInsertOrUpdate(urlCache);
+                database.closeConnection();
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                Log.i(TAG, "onFailure: " + msg);
+                CommonUtil.toast("网络异常");
+            }
+        });
+    }
+
+    private void initTabs(String json) {
+
+        Response<List<Level>> resp = gson.fromJson(json, new TypeToken<Response<List<Level>>>() {
+        }.getType());
+
+        levels = resp.info;
+        Collections.sort(levels, new Comparator<Level>() {
+            @Override
+            public int compare(Level lhs, Level rhs) {
+                return Integer.valueOf(rhs.Sort).compareTo(lhs.Sort);
+            }
+        });
 
         ll_ctrl.removeAllViews();
+        fragments.clear();
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
         ColorStateList colors = getResources().getColorStateList(R.color.selector_text_normal);
         //添加等级数据
         for (int i = 0; i < levels.size(); i++) {
-            CheckBox child = new CheckBox(getActivity());
+            TextView child = new TextView(getActivity());
             child.setGravity(Gravity.CENTER);
             child.setText(levels.get(i).Name);
             child.setTextColor(colors);
-            child.setButtonDrawable(null);
             ll_ctrl.addView(child, params);
-            FragmentFolder fragmentFolder = new FragmentFolder();
+            FragmentFolderTodo fragmentFolder = new FragmentFolderTodo();
             Bundle args = new Bundle();
             args.putString("level", gson.toJson(levels.get(i)));
             fragmentFolder.setArguments(args);
@@ -146,21 +195,22 @@ public class ListenFragment extends Fragment {
         }
 
         //添加已下载项
-        CheckBox child = new CheckBox(getActivity());
+        TextView child = new TextView(getActivity());
         child.setGravity(Gravity.CENTER);
         child.setText("已下载");
         child.setTextColor(colors);
-        child.setButtonDrawable(null);
         ll_ctrl.addView(child, params);
-        fragments.add(new FragmentDownload());
+        fragments.add(new FragmentFolderDone());
         adapter.notifyDataSetChanged();
+
+        Log.i(TAG, "initTabs: fragments.size()=" + fragments.size());
 
         //添加点击事件
         int childCount = ll_ctrl.getChildCount();
         for (int i = 0; i < childCount; i++) {
             final int position = i;
-            CheckBox childAt = (CheckBox) ll_ctrl.getChildAt(i);
-            childAt.setChecked(position == 0);
+            TextView childAt = (TextView) ll_ctrl.getChildAt(i);
+            childAt.setSelected(position == 0);
             childAt.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -173,7 +223,7 @@ public class ListenFragment extends Fragment {
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
-        Log.i(TAG, "onViewStateRestored: " + savedInstanceState);
+        Log.i(TAG, "onViewStateRestored: savedInstanceState=" + savedInstanceState);
         Log.i(TAG, "onViewStateRestored: CurrentItem=" + viewPager.getCurrentItem());
         super.onViewStateRestored(savedInstanceState);
     }

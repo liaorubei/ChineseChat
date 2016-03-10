@@ -3,6 +3,7 @@ package com.newclass.woyaoxue.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,25 +14,25 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.newclass.woyaoxue.activity.DocsActivity;
+import com.newclass.woyaoxue.activity.ActivityDocsTodo;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Folder;
 import com.newclass.woyaoxue.bean.Level;
-import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.Log;
-import com.newclass.woyaoxue.view.ContentView;
-import com.newclass.woyaoxue.view.ContentView.ViewState;
 import com.voc.woyaoxue.R;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class FragmentFolder extends Fragment {
+/**
+ * 文件夹-未下载
+ */
+public class FragmentFolderTodo extends Fragment {
     private static final String TAG = "FolderFragment";
     private MyAdapter adapter;
     private List<Folder> list;
     private ListView listview;
     private Gson gson = new Gson();
+    private SwipeRefreshLayout srl;
 
 
     @Override
@@ -44,6 +45,9 @@ public class FragmentFolder extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Level level = gson.fromJson(getArguments().getString("level"), new TypeToken<Level>() {
         }.getType());
+        srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
+        srl.setColorSchemeColors(R.color.color_app);
+
         listview = (ListView) view.findViewById(android.R.id.list);
         list = level.Folders;
         adapter = new MyAdapter(list);
@@ -53,7 +57,7 @@ public class FragmentFolder extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Folder folder = list.get(position);
-                Intent intent = new Intent(getActivity(), DocsActivity.class);
+                Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
                 intent.putExtra("folder", gson.toJson(folder));
                 startActivity(intent);
             }

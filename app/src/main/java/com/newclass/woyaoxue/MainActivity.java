@@ -2,17 +2,14 @@ package com.newclass.woyaoxue;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.os.Environment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentPagerAdapter;
 
 import android.support.v4.app.FragmentTabHost;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -24,12 +21,19 @@ import com.newclass.woyaoxue.activity.ActivityTake;
 import com.newclass.woyaoxue.fragment.FragmentChoose;
 import com.newclass.woyaoxue.fragment.FragmentLineUp;
 import com.newclass.woyaoxue.fragment.FragmentPerson;
-import com.newclass.woyaoxue.fragment.ListenFragment;
+import com.newclass.woyaoxue.fragment.FragmentListen;
 import com.newclass.woyaoxue.service.AutoUpdateService;
 import com.newclass.woyaoxue.service.DownloadService;
-import com.newclass.woyaoxue.util.ConstantsUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class MainActivity extends FragmentActivity {
     // Monkey测试代码
@@ -42,6 +46,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         initView();
 
@@ -92,7 +97,7 @@ public class MainActivity extends FragmentActivity {
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(MainActivity.this, getSupportFragmentManager(), R.id.ff_content);
         tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), MyApplication.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
-        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), ListenFragment.class, null);
+        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentListen.class, null);
         tabHost.addTab(tabHost.newTabSpec("me").setIndicator(initIndicator("Me")), FragmentPerson.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override

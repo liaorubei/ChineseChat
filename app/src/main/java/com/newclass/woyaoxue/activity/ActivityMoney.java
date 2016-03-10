@@ -9,6 +9,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -28,6 +29,7 @@ import java.util.List;
 public class ActivityMoney extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MoneyActivity";
+    private Button bt_paypal, bt_alipay;
     private ListView listview;
     private List<Pay> list;
     private BaseAdapter<Pay> adapter;
@@ -41,7 +43,8 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
 
         initView();
         initData();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if( getActionBar()!=null){
+        getActionBar().setDisplayHomeAsUpEnabled(true);}
     }
 
     private void initData() {
@@ -75,15 +78,28 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
 
     private void initView() {
         listview = (ListView) findViewById(R.id.listview);
+        bt_paypal = (Button) findViewById(R.id.bt_paypal);
+        bt_alipay = (Button) findViewById(R.id.bt_alipay);
+
+        bt_paypal.setOnClickListener(this);
+        bt_alipay.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
-         /*   case R.id.rl_record:
-                startActivity(new Intent(ActivityMoney.this, RecordsActivity.class));
-                break;*/
+            case R.id.bt_paypal:
+                Dialog dialog = new Dialog(this);
+                dialog.setContentView(R.layout.dialog_pricelist);
+                dialog.setTitle("请选择充值金额");
+                dialog.show();
+                break;
+
+
+            case R.id.bt_alipay:
+
+                break;
         }
     }
 
@@ -95,12 +111,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Pay item = getItem(position);
-            View inflate = View.inflate(ActivityMoney.this, R.layout.listitem_money, null);
-            TextView tv_subject = (TextView) inflate.findViewById(R.id.tv_subject);
-            TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
-
-            tv_subject.setText(item.subject);
-            tv_price.setText("CNY:" + item.cny + "/USD:" + item.usd);
+            View inflate = View.inflate(ActivityMoney.this, R.layout.listitem_records, null);
             return inflate;
         }
     }

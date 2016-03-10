@@ -61,6 +61,8 @@ import com.newclass.woyaoxue.view.SpecialLyricView;
 import com.voc.woyaoxue.R;
 
 public class PlayActivity extends Activity implements OnClickListener, OnPreparedListener, OnErrorListener, OnInfoListener {
+    private static final String TAG = "PlayActivity";
+
     private enum MediaState {
         正在录音, 播放录音, 播放原音, 全部暂停
     }
@@ -241,8 +243,9 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
                     urlCache.Url = this.getRequestUrl();
                     urlCache.Json = responseInfo.result;
                     urlCache.UpdateAt = System.currentTimeMillis();
-                    if (database!=null){
-                    database.cacheInsertOrUpdate(urlCache);}
+                    if (database != null) {
+                        database.cacheInsertOrUpdate(urlCache);
+                    }
                 }
 
             });
@@ -380,8 +383,9 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
 
             @Override
             public void onStopTrackingTouch(SeekBar sb) {
-if (    originPlayer!=null){
-                originPlayer.seekTo(sb.getProgress());}
+                if (originPlayer != null) {
+                    originPlayer.seekTo(sb.getProgress());
+                }
 
             }
         });
@@ -510,6 +514,7 @@ if (    originPlayer!=null){
 
     @Override
     protected void onDestroy() {
+        Log.i(TAG, "onDestroy: ");
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
         if (originPlayer != null) {

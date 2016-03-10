@@ -9,6 +9,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.newclass.woyaoxue.activity.MessageActivity;
+import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.ConstantsUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
@@ -26,6 +27,7 @@ import android.view.WindowManager;
 public class MyApplication extends Application {
     protected static final String TAG = "MyApplication";
     private static Context mContext = null;
+    private static Database mDatabase = null;
 
     private Observer<StatusCode> observerOnlineStatus = new Observer<StatusCode>() {
         private static final long serialVersionUID = 1L;
@@ -41,6 +43,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         mContext = this;
+        mDatabase = new Database(this);
         SDKOptions options = getOptions();
         LoginInfo loginInfo = getLoginInfo();
         NIMClient.init(this, loginInfo, options);
@@ -142,7 +145,12 @@ public class MyApplication extends Application {
         mContext = context;
     }
 
+
     public static boolean isStudent() {
         return "student".equals(release);
+    }
+
+    public static Database getDatabase() {
+        return mDatabase;
     }
 }

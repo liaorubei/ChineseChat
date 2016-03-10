@@ -32,7 +32,8 @@ public class MoreActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_more);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		if( getActionBar()!=null){
+			getActionBar().setDisplayHomeAsUpEnabled(true);}
 		listview = (ListView) findViewById(R.id.listview);
 
 		String json = getIntent().getStringExtra("hideLevels");

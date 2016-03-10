@@ -1,23 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:descendantFocusability="blocksDescendants"
-                android:padding="5dp">
+                android:layout_height="60dp"
+                android:descendantFocusability="blocksDescendants">
 
-    <CheckBox
+    <ImageView
         android:id="@+id/cb_delete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:visibility="gone"/>
+        android:layout_marginRight="10dp"
+        android:background="@drawable/selector_checkbox"
+        android:visibility="visible"/>
 
-    <LinearLayout
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_toLeftOf="@id/cb_delete"
-        android:orientation="vertical">
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        >
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -72,12 +79,13 @@
             android:id="@+id/tv_title_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_weight="3"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Study: Head Lice Growing Resistant to Existing Treatments"
             android:textColor="#a0a0a0"
             android:textSize="15sp"/>
-    </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

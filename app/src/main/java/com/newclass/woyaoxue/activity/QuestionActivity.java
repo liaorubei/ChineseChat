@@ -42,7 +42,8 @@ public class QuestionActivity extends Activity
 		initView();
 		initData();
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		if( getActionBar()!=null){
+			getActionBar().setDisplayHomeAsUpEnabled(true);}
 	}
 
 	@Override

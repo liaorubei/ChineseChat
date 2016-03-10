@@ -79,7 +79,8 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         createDatePickerDialog();
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if( getActionBar()!=null){
+            getActionBar().setDisplayHomeAsUpEnabled(true);}
     }
 
     private void initData() {

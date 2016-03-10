@@ -49,7 +49,8 @@ public class HistoryActivity extends Activity {
 
         initView();
         initData();
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if( getActionBar()!=null){
+            getActionBar().setDisplayHomeAsUpEnabled(true);}
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 

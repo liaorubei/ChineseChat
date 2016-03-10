@@ -42,7 +42,7 @@
         android:name="com.newclass.woyaoxue.MyApplication"
         android:icon="${APPLICATION_ICON}"
         android:label="ChineseChat"
-        android:theme="@android:style/Theme.Light.NoTitleBar">
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar">
 
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
@@ -122,9 +122,9 @@
             android:name="release"
             android:value="${release_value}"/>
         <!-- 文件夹界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityDocument"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityDocsDone"/>
         <!-- 文件夹界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.DocsActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityDocsTodo"/>
 
         <!-- 播放界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.PlayActivity"/>

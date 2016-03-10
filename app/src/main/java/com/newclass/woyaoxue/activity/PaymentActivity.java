@@ -90,7 +90,8 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
         startService(intent);
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        if( getActionBar()!=null){
+            getActionBar().setDisplayHomeAsUpEnabled(true);}
 
         initData();
         progressDialog = new ProgressDialog(this);

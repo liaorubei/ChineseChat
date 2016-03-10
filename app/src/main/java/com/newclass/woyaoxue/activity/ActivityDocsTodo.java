@@ -24,10 +24,12 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.newclass.woyaoxue.MyApplication;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Document;
 import com.newclass.woyaoxue.bean.DownloadInfo;
 import com.newclass.woyaoxue.bean.Folder;
+import com.newclass.woyaoxue.bean.UrlCache;
 import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.service.DownloadService;
 import com.newclass.woyaoxue.service.DownloadService.MyBinder;
@@ -38,25 +40,30 @@ import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.CircularProgressBar;
 import com.voc.woyaoxue.R;
 
+import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-public class DocsActivity extends Activity {
+
+/*
+*
+* 文档列表页
+*
+* */
+public class ActivityDocsTodo extends Activity {
     private static final String TAG = "DocsActivity";
     private List<Document> list;
-
-
     private MyAdapter adapter;
     private ServiceConnection conn;
     private MyBinder myBinder;
     private Database database;
-
     private View ib_download;
-    private TextView tv_folder, tv_down;
-    protected int pageSize = 25;
+    private TextView tv_folder;
+    private int pageSize = 25;
     private Gson gson = new Gson();
     private SwipeRefreshLayout srl;
     private Folder folder;
@@ -65,7 +72,7 @@ public class DocsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_docs);
+        setContentView(R.layout.activity_docstodo);
 
         // 取得传递过来的数据
         Intent intent = getIntent();
@@ -79,6 +86,8 @@ public class DocsActivity extends Activity {
         initView();
 
         initData();
+
+        tv_folder.setText(folder.Name);
 
         database = new Database(this);
 
@@ -100,27 +109,82 @@ public class DocsActivity extends Activity {
     }
 
     private void initData() {
-        HttpUtil.post(NetworkUtil.getDocs(folder.Id + "", 0 + "", pageSize + ""), null, new RequestCallBack<String>() {
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                List<Document> docs = gson.fromJson(responseInfo.result, new TypeToken<List<Document>>() {
-                }.getType());
 
-                list.clear();
-                for (Document d : docs) {
-                    list.add(d);
+        String url = NetworkUtil.getDocs(folder.Id + "", 0 + "", pageSize + "");
+
+        UrlCache cache = MyApplication.getDatabase().cacheSelectByUrl(url);
+        if (cache == null) {
+
+            HttpUtil.post(url, null, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    lastPost(responseInfo.result);
+
+                    UrlCache urlCache = new UrlCache();
+                    urlCache.Url = this.getRequestUrl();
+                    urlCache.Json = responseInfo.result;
+                    urlCache.UpdateAt = System.currentTimeMillis();
+                    MyApplication.getDatabase().cacheInsertOrUpdate(urlCache);
                 }
-                adapter.notifyDataSetChanged();
 
-                srl.setRefreshing(false);
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    CommonUtil.toast("网络异常");
+                    srl.setRefreshing(false);
+                }
+            });
+        } else {
+            if (cache.UpdateAt < (System.currentTimeMillis() - 10 * 60 * 1000)) {
+
+                HttpUtil.post(url, null, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        lastPost(responseInfo.result);
+
+                        UrlCache urlCache = new UrlCache();
+                        urlCache.Url = this.getRequestUrl();
+                        urlCache.Json = responseInfo.result;
+                        urlCache.UpdateAt = System.currentTimeMillis();
+                        MyApplication.getDatabase().cacheInsertOrUpdate(urlCache);
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        CommonUtil.toast("网络异常");
+                        srl.setRefreshing(false);
+                    }
+                });
+            } else {
+                lastPost(cache.Json);
             }
 
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                CommonUtil.toast("网络异常");
-                srl.setRefreshing(false);
+        }
+
+
+        try {
+            HttpURLConnection conn = null;
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(2500);
+            int code = conn.getResponseCode();
+            if (code == 200) {
+                InputStream inputStream = conn.getInputStream();
             }
-        });
+        } catch (Exception e) {
+        }
+
+
+    }
+
+    private void lastPost(String json) {
+        List<Document> docs = gson.fromJson(json, new TypeToken<List<Document>>() {
+        }.getType());
+
+        list.clear();
+        for (Document d : docs) {
+            list.add(d);
+        }
+        adapter.notifyDataSetChanged();
+        srl.setRefreshing(false);
     }
 
     private void initView() {
@@ -128,6 +192,7 @@ public class DocsActivity extends Activity {
         srl = (SwipeRefreshLayout) findViewById(R.id.srl);
         listview = (ListView) findViewById(android.R.id.list);
         ib_download = findViewById(R.id.ib_download);
+        tv_folder = (TextView) findViewById(R.id.tv_folder);
 
         //初始化变量
         list = new ArrayList<>();
@@ -139,7 +204,7 @@ public class DocsActivity extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent play = new Intent(DocsActivity.this, PlayActivity.class);
+                Intent play = new Intent(ActivityDocsTodo.this, PlayActivity.class);
                 play.putExtra("Id", list.get(position).Id);
                 startActivity(play);
             }
@@ -218,7 +283,6 @@ public class DocsActivity extends Activity {
         database.docsInsert(doc);
     }
 
-
     private class MyAdapter extends BaseAdapter<Document> implements Observer {
 
         public MyAdapter(List<Document> list) {
@@ -229,7 +293,7 @@ public class DocsActivity extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
             final Document item = getItem(position);
             if (convertView == null) {
-                convertView = View.inflate(DocsActivity.this, R.layout.listitem_docs, null);
+                convertView = View.inflate(ActivityDocsTodo.this, R.layout.listitem_docs, null);
                 ViewHolder holder = new ViewHolder();
                 convertView.setTag(holder);
 
@@ -245,7 +309,7 @@ public class DocsActivity extends Activity {
             holder.tv_title_one.setText(item.Title);
             holder.tv_title_two.setText(item.TitleTwo);
             holder.tv_date.setText(item.DateString);
-            holder.tv_size.setText(Formatter.formatFileSize(DocsActivity.this, item.Length));
+            holder.tv_size.setText(Formatter.formatFileSize(ActivityDocsTodo.this, item.Length));
             holder.tv_time.setText(item.LengthString);
 
             DownloadInfo ssss = database.docsSelectById(item.Id);
@@ -256,7 +320,7 @@ public class DocsActivity extends Activity {
                     holder.pb_down.setVisibility(View.INVISIBLE);
 
                     holder.iv_down.setVisibility(View.VISIBLE);
-                    holder.iv_down.setImageResource(R.drawable.download_disable);
+                    holder.iv_down.setImageResource(R.drawable.download_finish);
                 } else {
                     DownloadInfo info = myBinder.getDownloadManager().get(item.Id);
                     holder.pb_down.setMax((int) info.Total);
@@ -275,7 +339,7 @@ public class DocsActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     if (database.docsExists(item.Id)) {
-                        Toast.makeText(DocsActivity.this, "请不要重复下载", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityDocsTodo.this, "请不要重复下载", Toast.LENGTH_SHORT).show();
                     } else {
                         download(item);
                         holder.pb_down.setMax(100);

@@ -17,8 +17,8 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.newclass.woyaoxue.bean.Level;
 import com.newclass.woyaoxue.bean.Response;
-import com.newclass.woyaoxue.fragment.FragmentFolder;
-import com.newclass.woyaoxue.fragment.FragmentDownload;
+import com.newclass.woyaoxue.fragment.FragmentFolderTodo;
+import com.newclass.woyaoxue.fragment.FragmentFolderDone;
 import com.newclass.woyaoxue.util.ConstantsUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
@@ -111,11 +111,11 @@ public class ContentViewListen extends ContentView {
                         child.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
                         child.setTextColor(i == 0 ? ConstantsUtil.ColorOne : ConstantsUtil.ColorTwo);
                         ll_levels.addView(child, i, params);
-                        FragmentFolder fragmentFolder = new FragmentFolder();
+                        FragmentFolderTodo fragmentFolder = new FragmentFolderTodo();
 
                         fragments.add(fragmentFolder);
                     }
-                    fragments.add(new FragmentDownload());
+                    fragments.add(new FragmentFolderDone());
 
                     adapter.notifyDataSetChanged();
 
