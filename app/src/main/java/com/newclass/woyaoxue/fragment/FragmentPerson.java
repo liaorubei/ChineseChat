@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.lidroid.xutils.BitmapUtils;
@@ -24,8 +23,8 @@ import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.HistoryActivity;
 import com.newclass.woyaoxue.activity.ActivityMoney;
-import com.newclass.woyaoxue.activity.PersonActivity;
-import com.newclass.woyaoxue.activity.SettingActivity;
+import com.newclass.woyaoxue.activity.ActivityPerson;
+import com.newclass.woyaoxue.activity.ActivitySetting;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
@@ -40,8 +39,8 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
     private View bt_histroy, bt_setting;
     private ImageView iv_avater, iv_gender;
-    private TextView tv_nickname, tv_username;
-    private RelativeLayout rl_money;
+    private TextView tv_nickname;
+
     private View ll_person;
     private User user;
 
@@ -56,18 +55,16 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         View inflate = inflater.inflate(R.layout.fragment_person, null);
         ll_person = inflate.findViewById(R.id.ll_person);
         tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
-        tv_username = (TextView) inflate.findViewById(R.id.tv_username);
-        iv_avater = (ImageView) inflate.findViewById(R.id.iv_avater);
+             iv_avater = (ImageView) inflate.findViewById(R.id.iv_avater);
         iv_gender = (ImageView) inflate.findViewById(R.id.iv_gender);
 
-        rl_money = (RelativeLayout) inflate.findViewById(R.id.rl_money);
+
         bt_histroy = inflate.findViewById(R.id.rl_history);
         bt_setting = inflate.findViewById(R.id.rl_setting);
 
         inflate.findViewById(R.id.rl_topup).setOnClickListener(this);
 
         ll_person.setOnClickListener(this);
-        rl_money.setOnClickListener(this);
         bt_histroy.setOnClickListener(this);
         bt_setting.setOnClickListener(this);
         return inflate;
@@ -88,7 +85,6 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             user.Accid = sp.getString("accid", "");
 
             tv_nickname.setText(nickname);
-            tv_username.setText(username);
 
             iv_gender.setVisibility(gender == -1 ? View.INVISIBLE : View.VISIBLE);
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
@@ -127,7 +123,6 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
 
         } else {
             tv_nickname.setText("未登录");
-            tv_username.setText("未登录");
             iv_gender.setVisibility(View.INVISIBLE);
         }
     }
@@ -140,7 +135,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                     startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     return;
                 }
-                startActivity(new Intent(getActivity(), PersonActivity.class));
+                startActivity(new Intent(getActivity(), ActivityPerson.class));
                 break;
             case R.id.rl_topup:
                 startActivity(new Intent(getActivity(), ActivityMoney.class));
@@ -154,7 +149,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                 HistoryActivity.start(getActivity(), user.Accid);
                 break;
             case R.id.rl_setting:
-                startActivity(new Intent(getActivity(), SettingActivity.class));
+                startActivity(new Intent(getActivity(), ActivitySetting.class));
                 break;
         }
     }

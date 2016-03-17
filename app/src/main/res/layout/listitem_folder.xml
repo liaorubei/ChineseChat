@@ -1,32 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#f0f0f0"
-                android:descendantFocusability="blocksDescendants"
-                android:padding="5dp">
-
-    <CheckBox
-        android:id="@+id/cb_delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:visibility="gone"/>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/cb_delete"
+        android:layout_height="50dp"
+        android:layout_margin="5dp"
         android:orientation="vertical">
+
 
         <TextView
             android:id="@+id/tv_folder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
             android:ellipsize="end"
             android:singleLine="true"
             android:text="舌尖上的中国"
-            android:textColor="@color/main_dark"
             android:textSize="17sp"/>
 
         <TextView
@@ -34,8 +27,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="课程10"
-            android:textColor="@color/color_two"
             android:textSize="15sp"/>
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

@@ -90,8 +90,9 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
         startService(intent);
 
-        if( getActionBar()!=null){
-            getActionBar().setDisplayHomeAsUpEnabled(true);}
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         initData();
         progressDialog = new ProgressDialog(this);
@@ -465,8 +466,8 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
         String resultStatus = payResult.getResultStatus();
         // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
         if (TextUtils.equals(resultStatus, "9000")) {
-           // progressDialog.setMessage("正在验证订单");
-           // progressDialog.show();
+            // progressDialog.setMessage("正在验证订单");
+            // progressDialog.show();
 
             HttpUtil.Parameters p = new HttpUtil.Parameters();
             p.add("result", resultInfo);
@@ -483,13 +484,13 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
                         finish();
                     }
 
-                  //  progressDialog.dismiss();
+                    //  progressDialog.dismiss();
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
 
-                   // progressDialog.dismiss();
+                    // progressDialog.dismiss();
                 }
             });
 

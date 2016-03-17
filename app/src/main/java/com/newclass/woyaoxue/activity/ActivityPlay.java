@@ -1,18 +1,11 @@
 package com.newclass.woyaoxue.activity;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.media.AudioManager;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -21,21 +14,21 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -53,27 +46,33 @@ import com.newclass.woyaoxue.bean.DownloadInfo;
 import com.newclass.woyaoxue.bean.Lyric;
 import com.newclass.woyaoxue.bean.UrlCache;
 import com.newclass.woyaoxue.database.Database;
-import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.SpecialLyricView;
 import com.voc.woyaoxue.R;
 
-public class PlayActivity extends Activity implements OnClickListener, OnPreparedListener, OnErrorListener, OnInfoListener {
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class ActivityPlay extends Activity implements OnClickListener, OnPreparedListener, OnErrorListener, OnInfoListener {
     private static final String TAG = "PlayActivity";
+    private ArrayList<Integer> subTitleIcons;
 
     private enum MediaState {
         正在录音, 播放录音, 播放原音, 全部暂停
     }
 
     protected static final int REFRESH_SEEKBAR = 0;
-
     private Database database;
     private int documentId;
     private int elapsedTime = 0;// 录音/播放已经耗费的时间,毫秒数milliseconds
     private Handler handler = new Handler() {
-        public void handleMessage(android.os.Message msg) {
+        public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_SEEKBAR:
                     refresh_seekbar();
@@ -85,12 +84,20 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
     };
     // 是否单句循环
     private boolean isOneLineLoop = false;
-    private CheckBox iv_line, iv_play, iv_rec_pause, iv_rec_button;
+
     private RelativeLayout rl_buffering;
     private ImageView iv_cover;
-    private ImageView iv_microphone, iv_next, iv_prev;
-    private ImageView iv_rec_origin, iv_rec_prev, iv_rec_next, iv_rec_record, iv_rec_back;
-    private LinearLayout ll_lyrics, ll_play, ll_record;
+
+    //状态栏按钮
+    private Button bt_home, bt_menu;
+
+    //播放栏按钮
+    private ImageView iv_line, iv_prev, iv_play, iv_next, iv_tape;
+
+    //录音栏按钮
+    private ImageView iv_rec_pause, iv_rec_origin, iv_rec_prev, iv_rec_button, iv_rec_record, iv_rec_next, iv_rec_back;
+
+    private LinearLayout ll_lyrics, ll_play, ll_tape;
     private MediaRecorder mediaRecorder;// 音频录音对象
 
     private MediaPlayer originPlayer, recordPlayer;// 原音,录音播放对象
@@ -102,7 +109,6 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
     private SeekBar seekBar;
     private int sideA = 0, sideB = 0;
     private List<SpecialLyricView> specialLyricViews;
-    private List<Integer> subTitleIcons;
     private Integer subTitleState = 0;
     private ScrollView sv_lyrics;
     private ValueAnimator toRAnimator, toLAnimator;// 控制按钮布局的向右向左属性动画
@@ -110,18 +116,17 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
     private TextView tv_play_record_time;
     private MediaState currentState = MediaState.播放原音;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play);
 
-        initView();
-
         subTitleIcons = new ArrayList<Integer>();
-        subTitleIcons.add(R.drawable.ico_actionbar_subtitle_none);
-        subTitleIcons.add(R.drawable.ico_actionbar_subtitle_cn);
-        subTitleIcons.add(R.drawable.ico_actionbar_subtitle_encn);
+        subTitleIcons.add(R.drawable.switch_none);
+        subTitleIcons.add(R.drawable.switch_cn);
+        subTitleIcons.add(R.drawable.switch_cnen);
+
+        initView();
 
         tv_aSide.setText("");
         tv_bSide.setText("");
@@ -142,10 +147,10 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
         // 取得屏幕尺寸
         getWindowManager().getDefaultDisplay().getMetrics(outMetrics);
 
-        playParams = (android.widget.FrameLayout.LayoutParams) ll_play.getLayoutParams();
+        playParams = (FrameLayout.LayoutParams) ll_play.getLayoutParams();
         playParams.width = outMetrics.widthPixels;
 
-        recordParams = (android.widget.FrameLayout.LayoutParams) ll_record.getLayoutParams();
+        recordParams = (FrameLayout.LayoutParams) ll_tape.getLayoutParams();
         recordParams.width = outMetrics.widthPixels;
         recordParams.leftMargin = outMetrics.widthPixels;
 
@@ -181,7 +186,7 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
         specialLyricViews = new ArrayList<SpecialLyricView>();
 
         for (Lyric lyric : document.Lyrics) {
-            SpecialLyricView specialLyricView = new SpecialLyricView(PlayActivity.this, lyric);
+            SpecialLyricView specialLyricView = new SpecialLyricView(ActivityPlay.this, lyric);
             specialLyricViews.add(specialLyricView);
         }
 
@@ -324,25 +329,33 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
     }
 
     private void initView() {
-        // 控制栏的按钮初始化并添加监听
-        iv_line = (CheckBox) findViewById(R.id.iv_line);
-        iv_prev = (ImageView) findViewById(R.id.iv_prev);
-        iv_play = (CheckBox) findViewById(R.id.iv_paly);
-        iv_next = (ImageView) findViewById(R.id.iv_next);
-        iv_microphone = (ImageView) findViewById(R.id.iv_microphone);
-        iv_rec_pause = (CheckBox) findViewById(R.id.iv_rec_pause);
-        iv_rec_origin = (ImageView) findViewById(R.id.iv_rec_origin);
-        iv_rec_prev = (ImageView) findViewById(R.id.iv_rec_prev);
-        iv_rec_button = (CheckBox) findViewById(R.id.iv_rec_button);
-        iv_rec_next = (ImageView) findViewById(R.id.iv_rec_next);
-        iv_rec_record = (ImageView) findViewById(R.id.iv_rec_record);
-        iv_rec_back = (ImageView) findViewById(R.id.iv_rec_back);
+        //标题栏按钮
+        bt_home = (Button) findViewById(R.id.bt_home);
+        bt_menu = (Button) findViewById(R.id.bt_menu);
+        bt_home.setOnClickListener(this);
+        bt_menu.setOnClickListener(this);
 
+        // 播放栏按钮
+        iv_line = (ImageView) findViewById(R.id.iv_line);
+        iv_prev = (ImageView) findViewById(R.id.iv_prev);
+        iv_play = (ImageView) findViewById(R.id.iv_play);
+        iv_next = (ImageView) findViewById(R.id.iv_next);
+        iv_tape = (ImageView) findViewById(R.id.iv_tape);
         iv_line.setOnClickListener(this);
         iv_prev.setOnClickListener(this);
         iv_play.setOnClickListener(this);
         iv_next.setOnClickListener(this);
-        iv_microphone.setOnClickListener(this);
+        iv_tape.setOnClickListener(this);
+
+        //录音栏按钮
+        iv_rec_pause = (ImageView) findViewById(R.id.iv_rec_pause);
+        iv_rec_origin = (ImageView) findViewById(R.id.iv_rec_origin);
+        iv_rec_prev = (ImageView) findViewById(R.id.iv_rec_prev);
+        iv_rec_button = (ImageView) findViewById(R.id.iv_rec_button);
+        iv_rec_next = (ImageView) findViewById(R.id.iv_rec_next);
+        iv_rec_record = (ImageView) findViewById(R.id.iv_rec_record);
+        iv_rec_back = (ImageView) findViewById(R.id.iv_rec_back);
+
         iv_rec_pause.setOnClickListener(this);
         iv_rec_origin.setOnClickListener(this);
         iv_rec_prev.setOnClickListener(this);
@@ -362,7 +375,7 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
         tv_title = (TextView) findViewById(R.id.tv_title);
 
         ll_play = (LinearLayout) findViewById(R.id.ll_play);
-        ll_record = (LinearLayout) findViewById(R.id.ll_record);
+        ll_tape = (LinearLayout) findViewById(R.id.ll_tape);
         tv_play_record_time = (TextView) findViewById(R.id.tv_play_record_time);
 
         seekBar = (SeekBar) findViewById(R.id.seekBar);
@@ -401,8 +414,21 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
     public void onClick(View v) {
         switch (v.getId()) {
 
+            case R.id.bt_home:
+                this.finish();
+                break;
+            case R.id.bt_menu:
+
+                subTitleState++;
+                int state = subTitleState % subTitleIcons.size();
+                showOrHideSubtitle(state);
+                bt_menu.setBackgroundResource(subTitleIcons.get(state));
+                break;
+
+
             case R.id.iv_line:
-                isOneLineLoop = iv_line.isChecked();
+                iv_line.setSelected(!iv_line.isSelected());
+                isOneLineLoop = iv_line.isSelected();
                 if (isOneLineLoop) {
                     setSideASideB();
                 }
@@ -410,20 +436,23 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
             case R.id.iv_prev:
                 seekToPrevLine();
                 break;
-            case R.id.iv_paly:
+            case R.id.iv_play:
                 if (originPlayer.isPlaying()) {
                     originPlayer.pause();
+                    iv_play.setImageResource(R.drawable.play_btn_play_checked);
                 } else {
                     originPlayer.start();
+                    iv_play.setImageResource(R.drawable.play_btn_pause_checked);
                 }
                 break;
             case R.id.iv_next:
                 seekToNextLine();
                 break;
-            case R.id.iv_microphone:
+            case R.id.iv_tape:
                 // 控制栏左移动,切换到录音模式
                 toLAnimator.start();
                 isOneLineLoop = true;// 自动进入单句循环
+                iv_line.setSelected(true);
                 tv_play_record_time.setVisibility(View.VISIBLE);
 
                 // 初始化音频录音对播放录音的对象,这两个对象操作的是同一个文件
@@ -437,12 +466,16 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
                     initMediaRecorder(recordFile.getAbsolutePath());
                 }
 
-                // 播放当前的原音单句
+                // 播放当前的原音单句,并把录音栏的暂停按钮重置为"可以暂停"
                 elapsedTime = 0;
                 seekToCurrentLine();
+                iv_rec_pause.setImageResource(R.drawable.play_btn_pause_checked);
                 break;
+
             case R.id.iv_rec_pause:
-                stopOrPauseMedia(iv_rec_pause.isChecked(), false);
+                iv_rec_pause.setSelected(!iv_rec_pause.isSelected());
+                iv_rec_pause.setImageResource(iv_rec_pause.isSelected() ? R.drawable.play_btn_play_checked : R.drawable.play_btn_pause_checked);
+                stopOrPauseMedia(iv_rec_pause.isSelected(), false);
                 currentState = MediaState.全部暂停;
                 break;
             case R.id.iv_rec_origin:
@@ -456,22 +489,24 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
                 seekToPrevLine();
                 originPlayer.start();
                 currentState = MediaState.播放原音;
-
                 break;
             case R.id.iv_rec_button:
-                stopOrPauseMedia(false, iv_rec_button.isChecked());
+                iv_rec_button.setSelected(!iv_rec_button.isSelected());
+                stopOrPauseMedia(false, iv_rec_button.isSelected());
 
-                if (iv_rec_button.isChecked()) {
+                if (iv_rec_button.isSelected()) {
                     mediaRecorder.reset();
                     initMediaRecorder(recordFile.getAbsolutePath());
                     mediaRecorder.start();
                     currentState = MediaState.正在录音;
+                    iv_rec_button.setImageResource(R.drawable.play_btn_recording_selected);
                 } else {
                     if (recordFile.exists() && recordFile.length() > 0) {
                         recordPlayer.reset();
                         initRecordPlayer(recordFile.getAbsolutePath(), true);
                         recordPlayer.start();
                         currentState = MediaState.播放录音;
+                        iv_rec_button.setImageResource(R.drawable.play_btn_recording_uncheck);
                     }
                 }
                 break;
@@ -584,23 +619,6 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
                 break;
         }
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                return true;
-            case R.id.menu_switch:
-                subTitleState++;
-                int state = subTitleState % subTitleIcons.size();
-                showOrHideSubtitle(state);
-                item.setIcon(subTitleIcons.get(state));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
@@ -764,27 +782,28 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
     }
 
     private void setTipsTextView() {
-        if (!iv_rec_pause.isChecked()) {
+        if (!iv_rec_pause.isSelected()) {
             tv_play_record_time.setText(currentState + ":" + millisecondsFormat(elapsedTime));
         }
     }
 
     private void showOrHideSubtitle(int state) {
+
         Integer integer = subTitleIcons.get(state);
         switch (integer) {
-            case R.drawable.ico_actionbar_subtitle_none:
+            case R.drawable.switch_none:
                 for (SpecialLyricView view : specialLyricViews) {
                     view.showEnCn(SpecialLyricView.SHOW_NONE);
                     iv_cover.setVisibility(View.VISIBLE);
                 }
                 break;
-            case R.drawable.ico_actionbar_subtitle_cn:
+            case R.drawable.switch_cn:
                 for (SpecialLyricView view : specialLyricViews) {
                     view.showEnCn(SpecialLyricView.SHOW_CN);
                     iv_cover.setVisibility(View.INVISIBLE);
                 }
                 break;
-            case R.drawable.ico_actionbar_subtitle_encn:
+            case R.drawable.switch_cnen:
                 for (SpecialLyricView view : specialLyricViews) {
                     view.showEnCn(SpecialLyricView.SHOW_ENCN);
                     iv_cover.setVisibility(View.INVISIBLE);
@@ -802,8 +821,8 @@ public class PlayActivity extends Activity implements OnClickListener, OnPrepare
      */
     private void stopOrPauseMedia(boolean pause, boolean record) {
         elapsedTime = 0;
-        iv_rec_pause.setChecked(pause);
-        iv_rec_button.setChecked(record);
+        iv_rec_pause.setSelected(pause);
+        iv_rec_button.setSelected(record);
         if (currentState == MediaState.播放原音 && originPlayer != null) {
             originPlayer.pause();
         } else if (currentState == MediaState.播放录音) {

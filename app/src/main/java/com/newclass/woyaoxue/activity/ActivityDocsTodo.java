@@ -204,7 +204,7 @@ public class ActivityDocsTodo extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent play = new Intent(ActivityDocsTodo.this, PlayActivity.class);
+                Intent play = new Intent(ActivityDocsTodo.this, ActivityPlay.class);
                 play.putExtra("Id", list.get(position).Id);
                 startActivity(play);
             }

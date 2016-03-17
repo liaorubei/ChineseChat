@@ -1,63 +1,120 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#F0F0F0">
+
+    <RelativeLayout
+        android:id="@id/layout_title"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#00a478">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/home_back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="ChineseChat"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/ll_ctrl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="115dp"
+        android:layout_below="@id/layout_title"
+        android:layout_marginBottom="10dp"
+        android:background="#FFFFFF"
+        android:orientation="vertical"
+        >
 
         <TextView
-            android:id="@+id/tv_title"
+
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:background="@color/gray7"
+            android:layout_height="35dp"
             android:gravity="center"
             android:text="选择充值方式"
-            android:textColor="#0f0"/>
-
-        <Button
-            android:id="@+id/bt_paypal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Paypal"
             />
 
-        <Button
-            android:id="@+id/bt_alipay"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Alipay"
-            />
+            android:layout_height="80dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_paypal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal"
+                >
+
+
+                <RadioButton
+                    android:id="@+id/rb_paypal"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="5dp"
+                    android:button="@drawable/selector_box_radio"
+                    android:clickable="false"/>
+
+                <Button
+                    android:id="@+id/bt_paypal"
+                    android:layout_width="85dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/logo_paypal"
+                    android:clickable="false"
+                    android:gravity="center"
+                    />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_alipay"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+
+                <RadioButton
+                    android:id="@+id/rb_alipay"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginRight="5dp"
+                    android:button="@drawable/selector_box_radio"
+                    android:clickable="false"/>
+
+                <Button
+                    android:id="@+id/bt_alipay"
+                    android:layout_width="85dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/logo_alipay"
+                    android:clickable="false"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+
     </LinearLayout>
 
-
-    <LinearLayout
+    <ListView
+        android:id="@id/listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
+        android:layout_height="wrap_content"
         android:layout_below="@id/ll_ctrl"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-
-            android:background="@color/gray7"
-            android:gravity="center"
-            android:text="充值记录"
-            android:textColor="#0f0"/>
-
-        <ListView
-            android:id="@id/listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_title"
-            android:layout_weight="1"/>
-    </LinearLayout>
+        android:layout_weight="1"
+        android:background="#FFFFFF"
+        android:dividerHeight="10dp"/>
 
 
 </RelativeLayout>

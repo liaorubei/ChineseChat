@@ -11,7 +11,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
-        android:background="@drawable/selector_checkbox"
+        android:background="@drawable/selector_box_check"
         android:visibility="visible"/>
 
 

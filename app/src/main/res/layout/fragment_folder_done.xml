@@ -1,14 +1,6 @@
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/srl"
+<ListView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@android:id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#f0f0f0"
-    >
-
-    <com.newclass.woyaoxue.ListViewCompat
-        android:id="@android:id/list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"/>
-</android.support.v4.widget.SwipeRefreshLayout>
+    android:scrollbars="none"/>

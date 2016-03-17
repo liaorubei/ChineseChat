@@ -127,7 +127,7 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivityDocsTodo"/>
 
         <!-- 播放界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.PlayActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityPlay"/>
         <!-- 更多界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.MoreActivity"/>
         <!-- 测试界面 -->
@@ -174,9 +174,9 @@
             android:name="com.newclass.woyaoxue.activity.QuestionActivity"
             android:label="问题列表"/>
         <activity android:name="com.newclass.woyaoxue.activity.ActivityMoney"/>
-        <activity android:name="com.newclass.woyaoxue.activity.SettingActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting"/>
         <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity"/>
-        <activity android:name="com.newclass.woyaoxue.activity.PersonActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson"/>
         <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity"/>
 
         <!-- 更新下载服务 -->
@@ -186,11 +186,6 @@
         <service android:name="com.newclass.woyaoxue.service.DownloadService"/>
 
         <activity android:name="com.newclass.woyaoxue.activity.RecordsActivity"/>
-        <!-- ATTENTION: This was auto-generated to add Google Play services to your project for
-             App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version"/>
     </application>
 
 </manifest>

@@ -40,6 +40,10 @@ public class MainActivity extends FragmentActivity {
     // adb shell monkey -p com.voc.woyaoxue -s 500 --ignore-crashes --ignore-timeouts --monitor-native-crashes -v -v 10000 > E:\log.txt
     // gradlew assemblerelease
     //代码折叠/展开[ctrl shift -+]
+
+    //云信相关
+    //App Key: 599551c5de7282b9a1d686ee40abf74c
+    //App Secret: 64e52bd091da
     protected static final String TAG = "MainActivity";
 
     @Override

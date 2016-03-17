@@ -7,6 +7,9 @@ import android.os.Bundle;
 
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
@@ -14,9 +17,11 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
 
-public class SettingActivity extends Activity implements View.OnClickListener {
+public class ActivitySetting extends Activity implements View.OnClickListener {
     private static final String TAG = "SettingActivity";
-    private Button bt_login;
+    private RelativeLayout rl_login;
+    private TextView tv_login;
+    private ImageView iv_home;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +32,16 @@ public class SettingActivity extends Activity implements View.OnClickListener {
     }
 
     private void initView() {
-        bt_login = (Button) findViewById(R.id.bt_login);
+        //标题栏
+        iv_home = (ImageView) findViewById(R.id.iv_home);
 
-        bt_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? "登出" : "登录");
-        bt_login.setOnClickListener(this);
+        rl_login = (RelativeLayout) findViewById(R.id.rl_login);
+        tv_login = (TextView) findViewById(R.id.tv_login);
+
+        tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? "登出" : "登录");
+
+        iv_home.setOnClickListener(this);
+        rl_login.setOnClickListener(this);
     }
 
     @Override
@@ -44,6 +55,9 @@ public class SettingActivity extends Activity implements View.OnClickListener {
                 } else {
                     startActivity(new Intent(this, ActivitySignIn.class));
                 }
+                break;
+            case R.id.iv_home:
+                this.finish();
                 break;
         }
     }

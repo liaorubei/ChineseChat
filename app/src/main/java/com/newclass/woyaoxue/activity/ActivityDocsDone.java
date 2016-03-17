@@ -13,8 +13,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -86,7 +84,7 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent play = new Intent(ActivityDocsDone.this, PlayActivity.class);
+                Intent play = new Intent(ActivityDocsDone.this, ActivityPlay.class);
                 play.putExtra("Id", list.get(position).document.Id);
                 startActivity(play);
             }

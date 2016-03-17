@@ -29,171 +29,149 @@ import android.widget.Toast;
 
 /**
  * 帐号注册界面
- * @author liaorubei
  *
+ * @author liaorubei
  */
-public class ActivitySignUp extends Activity implements OnClickListener
-{
-	public static final int SignUp = 0;
+public class ActivitySignUp extends Activity implements OnClickListener {
+    public static final int SignUp = 0;
 
-	private EditText et_phone, et_captcha;
-	private EditText et_nickname, et_password, et_repassword;
-	private Button bt_signup;
+    private EditText et_phone, et_captcha;
+    private EditText et_nickname, et_password, et_repassword;
+    private Button bt_signup;
 
-	private TextView tv_next, tv_captcha, tv_term;
-	private CheckBox cb_is_teacher;
+    private TextView tv_next, tv_captcha, tv_term;
+    private CheckBox cb_is_teacher;
 
-	private LinearLayout ll_first, ll_second;
+    private LinearLayout ll_first, ll_second;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_signup);
-		initView();
-	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_signup);
+        //initView();
+    }
 
-	private void initView()
-	{
-		et_phone = (EditText) findViewById(R.id.et_phone);
-		et_captcha = (EditText) findViewById(R.id.et_captcha);
-		tv_next = (TextView) findViewById(R.id.tv_next);
+    private void initView() {
 
-		tv_next.setOnClickListener(this);
 
-		et_nickname = (EditText) findViewById(R.id.et_nickname);
-		et_password = (EditText) findViewById(R.id.et_password);
-		et_repassword = (EditText) findViewById(R.id.et_repassword);
+        tv_next.setOnClickListener(this);
 
-		bt_signup = (Button) findViewById(R.id.bt_signup);
-		bt_signup.setOnClickListener(this);
+        et_nickname = (EditText) findViewById(R.id.et_nickname);
+        et_password = (EditText) findViewById(R.id.et_password);
+        et_repassword = (EditText) findViewById(R.id.et_repassword);
 
-		ll_first = (LinearLayout) findViewById(R.id.ll_first);
-		ll_second = (LinearLayout) findViewById(R.id.ll_second);
+        bt_signup = (Button) findViewById(R.id.bt_signup);
+        bt_signup.setOnClickListener(this);
 
-		cb_is_teacher = (CheckBox) findViewById(R.id.cb_is_teacher);
 
-	}
+        ll_second = (LinearLayout) findViewById(R.id.ll_second);
 
-	@Override
-	public void onClick(View v)
-	{
-		switch (v.getId())
-		{
-		case R.id.tv_next:// 提交验证码
-		{
-			String phone = et_phone.getText().toString().trim();
-			String captcha = et_captcha.getText().toString().trim();
+        cb_is_teacher = (CheckBox) findViewById(R.id.cb_is_teacher);
 
-			if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(captcha))
-			{
-				CommonUtil.toast("数据不能为空");
-				return;
-			}
+    }
 
-			Parameters parameters = new Parameters();
-			parameters.add("phone", phone);
-			parameters.add("captcha", captcha);
-			HttpUtil.post(NetworkUtil.userVerify, parameters, new RequestCallBack<String>()
-			{
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_ctrl:// 提交验证码
+            {
+                String phone = et_phone.getText().toString().trim();
+                String captcha = et_captcha.getText().toString().trim();
 
-				@Override
-				public void onSuccess(ResponseInfo<String> responseInfo)
-				{
-					Response<String> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<String>>()
-					{}.getType());
-					if (response.code == 200)
-					{
-						ll_first.setVisibility(View.INVISIBLE);
-						ll_second.setVisibility(View.VISIBLE);
-					}
-					else
-					{
-						CommonUtil.toast(response.desc);
-					}
-					tv_next.setEnabled(true);
-				}
+                if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(captcha)) {
+                    CommonUtil.toast("数据不能为空");
+                    return;
+                }
 
-				@Override
-				public void onFailure(HttpException error, String msg)
-				{
-					tv_next.setEnabled(true);
-				}
-			});
-			tv_next.setEnabled(false);
-		}
-			break;
+                Parameters parameters = new Parameters();
+                parameters.add("phone", phone);
+                parameters.add("captcha", captcha);
+                HttpUtil.post(NetworkUtil.userVerify, parameters, new RequestCallBack<String>() {
 
-		case R.id.bt_signup:
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Response<String> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<String>>() {
+                        }.getType());
+                        if (response.code == 200) {
+                            ll_first.setVisibility(View.INVISIBLE);
+                            ll_second.setVisibility(View.VISIBLE);
+                        } else {
+                            CommonUtil.toast(response.desc);
+                        }
+                        tv_next.setEnabled(true);
+                    }
 
-		{
-			String phone = et_phone.getText().toString().trim();
-			String nickname = et_nickname.getText().toString().trim();
-			String password = et_password.getText().toString().trim();
-			String repassword = et_repassword.getText().toString().trim();
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        tv_next.setEnabled(true);
+                    }
+                });
+                tv_next.setEnabled(false);
+            }
+            break;
 
-			if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(nickname) || TextUtils.isEmpty(password) || TextUtils.isEmpty(repassword))
-			{
-				CommonUtil.toast("数据不能为空");
-				return;
-			}
+            case R.id.bt_signup:
 
-			if (!password.equals(repassword))
-			{
-				CommonUtil.toast("两次输入的密码不一致");
-				return;
-			}
+            {
+                String phone = et_phone.getText().toString().trim();
+                String nickname = et_nickname.getText().toString().trim();
+                String password = et_password.getText().toString().trim();
+                String repassword = et_repassword.getText().toString().trim();
 
-			Parameters parameters = new Parameters();
-			parameters.add("username", phone);
-			parameters.add("password", password);
-			parameters.add("nickname", nickname);
-			parameters.add("category", "" + (cb_is_teacher.isChecked() ? 1 : 0));
-			HttpUtil.post(NetworkUtil.userCreate, parameters, new RequestCallBack<String>()
-			{
+                if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(nickname) || TextUtils.isEmpty(password) || TextUtils.isEmpty(repassword)) {
+                    CommonUtil.toast("数据不能为空");
+                    return;
+                }
 
-				@Override
-				public void onSuccess(ResponseInfo<String> responseInfo)
-				{
-					bt_signup.setEnabled(true);
+                if (!password.equals(repassword)) {
+                    CommonUtil.toast("两次输入的密码不一致");
+                    return;
+                }
 
-					ll_first.setVisibility(View.INVISIBLE);
-					ll_second.setVisibility(View.INVISIBLE);
+                Parameters parameters = new Parameters();
+                parameters.add("username", phone);
+                parameters.add("password", password);
+                parameters.add("nickname", nickname);
+                parameters.add("category", "" + (cb_is_teacher.isChecked() ? 1 : 0));
+                HttpUtil.post(NetworkUtil.userCreate, parameters, new RequestCallBack<String>() {
 
-					Response<User> json = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>()
-					{}.getType());
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        bt_signup.setEnabled(true);
 
-					Log.i("logi", "创建成功:" + json.toString());
-					if (200 == json.code)
-					{
-						Toast.makeText(ActivitySignUp.this, "注册成功", Toast.LENGTH_SHORT).show();
+                        ll_first.setVisibility(View.INVISIBLE);
+                        ll_second.setVisibility(View.INVISIBLE);
 
-						// 返回注册信息
-						Intent data = new Intent();
-						data.putExtra("username", et_phone.getText().toString().trim());
-						data.putExtra("password", et_password.getText().toString().trim());
-						setResult(SignUp, data);
-						finish();
-					}
-					else
-					{
-						Toast.makeText(ActivitySignUp.this, json.desc, Toast.LENGTH_SHORT).show();
-					}
-				}
+                        Response<User> json = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
+                        }.getType());
 
-				@Override
-				public void onFailure(HttpException error, String msg)
-				{
-					Toast.makeText(ActivitySignUp.this, "网络异常,请重试", Toast.LENGTH_SHORT).show();
-					bt_signup.setEnabled(true);
-				}
-			});
-			bt_signup.setEnabled(false);
-		}
-			break;
+                        Log.i("logi", "创建成功:" + json.toString());
+                        if (200 == json.code) {
+                            Toast.makeText(ActivitySignUp.this, "注册成功", Toast.LENGTH_SHORT).show();
 
-		default:
-			break;
-		}
-	}
+                            // 返回注册信息
+                            Intent data = new Intent();
+                            data.putExtra("username", et_phone.getText().toString().trim());
+                            data.putExtra("password", et_password.getText().toString().trim());
+                            setResult(SignUp, data);
+                            finish();
+                        } else {
+                            Toast.makeText(ActivitySignUp.this, json.desc, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        Toast.makeText(ActivitySignUp.this, "网络异常,请重试", Toast.LENGTH_SHORT).show();
+                        bt_signup.setEnabled(true);
+                    }
+                });
+                bt_signup.setEnabled(false);
+            }
+            break;
+
+            default:
+                break;
+        }
+    }
 }

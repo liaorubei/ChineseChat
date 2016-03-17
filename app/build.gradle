@@ -60,6 +60,9 @@ dependencies {
     compile files('libs/netty-4.0.23-for-yx.final.jar')
     compile 'com.paypal.sdk:paypal-android-sdk:2.13.0'
 
+    //圆形图片
+    compile 'de.hdodenhof:circleimageview:2.0.0'
+
     compile files('libs/alipaySdk-20160120.jar')
 
     //compile 'com.android.support:appcompat-v7:22.2.1'

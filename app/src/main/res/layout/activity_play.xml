@@ -3,11 +3,45 @@
                 android:layout_height="match_parent">
 
     <RelativeLayout
+        android:id="@id/layout_title"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#00a478">
+
+        <Button
+            android:id="@+id/bt_home"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/home_back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="ChineseChat"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/bt_menu"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="15dp"
+            android:background="@drawable/switch_none"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/rl_seekbar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_alignParentTop="true"
-        android:background="#100f">
+        android:layout_below="@id/layout_title"
+        android:background="#FAFAFA">
 
         <TextView
             android:id="@+id/tv_aSide"
@@ -15,7 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:padding="5dp"
+            android:layout_marginLeft="15dp"
             android:text="00:00"/>
 
         <TextView
@@ -24,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:padding="5dp"
+            android:layout_marginRight="15dp"
             android:text="00:00"/>
 
         <SeekBar
@@ -41,113 +75,126 @@
     <FrameLayout
         android:id="@+id/fl_control"
         android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:layout_alignParentBottom="true">
+        android:layout_height="45dp"
+        android:layout_alignParentBottom="true"
+        android:background="#FAFAFA">
 
         <LinearLayout
-            android:id="@+id/ll_record"
+            android:id="@+id/ll_tape"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#efefff"
-            android:orientation="horizontal">
+            android:background="#FAFAFA"
+            android:orientation="horizontal"
+            android:visibility="visible">
 
-            <CheckBox
+            <ImageView
                 android:id="@+id/iv_rec_pause"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_pause"
-                android:button="@null"/>
+                android:src="@drawable/selector_play_btn_play"
+                />
 
             <ImageView
                 android:id="@+id/iv_rec_origin"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_p_origin"/>
+                android:src="@drawable/selector_play_btn_origin"/>
 
             <ImageView
                 android:id="@+id/iv_rec_prev"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_prev_s"/>
+                android:src="@drawable/selector_play_btn_prev"/>
 
-            <CheckBox
+            <ImageView
                 android:id="@+id/iv_rec_button"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_record"
-                android:button="@null"/>
+                android:button="@null"
+                android:src="@drawable/selector_play_btn_recording"/>
 
             <ImageView
                 android:id="@+id/iv_rec_next"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_next_s"/>
+                android:src="@drawable/selector_play_btn_next"/>
 
             <ImageView
                 android:id="@+id/iv_rec_record"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_p_record"/>
+                android:src="@drawable/selector_play_btn_record"/>
 
             <ImageView
                 android:id="@+id/iv_rec_back"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_micro_s"/>
+                android:src="@drawable/selector_play_btn_back"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/ll_play"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#efefff"
+            android:background="#FAFAFA"
             android:orientation="horizontal"
             android:visibility="visible">
 
-            <CheckBox
+            <ImageView
                 android:id="@+id/iv_line"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_repeat"
-                android:button="@null"/>
+                android:src="@drawable/selector_play_btn_line"/>
 
             <ImageView
                 android:id="@+id/iv_prev"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_prev_s"/>
+                android:src="@drawable/selector_play_btn_prev"/>
 
-            <CheckBox
-                android:id="@+id/iv_paly"
+            <ImageView
+                android:id="@+id/iv_play"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_play"
                 android:button="@null"
-                android:checked="true"/>
+                android:checked="true"
+                android:src="@drawable/play_btn_pause_checked"/>
 
             <ImageView
                 android:id="@+id/iv_next"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_next_s"/>
+                android:src="@drawable/selector_play_btn_next"/>
 
             <ImageView
-                android:id="@+id/iv_microphone"
+                android:id="@+id/iv_tape"
                 android:layout_width="0dp"
-                android:layout_height="match_parent"
+                android:layout_height="25dp"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:background="@drawable/selector_micro_s"/>
+                android:src="@drawable/selector_play_btn_tape"/>
         </LinearLayout>
     </FrameLayout>
 
@@ -155,12 +202,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/fl_control"
-        android:layout_below="@id/rl_seekbar">
+        android:layout_below="@id/rl_seekbar"
+        android:background="#F0F0F0">
 
         <ScrollView
             android:id="@+id/sv_lyrics"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#F0F0F0"
             android:paddingLeft="5dp"
             android:paddingRight="5dp">
 
@@ -201,7 +250,7 @@
             android:id="@+id/rl_buffering"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff">
+            android:background="#F0F0F0">
 
             <ProgressBar
                 android:id="@+id/pb_buffering"
@@ -228,7 +277,7 @@
             android:visibility="invisible"/>
     </FrameLayout>
 
-    <TextView
+    <Button
         android:id="@+id/tv_play_record_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -236,7 +285,10 @@
         android:layout_centerInParent="true"
         android:background="@drawable/shape_rounded_rectangle"
         android:padding="15dp"
-        android:textColor="#fff"
-        android:visibility="invisible"/>
+        android:shadowRadius="5"
+        android:text="播放原音 00:00"
+        android:textColor="#FFFFFF"
+        android:visibility="invisible"
+        />
 
 </RelativeLayout>

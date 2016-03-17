@@ -1,7 +1,9 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,9 +11,11 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,17 +46,17 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
-public class PersonActivity extends Activity implements View.OnClickListener {
+import de.hdodenhof.circleimageview.CircleImageView;
 
+//个人资料编辑页面
+public class ActivityPerson extends Activity implements View.OnClickListener {
     private static final String TAG = "PersonActivity";
-    private LinearLayout ll_show, ll_edit;
-    private TextView tv_nickname, tv_mobile, tv_email, tv_gender, tv_birth, tv_pick, tv_username, et_username;
+    private TextView tv_birth, tv_username;
     private EditText et_nickname, et_mobile, et_email, et_gender, et_birth;
     private RadioGroup rg_gender;
     private RadioButton rb_male, rb_female;
-    private ImageView iv_avater, iv_edit, iv_pick;
+    private ImageView iv_avater;
     private boolean isEdit = false;
     private MenuItem menuItemCancel;
     private MenuItem menuItemHandle;
@@ -65,6 +69,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
     private DatePickerDialog datePickerDialog;
     private SimpleDateFormat sdf;
     private Bitmap tempBitmap;
+    private Dialog dialogPick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,15 +77,16 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_person);
 
         initView();
-        initData();
+        //  initData();
         saveDialog = new ProgressDialog(this);
         tempIcon = new File(FolderUtil.rootDir(this), "temp_icon.PNG");
 
         createDatePickerDialog();
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
-        if( getActionBar()!=null){
-            getActionBar().setDisplayHomeAsUpEnabled(true);}
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     private void initData() {
@@ -97,7 +103,6 @@ public class PersonActivity extends Activity implements View.OnClickListener {
     }
 
     private void initEdit(ViewModel model) {
-        new BitmapUtils(this).display(iv_edit, NetworkUtil.getFullPath(model.Avater));
         et_nickname.setText(model.Name);
         et_email.setText(model.Email);
         et_mobile.setText(model.Mobile);
@@ -109,58 +114,106 @@ public class PersonActivity extends Activity implements View.OnClickListener {
 
         Log.i(TAG, "initShow: Avater=" + model.Avater);
         new BitmapUtils(this).display(iv_avater, NetworkUtil.getFullPath(model.Avater));
-        tv_nickname.setText(model.Name);
-        tv_email.setText(model.Email);
-        tv_mobile.setText(model.Mobile);
-        tv_gender.setText(model.Gender == 0 ? "女" : "男");
+        et_nickname.setText(model.Name);
+        et_email.setText(model.Email);
+        et_mobile.setText(model.Mobile);
+        et_gender.setText(model.Gender == 0 ? "女" : "男");
         tv_birth.setText(model.Birth);
     }
 
     private void initView() {
+        //标题栏
+        findViewById(R.id.iv_home).setOnClickListener(this);
+        findViewById(R.id.tv_save).setOnClickListener(this);
 
-        ll_show = (LinearLayout) findViewById(R.id.ll_show);
-        ll_edit = (LinearLayout) findViewById(R.id.ll_edit);
-
+        //编辑区域
         tv_username = (TextView) findViewById(R.id.tv_username);
-        et_username = (TextView) findViewById(R.id.et_username);
-
-        tv_nickname = (TextView) findViewById(R.id.tv_nickname);
-        tv_mobile = (TextView) findViewById(R.id.tv_mobile);
-        tv_email = (TextView) findViewById(R.id.tv_email);
-        tv_gender = (TextView) findViewById(R.id.tv_gender);
-        tv_birth = (TextView) findViewById(R.id.tv_birth);
         iv_avater = (ImageView) findViewById(R.id.iv_avater);
-        tv_pick = (TextView) findViewById(R.id.tv_pick);
-        tv_pick.setOnClickListener(this);
-
-        iv_edit = (ImageView) findViewById(R.id.iv_edit);
-        iv_edit.setOnClickListener(this);
-
-        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-        sp.getInt("id", -1);
-        tv_nickname.setText(sp.getString("nickname", ""));
-        tv_mobile.setText(sp.getString("mobile", ""));
-        tv_email.setText(sp.getString("email", ""));
-        tv_gender.setText(sp.getInt("gender", -1) == 0 ? "女" : "男");
-        tv_birth.setText(sp.getString("birth", ""));
-        tv_username.setText(sp.getString("username", ""));
-        et_username.setText(sp.getString("username", ""));
 
         et_nickname = (EditText) findViewById(R.id.et_nickname);
-        et_mobile = (EditText) findViewById(R.id.et_mobile);
         et_email = (EditText) findViewById(R.id.et_email);
+        et_mobile = (EditText) findViewById(R.id.et_mobile);
 
-        et_birth = (EditText) findViewById(R.id.et_birth);
+        rb_female = (RadioButton) findViewById(R.id.rb_female);
+        rb_male = (RadioButton) findViewById(R.id.rb_male);
 
-        iv_pick = (ImageView) findViewById(R.id.iv_pick);
-        iv_pick.setOnClickListener(this);
+        tv_birth = (TextView) findViewById(R.id.tv_birth);
+
+        iv_avater.setOnClickListener(this);
+
+
+
+
+
+
+
+
+
+        /*
+        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+        sp.getInt("id", -1);
+
+        tv_birth.setText(sp.getString("birth", ""));
+        tv_username.setText(sp.getString("username", ""));
+
+
+
         rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
         rb_male = (RadioButton) findViewById(R.id.rb_female);
         rb_female = (RadioButton) findViewById(R.id.rb_female);
-
-        new BitmapUtils(this).display(iv_avater, NetworkUtil.getFullPath(sp.getString("avater", "")));
+        */
+        // new BitmapUtils(this).display(iv_avater, NetworkUtil.getFullPath(sp.getString("avater", "")));
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_avater:
+                if (dialogPick == null) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    View inflate = getLayoutInflater().inflate(R.layout.dialog_pick, null);
+                    builder.setView(inflate);
+                    inflate.findViewById(R.id.tv_album).setOnClickListener(this);
+                    inflate.findViewById(R.id.tv_camera).setOnClickListener(this);
+                    dialogPick = builder.create();
+                    dialogPick.setCancelable(true);
+                    dialogPick.setCanceledOnTouchOutside(true);
+                }
+                dialogPick.show();
+
+                CircleImageView d = null;
+
+                //  pick();
+
+                // createDatePickerDialog();
+                //datePickerDialog.show();
+                break;
+            case R.id.tv_album: {
+                // 激活系统图库，选择一张图片
+                Intent intent = new Intent(Intent.ACTION_PICK);
+                intent.setType("image/*");
+                startActivityForResult(intent, PHOTO_REQUEST_PICK);
+            }
+            break;
+
+            case R.id.tv_camera: {
+                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+/*// 下面这句指定调用相机拍照后的照片存储的路径
+                if (pre.exists()) {
+                    pre.delete();
+                }
+                try {
+                    pre.createNewFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(pre))*/
+                ;
+                startActivityForResult(cameraIntent, 5);
+            }
+            break;
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -202,8 +255,6 @@ public class PersonActivity extends Activity implements View.OnClickListener {
     private void switchMode() {
         menuItemCancel.setVisible(isEdit);
         menuItemHandle.setTitle(isEdit ? "保存" : "编辑");
-        ll_edit.setVisibility(isEdit ? View.VISIBLE : View.INVISIBLE);
-        ll_show.setVisibility(isEdit ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void saveUserEx() {
@@ -219,6 +270,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         params.addBodyParameter("Birth", et_birth.getText().toString().trim());
         if (isIconSwitch) {
             params.addBodyParameter("icon", tempIcon);
+            // params.addBodyParameter("icon",new File(Environment.getExternalStorageDirectory(),"图片.jpg"));//某个图片的路径
         }
         new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userUpdate, params, new RequestCallBack<String>() {
             @Override
@@ -229,7 +281,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
 
                 if (resp.code == 200) {
                     //保存用户信息到sp
-                    SharedPreferences.Editor editor = PersonActivity.this.getSharedPreferences("user", MODE_PRIVATE).edit();
+                    SharedPreferences.Editor editor = ActivityPerson.this.getSharedPreferences("user", MODE_PRIVATE).edit();
                     editor.putInt("id", resp.info.Id);
                     editor.putString("nickname", resp.info.Name);
                     editor.putString("avater", resp.info.Icon);
@@ -246,7 +298,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
                     model.Birth = resp.info.Birth;
                     model.Mobile = resp.info.Mobile;
                     model.Gender = resp.info.Gender;
-                   // initShow(model);
+                    // initShow(model);
 
                     if (tempBitmap != null) {
                         File avaterPNG = new File(getFilesDir(), model.Avater);
@@ -289,20 +341,6 @@ public class PersonActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_edit:
-                pick();
-                break;
-            case R.id.iv_pick:
-
-                createDatePickerDialog();
-                datePickerDialog.show();
-
-                break;
-        }
-    }
 
     private void createDatePickerDialog() {
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
@@ -363,7 +401,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
                 if (data != null) {
                     // 得到图片的全路径
                     Uri uri = data.getData();
-                    crop(uri);
+                    Log.i(TAG, "onActivityResult: " + data);
                 }
                 break;
             case PHOTO_REQUEST_CROP:
@@ -373,7 +411,7 @@ public class PersonActivity extends Activity implements View.OnClickListener {
                         tempBitmap = data.getParcelableExtra("data");
                         OutputStream out = new FileOutputStream(tempIcon);
                         tempBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-                        this.iv_edit.setImageBitmap(tempBitmap);
+
                         this.iv_avater.setImageBitmap(tempBitmap);
                         out.close();
                         isIconSwitch = true;
