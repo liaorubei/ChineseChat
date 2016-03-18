@@ -83,7 +83,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="昵称:"/>
+            android:text="昵称:"
+            android:textSize="15sp"/>
 
         <EditText
             android:id="@+id/et_nickname"
@@ -92,7 +93,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="8"
             android:background="@null"
-            android:text="昵称"/>
+            android:text="昵称"
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -108,7 +110,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="邮箱:"/>
+            android:text="邮箱:"
+            android:textSize="15sp"/>
 
         <EditText
             android:id="@+id/et_email"
@@ -118,7 +121,8 @@
             android:layout_weight="8"
             android:background="@null"
             android:inputType="textEmailAddress"
-            android:text="chinesenet@chinesenet.cn"/>
+            android:text="chinesenet@chinesenet.cn"
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -134,7 +138,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="手机:"/>
+            android:text="手机:"
+            android:textSize="15sp"/>
 
         <EditText
             android:id="@+id/et_mobile"
@@ -144,7 +149,8 @@
             android:layout_weight="8"
             android:background="@null"
             android:inputType="textPhonetic"
-            android:text="13512345671"/>
+            android:text="13512345671"
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -160,7 +166,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="性别:"/>
+            android:text="性别:"
+            android:textSize="15sp"/>
 
 
         <RadioGroup
@@ -174,15 +181,20 @@
             <RadioButton
                 android:id="@+id/rb_female"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
+                android:layout_marginRight="15dp"
+                android:button="@drawable/selector_box_radio"
                 android:checked="true"
-                android:text="女"/>
+                android:text="女"
+                android:textSize="15sp"/>
 
             <RadioButton
                 android:id="@+id/rb_male"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="男"/>
+                android:layout_height="25dp"
+                android:button="@drawable/selector_box_radio"
+                android:text="男"
+                android:textSize="15sp"/>
 
 
         </RadioGroup>
@@ -203,7 +215,8 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="生日:"/>
+            android:text="生日:"
+            android:textSize="15sp"/>
 
         <TextView
             android:id="@+id/tv_birth"
@@ -211,9 +224,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="8"
-            android:text="1990-10-10"/>
-
-
+            android:text="1990-10-10"
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <LinearLayout
@@ -229,10 +241,11 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="国家:"/>
+            android:text="国家:"
+            android:textSize="15sp"/>
 
         <Spinner
-
+            android:id="@+id/sp_country"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -252,9 +265,11 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="母语:"/>
+            android:text="母语:"
+            android:textSize="15sp"/>
 
         <Spinner
+            android:id="@+id/sp_language"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -276,13 +291,15 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="职业:"/>
+            android:text="职业:"
+            android:textSize="15sp"/>
 
         <Spinner
+            android:id="@+id/sp_job"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="8"
-            android:gravity="center"/>
+            />
     </LinearLayout>
 </LinearLayout>

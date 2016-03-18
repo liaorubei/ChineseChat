@@ -76,7 +76,7 @@ public class ActivityCall extends Activity implements OnClickListener {
 
     private AVChatCallback<Void> callback_hangup;
     private AVChatCallback<AVChatData> callback_call;
-    private Button bt_hangup, bt_mute, bt_free, bt_face, bt_card;
+    private View bt_hangup, bt_mute, bt_free, bt_face, bt_card;
 
     private View ll_user, ll_ctrl, rl_main;
 
@@ -181,11 +181,7 @@ public class ActivityCall extends Activity implements OnClickListener {
     private boolean IS_CHATTING = false;
     private int requestcode_theme = 1;
     private PopupWindow facePopupWindow;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
+
     private Dialog faceDialog;
 
     @Override
@@ -194,9 +190,6 @@ public class ActivityCall extends Activity implements OnClickListener {
         setContentView(R.layout.activity_call);
         initView();
         initData();
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     private void nimCall() {
@@ -281,11 +274,11 @@ public class ActivityCall extends Activity implements OnClickListener {
     }
 
     private void initView() {
-        bt_hangup = (Button) findViewById(R.id.bt_hangup);
-        bt_mute = (Button) findViewById(R.id.bt_mute);
-        bt_free = (Button) findViewById(R.id.bt_free);
-        bt_face = (Button) findViewById(R.id.bt_face);
-        bt_card = (Button) findViewById(R.id.bt_card);
+        bt_hangup = findViewById(R.id.bt_hangup);
+        bt_mute = findViewById(R.id.bt_mute);
+        bt_free = findViewById(R.id.bt_free);
+        bt_face = findViewById(R.id.bt_face);
+        bt_card = findViewById(R.id.bt_card);
         ll_user = findViewById(R.id.ll_user);
         ll_ctrl = findViewById(R.id.ll_ctrl);
         rl_main = findViewById(R.id.rl_main);
@@ -317,13 +310,13 @@ public class ActivityCall extends Activity implements OnClickListener {
                     // 打开音频
                     AVChatManager.getInstance().setMute(true);
                 }
-                bt_mute.setText(AVChatManager.getInstance().isMute() ? "目前静音" : "目前不静音");
+                CommonUtil.toast(AVChatManager.getInstance().isMute() ? "目前静音" : "目前通话");
             }
             break;
             case R.id.bt_free: {
                 // 设置扬声器是否开启
                 AVChatManager.getInstance().setSpeaker(!AVChatManager.getInstance().speakerEnabled());
-                bt_free.setText(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
+                CommonUtil.toast(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
             }
             break;
 

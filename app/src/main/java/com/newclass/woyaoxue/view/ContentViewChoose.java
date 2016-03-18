@@ -92,6 +92,7 @@ public class ContentViewChoose extends ContentView {
         HttpUtil.post(NetworkUtil.teacherInQueue, parameters, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 if (isRefresh) {
                     list.clear();
                 }

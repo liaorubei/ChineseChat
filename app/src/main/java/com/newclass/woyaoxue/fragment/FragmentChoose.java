@@ -39,6 +39,7 @@ public class FragmentChoose extends Fragment {
     @Override
     public void onResume() {
         contentView.onResume();
+        Log.i(TAG, "onResume: ");
         super.onResume();
     }
 }

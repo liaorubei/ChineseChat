@@ -2,101 +2,154 @@
     android:id="@+id/rl_main"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F0F0F0">
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/ll_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="70dp"
+        android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:src="@drawable/ic_launcher"/>
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/ic_launcher_student"/>
 
         <TextView
             android:id="@+id/tv_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/iv_icon"
+            android:layout_marginBottom="10dp"
             android:text="昵称"/>
 
         <Chronometer
             android:id="@+id/cm_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_nickname"
-            android:layout_gravity="center"
             android:layout_toRightOf="@id/iv_icon"/>
-    </RelativeLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_call"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="75dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/bt_mute"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/shape_oval_green"
+            android:padding="20dp"
+            android:src="@drawable/icon_call_microphone"/>
+
+        <ImageView
+            android:id="@+id/bt_hangup"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/shape_oval_red"
+            android:padding="20dp"
+            android:src="@drawable/icon_call_handup"/>
+
+        <ImageView
+            android:id="@+id/bt_free"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_margin="15dp"
+            android:background="@drawable/shape_oval_green"
+            android:padding="20dp"
+            android:src="@drawable/icon_call_mute"/>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_ctrl"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="36dp"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:visibility="visible">
 
-        <Button
+
+        <RelativeLayout
             android:id="@+id/bt_face"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:text="发表情"/>
+            android:layout_width="115dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="50dp">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/shape_oval_green"/>
 
 
-        <Button
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/shape_oval_green"/>
+
+
+            <TextView
+                android:layout_width="79dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="#00A478"
+                android:gravity="center"
+                android:text="发表情"
+                android:textColor="#fff"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
             android:id="@+id/bt_card"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            android:layout_weight="1"
-            android:text="选主题"/>
-    </LinearLayout>
+            android:layout_width="115dp"
+            android:layout_height="36dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/ll_ctrl"
-        android:layout_marginBottom="100dp"
-        android:orientation="horizontal">
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/shape_oval_green"/>
 
-        <Button
-            android:id="@+id/bt_mute"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:background="@drawable/avchat_mute_icon_checked"/>
 
-        <Button
-            android:id="@+id/bt_hangup"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="25dp"
-            android:background="@drawable/avchat_no_pickup"/>
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/shape_oval_green"/>
 
-        <Button
-            android:id="@+id/bt_free"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="25dp"
-            android:background="@drawable/avchat_speaker_icon_checked"/>
+
+            <TextView
+                android:layout_width="79dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:background="#00A478"
+                android:gravity="center"
+                android:text="发表情"
+                android:textColor="#fff"/>
+
+        </RelativeLayout>
+
     </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_face"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
-        android:background="#E2ffff">
+        android:background="#E2ffff"
+        android:visibility="visible">
 
 
         <LinearLayout
@@ -164,7 +217,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/selector_levels"
                 android:gravity="center"
-                android:src="@drawable/xxy_s_normal"
+                android:src="@drawable/icon_call_face"
                 android:text="普通"/>
 
             <ImageView
@@ -173,7 +226,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/selector_levels"
                 android:gravity="center"
-                android:src="@drawable/lt_s_normal"
+                android:src="@drawable/icon_call_heart"
                 android:text="流氓"/>
 
             <ImageView
@@ -182,7 +235,7 @@
                 android:layout_weight="1"
                 android:background="@drawable/selector_levels"
                 android:gravity="center"
-                android:src="@drawable/ajmd_s_normal"
+                android:src="@drawable/icon_call_star"
                 android:text="普通"/>
         </LinearLayout>
 

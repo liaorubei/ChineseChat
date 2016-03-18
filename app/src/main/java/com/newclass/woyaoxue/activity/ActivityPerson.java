@@ -11,17 +11,16 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
+import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -36,7 +35,6 @@ import com.lidroid.xutils.http.client.HttpRequest;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
-import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
@@ -47,29 +45,32 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 //个人资料编辑页面
 public class ActivityPerson extends Activity implements View.OnClickListener {
     private static final String TAG = "PersonActivity";
+    private static final int PHOTO_REQUEST_TAKE = 49;
+    private static final int PHOTO_REQUEST_PICK = 50;
+    private static final int PHOTO_REQUEST_CROP = 51;
+
     private TextView tv_birth, tv_username;
-    private EditText et_nickname, et_mobile, et_email, et_gender, et_birth;
+    private EditText et_nickname, et_mobile, et_email;
+    private Spinner sp_job, sp_language, sp_country;
     private RadioGroup rg_gender;
     private RadioButton rb_male, rb_female;
     private ImageView iv_avater;
-    private boolean isEdit = false;
-    private MenuItem menuItemCancel;
-    private MenuItem menuItemHandle;
-    private ProgressDialog saveDialog;
-    private Gson gson = new Gson();
-    private final int PHOTO_REQUEST_PICK = 50;
-    private final int PHOTO_REQUEST_CROP = 51;
-    private File tempIcon;
+
+    private File cropImage;
+    private File saveImage;
     private boolean isIconSwitch = false;
+    private ProgressDialog saveDialog;
     private DatePickerDialog datePickerDialog;
-    private SimpleDateFormat sdf;
-    private Bitmap tempBitmap;
     private Dialog dialogPick;
+    private SimpleDateFormat sdf;
+    private Gson gson = new Gson();
+
+    private String[] 国家 = new String[]{"中国", "日本", "韩国", "朝鲜", "老挝", "越南"};
+    private String[] 母语 = new String[]{"普通话", "日语", "韩语", "朝鲜语", "越南语"};
+    private String[] 职业 = new String[]{"老师", "公务员", "司机", "学生", "建筑师", "设计师"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,7 +80,15 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         initView();
         //  initData();
         saveDialog = new ProgressDialog(this);
-        tempIcon = new File(FolderUtil.rootDir(this), "temp_icon.PNG");
+        // cropImage = new File(FolderUtil.rootDir(this), "temp_icon.PNG");
+        cropImage = new File(Environment.getExternalStorageDirectory(), "crop.png");
+        saveImage = new File(Environment.getExternalStorageDirectory(), "save.png");
+        if (cropImage.exists()) {
+            cropImage.delete();
+        }
+        if (saveImage.exists()) {
+            saveImage.delete();
+        }
 
         createDatePickerDialog();
 
@@ -87,38 +96,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-    }
-
-    private void initData() {
-        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-        ViewModel model = new ViewModel();
-        model.Name = sp.getString("nickname", "");
-        model.Mobile = sp.getString("mobile", "");
-        model.Email = sp.getString("email", "");
-        model.Gender = sp.getInt("gender", -1);
-        model.Birth = sp.getString("birth", "");
-        model.Avater = sp.getString("avater", "");
-        initShow(model);
-        initEdit(model);
-    }
-
-    private void initEdit(ViewModel model) {
-        et_nickname.setText(model.Name);
-        et_email.setText(model.Email);
-        et_mobile.setText(model.Mobile);
-        rg_gender.check(model.Gender == 0 ? R.id.rb_female : R.id.rb_male);
-        et_birth.setText(model.Birth);
-    }
-
-    private void initShow(ViewModel model) {
-
-        Log.i(TAG, "initShow: Avater=" + model.Avater);
-        new BitmapUtils(this).display(iv_avater, NetworkUtil.getFullPath(model.Avater));
-        et_nickname.setText(model.Name);
-        et_email.setText(model.Email);
-        et_mobile.setText(model.Mobile);
-        et_gender.setText(model.Gender == 0 ? "女" : "男");
-        tv_birth.setText(model.Birth);
     }
 
     private void initView() {
@@ -139,35 +116,47 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
 
         tv_birth = (TextView) findViewById(R.id.tv_birth);
 
+        sp_country = (Spinner) findViewById(R.id.sp_country);
+        sp_language = (Spinner) findViewById(R.id.sp_language);
+        sp_job = (Spinner) findViewById(R.id.sp_job);
+
+
         iv_avater.setOnClickListener(this);
+        tv_birth.setOnClickListener(this);
 
 
-
-
-
-
-
-
-
-        /*
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-        sp.getInt("id", -1);
 
-        tv_birth.setText(sp.getString("birth", ""));
         tv_username.setText(sp.getString("username", ""));
 
+        et_nickname.setText(sp.getString("nickname", ""));
+        et_email.setText(sp.getString("email", ""));
+        et_mobile.setText(sp.getString("mobile", ""));
+        int gender = sp.getInt("gender", -1);
+        rb_female.setChecked(gender == 0);
+        rb_male.setChecked(gender == 1);
+        tv_birth.setText(sp.getString("birth", ""));
 
 
         rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
         rb_male = (RadioButton) findViewById(R.id.rb_female);
         rb_female = (RadioButton) findViewById(R.id.rb_female);
-        */
-        // new BitmapUtils(this).display(iv_avater, NetworkUtil.getFullPath(sp.getString("avater", "")));
+
+
+        sp_country.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 国家));
+        sp_language.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 母语));
+        sp_job.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 职业));
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_home:
+                this.finish();
+                break;
+            case R.id.tv_save:
+                saveUserEx();
+                break;
             case R.id.iv_avater:
                 if (dialogPick == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -181,7 +170,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 }
                 dialogPick.show();
 
-                CircleImageView d = null;
 
                 //  pick();
 
@@ -189,77 +177,69 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 //datePickerDialog.show();
                 break;
             case R.id.tv_album: {
-                // 激活系统图库，选择一张图片
-                Intent intent = new Intent(Intent.ACTION_PICK);
+                // Intent intent = new Intent(Intent.ACTION_PICK);
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.setType("image/*");
                 startActivityForResult(intent, PHOTO_REQUEST_PICK);
+                dialogPick.dismiss();
             }
             break;
 
             case R.id.tv_camera: {
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-/*// 下面这句指定调用相机拍照后的照片存储的路径
-                if (pre.exists()) {
-                    pre.delete();
-                }
-                try {
-                    pre.createNewFile();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(pre))*/
-                ;
-                startActivityForResult(cameraIntent, 5);
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(saveImage));
+                startActivityForResult(intent, PHOTO_REQUEST_TAKE);
+                dialogPick.dismiss();
             }
             break;
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        menuItemCancel = menu.add(menu.NONE, 1, 1, "取消");
-        menuItemCancel.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menuItemCancel.setVisible(false);
-
-        menuItemHandle = menu.add(Menu.NONE, 2, 2, "编辑");
-        menuItemHandle.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case 1:
-                isEdit = false;
-                switchMode();
+            case R.id.tv_birth:
+                datePickerDialog.show();
                 break;
-
-            case 2: {
-                if (isEdit) {
-                    saveUserEx();
-                }
-                isEdit = !isEdit;
-                switchMode();
-            }
-            break;
-
-
         }
-
-
-        return true;
     }
 
-    private void switchMode() {
-        menuItemCancel.setVisible(isEdit);
-        menuItemHandle.setTitle(isEdit ? "保存" : "编辑");
+    private void cropImageUri(Uri uri, int outputX, int outputY, int requestCode) {
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", outputX);
+        intent.putExtra("outputY", outputY);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(cropImage));//Uri.fromFile(cropImage)
+        intent.putExtra("return-data", false);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.PNG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case PHOTO_REQUEST_PICK:
+                Log.i(TAG, "onActivityResult: PHOTO_REQUEST_PICK data=" + data);
+                if (data != null) {
+
+                }
+                break;
+            case PHOTO_REQUEST_TAKE:
+                Log.i(TAG, "onActivityResult: PHOTO_REQUEST_TAKE data=" + data);
+                if (resultCode == Activity.RESULT_OK) {
+                    cropImageUri(Uri.fromFile(saveImage), 250, 250, PHOTO_REQUEST_CROP);
+                }
+                break;
+            case PHOTO_REQUEST_CROP:
+                Log.i(TAG, "onActivityResult: PHOTO_REQUEST_CROP data=" + data);
+                if (data != null) {
+                    new BitmapUtils(this).display(iv_avater, cropImage.getAbsolutePath());
+                    isIconSwitch = true;
+                }
+                break;
+        }
     }
 
     private void saveUserEx() {
-
-
         saveDialog.show();
         com.lidroid.xutils.http.RequestParams params = new RequestParams();
         params.addBodyParameter("id", getSharedPreferences("user", MODE_PRIVATE).getInt("id", -1) + "");
@@ -267,9 +247,9 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         params.addBodyParameter("Email", et_email.getText().toString().trim());
         params.addBodyParameter("Mobile", et_mobile.getText().toString().trim());
         params.addBodyParameter("Gender", (rb_female.isChecked() ? 0 : 1) + "");
-        params.addBodyParameter("Birth", et_birth.getText().toString().trim());
+        params.addBodyParameter("Birth", tv_birth.getText().toString().trim());
         if (isIconSwitch) {
-            params.addBodyParameter("icon", tempIcon);
+            params.addBodyParameter("icon", cropImage);
             // params.addBodyParameter("icon",new File(Environment.getExternalStorageDirectory(),"图片.jpg"));//某个图片的路径
         }
         new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userUpdate, params, new RequestCallBack<String>() {
@@ -291,29 +271,11 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                     editor.putInt("gender", resp.info.Gender);
                     editor.commit();
 
-                    ViewModel model = new ViewModel();
-                    model.Name = resp.info.Name;
-                    model.Avater = resp.info.Icon;
-                    model.Email = resp.info.Email;
-                    model.Birth = resp.info.Birth;
-                    model.Mobile = resp.info.Mobile;
-                    model.Gender = resp.info.Gender;
-                    // initShow(model);
-
-                    if (tempBitmap != null) {
-                        File avaterPNG = new File(getFilesDir(), model.Avater);
-                        saveBitmap(tempBitmap, avaterPNG);
-                    }
-
+                    CommonUtil.toast("修改成功");
                 } else {
                     CommonUtil.toast("修改失败");
                 }
-
-
                 saveDialog.dismiss();
-
-                isEdit = false;
-                switchMode();
             }
 
             @Override
@@ -346,7 +308,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         datePickerDialog = new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                //  Log.i(TAG, "onDateSet: year:" + year + " monthOfYear:" + monthOfYear + " dayOfMonth:" + dayOfMonth);
+                Log.i(TAG, "onDateSet: year:" + year + " monthOfYear:" + monthOfYear + " dayOfMonth:" + dayOfMonth);
             }
         }, 2000, 1, 1);
         datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
@@ -354,7 +316,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
             public void onClick(DialogInterface dialog, int which) {
                 Calendar l = Calendar.getInstance();
                 l.set(datePickerDialog.getDatePicker().getYear(), datePickerDialog.getDatePicker().getMonth(), datePickerDialog.getDatePicker().getDayOfMonth());
-                et_birth.setText(sdf.format(l.getTime()));
+                tv_birth.setText(sdf.format(l.getTime()));
             }
         });
     }
@@ -387,55 +349,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
 
         intent.putExtra("outputFormat", "JPEG");// 图片格式
         intent.putExtra("noFaceDetection", true);// 取消人脸识别
-        intent.putExtra("return-data", true);//要求返回数据
+        intent.putExtra("return-data", false);//要求返回数据
         // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CUT
         startActivityForResult(intent, PHOTO_REQUEST_CROP);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        switch (requestCode) {
-            case PHOTO_REQUEST_PICK:
-                // 从相册返回的数据
-                if (data != null) {
-                    // 得到图片的全路径
-                    Uri uri = data.getData();
-                    Log.i(TAG, "onActivityResult: " + data);
-                }
-                break;
-            case PHOTO_REQUEST_CROP:
-                // 从剪切图片返回的数据
-                if (data != null) {
-                    try {
-                        tempBitmap = data.getParcelableExtra("data");
-                        OutputStream out = new FileOutputStream(tempIcon);
-                        tempBitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-
-                        this.iv_avater.setImageBitmap(tempBitmap);
-                        out.close();
-                        isIconSwitch = true;
-                    } catch (Exception e) {
-                        isIconSwitch = false;
-                        CommonUtil.toast("图片裁剪保存时出错");
-                    }
-                }
-                break;
-        }
-
-
-        //   super.onActivityResult(requestCode, resultCode, data);
-    }
-
-
-    private class ViewModel {
-        public String Icon;
-        public String Name;
-        public String Email;
-
-        public String Birth;
-        public String Mobile;
-        public int Gender;
-        public String Avater;
     }
 }

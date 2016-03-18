@@ -3,6 +3,7 @@ package com.newclass.woyaoxue;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import android.support.v4.app.FragmentTabHost;
@@ -35,7 +36,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements View.OnClickListener {
     // Monkey测试代码
     // adb shell monkey -p com.voc.woyaoxue -s 500 --ignore-crashes --ignore-timeouts --monitor-native-crashes -v -v 10000 > E:\log.txt
     // gradlew assemblerelease
@@ -45,12 +46,12 @@ public class MainActivity extends FragmentActivity {
     //App Key: 599551c5de7282b9a1d686ee40abf74c
     //App Secret: 64e52bd091da
     protected static final String TAG = "MainActivity";
+    private TextView tv_delete, tv_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         initView();
 
@@ -98,6 +99,11 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void initView() {
+        tv_refresh = (TextView) findViewById(R.id.tv_refresh);
+        tv_delete = (TextView) findViewById(R.id.tv_delete);
+        tv_refresh.setOnClickListener(this);
+        //  tv_delete.setOnClickListener(this);
+
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(MainActivity.this, getSupportFragmentManager(), R.id.ff_content);
         tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), MyApplication.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
@@ -107,6 +113,21 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onTabChanged(String tabId) {
                 Log.i(TAG, "onTabChanged: tabId=" + tabId);
+                switch (tabId) {
+                    case "chat":
+                        tv_refresh.setVisibility(View.VISIBLE);
+                        tv_delete.setVisibility(View.INVISIBLE);
+                        break;
+                    case "listen":
+                        tv_refresh.setVisibility(View.INVISIBLE);
+                        tv_delete.setVisibility(View.INVISIBLE);
+                        break;
+                    case "me":
+                        tv_refresh.setVisibility(View.INVISIBLE);
+                        tv_delete.setVisibility(View.INVISIBLE);
+                        break;
+
+                }
             }
         });
         tabHost.setCurrentTabByTag("listen");
@@ -131,4 +152,17 @@ public class MainActivity extends FragmentActivity {
         return inflate;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.tv_refresh:
+                FragmentChoose chat = (FragmentChoose) getSupportFragmentManager().findFragmentByTag("chat");
+                chat.onResume();
+
+                break;
+            case R.id.delete:
+
+                break;
+        }
+    }
 }

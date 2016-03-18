@@ -13,6 +13,7 @@ import com.newclass.woyaoxue.view.ContentViewChoose;
 import com.newclass.woyaoxue.view.ContentViewLineUp;
 
 /**
+ * 教师端教师排队界面
  * Created by liaorubei on 2016/1/14.
  */
 public class FragmentLineUp extends android.support.v4.app.Fragment {

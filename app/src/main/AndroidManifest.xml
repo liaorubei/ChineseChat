@@ -102,9 +102,7 @@
             android:value="com.netease.nimlib.service.NimReceiver"/>
 
         <activity
-            android:name="com.newclass.woyaoxue.MainActivity"
-            android:label="ChineseChat"
-            android:screenOrientation="portrait">
+            android:name="com.newclass.woyaoxue.activity.ActivityCall">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -176,7 +174,7 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivityMoney"/>
         <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting"/>
         <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity"/>
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson"/>
+        <!--  <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson"/>-->
         <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity"/>
 
         <!-- 更新下载服务 -->

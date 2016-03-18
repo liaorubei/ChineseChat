@@ -116,7 +116,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/ic_launcher_student"/>
+            android:src="@drawable/icon_wallet"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -148,7 +148,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/ic_launcher_student"/>
+            android:src="@drawable/icon_setting"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -180,7 +180,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/ic_launcher_student"/>
+            android:src="@drawable/icon_record"/>
 
         <TextView
             android:layout_width="wrap_content"

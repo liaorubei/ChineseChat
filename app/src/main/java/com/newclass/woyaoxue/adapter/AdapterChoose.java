@@ -2,12 +2,14 @@ package com.newclass.woyaoxue.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -18,6 +20,7 @@ import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.HttpUtil;
+import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
@@ -27,6 +30,7 @@ import java.util.List;
  * Created by liaorubei on 2016/1/13.
  */
 public class AdapterChoose extends BaseAdapter<User> {
+    private static final String TAG = "AdapterChoose";
     private Context mContext;
 
 
@@ -41,15 +45,12 @@ public class AdapterChoose extends BaseAdapter<User> {
         final User user = getItem(position);
         View inflate = View.inflate(mContext, R.layout.listitem_choose, null);
         TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
-        TextView tv_username = (TextView) inflate.findViewById(R.id.tv_username);
-        TextView tv_category = (TextView) inflate.findViewById(R.id.tv_category);
         ImageView iv_icon = (ImageView) inflate.findViewById(R.id.iv_icon);
         tv_nickname.setText("昵称:" + user.Name);
-        tv_username.setText(user.Username);
-        tv_category.setText(user.Category == 1 ? "教师" : "学生");
-       // new BitmapUtils(mContext).display(iv_icon, NetworkUtil.getFullPath(user.Avater));
+        String path = NetworkUtil.getFullPath(user.Icon);
+        new BitmapUtils(mContext).display(iv_icon, path);
 
-        Button bt_call = (Button) inflate.findViewById(R.id.bt_call);
+        ImageView bt_call = (ImageView) inflate.findViewById(R.id.bt_call);
         bt_call.setOnClickListener(new View.OnClickListener() {
 
             @Override

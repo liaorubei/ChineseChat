@@ -2,23 +2,29 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
+              android:background="#F0F0F0"
               android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_album"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_launcher_student"
+        android:layout_height="45dp"
+        android:layout_marginBottom="1dp"
+        android:background="#FFFFFF"
+        android:drawableLeft="@drawable/icon_album"
         android:gravity="center|left"
+        android:paddingLeft="15dp"
         android:text="相册"
         android:textColor="#000"/>
 
     <TextView
         android:id="@+id/tv_camera"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawableLeft="@drawable/ic_launcher_student"
+        android:layout_height="45dp"
+        android:background="#FFFFFF"
+        android:drawableLeft="@drawable/icon_camera"
         android:gravity="center|left"
+        android:paddingLeft="15dp"
         android:text="相机"
         android:textColor="#000"/>
 
