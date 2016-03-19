@@ -14,4 +14,16 @@
             android:layout_height="match_parent">
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ImageView
+        android:id="@+id/iv_enqueue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginRight="25dp"
+        android:background="@drawable/shape_oval_red"
+        android:padding="15dp"
+        android:src="@drawable/enqueue"/>
 </RelativeLayout>

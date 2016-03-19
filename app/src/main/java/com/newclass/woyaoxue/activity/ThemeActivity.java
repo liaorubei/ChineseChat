@@ -12,6 +12,7 @@ import com.newclass.woyaoxue.bean.HsLevel;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.fragment.FragmentThemes;
 import com.newclass.woyaoxue.util.HttpUtil;
+import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.LazyViewPager;
 import com.voc.woyaoxue.R;
@@ -21,12 +22,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ThemeActivity extends FragmentActivity {
+    private static final String TAG = "ThemeActivity";
     private LinearLayout ll_indicator;
     private LazyViewPager viewPager;
     private List<Fragment> fragments;
@@ -51,6 +54,7 @@ public class ThemeActivity extends FragmentActivity {
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Response<List<HsLevel>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<HsLevel>>>() {
                 }.getType());
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
 
                 if (resp.code == 200) {
                     for (int i = 0; i < resp.info.size(); i++) {
@@ -75,12 +79,11 @@ public class ThemeActivity extends FragmentActivity {
                         fragments.add(fragmentThemes);
                     }
                 }
-
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
-
+                Log.i(TAG, "onFailure: " + msg);
             }
         });
 

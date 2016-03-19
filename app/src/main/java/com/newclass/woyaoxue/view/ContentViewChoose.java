@@ -55,6 +55,7 @@ public class ContentViewChoose extends ContentView {
     public View onCreateSuccessView() {
         View inflate = View.inflate(getContext(), R.layout.contentview_choose, null);
         srl = (SwipeRefreshLayout) inflate.findViewById(R.id.srl);
+        srl.setColorSchemeResources(R.color.color_app);
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -105,9 +106,10 @@ public class ContentViewChoose extends ContentView {
                         user.NickName = user.Name;
                         list.add(user);
                     }
-                    adapterChoose.notifyDataSetChanged();
                 }
 
+                //无论如何,只要请求成功,都刷新一次数据适配器,因为列表有可能已经清空或者重新加载
+                adapterChoose.notifyDataSetChanged();
                 srl.setRefreshing(false);
             }
 

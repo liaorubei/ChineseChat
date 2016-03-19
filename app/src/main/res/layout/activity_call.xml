@@ -136,7 +136,7 @@
                 android:layout_centerInParent="true"
                 android:background="#00A478"
                 android:gravity="center"
-                android:text="发表情"
+                android:text="选主题"
                 android:textColor="#fff"/>
 
         </RelativeLayout>
@@ -149,14 +149,13 @@
         android:layout_height="200dp"
         android:layout_alignParentBottom="true"
         android:background="#E2ffff"
-        android:visibility="visible">
+        android:visibility="invisible">
 
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+            android:orientation="horizontal"            >
 
             <ImageView
                 android:layout_width="45dp"

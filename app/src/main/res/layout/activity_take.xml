@@ -1,173 +1,144 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="25dp"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/iv_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_launcher"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/iv_icon"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/tv_nickname"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:padding="5dp"
-                android:text="昵称:汉问学生001"/>
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:padding="5dp"
-                android:text="性别:男"/>
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:padding="5dp"
-                android:text="总时长:125小时"/>
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:padding="5dp"
-                android:text="次数:250次"/>
-
-        </LinearLayout>
-
-
-    </RelativeLayout>
-
+                android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/ll_theme"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_alignParentBottom="true"
-        android:orientation="vertical"
-        android:visibility="invisible">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="你的老板"
-            android:textSize="25sp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="1.你的老板是男的还是女的?"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2.你的老板大概多大了,看起来怎么样"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="3.你的老板结婚了吗"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="4.你的老板孩子在那个学校上学啊"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="5.你觉得你的老板怎么样"/>
-
-
-    </LinearLayout>
-
-    <FrameLayout
+        android:id="@+id/ll_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@id/ll_theme">
+        android:layout_marginTop="70dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:layout_marginBottom="15dp"
+            android:src="@drawable/ic_launcher_student"/>
+
+        <TextView
+            android:id="@+id/tv_nickname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="昵称"/>
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:text="总时长:125小时  次数:250次"/>
+
+        <Chronometer
+            android:id="@+id/cm_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+
+    <FrameLayout
+        android:id="@+id/fl_theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
 
         <LinearLayout
+            android:id="@+id/ll_theme"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_theme"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="你的老板"
+                android:textSize="25sp"/>
+
+            <ListView
+                android:id="@+id/listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"/>
+        </LinearLayout>
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:id="@+id/fl_ctrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/fl_theme"
+        android:layout_marginBottom="45dp">
+
+        <LinearLayout
+            android:id="@+id/ll_call"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
+            android:gravity="center_horizontal"
             android:orientation="horizontal"
-            android:padding="10dp"
+            android:visibility="invisible">
+
+            <ImageView
+                android:id="@+id/bt_mute"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/shape_oval_green"
+                android:padding="20dp"
+                android:src="@drawable/icon_call_microphone"/>
+
+            <ImageView
+                android:id="@+id/bt_hangup"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/shape_oval_red"
+                android:padding="20dp"
+                android:src="@drawable/icon_call_handup"/>
+
+            <ImageView
+                android:id="@+id/bt_free"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_margin="15dp"
+                android:background="@drawable/shape_oval_green"
+                android:padding="20dp"
+                android:src="@drawable/icon_call_mute"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_hang"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="horizontal"
             android:visibility="visible">
 
             <Button
-                android:id="@+id/bt_hangup"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="挂断"/>
+                android:id="@+id/bt_reject"
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:layout_marginRight="100dp"
+                android:background="@drawable/shape_oval_red"
+                android:text="拒绝"
+                android:textColor="#fff"/>
 
             <Button
                 android:id="@+id/bt_accept"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="接受"/>
-
-
+                android:layout_width="85dp"
+                android:layout_height="85dp"
+                android:background="@drawable/shape_oval_green"
+                android:text="接受"
+                android:textColor="#fff"/>
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="10dp"
-            android:visibility="invisible">
 
-            <Button
-                android:id="@+id/bt_mute"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:text="静音"/>
-
-            <Button
-                android:id="@+id/bt_finish"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:text="结束"
-                />
-
-            <Button
-                android:id="@+id/bt_free"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:layout_weight="1"
-                android:text="免提"/>
-
-
-        </LinearLayout>
     </FrameLayout>
 
 

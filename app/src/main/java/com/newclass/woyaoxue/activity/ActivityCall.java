@@ -209,7 +209,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                 @Override
                 public void onSuccess(AVChatData avChatData) {
                     cm_time.start();
-                    CommonUtil.toast("拨打成功");
+                    Log.i(TAG, "onSuccess: " + "拨打成功");
                 }
             };
         }
@@ -340,7 +340,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                 NIMClient.getService(MsgService.class).sendMessage(message, false).setCallback(new RequestCallback<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        android.util.Log.i(TAG, "onSuccess: 文本消息发送成功");
+                        Log.i(TAG, "onSuccess: 文本消息发送成功");
                     }
 
                     @Override

@@ -57,8 +57,9 @@ public class ContentViewLineUp extends ContentView {
 
     @Override
     public View onCreateSuccessView() {
-        inflate = View.inflate(getContext(), R.layout.contentview_folder, null);
+        inflate = View.inflate(getContext(), R.layout.contentview_lineup, null);
         srl = (SwipeRefreshLayout) inflate.findViewById(R.id.srl);
+        srl.setColorSchemeResources(R.color.color_app);
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -70,6 +71,14 @@ public class ContentViewLineUp extends ContentView {
         list = new ArrayList<User>();
         adapter = new AdapterLineup(list, getContext());
         listview.setAdapter(adapter);
+        //listview.setOnScrollListener();
+
+        inflate.findViewById(R.id.iv_enqueue).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                lineup();
+            }
+        });
 
         return inflate;
     }
@@ -131,6 +140,7 @@ public class ContentViewLineUp extends ContentView {
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 refreshView(responseInfo.result);
                 srl.setRefreshing(false);
             }
@@ -148,15 +158,15 @@ public class ContentViewLineUp extends ContentView {
     private void refreshView(String json) {
         Response<Rank> resp = gson.fromJson(json, new TypeToken<Response<Rank>>() {
         }.getType());
+        list.clear();
 
         if (resp.code == 200 && resp.info != null) {
             List<User> users = resp.info.Data;
-            list.clear();
             for (User user : users) {
                 list.add(user);
             }
-            adapter.notifyDataSetChanged();
         }
+        adapter.notifyDataSetChanged();
     }
 
     public void onResume() {
