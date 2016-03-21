@@ -14,12 +14,12 @@ android {
     }
 
     productFlavors {
-/*        student {
+        student {
             manifestPlaceholders = [release_value: "student", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_student"]
-        }*/
-        teacher {
-            manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
         }
+/*        teacher {
+            manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
+        }*/
     }
 
     signingConfigs {
@@ -52,21 +52,19 @@ dependencies {
     compile files('libs/cosinesdk.jar')
     compile files('libs/nim-sdk-1.7.0.jar')
 
-    compile 'com.android.support:support-v13:22.2.1'
-    compile 'com.google.code.gson:gson:2.4'
-    compile 'com.jiechic.library:xUtils:2.6.14'
-
     //支付相关
     compile files('libs/netty-4.0.23-for-yx.final.jar')
-    compile 'com.paypal.sdk:paypal-android-sdk:2.13.0'
 
     //圆形图片
-    compile 'de.hdodenhof:circleimageview:2.0.0'
+
 
     compile files('libs/alipaySdk-20160120.jar')
 
-    //compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:support-v13:22.2.1'
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.jiechic.library:xUtils:2.6.14'
+    compile 'com.paypal.sdk:paypal-android-sdk:2.13.0'
+    compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.android.support:support-v4:22.2.1'
-    //compile 'com.android.support:design:22.2.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
 }

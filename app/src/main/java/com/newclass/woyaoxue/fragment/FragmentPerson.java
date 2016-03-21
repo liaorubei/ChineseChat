@@ -20,8 +20,9 @@ import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.newclass.woyaoxue.MyApplication;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
-import com.newclass.woyaoxue.activity.HistoryActivity;
+import com.newclass.woyaoxue.activity.ActivityHistory;
 import com.newclass.woyaoxue.activity.ActivityMoney;
 import com.newclass.woyaoxue.activity.ActivityPerson;
 import com.newclass.woyaoxue.activity.ActivitySetting;
@@ -37,7 +38,7 @@ import java.io.OutputStream;
 
 public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
-    private View bt_histroy, bt_setting;
+    private View bt_histroy, bt_setting, rl_topup;
     private ImageView iv_avater, iv_gender;
     private TextView tv_nickname;
 
@@ -55,16 +56,16 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         View inflate = inflater.inflate(R.layout.fragment_person, null);
         ll_person = inflate.findViewById(R.id.ll_person);
         tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
-             iv_avater = (ImageView) inflate.findViewById(R.id.iv_avater);
+        iv_avater = (ImageView) inflate.findViewById(R.id.iv_avater);
         iv_gender = (ImageView) inflate.findViewById(R.id.iv_gender);
 
 
+        rl_topup = inflate.findViewById(R.id.rl_topup);
         bt_histroy = inflate.findViewById(R.id.rl_history);
         bt_setting = inflate.findViewById(R.id.rl_setting);
 
-        inflate.findViewById(R.id.rl_topup).setOnClickListener(this);
-
         ll_person.setOnClickListener(this);
+        rl_topup.setOnClickListener(this);
         bt_histroy.setOnClickListener(this);
         bt_setting.setOnClickListener(this);
         return inflate;
@@ -85,12 +86,14 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             user.Accid = sp.getString("accid", "");
 
             tv_nickname.setText(nickname);
-
             iv_gender.setVisibility(gender == -1 ? View.INVISIBLE : View.VISIBLE);
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
 
-            BitmapUtils bitmapUtils = new BitmapUtils(getActivity());
+            //如果是学生端,显示充值界面和学习记录
+            rl_topup.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.INVISIBLE);
+            bt_histroy.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.INVISIBLE);
 
+            BitmapUtils bitmapUtils = new BitmapUtils(getActivity());
             final File avaterPNG = new File(FolderUtil.rootDir(getActivity()), avater);
 
             if (avaterPNG.exists() && avaterPNG.isFile()) {
@@ -116,14 +119,14 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
 
                     @Override
                     public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-                        iv_avater.setImageResource(R.drawable.ic_launcher);
+                        iv_avater.setImageResource(R.drawable.ic_launcher_student);
                     }
                 });
             }
 
         } else {
             tv_nickname.setText("未登录");
-            iv_gender.setVisibility(View.INVISIBLE);
+            iv_gender.setVisibility(View.GONE);
         }
     }
 
@@ -146,7 +149,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                     startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     return;
                 }
-                HistoryActivity.start(getActivity(), user.Accid);
+                ActivityHistory.start(getActivity(), user.Accid);
                 break;
             case R.id.rl_setting:
                 startActivity(new Intent(getActivity(), ActivitySetting.class));

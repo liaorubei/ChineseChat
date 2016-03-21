@@ -13,7 +13,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
-import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,6 +35,7 @@ import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.NimSysNotice;
+import com.newclass.woyaoxue.bean.Question;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.Theme;
 import com.newclass.woyaoxue.bean.User;
@@ -46,8 +46,7 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import org.w3c.dom.Text;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,8 +60,6 @@ public class ActivityTake extends Activity implements OnClickListener {
     protected static final String TAG = "ActivityTake";
 
     private View bt_hangup, bt_reject, bt_accept, bt_mute, bt_free;
-
-    private Theme currentTheme = null;
     private Gson gson = new Gson();
     private ImageView iv_icon;
     private AlertDialog ratingDialog;
@@ -85,6 +82,7 @@ public class ActivityTake extends Activity implements OnClickListener {
         public void onSuccess(Void arg0) {
             isAccept = true;
             IS_CHATTING = true;
+            cm_time.start();
         }
     };
 
@@ -102,14 +100,13 @@ public class ActivityTake extends Activity implements OnClickListener {
 
         @Override
         public void onSuccess(Void arg0) {
-            if (ratingDialog == null) {
+/*            if (ratingDialog == null) {
                 createRatingDialog();
             }
             if (isAccept) {
                 ratingDialog.show();
-
                 return;
-            }
+            }*/
 
             finish();
         }
@@ -122,7 +119,9 @@ public class ActivityTake extends Activity implements OnClickListener {
         @Override
         public void onEvent(AVChatCommonEvent event) {
             Log.i(TAG, "挂断: ChatId=" + event.getChatId() + " Account=" + event.getAccount());
-            if (ratingDialog == null) {
+            finish();
+
+/*            if (ratingDialog == null) {
                 createRatingDialog();
             }
             if (isAccept && IS_CHATTING) {
@@ -132,10 +131,8 @@ public class ActivityTake extends Activity implements OnClickListener {
                 HttpUtil.post(NetworkUtil.callFinish, parameters, null);
 
                 //只有接听了之后,才会有打分
-                ratingDialog.show();
-            } else {
-                finish();
-            }
+                //ratingDialog.show();
+            }*/
         }
     };
 
@@ -165,8 +162,8 @@ public class ActivityTake extends Activity implements OnClickListener {
             if (notice.NoticeType == NimSysNotice.NoticeType_Card) {
                 CommonUtil.toast("对方点击了:" + notice.info.Name);
             }
-            currentTheme = notice.info;
-            // showThemeQuestion();
+
+            showThemeQuestion(notice.info);
         }
     };
 
@@ -178,6 +175,8 @@ public class ActivityTake extends Activity implements OnClickListener {
     private ListView listview;
     private View ll_hang;
     private View ll_call;
+    private List<String> list;
+    private MyAdapter adapter;
 
     public static void start(Context context, AVChatData avChatData) {
         Intent intent = new Intent(context, ActivityTake.class);
@@ -213,6 +212,9 @@ public class ActivityTake extends Activity implements OnClickListener {
         });
 
         registerObserver(true);
+        list = new ArrayList<>();
+        adapter = new MyAdapter(list);
+        listview.setAdapter(adapter);
     }
 
     protected void createRatingDialog() {
@@ -279,6 +281,9 @@ public class ActivityTake extends Activity implements OnClickListener {
         bt_free.setOnClickListener(this);
         bt_reject.setOnClickListener(this);
         bt_accept.setOnClickListener(this);
+
+
+        // iv_icon.setOnClickListener(this);
     }
 
     @Override
@@ -369,20 +374,48 @@ public class ActivityTake extends Activity implements OnClickListener {
                 break;
 
             case R.id.iv_icon:
+                Theme k = new Theme();
+                k.Id = 11;
+                showThemeQuestion(k);
+
+
                 break;
 
             case R.id.bt_face: {
-                HistoryActivity.start(ActivityTake.this, avChatData.getAccount());
+                ActivityHistory.start(ActivityTake.this, avChatData.getAccount());
             }
             break;
 
-            case R.id.bt_text: {
-                showThemeQuestion();
-            }
-            break;
             default:
                 break;
         }
+    }
+
+    private void showThemeQuestion(Theme theme) {
+        Parameters params = new Parameters();
+        params.add("id", "" + theme.Id);
+        HttpUtil.post(NetworkUtil.themeGetById, params, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Response<Theme> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Theme>>() {
+                }.getType());
+
+                list.clear();
+                if (resp.code == 200) {
+                    List<Question> questions = resp.info.Questions;
+                    for (Question q : questions) {
+                        list.add(q.Name);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+                ll_theme.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+
+            }
+        });
     }
 
     @Override
@@ -420,17 +453,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         AVChatManager.getInstance().observeTimeoutNotification(observerTimeout, register);
     }
 
-    private void showThemeQuestion() {
-        if (currentTheme == null) {
-            CommonUtil.toast("对方还没有选择学习主题");
-            return;
-        }
-        Intent intent = new Intent(getApplication(), QuestionActivity.class);
-        intent.putExtra("themeId", currentTheme.Id);
-        startActivity(intent);
-    }
-
-
     private class MyAdapter extends BaseAdapter<String> {
 
         public MyAdapter(List<String> list) {
@@ -439,12 +461,11 @@ public class ActivityTake extends Activity implements OnClickListener {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            final String item = getItem(position);
-            View inflate = View.inflate(getApplication(), R.layout.griditem_card, null);
-            inflate.findViewById(R.id.iv_card).setVisibility(View.VISIBLE);
-            TextView tv_theme = (TextView) inflate.findViewById(R.id.tv_theme);
-            tv_theme.setText("主题:" + item);
-
+            String item = getItem(position);
+            View inflate = View.inflate(getApplication(), R.layout.listitem_call, null);
+            TextView textview = (TextView) inflate.findViewById(R.id.textview);
+            textview.setText(item);
+            textview.setText(item);
             return inflate;
         }
     }

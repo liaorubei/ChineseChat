@@ -32,7 +32,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 
 //聊天记录
-public class HistoryActivity extends Activity {
+public class ActivityHistory extends Activity {
     protected static final String TAG = "HistoryActivity";
     private static final String KEY_ACCID = "KEY_ACCID";
     private ListView listview;
@@ -69,6 +69,13 @@ public class HistoryActivity extends Activity {
     }
 
     private void initView() {
+        findViewById(R.id.iv_home).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         listview = (ListView) findViewById(R.id.listview);
         list = new ArrayList<CallLog>();
         adapter = new MyAdapter(list);
@@ -76,7 +83,7 @@ public class HistoryActivity extends Activity {
     }
 
     public static void start(Context context, String accid) {
-        Intent intent = new Intent(context, HistoryActivity.class);
+        Intent intent = new Intent(context, ActivityHistory.class);
         intent.putExtra(KEY_ACCID, accid);
         context.startActivity(intent);
     }

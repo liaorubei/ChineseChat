@@ -37,7 +37,6 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
 
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,12 +68,13 @@
             android:layout_centerVertical="true"
             android:text="在Wifi环境下使用"/>
 
-        <ImageView
+        <CheckBox
+            android:id="@+id/cb_wifi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/download_play"
+            android:button="@drawable/selector_box_check"
             />
     </RelativeLayout>
 

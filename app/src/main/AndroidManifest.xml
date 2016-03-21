@@ -102,7 +102,7 @@
             android:value="com.netease.nimlib.service.NimReceiver"/>
 
         <activity
-            android:name="com.newclass.woyaoxue.activity.ThemeActivity">
+            android:name="com.newclass.woyaoxue.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -151,32 +151,18 @@
             android:name="com.newclass.woyaoxue.activity.ActivityTake"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.ChooseActivity"
-            android:label="自选教师"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.FriendActivity"
-            android:label="我的学友"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.FriendAddActivity"
-            android:label="添加学友"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.FriendSearchActivity"
-            android:label="查找学友"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.RandomActivity"
-            android:label="随机拨打"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.HistoryActivity"
-            android:label="学习记录"/>
-        <activity
-            android:name="com.newclass.woyaoxue.activity.QuestionActivity"
-            android:label="问题列表"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ChooseActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.FriendActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.FriendAddActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.FriendSearchActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.RandomActivity"/>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityHistory"/>
+        <activity android:name="com.newclass.woyaoxue.activity.QuestionActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.ActivityMoney"/>
         <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting"/>
         <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity"/>
         <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson"/>
-       <!-- <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity"/>-->
+        <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity"/>
 
         <!-- 更新下载服务 -->
         <service android:name="com.newclass.woyaoxue.service.AutoUpdateService"/>

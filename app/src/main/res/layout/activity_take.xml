@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#F0F0F0">
 
     <LinearLayout
         android:id="@+id/ll_user"
@@ -47,23 +48,24 @@
         <LinearLayout
             android:id="@+id/ll_theme"
             android:layout_width="match_parent"
-            android:layout_height="125dp"
-            android:orientation="horizontal"
+            android:layout_height="130dp"
+            android:orientation="vertical"
             android:visibility="gone">
 
             <TextView
                 android:id="@+id/tv_theme"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:text="你的老板"
-                android:textSize="25sp"/>
+                android:textSize="15sp"/>
 
             <ListView
                 android:id="@+id/listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible"/>
+                android:background="#FFFFFF"/>
         </LinearLayout>
     </FrameLayout>
 

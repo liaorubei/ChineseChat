@@ -154,9 +154,56 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
             case R.id.iv_home:
                 this.finish();
                 break;
-            case R.id.tv_save:
-                saveUserEx();
-                break;
+            case R.id.tv_save: {
+                saveDialog.show();
+                com.lidroid.xutils.http.RequestParams params = new RequestParams();
+                params.addBodyParameter("id", getSharedPreferences("user", MODE_PRIVATE).getInt("id", -1) + "");
+                params.addBodyParameter("Name", et_nickname.getText().toString().trim());
+                params.addBodyParameter("Email", et_email.getText().toString().trim());
+                params.addBodyParameter("Mobile", et_mobile.getText().toString().trim());
+                params.addBodyParameter("Gender", (rb_female.isChecked() ? 0 : 1) + "");
+                params.addBodyParameter("Birth", tv_birth.getText().toString().trim());
+                params.addBodyParameter("country", sp_country.getSelectedItem() + "");
+                params.addBodyParameter("language", sp_language.getSelectedItem() + "");
+                params.addBodyParameter("job", sp_job.getSelectedItem() + "");
+
+                if (isIconSwitch) {
+                    params.addBodyParameter("icon", cropImage);
+                }
+                new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userUpdate, params, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Log.i(TAG, "onSuccess: " + responseInfo.result);
+                        Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
+                        }.getType());
+
+                        if (resp.code == 200) {
+                            //保存用户信息到sp
+                            SharedPreferences.Editor editor = ActivityPerson.this.getSharedPreferences("user", MODE_PRIVATE).edit();
+                            editor.putInt("id", resp.info.Id);
+                            editor.putString("nickname", resp.info.Name);
+                            editor.putString("avater", resp.info.Icon);
+                            editor.putString("email", resp.info.Email);
+                            editor.putString("birth", resp.info.Birth);
+                            editor.putString("mobile", resp.info.Mobile);
+                            editor.putInt("gender", resp.info.Gender);
+                            editor.commit();
+
+                            CommonUtil.toast("修改成功");
+                        } else {
+                            CommonUtil.toast("修改失败");
+                        }
+                        saveDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        Log.i(TAG, "onFailure: " + msg);
+                        saveDialog.dismiss();
+                    }
+                });
+            }
+            break;
             case R.id.iv_avater:
                 if (dialogPick == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -237,54 +284,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 }
                 break;
         }
-    }
-
-    private void saveUserEx() {
-        saveDialog.show();
-        com.lidroid.xutils.http.RequestParams params = new RequestParams();
-        params.addBodyParameter("id", getSharedPreferences("user", MODE_PRIVATE).getInt("id", -1) + "");
-        params.addBodyParameter("Name", et_nickname.getText().toString().trim());
-        params.addBodyParameter("Email", et_email.getText().toString().trim());
-        params.addBodyParameter("Mobile", et_mobile.getText().toString().trim());
-        params.addBodyParameter("Gender", (rb_female.isChecked() ? 0 : 1) + "");
-        params.addBodyParameter("Birth", tv_birth.getText().toString().trim());
-        if (isIconSwitch) {
-            params.addBodyParameter("icon", cropImage);
-            // params.addBodyParameter("icon",new File(Environment.getExternalStorageDirectory(),"图片.jpg"));//某个图片的路径
-        }
-        new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userUpdate, params, new RequestCallBack<String>() {
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
-                }.getType());
-
-                if (resp.code == 200) {
-                    //保存用户信息到sp
-                    SharedPreferences.Editor editor = ActivityPerson.this.getSharedPreferences("user", MODE_PRIVATE).edit();
-                    editor.putInt("id", resp.info.Id);
-                    editor.putString("nickname", resp.info.Name);
-                    editor.putString("avater", resp.info.Icon);
-                    editor.putString("email", resp.info.Email);
-                    editor.putString("birth", resp.info.Birth);
-                    editor.putString("mobile", resp.info.Mobile);
-                    editor.putInt("gender", resp.info.Gender);
-                    editor.commit();
-
-                    CommonUtil.toast("修改成功");
-                } else {
-                    CommonUtil.toast("修改失败");
-                }
-                saveDialog.dismiss();
-            }
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "onFailure: " + msg);
-                saveDialog.dismiss();
-            }
-        });
-
     }
 
     private void saveBitmap(Bitmap tempBitmap, File avaterPNG) {

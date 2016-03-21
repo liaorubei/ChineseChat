@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
+import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
 
@@ -48,10 +49,12 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
     public void onClick(View v) {
 
         switch (v.getId()) {
-            case R.id.bt_login:
+            case R.id.rl_login:
                 if (NIMClient.getStatus() == StatusCode.LOGINED) {
                     NIMClient.getService(AuthService.class).logout();
                     getSharedPreferences("user", MODE_PRIVATE).edit().clear().commit();
+                    CommonUtil.toast("登出成功");
+                    tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? "登出" : "登录");
                 } else {
                     startActivity(new Intent(this, ActivitySignIn.class));
                 }

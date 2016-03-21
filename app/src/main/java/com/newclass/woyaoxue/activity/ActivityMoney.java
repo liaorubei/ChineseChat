@@ -75,6 +75,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
     }
 
     private void initView() {
+        findViewById(R.id.iv_home).setOnClickListener(this);
         listview = (ListView) findViewById(R.id.listview);
         rb_paypal = (RadioButton) findViewById(R.id.rb_paypal);
         rb_alipay = (RadioButton) findViewById(R.id.rb_alipay);
@@ -87,6 +88,9 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_home:
+                finish();
+                break;
 
             case R.id.ll_paypal:
                 rb_paypal.setChecked(true);
