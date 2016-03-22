@@ -120,6 +120,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="8"
             android:background="@null"
+            android:enabled="false"
             android:inputType="textEmailAddress"
             android:text="chinesenet@chinesenet.cn"
             android:textSize="15sp"/>

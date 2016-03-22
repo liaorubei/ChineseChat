@@ -1,20 +1,38 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
-import android.app.Dialog;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
-
-import android.view.Gravity;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.TextView;
 
-
+import com.alipay.sdk.app.PayTask;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.newclass.woyaoxue.base.BaseAdapter;
-
+import com.newclass.woyaoxue.bean.Orders;
+import com.newclass.woyaoxue.bean.PayResult;
+import com.newclass.woyaoxue.bean.Response;
+import com.newclass.woyaoxue.util.CommonUtil;
+import com.newclass.woyaoxue.util.HttpUtil;
+import com.newclass.woyaoxue.util.Log;
+import com.newclass.woyaoxue.util.NetworkUtil;
+import com.paypal.android.sdk.payments.PayPalConfiguration;
+import com.paypal.android.sdk.payments.PayPalPayment;
+import com.paypal.android.sdk.payments.PayPalService;
+import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.voc.woyaoxue.R;
 
 import java.math.BigDecimal;
@@ -27,11 +45,21 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
     private static final String TAG = "MoneyActivity";
     private LinearLayout ll_paypal, ll_alipay;
     private RadioButton rb_paypal, rb_alipay;
-    private ListView listview;
-    private List<Pay> list;
-    private BaseAdapter<Pay> adapter;
-    private Dialog paymentDialog;
+    private List<Orders> orderList;
+    private ListView orderListView;
+    private BaseAdapter<Orders> orderAdapter;
+    private List<Pay> paymentList;
+    private BaseAdapter<Pay> paymentAdapter;
+    private ListView paymentListView;
+    private AlertDialog paymentDialog;
+    private Gson gson = new Gson();
+    private ProgressDialog progressDialog;
+    private String orderId;
 
+    private static final int SDK_PAY_FLAG = 1;
+    private static final String PAYPAL_CLIENT_ID = "ARWTsXI5z88D8wWRIcy8WqR2WfTSpxeHWqL1LLQh15RwYqsfTJx08plA5Lczhm3NmCzZglArvmQ_6Y8h";
+    private static PayPalConfiguration paypalConfig = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX).clientId(PAYPAL_CLIENT_ID);
+    private static final int REQUEST_CODE_PAYPAL = 50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,39 +74,86 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
     }
 
     private void initData() {
-        //是否显示充值的内容和按钮
+        //初始化充值记录
+        orderList = new ArrayList<Orders>();
+        orderAdapter = new OrderAdapter(orderList);
+        orderListView.setAdapter(orderAdapter);
 
-        list = new ArrayList<>();
-        list.add(new Pay("1000学币", new BigDecimal(10), new BigDecimal(65)));
-        list.add(new Pay("2000学币", new BigDecimal(20), new BigDecimal(130)));
-        list.add(new Pay("3000学币", new BigDecimal(30), new BigDecimal(195)));
-        list.add(new Pay("5000学币", new BigDecimal(50), new BigDecimal(325)));
-        list.add(new Pay("10000学币", new BigDecimal(100), new BigDecimal(650)));
-        adapter = new MyAdapter(list);
-        listview.setAdapter(adapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        HttpUtil.Parameters p = new HttpUtil.Parameters();
+        p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
+        p.add("skip", 0 + "");
+        p.add("take", 15 + "");
+        HttpUtil.post(NetworkUtil.paymentOrderRecords, p, new RequestCallBack<String>() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Pay pay = list.get(position);
-                if (paymentDialog == null) {
-                    paymentDialog = new Dialog(ActivityMoney.this);
-                    paymentDialog.setTitle("请选择你的支付方式");
-                    View inflate = getLayoutInflater().inflate(R.layout.dialog_payment, null);
-                    ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    paymentDialog.setContentView(inflate, params);
-                    paymentDialog.getWindow().setGravity(Gravity.BOTTOM);
-                    paymentDialog.setCanceledOnTouchOutside(false);
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
+                Response<List<Orders>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Orders>>>() {
+                }.getType());
+
+                orderList.clear();
+                if (resp.code == 200) {
+                    List<Orders> info = resp.info;
+                    for (Orders o : info) {
+                        orderList.add(o);
+                    }
                 }
-                paymentDialog.show();
+
+                orderAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                Log.i(TAG, "onFailure: " + msg);
+                CommonUtil.toast("充值记录加载失败");
             }
         });
+
+        //初始化充值对话框
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View view = getLayoutInflater().inflate(R.layout.dialog_payment, null);
+        view.findViewById(R.id.iv_close).setOnClickListener(this);
+        view.findViewById(R.id.bt_positive).setOnClickListener(this);
+        paymentListView = (ListView) view.findViewById(R.id.listview);
+        builder.setView(view);
+        paymentDialog = builder.create();
+        paymentDialog.setCancelable(true);
+        paymentDialog.setCanceledOnTouchOutside(true);
+
+        //初始化充值金额
+        paymentList = new ArrayList<>();
+        paymentList.add(new Pay("1000学币", new Double(10), new Double(65)));
+        paymentList.add(new Pay("2000学币", new Double(20), new Double(130)));
+        paymentList.add(new Pay("3000学币", new Double(30), new Double(195)));
+        paymentList.add(new Pay("5000学币", new Double(50), new Double(325)));
+        paymentList.add(new Pay("10000学币", new Double(100), new Double(650)));
+
+        paymentAdapter = new MyAdapter(paymentList);
+        paymentListView.setAdapter(paymentAdapter);
+        paymentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                for (int i = 0; i < paymentList.size(); i++) {
+                    paymentList.get(i).is_check = i == position;
+                }
+                paymentAdapter.notifyDataSetChanged();
+            }
+        });
+
+
+        //初始化充值进度对话框
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
     private void initView() {
         findViewById(R.id.iv_home).setOnClickListener(this);
-        listview = (ListView) findViewById(R.id.listview);
+
+        orderListView = (ListView) findViewById(R.id.listview);
         rb_paypal = (RadioButton) findViewById(R.id.rb_paypal);
         rb_alipay = (RadioButton) findViewById(R.id.rb_alipay);
+
+        //绑定点击事件
         ll_paypal = (LinearLayout) findViewById(R.id.ll_paypal);
         ll_alipay = (LinearLayout) findViewById(R.id.ll_alipay);
         ll_paypal.setOnClickListener(this);
@@ -91,19 +166,82 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
             case R.id.iv_home:
                 finish();
                 break;
-
             case R.id.ll_paypal:
                 rb_paypal.setChecked(true);
                 rb_alipay.setChecked(false);
-                Dialog dialog = new Dialog(this);
-                dialog.setContentView(R.layout.dialog_pricelist);
-                dialog.setTitle("请选择充值金额");
-                dialog.show();
+                //请求网络
+
+
+                paymentDialog.show();
                 break;
             case R.id.ll_alipay:
                 rb_paypal.setChecked(false);
                 rb_alipay.setChecked(true);
+                paymentDialog.show();
                 break;
+            //对话框控件
+            case R.id.iv_close: {
+                //充值对话框隐藏及充值金额选中状态重置
+                paymentDialog.dismiss();
+                for (Pay p : paymentList) {
+                    p.is_check = false;
+                }
+                paymentAdapter.notifyDataSetChanged();
+            }
+            break;
+            case R.id.bt_positive: {
+                Pay pay = null;
+                for (Pay p : paymentList) {
+                    if (p.is_check) {
+                        pay = p;
+                        break;
+                    }
+                }
+
+                if (pay == null) {
+                    CommonUtil.toast("请选择充值金额");
+                    return;
+                }
+
+                progressDialog.setMessage("正在创建订单");
+                progressDialog.show();
+
+                //注意测试环境
+                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : 0.01, rb_paypal.isChecked() ? "USD" : "CNY", pay.subject, pay.subject);
+                HttpUtil.Parameters p = new HttpUtil.Parameters();
+                p.add("id", 0 + "");
+                p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
+                p.add("Currency", order.Currency);
+                p.add("Amount", order.Amount + "");
+                p.add("Quantity", order.Quantity + "");
+                p.add("Price", order.Price + "");
+                p.add("Main", order.Main + "");
+                p.add("Body", order.Body + "");
+                HttpUtil.post(NetworkUtil.paymentCreateOrder, p, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Response<Orders> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Orders>>() {
+                        }.getType());
+                        orderId = resp.info.Id;
+
+
+                        if (rb_alipay.isChecked()) {
+                            new AlipayThread(resp.info.LastOrderString).start();
+                        } else if (rb_paypal.isChecked()) {
+                            launchPayPalPayment(order);
+                        }
+                        progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        progressDialog.dismiss();
+                        CommonUtil.toast("订单创建失败");
+                    }
+                });
+
+            }
+            break;
         }
     }
 
@@ -115,7 +253,47 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Pay item = getItem(position);
-            View inflate = View.inflate(ActivityMoney.this, R.layout.listitem_records, null);
+            View inflate = View.inflate(ActivityMoney.this, R.layout.listitem_payment, null);
+            ImageView cb_payment = (ImageView) inflate.findViewById(R.id.iv_payment);
+            TextView tv_main = (TextView) inflate.findViewById(R.id.tv_main);
+            TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
+
+            cb_payment.setSelected(item.is_check);
+            tv_main.setText(item.subject);
+            tv_price.setText(rb_paypal.isChecked() ? ("USD " + item.usd) : ("CNY " + item.cny));
+            return inflate;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+
+            case REQUEST_CODE_PAYPAL:
+                handlePaypalResult(resultCode, data);
+                break;
+        }
+
+    }
+
+    private class OrderAdapter extends BaseAdapter<Orders> {
+        public OrderAdapter(List<Orders> list) {
+            super(list);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Orders item = getItem(position);
+            View inflate = getLayoutInflater().inflate(R.layout.listitem_records, null);
+            TextView tv_main = (TextView) inflate.findViewById(R.id.tv_main);
+            TextView tv_amount = (TextView) inflate.findViewById(R.id.tv_amount);
+            TextView tv_state = (TextView) inflate.findViewById(R.id.tv_state);
+            TextView tv_createtime = (TextView) inflate.findViewById(R.id.tv_createtime);
+
+            tv_main.setText("项目:" + item.Main);
+            tv_amount.setText("金额:" + item.Currency + item.Amount);
+            tv_state.setText("状态:" + item.TradeStatus);
+            tv_createtime.setText("时间:" + item.CreateTime);
             return inflate;
         }
     }
@@ -123,15 +301,146 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
 
     private class Pay {
         String subject;
-        BigDecimal usd;
-        BigDecimal cny;
+        double usd;
+        double cny;
+        boolean is_check;
 
-        public Pay(String subject, BigDecimal us, BigDecimal cn) {
+        public Pay(String subject, double us, double cn) {
             this.subject = subject;
             this.usd = us;
             this.cny = cn;
         }
     }
 
+    private class AlipayThread extends Thread {
+        private String mLastOrderString;
+
+        public AlipayThread(String lastOrderString) {
+            this.mLastOrderString = lastOrderString;
+        }
+
+        @Override
+        public void run() {
+
+            // 构造PayTask 对象
+            PayTask alipay = new PayTask(ActivityMoney.this);
+
+            // 调用支付接口，获取支付结果
+            // mLastOrderString 最终订单信息,主要包含商户的订单信息，key=“value”形式，以&连接,包含签名和签名类型
+            // true     是否需要一个loading加载动画做为在钱包唤起之前的过渡
+            String result = alipay.pay(mLastOrderString, true);
+
+            Log.i(TAG, "result: " + result);
+
+            PayResult payResult = new PayResult(result);
+            handleAlipayResult(payResult);
+        }
+    }
+
+    /**
+     * Launching PalPay payment activity to complete the payment
+     */
+    private void launchPayPalPayment(Orders order) {
+        PayPalPayment thingsToBuy = new PayPalPayment(new BigDecimal(order.Amount), order.Currency, order.Main, PayPalPayment.PAYMENT_INTENT_SALE);
+        Intent intent = new Intent(ActivityMoney.this, com.paypal.android.sdk.payments.PaymentActivity.class);
+        intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
+        intent.putExtra(com.paypal.android.sdk.payments.PaymentActivity.EXTRA_PAYMENT, thingsToBuy);
+        startActivityForResult(intent, REQUEST_CODE_PAYPAL);
+    }
+
+    private void handleAlipayResult(PayResult payResult) {
+        Log.i(TAG, "handleAlipayResult: " + payResult.getResult());
+        /**
+         * 同步返回的结果必须放置到服务端进行验证（验证的规则请看https://doc.open.alipay.com/doc2/ detail.htm?spm=0.0.0.0.xdvAU6&treeId=59&articleId=103665& docType=1) 建议商户依赖异步通知
+         */
+        String resultInfo = payResult.getResult();// 同步返回需要验证的信息
+        final String resultStatus = payResult.getResultStatus();
+        // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
+        if (TextUtils.equals(resultStatus, "9000")) {
+            // progressDialog.setMessage("正在验证订单");
+            // progressDialog.show();
+
+            HttpUtil.Parameters p = new HttpUtil.Parameters();
+            p.add("result", resultInfo);
+            p.add("orderId", orderId);
+            HttpUtil.post(NetworkUtil.paymentVerifyAliPay, p, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    Response<Orders> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Orders>>() {
+                    }.getType());
+
+                    if (resp.code == 200) {
+                        CommonUtil.toast("支付成功");
+                        finish();
+                    }
+
+                    //  progressDialog.dismiss();
+                }
+
+                @Override
+                public void onFailure(HttpException error, String msg) {
+
+                    // progressDialog.dismiss();
+                }
+            });
+
+
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    // 判断resultStatus 为非"9000"则代表可能支付失败
+                    // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
+                    if (TextUtils.equals(resultStatus, "8000")) {
+                        CommonUtil.toast("支付结果确认中");
+                    } else {
+                        // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
+                        CommonUtil.toast("支付失败");
+                    }
+                }
+            });
+        }
+    }
+
+    private void handlePaypalResult(int resultCode, Intent data) {
+        switch (resultCode) {
+            case Activity.RESULT_OK: {
+                PaymentConfirmation confirm = data.getParcelableExtra(com.paypal.android.sdk.payments.PaymentActivity.EXTRA_RESULT_CONFIRMATION);
+                if ("approved".equals(confirm.getProofOfPayment().getState())) {
+                    progressDialog.setMessage("正在验证订单");
+                    progressDialog.show();
+
+                    HttpUtil.Parameters p = new HttpUtil.Parameters();
+                    p.add("paymentId", confirm.getProofOfPayment().getPaymentId());
+                    p.add("orderId", orderId);
+                    HttpUtil.post(NetworkUtil.paymentVerifyPayPal, p, new RequestCallBack<String>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<String> responseInfo) {
+                            Log.i(TAG, "onSuccess: " + responseInfo.result);
+                            progressDialog.dismiss();
+                            CommonUtil.toast("支付成功");
+                            finish();
+                        }
+
+                        @Override
+                        public void onFailure(HttpException error, String msg) {
+                            CommonUtil.toast("支付失败");
+                        }
+                    });
+                }
+                Log.i(TAG, "Activity.RESULT_OK:" + confirm.toJSONObject().toString());
+            }
+            break;
+            case Activity.RESULT_CANCELED: {
+                Log.i(TAG, "The user canceled.");
+            }
+            break;
+            case com.paypal.android.sdk.payments.PaymentActivity.RESULT_EXTRAS_INVALID: {
+                Log.i(TAG, "An invalid Payment or PayPalConfiguration was submitted. Please see the docs.");
+            }
+            break;
+        }
+    }
 }
 

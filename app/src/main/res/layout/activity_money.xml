@@ -1,7 +1,8 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#F0F0F0">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#F0F0F0"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:id="@id/layout_title"
@@ -28,6 +29,14 @@
 
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginBottom="1dp"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:text="选择充值方式"/>
+
     <LinearLayout
         android:id="@+id/ll_ctrl"
         android:layout_width="match_parent"
@@ -35,16 +44,8 @@
         android:layout_below="@id/layout_title"
         android:layout_marginBottom="10dp"
         android:background="#FFFFFF"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
-        <TextView
-
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:gravity="center"
-            android:text="选择充值方式"
-            />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -57,9 +58,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:orientation="horizontal"
-                >
-
+                android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/rb_paypal"
@@ -75,8 +74,7 @@
                     android:layout_height="30dp"
                     android:background="@drawable/logo_paypal"
                     android:clickable="false"
-                    android:gravity="center"
-                    />
+                    android:gravity="center"/>
             </LinearLayout>
 
             <LinearLayout
@@ -108,6 +106,14 @@
 
     </LinearLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:layout_marginBottom="1dp"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:text="充值记录"/>
+
     <ListView
         android:id="@id/listview"
         android:layout_width="match_parent"
@@ -116,6 +122,4 @@
         android:layout_weight="1"
         android:background="#FFFFFF"
         android:dividerHeight="10dp"/>
-
-
-</RelativeLayout>
+</LinearLayout>

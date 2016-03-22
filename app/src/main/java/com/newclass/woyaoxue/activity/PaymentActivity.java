@@ -69,10 +69,8 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
     public static final String RSA_PUBLIC = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDxXZpvA4e0p8JKd7HvhVLmRiRPZDzvbmbFQRHjJ8rlJgdt/OLFDkR/1/8wLaKnM9Zw1ebtI0CKOI1JzkYUwFfhF/RxubI8yJlgynB23kq163s2QA/iN3XUaej7KcNd+hp3c+N8P7T9HfU8piRrc/uZGcWu+67rnYMkua7KHI18oQIDAQAB";
 */
     private static final int SDK_PAY_FLAG = 1;
-
-
-    private static PayPalConfiguration paypalConfig = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX).clientId(ConstantsUtil.PAYPAL_CLIENT_ID);
-
+    private static final String PAYPAL_CLIENT_ID = "ARWTsXI5z88D8wWRIcy8WqR2WfTSpxeHWqL1LLQh15RwYqsfTJx08plA5Lczhm3NmCzZglArvmQ_6Y8h";
+    private static PayPalConfiguration paypalConfig = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX).clientId(PAYPAL_CLIENT_ID);
 
     private String subject;
     private Serializable usd;
@@ -500,11 +498,9 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
             // "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
             if (TextUtils.equals(resultStatus, "8000")) {
                 Toast.makeText(PaymentActivity.this, "支付结果确认中", Toast.LENGTH_SHORT).show();
-
             } else {
                 // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                 Toast.makeText(PaymentActivity.this, "支付失败", Toast.LENGTH_SHORT).show();
-
             }
         }
     }

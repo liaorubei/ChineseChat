@@ -1,0 +1,35 @@
+<!--充值金额listitem-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="#f0f0f0"
+    android:orientation="horizontal"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+    <ImageView
+        android:id="@+id/iv_payment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/selector_box_radio"/>
+
+    <TextView
+        android:id="@+id/tv_main"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:gravity="center_vertical"
+        android:text="1000学币"
+        />
+
+    <TextView
+        android:id="@+id/tv_price"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:gravity="right|center_vertical"
+        android:text="$ 30.00"
+        />
+</LinearLayout>
+

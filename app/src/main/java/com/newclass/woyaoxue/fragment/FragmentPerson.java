@@ -90,8 +90,8 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
 
             //如果是学生端,显示充值界面和学习记录
-            rl_topup.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.INVISIBLE);
-            bt_histroy.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.INVISIBLE);
+            rl_topup.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.GONE);
+            bt_histroy.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.GONE);
 
             BitmapUtils bitmapUtils = new BitmapUtils(getActivity());
             final File avaterPNG = new File(FolderUtil.rootDir(getActivity()), avater);

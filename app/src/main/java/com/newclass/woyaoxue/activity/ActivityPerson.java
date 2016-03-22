@@ -68,7 +68,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private SimpleDateFormat sdf;
     private Gson gson = new Gson();
 
-    private String[] 国家 = new String[]{"中国", "日本", "韩国", "朝鲜", "老挝", "越南"};
+    private String[] 国家 = new String[]{"中国", "US", "日本", "韩国", "朝鲜", "老挝", "越南"};
     private String[] 母语 = new String[]{"普通话", "日语", "韩语", "朝鲜语", "越南语"};
     private String[] 职业 = new String[]{"老师", "公务员", "司机", "学生", "建筑师", "设计师"};
 
@@ -124,9 +124,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         iv_avater.setOnClickListener(this);
         tv_birth.setOnClickListener(this);
 
-
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-
         tv_username.setText(sp.getString("username", ""));
 
         et_nickname.setText(sp.getString("nickname", ""));
@@ -136,12 +134,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         rb_female.setChecked(gender == 0);
         rb_male.setChecked(gender == 1);
         tv_birth.setText(sp.getString("birth", ""));
-
-
-        rg_gender = (RadioGroup) findViewById(R.id.rg_gender);
-        rb_male = (RadioButton) findViewById(R.id.rb_female);
-        rb_female = (RadioButton) findViewById(R.id.rb_female);
-
 
         sp_country.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 国家));
         sp_language.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 母语));

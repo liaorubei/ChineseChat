@@ -20,6 +20,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
@@ -28,7 +30,6 @@ public class MyApplication extends Application {
     protected static final String TAG = "MyApplication";
     private static Context mContext = null;
     private static Database mDatabase = null;
-
     private Observer<StatusCode> observerOnlineStatus = new Observer<StatusCode>() {
         private static final long serialVersionUID = 1L;
 
