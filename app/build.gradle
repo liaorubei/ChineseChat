@@ -14,12 +14,12 @@ android {
     }
 
     productFlavors {
-        student {
+/*        student {
             manifestPlaceholders = [release_value: "student", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_student"]
-        }
-/*        teacher {
-            manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
         }*/
+        teacher {
+            manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
+        }
     }
 
     signingConfigs {

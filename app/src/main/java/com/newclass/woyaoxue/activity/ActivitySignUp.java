@@ -22,10 +22,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 帐号注册界面
@@ -34,92 +38,66 @@ import android.widget.Toast;
  */
 public class ActivitySignUp extends Activity implements OnClickListener {
     public static final int SignUp = 0;
-
-    private EditText et_phone, et_captcha;
-    private EditText et_nickname, et_password, et_repassword;
+    private EditText et_email, et_password, et_repassword;
+    private View tv_protocol, tv_login;
+    private CheckBox cb_is_read;
     private Button bt_signup;
-
-    private TextView tv_next, tv_captcha, tv_term;
-    private CheckBox cb_is_teacher;
-
-    private LinearLayout ll_first, ll_second;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
-        //initView();
+        initView();
     }
 
     private void initView() {
+        findViewById(R.id.iv_home).setOnClickListener(this);
 
-
-        tv_next.setOnClickListener(this);
-
-        et_nickname = (EditText) findViewById(R.id.et_nickname);
+        et_email = (EditText) findViewById(R.id.et_email);
         et_password = (EditText) findViewById(R.id.et_password);
         et_repassword = (EditText) findViewById(R.id.et_repassword);
 
+        cb_is_read = (CheckBox) findViewById(R.id.cb_is_read);
+        cb_is_read.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                bt_signup.setEnabled(isChecked);
+            }
+        });
+
+        findViewById(R.id.tv_protocol).setOnClickListener(this);
+        findViewById(R.id.tv_login).setOnClickListener(this);
+
         bt_signup = (Button) findViewById(R.id.bt_signup);
         bt_signup.setOnClickListener(this);
-
-
-        ll_second = (LinearLayout) findViewById(R.id.ll_second);
-
-        cb_is_teacher = (CheckBox) findViewById(R.id.cb_is_teacher);
-
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.tv_ctrl:// 提交验证码
-            {
-                String phone = et_phone.getText().toString().trim();
-                String captcha = et_captcha.getText().toString().trim();
+            case R.id.iv_home:
+                this.finish();
+                break;
+            case R.id.tv_protocol:
+                CommonUtil.toast("暂时无");
+                break;
+            case R.id.bt_signup: {
+                String email = et_email.getText().toString().trim();
+                String password = et_password.getText().toString().trim();
+                String repassword = et_repassword.getText().toString().trim();
 
-                if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(captcha)) {
+                if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(repassword)) {
                     CommonUtil.toast("数据不能为空");
                     return;
                 }
 
-                Parameters parameters = new Parameters();
-                parameters.add("phone", phone);
-                parameters.add("captcha", captcha);
-                HttpUtil.post(NetworkUtil.userVerify, parameters, new RequestCallBack<String>() {
-
-                    @Override
-                    public void onSuccess(ResponseInfo<String> responseInfo) {
-                        Response<String> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<String>>() {
-                        }.getType());
-                        if (response.code == 200) {
-                            ll_first.setVisibility(View.INVISIBLE);
-                            ll_second.setVisibility(View.VISIBLE);
-                        } else {
-                            CommonUtil.toast(response.desc);
-                        }
-                        tv_next.setEnabled(true);
-                    }
-
-                    @Override
-                    public void onFailure(HttpException error, String msg) {
-                        tv_next.setEnabled(true);
-                    }
-                });
-                tv_next.setEnabled(false);
-            }
-            break;
-
-            case R.id.bt_signup:
-
-            {
-                String phone = et_phone.getText().toString().trim();
-                String nickname = et_nickname.getText().toString().trim();
-                String password = et_password.getText().toString().trim();
-                String repassword = et_repassword.getText().toString().trim();
-
-                if (TextUtils.isEmpty(phone) || TextUtils.isEmpty(nickname) || TextUtils.isEmpty(password) || TextUtils.isEmpty(repassword)) {
-                    CommonUtil.toast("数据不能为空");
+                //验证邮箱格式
+                String check = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+                Pattern regex = Pattern.compile(check);
+                Matcher matcher = regex.matcher(email);
+                boolean isMatched = matcher.matches();
+                if (!isMatched) {
+                    CommonUtil.toast("邮箱格式不正确");
                     return;
                 }
 
@@ -129,29 +107,23 @@ public class ActivitySignUp extends Activity implements OnClickListener {
                 }
 
                 Parameters parameters = new Parameters();
-                parameters.add("username", phone);
+                parameters.add("email", email);
                 parameters.add("password", password);
-                parameters.add("nickname", nickname);
-                parameters.add("category", "" + (cb_is_teacher.isChecked() ? 1 : 0));
+                parameters.add("category", "" + 0);
                 HttpUtil.post(NetworkUtil.userCreate, parameters, new RequestCallBack<String>() {
 
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
                         bt_signup.setEnabled(true);
-
-                        ll_first.setVisibility(View.INVISIBLE);
-                        ll_second.setVisibility(View.INVISIBLE);
-
                         Response<User> json = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                         }.getType());
 
                         Log.i("logi", "创建成功:" + json.toString());
                         if (200 == json.code) {
                             Toast.makeText(ActivitySignUp.this, "注册成功", Toast.LENGTH_SHORT).show();
-
                             // 返回注册信息
                             Intent data = new Intent();
-                            data.putExtra("username", et_phone.getText().toString().trim());
+                            data.putExtra("email", et_email.getText().toString().trim());
                             data.putExtra("password", et_password.getText().toString().trim());
                             setResult(SignUp, data);
                             finish();
@@ -169,7 +141,9 @@ public class ActivitySignUp extends Activity implements OnClickListener {
                 bt_signup.setEnabled(false);
             }
             break;
-
+            case R.id.tv_login:
+                this.finish();
+                break;
             default:
                 break;
         }

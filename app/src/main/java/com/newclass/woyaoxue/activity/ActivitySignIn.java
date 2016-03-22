@@ -102,7 +102,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SignUp && resultCode == ActivitySignUp.SignUp && data != null) {
-            String username = data.getStringExtra("username");
+            String username = data.getStringExtra("email");
             String password = data.getStringExtra("password");
             signIn(username, password);
         }

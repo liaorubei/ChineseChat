@@ -1,11 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#F0F0F0">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0">
 
     <RelativeLayout
-        android:id="@id/layout_title"
         xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@id/layout_title"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#00a478">
@@ -15,7 +15,7 @@
             android:layout_height="25dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
-            android:src="@drawable/home_back"/>
+            android:src="@drawable/home_back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_centerInParent="true"
             android:text="ChineseChat"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
@@ -46,7 +46,7 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/shape_text_signinup"
             android:hint="请输入邮箱"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
 
         <EditText
@@ -57,7 +57,7 @@
             android:background="@drawable/shape_text_signinup"
             android:hint="请输入密码"
             android:inputType="textPassword"
-            android:textSize="12sp"/>
+            android:textSize="12sp" />
 
 
         <Button
@@ -70,7 +70,7 @@
             android:enabled="true"
             android:text="登   录"
             android:textColor="#FFFFFF"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,22 +79,22 @@
             android:orientation="horizontal">
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="忘记密码?"
+                android:textColor="@color/color_app" />
+
+            <TextView
                 android:id="@+id/tv_signup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:gravity="right"
                 android:layout_weight="1"
                 android:text="用户注册"
-                android:textColor="@color/color_app"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="忘记密码?"
-                android:textColor="@color/color_app"/>
+                android:textColor="@color/color_app" />
         </LinearLayout>
-
     </LinearLayout>
 
 </RelativeLayout>

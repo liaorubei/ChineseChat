@@ -58,7 +58,7 @@ public class MyApplication extends Application {
 
     private SDKOptions getOptions() {
         SDKOptions options = new SDKOptions();
-        options.appKey = ConstantsUtil.NimAppKey;
+        options.appKey = "599551c5de7282b9a1d686ee40abf74c";
 
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
         StatusBarNotificationConfig config = new StatusBarNotificationConfig();
