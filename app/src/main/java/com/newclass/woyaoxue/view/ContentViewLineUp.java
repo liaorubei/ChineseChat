@@ -101,14 +101,6 @@ public class ContentViewLineUp extends ContentView {
     }
 
     private void refresh(boolean isRefresh) {
-
-        StatusCode status = NIMClient.getStatus();
-        Log.i(TAG, "refresh: " + status);
-        if (status != StatusCode.LOGINED) {
-            getContext().startActivity(new Intent(getContext(), ActivitySignIn.class));
-            return;
-        }
-
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
         parameters.add("id", getContext().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("id", 0) + "");
         HttpUtil.post(NetworkUtil.teacherRefresh, parameters, new RequestCallBack<String>() {

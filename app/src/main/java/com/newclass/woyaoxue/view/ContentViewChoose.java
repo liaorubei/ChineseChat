@@ -116,7 +116,7 @@ public class ContentViewChoose extends ContentView {
             @Override
             public void onFailure(HttpException error, String msg) {
                 srl.setRefreshing(false);
-                CommonUtil.toast("加载失败");
+                CommonUtil.toast("网络异常");
             }
         });
 
