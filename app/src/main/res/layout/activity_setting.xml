@@ -29,18 +29,17 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_feedback"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:text="投诉/建议"/>
 
         <ImageView
@@ -48,7 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/download_play"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/icon_menu_arrow"
             />
     </RelativeLayout>
 
@@ -56,67 +56,48 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:background="#fff">
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="在Wifi环境下使用"/>
+            android:layout_marginLeft="10dp"
+            android:text="请在Wifi环境下使用"/>
 
-        <CheckBox
-            android:id="@+id/cb_wifi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:button="@drawable/selector_box_check"
-            />
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rl_wipedata"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:background="#fff">
 
 
         <TextView
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:text="清理缓存"/>
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/download_play"
-            />
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rb_aboutapp"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
-
+        android:background="#fff">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:text="关于汉问"/>
 
         <ImageView
@@ -124,7 +105,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/download_play"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/icon_menu_arrow"
             />
     </RelativeLayout>
 
@@ -133,10 +115,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
+        android:background="#fff">
 
 
         <TextView
@@ -144,6 +123,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
             android:text="登录"/>
 
         <ImageView
@@ -151,7 +131,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/download_play"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/icon_menu_arrow"
             />
     </RelativeLayout>
 </LinearLayout>

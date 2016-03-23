@@ -1,5 +1,6 @@
 package com.newclass.woyaoxue.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -46,13 +47,28 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private User user;
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate: ");
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
     public void onResume() {
+        Log.i(TAG, "onResume: ");
         super.onResume();
         initData();
     }
 
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.i(TAG, "onViewCreated: ");
+        super.onViewCreated(view, savedInstanceState);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView: ");
         View inflate = inflater.inflate(R.layout.fragment_person, null);
         ll_person = inflate.findViewById(R.id.ll_person);
         tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);

@@ -100,7 +100,7 @@ public class AutoUpdateService extends Service {
                             notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                             builder = new NotificationCompat.Builder(AutoUpdateService.this);
                             builder.setSmallIcon(R.drawable.ic_launcher);
-                            builder.setContentTitle("中文之音");
+                            builder.setContentTitle("ChineseChat");
                             builder.setContentText("应用更新");
                             builder.setProgress(100, 0, false);
                             notificationManager.notify(0, builder.build());

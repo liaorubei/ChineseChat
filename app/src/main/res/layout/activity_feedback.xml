@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@id/layout_title"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#00a478">
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:src="@drawable/home_back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="ChineseChat"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/et_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="1"
+        android:background="@drawable/shape_text_signinup"
+        android:gravity="top"
+        android:hint="请输入投诉/反馈/建议内容"
+        android:inputType="textPassword"
+        android:textSize="12sp"/>
+
+    <EditText
+        android:id="@+id/et_contact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/shape_text_signinup"
+        android:hint="请留下您的联系方式(如果意见被采纳会有惊喜哦)"
+        android:textSize="12sp"/>
+
+
+    <Button
+        android:id="@+id/bt_positive"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/selector_button_signniup"
+        android:enabled="true"
+        android:text="登   录"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"/>
+
+</LinearLayout>
