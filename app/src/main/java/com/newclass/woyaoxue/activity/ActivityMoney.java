@@ -24,6 +24,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Orders;
 import com.newclass.woyaoxue.bean.PayResult;
+import com.newclass.woyaoxue.bean.Product;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
@@ -79,6 +80,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         orderAdapter = new OrderAdapter(orderList);
         orderListView.setAdapter(orderAdapter);
 
+        //取得充值记录
         HttpUtil.Parameters p = new HttpUtil.Parameters();
         p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
         p.add("skip", 0 + "");
@@ -121,12 +123,6 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
 
         //初始化充值金额
         paymentList = new ArrayList<>();
-        paymentList.add(new Pay("1000学币", new Double(10), new Double(65)));
-        paymentList.add(new Pay("2000学币", new Double(20), new Double(130)));
-        paymentList.add(new Pay("3000学币", new Double(30), new Double(195)));
-        paymentList.add(new Pay("5000学币", new Double(50), new Double(325)));
-        paymentList.add(new Pay("10000学币", new Double(100), new Double(650)));
-
         paymentAdapter = new MyAdapter(paymentList);
         paymentListView.setAdapter(paymentAdapter);
         paymentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -139,6 +135,26 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
             }
         });
 
+        //取得价目表
+        HttpUtil.post(NetworkUtil.productSelect, null, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Response<List<Product>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Product>>>() {
+                }.getType());
+                paymentList.clear();
+                if (resp.code == 200) {
+                    for (Product p : resp.info) {
+                        paymentList.add(new Pay(p.Coin + " 学币", p.USD, p.CNY));
+                    }
+                }
+                paymentAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+
+            }
+        });
 
         //初始化充值进度对话框
         progressDialog = new ProgressDialog(this);

@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
         iv_home = (ImageView) findViewById(R.id.iv_home);
         findViewById(R.id.rl_feedback).setOnClickListener(this);
         findViewById(R.id.rl_wipedata).setOnClickListener(this);
-        findViewById(R.id.rb_aboutapp).setOnClickListener(this);
+        findViewById(R.id.rl_aboutapp).setOnClickListener(this);
 
         rl_login = (RelativeLayout) findViewById(R.id.rl_login);
         tv_login = (TextView) findViewById(R.id.tv_login);
@@ -60,6 +59,12 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                 startActivity(intent);
             }
             break;
+            case R.id.rl_aboutapp:
+            {
+                Intent intent=new Intent(getApplicationContext(),ActivityAbout.class);
+                startActivity(intent);
+            }
+                break;
             case R.id.rl_login:
                 if (NIMClient.getStatus() == StatusCode.LOGINED) {
                     NIMClient.getService(AuthService.class).logout();

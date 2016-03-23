@@ -17,9 +17,9 @@ android {
         student {
             manifestPlaceholders = [release_value: "student", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_student"]
         }
-        teacher {
+/*        teacher {
             manifestPlaceholders = [release_value: "teacher", IS_RELEASE: true, APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
-        }
+        }*/
     }
 
     signingConfigs {

@@ -96,6 +96,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
 
         bt_login.setOnClickListener(this);
         tv_signup.setOnClickListener(this);
+        findViewById(R.id.tv_password).setOnClickListener(this);
     }
 
     @Override
@@ -130,7 +131,8 @@ public class ActivitySignIn extends Activity implements OnClickListener {
             case R.id.tv_signup:
                 startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
                 break;
-            default:
+            case R.id.tv_password:
+                startActivity(new Intent(getApplicationContext(),ActivityReset.class));
                 break;
         }
     }
