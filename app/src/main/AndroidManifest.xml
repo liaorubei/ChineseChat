@@ -105,12 +105,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <!-- 说明是否是正式发布版本,如果是正式发布版本,就不用每次都登录云信,在Application中自动读取配置登录 -->
-        <meta-data
-            android:name="IS_RELEASE"
-            android:value="${IS_RELEASE}" />
-
         <!-- 说明本应该是学生端还是老师端 -->
         <meta-data
             android:name="release"

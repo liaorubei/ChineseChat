@@ -115,26 +115,15 @@ public class MyApplication extends Application {
 
     private LoginInfo getLoginInfo() {
         LoginInfo info = null;
-        boolean is_release = false;
-        try {
-            is_release = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getBoolean("IS_RELEASE", false);
-        } catch (Exception e) {
-            e.printStackTrace();
+        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+        String accid = sp.getString("accid", "");
+        String token = sp.getString("token", "");
+
+        if (TextUtils.isEmpty(accid) || TextUtils.isEmpty(token)) {
+            return null;
+        } else {
+            info = new LoginInfo(accid, token);
         }
-
-        if (is_release) {
-
-            SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-            String accid = sp.getString("accid", "");
-            String token = sp.getString("token", "");
-
-            if (TextUtils.isEmpty(accid) || TextUtils.isEmpty(token)) {
-                return null;
-            } else {
-                info = new LoginInfo(accid, token);
-            }
-        }
-        Log.i(TAG, "getLoginInfo: " + info);
         return info;
     }
 
