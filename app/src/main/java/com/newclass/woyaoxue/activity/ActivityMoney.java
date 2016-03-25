@@ -139,6 +139,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         HttpUtil.post(NetworkUtil.productSelect, null, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<Product>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Product>>>() {
                 }.getType());
                 paymentList.clear();
@@ -223,7 +224,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                 progressDialog.show();
 
                 //注意测试环境
-                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : 0.01, rb_paypal.isChecked() ? "USD" : "CNY", pay.subject, pay.subject);
+                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : new BigDecimal(0.01), rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat " + pay.subject, "ChineseChat " + pay.subject);
                 HttpUtil.Parameters p = new HttpUtil.Parameters();
                 p.add("id", 0 + "");
                 p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
@@ -236,6 +237,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                 HttpUtil.post(NetworkUtil.paymentCreateOrder, p, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Log.i(TAG, "onSuccess: " + responseInfo.result);
                         Response<Orders> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Orders>>() {
                         }.getType());
                         orderId = resp.info.Id;
@@ -307,7 +309,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
             TextView tv_createtime = (TextView) inflate.findViewById(R.id.tv_createtime);
 
             tv_main.setText("项目:" + item.Main);
-            tv_amount.setText("金额:" + item.Currency + item.Amount);
+            tv_amount.setText("金额: " + item.Amount + " " + item.Currency);
             tv_state.setText("状态:" + item.TradeStatus);
             tv_createtime.setText("时间:" + item.CreateTime);
             return inflate;
@@ -317,11 +319,11 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
 
     private class Pay {
         String subject;
-        double usd;
-        double cny;
+        BigDecimal usd;
+        BigDecimal cny;
         boolean is_check;
 
-        public Pay(String subject, double us, double cn) {
+        public Pay(String subject, BigDecimal us, BigDecimal cn) {
             this.subject = subject;
             this.usd = us;
             this.cny = cn;
@@ -357,7 +359,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
      * Launching PalPay payment activity to complete the payment
      */
     private void launchPayPalPayment(Orders order) {
-        PayPalPayment thingsToBuy = new PayPalPayment(new BigDecimal(order.Amount), order.Currency, order.Main, PayPalPayment.PAYMENT_INTENT_SALE);
+        PayPalPayment thingsToBuy = new PayPalPayment(order.Amount, order.Currency, order.Main, PayPalPayment.PAYMENT_INTENT_SALE);
         Intent intent = new Intent(ActivityMoney.this, com.paypal.android.sdk.payments.PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
         intent.putExtra(com.paypal.android.sdk.payments.PaymentActivity.EXTRA_PAYMENT, thingsToBuy);

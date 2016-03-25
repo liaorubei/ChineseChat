@@ -151,7 +151,7 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
                 progressDialog.setMessage("正在创建订单");
                 progressDialog.show();
 
-                final Orders order = new Orders(0.01, "USD", "ChineseChat 学币充值", "ChineseChat 学币1000枚");
+                final Orders order = new Orders(new BigDecimal(0.01), "USD", "ChineseChat 学币充值", "ChineseChat 学币1000枚");
                 HttpUtil.Parameters p = new HttpUtil.Parameters();
                 p.add("id", 0 + "");
                 p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
@@ -421,7 +421,7 @@ public class PaymentActivity extends Activity implements View.OnClickListener {
      * Launching PalPay payment activity to complete the payment
      */
     private void launchPayPalPayment(Orders order) {
-        PayPalPayment thingsToBuy = new PayPalPayment(new BigDecimal(order.Amount), order.Currency, order.Main, PayPalPayment.PAYMENT_INTENT_SALE);
+        PayPalPayment thingsToBuy = new PayPalPayment(order.Amount, order.Currency, order.Main, PayPalPayment.PAYMENT_INTENT_SALE);
 
         Intent intent = new Intent(PaymentActivity.this, com.paypal.android.sdk.payments.PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
