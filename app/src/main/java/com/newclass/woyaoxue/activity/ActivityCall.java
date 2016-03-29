@@ -6,10 +6,15 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +31,10 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -58,6 +67,8 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -72,7 +83,9 @@ public class ActivityCall extends Activity implements OnClickListener {
     public static final String KEY_TARGET_NICKNAME = "KEY_TARGET_NICKNAME";
     public static final String KEY_TARGET_ACCID = "KEY_TARGET_ACCID";
     public static final String KEY_TARGET_ID = "KEY_TARGET_ID";
+    private static final String KEY_TARGET_ICON = "KEY_TARGET_ICON";
     public static final String TAG = "ActivityCall";
+    private static final int REFRESH_DATA = 25;
 
     private AVChatCallback<Void> callback_hangup;
     private AVChatCallback<AVChatData> callback_call;
@@ -92,6 +105,16 @@ public class ActivityCall extends Activity implements OnClickListener {
     private String callId;
     private User source;
     private User target;
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case REFRESH_DATA:
+                    break;
+            }
+        }
+    };
 
     // 监听网络通话被叫方的响应（接听、拒绝、忙）
     private Observer<AVChatCalleeAckEvent> observerCallAck = new Observer<AVChatCalleeAckEvent>() {
@@ -243,11 +266,12 @@ public class ActivityCall extends Activity implements OnClickListener {
         AVChatManager.getInstance().hangUp(callback_hangup);
     }
 
-    public static void start(Context context, int id, String accId, String nickName, int callTypeAudio) {
+    public static void start(Context context, int id, String accId, String icon, String nickName, int callTypeAudio) {
         Intent intent = new Intent(context, ActivityCall.class);
         intent.putExtra(KEY_TARGET_ID, id);
         intent.putExtra(KEY_TARGET_ACCID, accId);
         intent.putExtra(KEY_TARGET_NICKNAME, nickName);
+        intent.putExtra(KEY_TARGET_ICON, icon);
         context.startActivity(intent);
         Log.i(TAG, "id:" + id + " accId:" + accId + " nickName:" + nickName + " callTypeAudio:" + callTypeAudio);
     }
@@ -256,8 +280,40 @@ public class ActivityCall extends Activity implements OnClickListener {
         Intent intent = getIntent();
         String nickname = intent.getStringExtra(KEY_TARGET_NICKNAME);
         tv_nickname.setText(nickname);
-        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
 
+        String icon = intent.getStringExtra(KEY_TARGET_ICON);
+
+        //下载处理,如果有设置头像,则显示头像,
+        //如果头像已经下载过,则加载本地图片
+        if (!TextUtils.isEmpty(icon)) {
+            final File file = new File(getFilesDir(), icon);
+            String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(icon);
+            new BitmapUtils(ActivityCall.this).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
+                @Override
+                public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+                    container.setImageBitmap(bitmap);
+
+                    //缓存处理,如果本地照片已经保存过,则不做保存处理
+                    if (!file.exists()) {
+                        file.getParentFile().mkdirs();
+                        try {
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Log.i(TAG, "onLoadCompleted: uri=" + uri);
+                }
+
+                @Override
+                public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
+                    container.setImageResource(R.drawable.ic_launcher_student);
+                    Log.i(TAG, "onLoadFailed: ");
+                }
+            });
+        }
+
+        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
         source = new User();
         source.Id = sp.getInt("id", 0);
         source.Accid = sp.getString("accid", "");
@@ -267,6 +323,7 @@ public class ActivityCall extends Activity implements OnClickListener {
         target.Id = intent.getIntExtra(KEY_TARGET_ID, 0);
         target.Accid = intent.getStringExtra(KEY_TARGET_ACCID);
         target.NickName = intent.getStringExtra(KEY_TARGET_NICKNAME);
+        target.Icon = intent.getStringExtra(KEY_TARGET_ICON);
 
         nimCall();
 
@@ -274,6 +331,10 @@ public class ActivityCall extends Activity implements OnClickListener {
     }
 
     private void initView() {
+        //头像
+        iv_icon = (ImageView) findViewById(R.id.iv_icon);
+
+        //控制
         bt_hangup = findViewById(R.id.bt_hangup);
         bt_mute = findViewById(R.id.bt_mute);
         bt_free = findViewById(R.id.bt_free);
@@ -311,12 +372,14 @@ public class ActivityCall extends Activity implements OnClickListener {
                     AVChatManager.getInstance().setMute(true);
                 }
                 CommonUtil.toast(AVChatManager.getInstance().isMute() ? "目前静音" : "目前通话");
+                bt_free.setSelected(AVChatManager.getInstance().isMute());
             }
             break;
             case R.id.bt_free: {
                 // 设置扬声器是否开启
                 AVChatManager.getInstance().setSpeaker(!AVChatManager.getInstance().speakerEnabled());
                 CommonUtil.toast(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
+                bt_mute.setSelected(AVChatManager.getInstance().speakerEnabled());
             }
             break;
 

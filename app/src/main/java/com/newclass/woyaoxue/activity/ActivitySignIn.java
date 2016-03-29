@@ -89,6 +89,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     };
 
     private void initView() {
+        findViewById(R.id.iv_home).setOnClickListener(this);
         et_username = (EditText) findViewById(R.id.et_username);
         et_password = (EditText) findViewById(R.id.et_password);
         bt_login = (Button) findViewById(R.id.bt_login);
@@ -112,6 +113,9 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_home:
+                this.finish();
+                break;
             case R.id.bt_login:
                 bt_login.setEnabled(false);
 
@@ -132,7 +136,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
                 break;
             case R.id.tv_password:
-                startActivity(new Intent(getApplicationContext(),ActivityReset.class));
+                startActivity(new Intent(getApplicationContext(), ActivityReset.class));
                 break;
         }
     }

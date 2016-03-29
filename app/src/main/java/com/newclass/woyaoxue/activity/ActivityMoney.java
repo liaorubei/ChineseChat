@@ -61,6 +61,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
     private static final String PAYPAL_CLIENT_ID = "ARWTsXI5z88D8wWRIcy8WqR2WfTSpxeHWqL1LLQh15RwYqsfTJx08plA5Lczhm3NmCzZglArvmQ_6Y8h";
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX).clientId(PAYPAL_CLIENT_ID);
     private static final int REQUEST_CODE_PAYPAL = 50;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,35 +82,37 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         orderListView.setAdapter(orderAdapter);
 
         //取得充值记录
-        HttpUtil.Parameters p = new HttpUtil.Parameters();
-        p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
-        p.add("skip", 0 + "");
-        p.add("take", 15 + "");
-        HttpUtil.post(NetworkUtil.paymentOrderRecords, p, new RequestCallBack<String>() {
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<List<Orders>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Orders>>>() {
-                }.getType());
+        username = getSharedPreferences("", MODE_PRIVATE).getString("username", "");
+        if (!TextUtils.isEmpty(username)) {
+            HttpUtil.Parameters p = new HttpUtil.Parameters();
+            p.add("username", username);
+            p.add("skip", 0 + "");
+            p.add("take", 15 + "");
+            HttpUtil.post(NetworkUtil.paymentOrderRecords, p, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    Response<List<Orders>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Orders>>>() {
+                    }.getType());
 
-                orderList.clear();
-                if (resp.code == 200) {
-                    List<Orders> info = resp.info;
-                    for (Orders o : info) {
-                        orderList.add(o);
+                    orderList.clear();
+                    if (resp.code == 200) {
+                        List<Orders> info = resp.info;
+                        for (Orders o : info) {
+                            orderList.add(o);
+                        }
                     }
+
+                    orderAdapter.notifyDataSetChanged();
                 }
 
-                orderAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "onFailure: " + msg);
-                CommonUtil.toast("充值记录加载失败");
-            }
-        });
-
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    Log.i(TAG, "onFailure: " + msg);
+                    CommonUtil.toast("充值记录加载失败");
+                }
+            });
+        }
         //初始化充值对话框
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_payment, null);
@@ -145,7 +148,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                 paymentList.clear();
                 if (resp.code == 200) {
                     for (Product p : resp.info) {
-                        paymentList.add(new Pay(p.Coin + " 学币", p.USD, p.CNY));
+                        paymentList.add(new Pay(p.Coin, p.USD, p.CNY));
                     }
                 }
                 paymentAdapter.notifyDataSetChanged();
@@ -186,9 +189,6 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
             case R.id.ll_paypal:
                 rb_paypal.setChecked(true);
                 rb_alipay.setChecked(false);
-                //请求网络
-
-
                 paymentDialog.show();
                 break;
             case R.id.ll_alipay:
@@ -224,7 +224,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                 progressDialog.show();
 
                 //注意测试环境
-                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : new BigDecimal(0.01), rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat " + pay.subject, "ChineseChat " + pay.subject);
+                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : new BigDecimal("0.01"), rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat " + pay.subject, "ChineseChat " + pay.subject);
                 HttpUtil.Parameters p = new HttpUtil.Parameters();
                 p.add("id", 0 + "");
                 p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
@@ -234,6 +234,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                 p.add("Price", order.Price + "");
                 p.add("Main", order.Main + "");
                 p.add("Body", order.Body + "");
+                p.add("coin", pay.coin + "");
                 HttpUtil.post(NetworkUtil.paymentCreateOrder, p, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -255,6 +256,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                     public void onFailure(HttpException error, String msg) {
                         progressDialog.dismiss();
                         CommonUtil.toast("订单创建失败");
+                        android.util.Log.i(TAG, "onFailure: " + msg);
                     }
                 });
 
@@ -291,7 +293,6 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                 handlePaypalResult(resultCode, data);
                 break;
         }
-
     }
 
     private class OrderAdapter extends BaseAdapter<Orders> {
@@ -318,13 +319,15 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
 
 
     private class Pay {
+        int coin;
         String subject;
         BigDecimal usd;
         BigDecimal cny;
         boolean is_check;
 
-        public Pay(String subject, BigDecimal us, BigDecimal cn) {
-            this.subject = subject;
+        public Pay(int coin, BigDecimal us, BigDecimal cn) {
+            this.coin = coin;
+            this.subject = coin + " 学币";
             this.usd = us;
             this.cny = cn;
         }

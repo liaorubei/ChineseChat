@@ -111,29 +111,32 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                     return;
                 }
 
+                CommonUtil.toast("请到邮箱获取验证码");
+                time = 60;
+                tv_code.setText("60S");
+                tv_code.setEnabled(false);
+                Message message = handler.obtainMessage();
+                message.what = CHANGE_TIME_TEXT;
+                message.obj = tv_code;
+                handler.sendMessageDelayed(message, 1000);
+
                 HttpUtil.Parameters params = new HttpUtil.Parameters();
                 params.add("email", email);
                 HttpUtil.post(NetworkUtil.nimuserGetCode, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                        time = 60;
-                        tv_code.setText("60S");
-                        tv_code.setEnabled(false);
-                        Message message = handler.obtainMessage();
-                        message.what = CHANGE_TIME_TEXT;
-                        message.obj = tv_code;
-                        handler.sendMessageDelayed(message, 1000);
+                        Log.i(TAG, "onSuccess: " + responseInfo.result);
                     }
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
                         CommonUtil.toast("获取验证码失败");
+                        tv_code.setEnabled(true);
                         Log.i(TAG, "onFailure: " + msg);
                     }
                 });
 
 
-                CommonUtil.toast("请到邮箱获取验证码");
             }
             break;
             case R.id.bt_next: {

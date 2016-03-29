@@ -1,6 +1,5 @@
 package com.newclass.woyaoxue.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,16 +8,22 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.MyApplication;
@@ -27,8 +32,11 @@ import com.newclass.woyaoxue.activity.ActivityHistory;
 import com.newclass.woyaoxue.activity.ActivityMoney;
 import com.newclass.woyaoxue.activity.ActivityPerson;
 import com.newclass.woyaoxue.activity.ActivitySetting;
+import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
+import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.FolderUtil;
+import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
@@ -41,13 +49,36 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
     private View bt_histroy, bt_setting, rl_topup;
     private ImageView iv_avater, iv_gender;
-    private TextView tv_nickname;
+    private TextView tv_nickname, tv_coins, tv_score;
 
     private View ll_person;
     private User user;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        String username = getActivity().getSharedPreferences("user", Context.MODE_APPEND).getString("username", "");
+        if (!TextUtils.isEmpty(username)) {
+            HttpUtil.Parameters params = new HttpUtil.Parameters();
+            params.add("username", username);
+            HttpUtil.post(NetworkUtil.nimuserGetByUsername, params, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Response<User> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
+                    }.getType());
+
+                    if (resp.code == 200) {
+                        tv_coins.setText("" + resp.info.Coins);
+                        tv_score.setText("" + resp.info.Score);
+                    }
+                }
+
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    CommonUtil.toast("用户信息更新失败");
+                    Log.i(TAG, "onFailure: " + msg);
+                }
+            });
+        }
         Log.i(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
     }
@@ -74,7 +105,8 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
         iv_avater = (ImageView) inflate.findViewById(R.id.iv_avater);
         iv_gender = (ImageView) inflate.findViewById(R.id.iv_gender);
-
+        tv_coins = (TextView) inflate.findViewById(R.id.tv_coins);
+        tv_score = (TextView) inflate.findViewById(R.id.tv_score);
 
         rl_topup = inflate.findViewById(R.id.rl_topup);
         bt_histroy = inflate.findViewById(R.id.rl_history);

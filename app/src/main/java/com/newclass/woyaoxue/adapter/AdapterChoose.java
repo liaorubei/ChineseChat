@@ -105,7 +105,7 @@ public class AdapterChoose extends BaseAdapter<User> {
 
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                        ActivityCall.start(mContext, user.Id, user.Accid, user.NickName, ActivityCall.CALL_TYPE_AUDIO);
+                        ActivityCall.start(mContext, user.Id, user.Accid,user.Icon, user.NickName, ActivityCall.CALL_TYPE_AUDIO);
                     }
 
                     @Override

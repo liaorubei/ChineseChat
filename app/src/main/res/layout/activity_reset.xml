@@ -12,17 +12,17 @@
 
         <ImageView
             android:id="@+id/iv_home"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
+            android:padding="10dp"
             android:src="@drawable/home_back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="ChineseChat"
+            android:text="密码重置"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -49,6 +49,7 @@
                 android:background="@drawable/shape_text_signinup"
                 android:hint="请输入邮箱"
                 android:textSize="12sp" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="48dp"

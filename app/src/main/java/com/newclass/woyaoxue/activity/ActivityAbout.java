@@ -19,11 +19,15 @@ public class ActivityAbout extends Activity implements View.OnClickListener {
     private void initView() {
         findViewById(R.id.rl_usehelp).setOnClickListener(this);
         findViewById(R.id.rl_useterm).setOnClickListener(this);
+        findViewById(R.id.iv_home).setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
+            case R.id.iv_home:
+                this.finish();
+                break;
             case R.id.rl_usehelp: {
                 Intent intent = new Intent(getApplicationContext(), ActivityUsehelp.class);
                 startActivity(intent);

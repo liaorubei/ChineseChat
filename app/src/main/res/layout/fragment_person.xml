@@ -67,7 +67,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toLeftOf="@id/center"
-                android:text="150"
+                android:text="0"
                 android:textColor="#FF7F30"/>
 
             <TextView
@@ -87,7 +87,7 @@
                 />
 
             <TextView
-                android:id="@+id/tv_point"
+                android:id="@+id/tv_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/tv_tips_point"
