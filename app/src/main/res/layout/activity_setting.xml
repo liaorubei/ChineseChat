@@ -12,10 +12,10 @@
 
         <ImageView
             android:id="@+id/iv_home"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
+            android:padding="10dp"
             android:src="@drawable/home_back" />
 
         <TextView
@@ -55,7 +55,6 @@
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
         android:background="#fff">
-
 
         <TextView
             android:layout_width="wrap_content"

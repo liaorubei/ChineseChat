@@ -1,6 +1,5 @@
 package com.newclass.woyaoxue.activity;
 
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -59,12 +58,11 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                 startActivity(intent);
             }
             break;
-            case R.id.rl_aboutapp:
-            {
-                Intent intent=new Intent(getApplicationContext(),ActivityAbout.class);
+            case R.id.rl_aboutapp: {
+                Intent intent = new Intent(getApplicationContext(), ActivityAbout.class);
                 startActivity(intent);
             }
-                break;
+            break;
             case R.id.rl_login:
                 if (NIMClient.getStatus() == StatusCode.LOGINED) {
                     NIMClient.getService(AuthService.class).logout();

@@ -44,6 +44,7 @@ import java.util.List;
 public class ActivityMoney extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MoneyActivity";
+    public static final int RESULTCODE_SUCCESS = 1;
     private LinearLayout ll_paypal, ll_alipay;
     private RadioButton rb_paypal, rb_alipay;
     private List<Orders> orderList;
@@ -394,15 +395,12 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                     if (resp.code == 200) {
                         CommonUtil.toast("支付成功");
                         finish();
+                        setResult(RESULTCODE_SUCCESS);
                     }
-
-                    //  progressDialog.dismiss();
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
-
-                    // progressDialog.dismiss();
                 }
             });
 
@@ -441,6 +439,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                             Log.i(TAG, "onSuccess: " + responseInfo.result);
                             progressDialog.dismiss();
                             CommonUtil.toast("支付成功");
+                            setResult(RESULTCODE_SUCCESS);
                             finish();
                         }
 

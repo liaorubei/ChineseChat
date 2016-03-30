@@ -8,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,6 @@ import com.newclass.woyaoxue.activity.ActivityPerson;
 import com.newclass.woyaoxue.activity.ActivitySetting;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
-import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
@@ -47,19 +45,24 @@ import java.io.OutputStream;
 
 public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
+    private static final int REQUESTCODE_TOPUP = 1;
     private View bt_histroy, bt_setting, rl_topup;
     private ImageView iv_avater, iv_gender;
     private TextView tv_nickname, tv_coins, tv_score;
 
     private View ll_person;
     private User user;
+    private boolean NEED_TO_REFRESH = true;//是否需要刷新成最新数据
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        String username = getActivity().getSharedPreferences("user", Context.MODE_APPEND).getString("username", "");
-        if (!TextUtils.isEmpty(username)) {
+    public void onResume() {
+        Log.i(TAG, "onResume: ");
+
+        if (NEED_TO_REFRESH && NIMClient.getStatus() == StatusCode.LOGINED) {
+            NEED_TO_REFRESH = false;
+
             HttpUtil.Parameters params = new HttpUtil.Parameters();
-            params.add("username", username);
+            params.add("username", getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getString("username", ""));
             HttpUtil.post(NetworkUtil.nimuserGetByUsername, params, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -67,25 +70,17 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                     }.getType());
 
                     if (resp.code == 200) {
-                        tv_coins.setText("" + resp.info.Coins);
-                        tv_score.setText("" + resp.info.Score);
+                        tv_coins.setText(resp.info.Coins + "");
+                        tv_score.setText(resp.info.Score + "");
                     }
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
-                    CommonUtil.toast("用户信息更新失败");
                     Log.i(TAG, "onFailure: " + msg);
                 }
             });
         }
-        Log.i(TAG, "onCreate: ");
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        Log.i(TAG, "onResume: ");
         super.onResume();
         initData();
     }
@@ -120,6 +115,10 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     }
 
     private void initData() {
+        //如果是学生端,显示充值界面和学习记录
+        rl_topup.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.GONE);
+        bt_histroy.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.GONE);
+
         if (NIMClient.getStatus() == StatusCode.LOGINED) {
             SharedPreferences sp = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
             user = new User();
@@ -136,10 +135,6 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             tv_nickname.setText(nickname);
             iv_gender.setVisibility(gender == -1 ? View.INVISIBLE : View.VISIBLE);
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
-
-            //如果是学生端,显示充值界面和学习记录
-            rl_topup.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.GONE);
-            bt_histroy.setVisibility(MyApplication.isStudent() ? View.VISIBLE : View.GONE);
 
             BitmapUtils bitmapUtils = new BitmapUtils(getActivity());
             final File avaterPNG = new File(FolderUtil.rootDir(getActivity()), avater);
@@ -178,6 +173,16 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         }
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUESTCODE_TOPUP:
+                NEED_TO_REFRESH = resultCode == ActivityMoney.RESULTCODE_SUCCESS;
+                break;
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -189,7 +194,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                 startActivity(new Intent(getActivity(), ActivityPerson.class));
                 break;
             case R.id.rl_topup:
-                startActivity(new Intent(getActivity(), ActivityMoney.class));
+                startActivityForResult(new Intent(getActivity(), ActivityMoney.class), REQUESTCODE_TOPUP);
                 break;
 
             case R.id.rl_history:
