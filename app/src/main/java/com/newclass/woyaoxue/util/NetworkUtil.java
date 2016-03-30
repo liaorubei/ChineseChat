@@ -41,9 +41,10 @@ public class NetworkUtil {
     public static String feedbackCreate = domain + "/Api/Feedback/Create";
     public static String productSelect = domain + "/Api/Product/Select";
     public static String nimuserGetCode = domain + "/Api/NimUser/GetCode";
-    public static String nimuserVerify=domain+"/Api/NimUser/Verify";
-    public static String nimuserChangePassword=domain+"/Api/NimUser/ChangePassword";
-    public static String nimuserGetByUsername=domain+"/Api/NimUser/GetByUsername";
+    public static String nimuserVerify = domain + "/Api/NimUser/Verify";
+    public static String nimuserChangePassword = domain + "/Api/NimUser/ChangePassword";
+    public static String nimuserGetByUsername = domain + "/Api/NimUser/GetByUsername";
+    public static String callRefresh = domain + "/Api/CallLog/Refresh";
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {

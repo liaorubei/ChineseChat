@@ -57,7 +57,6 @@ public class ThemeActivity extends FragmentActivity implements FragmentThemes.On
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Response<List<HsLevel>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<HsLevel>>>() {
                 }.getType());
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
 
                 if (resp.code == 200) {
                     for (int i = 0; i < resp.info.size(); i++) {

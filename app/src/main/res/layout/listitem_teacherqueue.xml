@@ -28,6 +28,7 @@
             android:text="昵称:全职教师"/>
 
         <TextView
+            android:id="@+id/tv_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"

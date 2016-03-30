@@ -1,7 +1,7 @@
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#F0F0F0">
 
     <RelativeLayout
         android:id="@id/layout_title"
@@ -11,11 +11,11 @@
 
         <ImageView
             android:id="@+id/iv_home"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:src="@drawable/home_back"/>
+            android:padding="10dp"
+            android:src="@drawable/home_back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +23,7 @@
             android:layout_centerInParent="true"
             android:text="ChineseChat"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_ctrl"
@@ -33,7 +33,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:text="删除"
-            android:textColor="#FFF"/>
+            android:textColor="#FFF" />
 
     </RelativeLayout>
 
@@ -42,8 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_below="@id/layout_title"
-        android:background="#F9F9F9"
-        >
+        android:background="#F9F9F9">
 
         <TextView
             android:id="@+id/tv_name"
@@ -53,8 +52,7 @@
             android:layout_marginLeft="10dp"
             android:gravity="center_vertical"
             android:text="成语故事汇"
-            android:textColor="@color/color_app"
-            />
+            android:textColor="@color/color_app" />
 
         <ImageView
             android:id="@+id/cb_delete"
@@ -63,8 +61,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:background="@drawable/selector_box_check"
-            />
+            android:background="@drawable/selector_box_check" />
 
     </RelativeLayout>
 
@@ -76,8 +73,7 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/tv_folder"
         android:background="#F0F0F0"
-        android:scrollbars="none">
-    </ListView>
+        android:scrollbars="none"></ListView>
 
     <ImageView
         android:id="@+id/iv_delete"
@@ -88,7 +84,6 @@
         android:layout_marginBottom="25dp"
         android:background="@drawable/shape_oval_white"
         android:padding="10dp"
-        android:src="@drawable/dustbin_uncheck"
-        />
+        android:src="@drawable/dustbin_uncheck" />
 
 </RelativeLayout>

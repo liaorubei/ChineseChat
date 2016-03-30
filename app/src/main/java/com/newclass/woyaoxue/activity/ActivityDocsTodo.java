@@ -47,6 +47,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Future;
 
 
 /*
@@ -188,6 +189,14 @@ public class ActivityDocsTodo extends Activity {
     }
 
     private void initView() {
+        //标题
+        findViewById(R.id.iv_home).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         //查找
         srl = (SwipeRefreshLayout) findViewById(R.id.srl);
         listview = (ListView) findViewById(android.R.id.list);

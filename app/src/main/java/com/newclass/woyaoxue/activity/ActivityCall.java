@@ -87,8 +87,6 @@ public class ActivityCall extends Activity implements OnClickListener {
     public static final String TAG = "ActivityCall";
     private static final int REFRESH_DATA = 25;
 
-    private AVChatCallback<Void> callback_hangup;
-    private AVChatCallback<AVChatData> callback_call;
     private View bt_hangup, bt_mute, bt_free, bt_face, bt_card;
 
     private View ll_user, ll_ctrl, rl_main;
@@ -105,16 +103,45 @@ public class ActivityCall extends Activity implements OnClickListener {
     private String callId;
     private User source;
     private User target;
-
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case REFRESH_DATA:
-                    break;
+                case REFRESH_DATA: {
+                    refresh((String) msg.obj);
+
+                    Message message = obtainMessage();
+                    message.what = REFRESH_DATA;
+                    message.obj = msg.obj;
+                    sendMessageDelayed(message, 60000);
+                }
+                break;
             }
         }
     };
+
+    private void refresh(String callId) {
+        Parameters params = new Parameters();
+        params.add("callId", callId);
+        HttpUtil.post(NetworkUtil.callRefresh, params, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
+                Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
+                }.getType());
+                if (resp.code != 200) {
+
+                    AVChatManager.getInstance().hangUp(callback_hangup);
+                    CommonUtil.toast("学币不足");
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                Log.i(TAG, "onFailure: " + msg);
+            }
+        });
+    }
 
     // 监听网络通话被叫方的响应（接听、拒绝、忙）
     private Observer<AVChatCalleeAckEvent> observerCallAck = new Observer<AVChatCalleeAckEvent>() {
@@ -125,7 +152,9 @@ public class ActivityCall extends Activity implements OnClickListener {
             switch (event.getEvent()) {
                 case CALLEE_ACK_AGREE:// 被叫方同意接听
                     if (event.isDeviceReady()) {
+                        //保存通话状态和通话chatId
                         IS_CHATTING = true;
+                        chatId = event.getChatId();
 
                         CommonUtil.toast("设备正常,开始通话");
                         cm_time.setBase(SystemClock.elapsedRealtime());
@@ -149,6 +178,11 @@ public class ActivityCall extends Activity implements OnClickListener {
                                     callId = resp.info.Id;
                                 }
                                 Log.i(TAG, "记录Id:" + resp.info.Id);
+
+                                Message message = handler.obtainMessage();
+                                message.what = REFRESH_DATA;
+                                message.obj = callId;
+                                handler.sendMessage(message);
                             }
 
                             @Override
@@ -181,13 +215,24 @@ public class ActivityCall extends Activity implements OnClickListener {
 
         @Override
         public void onEvent(AVChatCommonEvent event) {
-            Log.i("logi", "对方已挂断 event.getChatId:" + event.getChatId());
-            Parameters parameters = new Parameters();
-            parameters.add("id", callId + "");
-            parameters.add("chatId", event.getChatId() + "");
+            Log.i(TAG, "对方已挂断 event.getChatId:" + event.getChatId());
 
-            HttpUtil.post(NetworkUtil.callFinish, parameters, null);
-            finish();
+            Parameters parameters = new Parameters();
+            parameters.add("chatId", event.getChatId());
+
+            HttpUtil.post(NetworkUtil.callFinish, parameters, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    Log.i(TAG, "onFailure: " + msg);
+                    finish();
+                }
+            });
         }
     };
 
@@ -201,9 +246,63 @@ public class ActivityCall extends Activity implements OnClickListener {
         }
     };
 
+    private long chatId = -1;
+    private AVChatCallback<Void> callback_hangup = new AVChatCallback<Void>() {
+
+        @Override
+        public void onException(Throwable arg0) {
+            Log.i("logi", "callactivity hangUp onException:" + arg0.getMessage());
+            finish();
+        }
+
+        @Override
+        public void onFailed(int arg0) {
+            Log.i("logi", "callactivity hangUp onFailed:" + arg0);
+            finish();
+        }
+
+        @Override
+        public void onSuccess(Void arg0) {
+            Log.i("logi", "callactivity hangUp onSuccess");
+            Parameters parameters = new Parameters();
+            parameters.add("chatId", chatId);
+
+            HttpUtil.post(NetworkUtil.callFinish, parameters, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    Log.i(TAG, "onFailure: " + msg);
+                    finish();
+                }
+            });
+        }
+    };
+    private AVChatCallback<AVChatData> callback_call = new AVChatCallback<AVChatData>() {
+
+        @Override
+        public void onException(Throwable arg0) {
+            CommonUtil.toast("拨打异常");
+        }
+
+        @Override
+        public void onFailed(int arg0) {
+            CommonUtil.toast("拨打错误");
+        }
+
+        @Override
+        public void onSuccess(AVChatData avChatData) {
+            cm_time.start();
+            Log.i(TAG, "onSuccess: " + "拨打成功");
+        }
+    };
+
     private boolean IS_CHATTING = false;
     private int requestcode_theme = 1;
-    private PopupWindow facePopupWindow;
 
     private Dialog faceDialog;
 
@@ -213,57 +312,6 @@ public class ActivityCall extends Activity implements OnClickListener {
         setContentView(R.layout.activity_call);
         initView();
         initData();
-    }
-
-    private void nimCall() {
-        if (callback_call == null) {
-            callback_call = new AVChatCallback<AVChatData>() {
-
-                @Override
-                public void onException(Throwable arg0) {
-                    CommonUtil.toast("拨打异常");
-                }
-
-                @Override
-                public void onFailed(int arg0) {
-                    CommonUtil.toast("拨打错误");
-                }
-
-                @Override
-                public void onSuccess(AVChatData avChatData) {
-                    cm_time.start();
-                    Log.i(TAG, "onSuccess: " + "拨打成功");
-                }
-            };
-        }
-        // 呼叫拨出
-        AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, callback_call);
-    }
-
-    private void nimHangup() {
-        if (callback_hangup == null) {
-            callback_hangup = new AVChatCallback<Void>() {
-
-                @Override
-                public void onException(Throwable arg0) {
-                    Log.i("logi", "callactivity hangUp onException:" + arg0.getMessage());
-                    finish();
-                }
-
-                @Override
-                public void onFailed(int arg0) {
-                    Log.i("logi", "callactivity hangUp onFailed:" + arg0);
-                    finish();
-                }
-
-                @Override
-                public void onSuccess(Void arg0) {
-                    Log.i("logi", "callactivity hangUp onSuccess");
-                    finish();
-                }
-            };
-        }
-        AVChatManager.getInstance().hangUp(callback_hangup);
     }
 
     public static void start(Context context, int id, String accId, String icon, String nickName, int callTypeAudio) {
@@ -325,8 +373,7 @@ public class ActivityCall extends Activity implements OnClickListener {
         target.NickName = intent.getStringExtra(KEY_TARGET_NICKNAME);
         target.Icon = intent.getStringExtra(KEY_TARGET_ICON);
 
-        nimCall();
-
+        AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, callback_call);
         registerObserver();
     }
 
@@ -359,7 +406,7 @@ public class ActivityCall extends Activity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_hangup:
-                nimHangup();
+                AVChatManager.getInstance().hangUp(callback_hangup);
                 break;
 
             case R.id.bt_mute: {
@@ -372,14 +419,14 @@ public class ActivityCall extends Activity implements OnClickListener {
                     AVChatManager.getInstance().setMute(true);
                 }
                 CommonUtil.toast(AVChatManager.getInstance().isMute() ? "目前静音" : "目前通话");
-                bt_free.setSelected(AVChatManager.getInstance().isMute());
+                bt_mute.setSelected(AVChatManager.getInstance().isMute());
             }
             break;
             case R.id.bt_free: {
                 // 设置扬声器是否开启
                 AVChatManager.getInstance().setSpeaker(!AVChatManager.getInstance().speakerEnabled());
                 CommonUtil.toast(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
-                bt_mute.setSelected(AVChatManager.getInstance().speakerEnabled());
+                bt_free.setSelected(AVChatManager.getInstance().speakerEnabled());
             }
             break;
 
@@ -471,6 +518,8 @@ public class ActivityCall extends Activity implements OnClickListener {
         AVChatManager.getInstance().observeCalleeAckNotification(observerCallAck, false);
         AVChatManager.getInstance().observeHangUpNotification(observerHangUp, false);
         AVChatManager.getInstance().observeTimeoutNotification(observerTimeOut, false);
+
+        handler.removeCallbacksAndMessages(null);
     }
 
     private void registerObserver() {

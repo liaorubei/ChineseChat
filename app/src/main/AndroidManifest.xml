@@ -165,7 +165,12 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivityAbout" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityUsehelp" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityUseterm" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityReset"></activity>
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityReset" />
+
+        <service
+            android:name="com.newclass.woyaoxue.service.TeacherAutoRefreshService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

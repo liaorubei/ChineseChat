@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -156,9 +157,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_refresh:
-                FragmentChoose chat = (FragmentChoose) getSupportFragmentManager().findFragmentByTag("chat");
+                Fragment chat = getSupportFragmentManager().findFragmentByTag("chat");
                 chat.onResume();
-
                 break;
             case R.id.delete:
 

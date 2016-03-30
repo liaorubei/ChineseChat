@@ -229,13 +229,6 @@ public class FragmentListen extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.i(TAG, "onSaveInstanceState: " + outState);
-        outState.putString("sldk", "12306+");
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onDestroy() {
         Log.i(TAG, "onDestroy: ");
         super.onDestroy();

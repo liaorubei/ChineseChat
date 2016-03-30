@@ -98,12 +98,10 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
     }
 
     private void initView() {
+        findViewById(R.id.iv_home).setOnClickListener(this);
         tv_folder = (RelativeLayout) findViewById(R.id.tv_folder);
         tv_name = (TextView) findViewById(R.id.tv_name);
         listview = (ListView) findViewById(R.id.listview);
-
-        ImageView iv_home = (ImageView) findViewById(R.id.iv_home);
-        iv_home.setOnClickListener(this);
 
         tv_ctrl = (TextView) findViewById(R.id.tv_ctrl);
         tv_ctrl.setOnClickListener(this);
@@ -279,8 +277,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 cb_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
                 adapter.notifyDataSetChanged();
                 break;
-
-
             case R.id.iv_delete:
                 List<ViewHelper> removeList = new ArrayList<ViewHelper>();// 被删除的集合
 

@@ -43,8 +43,6 @@ public class FragmentThemes extends Fragment {
         HsLevel hsLevel = gson.fromJson(getArguments().getString("HsLevel"), new TypeToken<HsLevel>() {
         }.getType());
 
-        Log.i(TAG, "onCreateView: " + hsLevel);
-
         View inflate = inflater.inflate(R.layout.fragment_themes, container, false);
         gridView = (GridView) inflate.findViewById(R.id.gridView);
         list = new ArrayList<>();
@@ -93,7 +91,6 @@ public class FragmentThemes extends Fragment {
             ViewModel item = getItem(position);
             View inflate = View.inflate(getActivity(), R.layout.griditem_card, null);
             TextView tv_theme = (TextView) inflate.findViewById(R.id.tv_theme);
-            Log.i(TAG, "getView: " + item.Name);
             tv_theme.setText(item.Name);
             inflate.findViewById(R.id.iv_card).setVisibility(item.isChecked ? View.INVISIBLE : View.VISIBLE);
             return inflate;

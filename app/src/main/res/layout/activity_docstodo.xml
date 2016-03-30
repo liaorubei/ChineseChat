@@ -1,9 +1,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0"
+    android:orientation="vertical">
 
-    <include layout="@layout/layout_title"/>
+    <RelativeLayout
+        android:id="@id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#00a478">
+
+        <ImageView
+            android:id="@+id/iv_home"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@drawable/home_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="ChineseChat"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/rl_download"
@@ -19,7 +41,7 @@
             android:layout_marginLeft="10dp"
             android:text="L2.013《买工艺品》"
             android:textColor="@color/color_app"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <ImageView
             android:id="@+id/ib_download"
@@ -28,7 +50,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_margin="10dp"
-            android:src="@drawable/download_pressed"/>
+            android:src="@drawable/download_pressed" />
 
         <TextView
             android:id="@+id/tv_down"
@@ -38,7 +60,7 @@
             android:layout_toLeftOf="@id/ib_download"
             android:text="全部下载"
             android:textColor="@color/color_app"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
     </RelativeLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -52,7 +74,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/rl_download"
-            android:scrollbars="none"/>
+            android:scrollbars="none" />
 
 
     </android.support.v4.widget.SwipeRefreshLayout>

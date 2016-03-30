@@ -1,5 +1,6 @@
 package com.newclass.woyaoxue.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -44,9 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private static final int REFRESH_DATA = 1;
-    private static int time = -1;
     private String TAG = "FragmentChoose";
+    private static final int REFRESH_DATA = 1;
+
     private static Gson gson = new Gson();
     private boolean visible = false;
     public Handler handler = new Handler() {
@@ -54,23 +55,21 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_DATA:
-                    time--;
-                    tv_time.setText("" + (time + 1));
-                    if (time < 0 && visible) {
+                    time += 5;
+                    if (visible && time > 60) {
                         refresh();
                     }
-                    sendEmptyMessageDelayed(REFRESH_DATA, 1000);
-                    Log.i(TAG, "handleMessage: " + time);
+                    tv_time.setText(time + "");
+                    sendEmptyMessageDelayed(REFRESH_DATA, 5000);
                     break;
             }
-
-
         }
     };
     private List<User> list;
     private MyAdapter adapter;
-    private TextView tv_time;
     private SwipeRefreshLayout srl;
+    private int time = 0;
+    private TextView tv_time;
 
     private void refresh() {
         srl.setRefreshing(true);
@@ -80,7 +79,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         HttpUtil.post(NetworkUtil.teacherInQueue, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: ");
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<User>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<User>>>() {
                 }.getType());
 
@@ -91,17 +90,16 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                     list.add(u);
                 }
                 adapter.notifyDataSetChanged();
-
                 srl.setVisibility(View.VISIBLE);
                 srl.setRefreshing(false);
-                time = 60;
+                time = 0;
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
                 CommonUtil.toast("网络异常");
-                time = 60;
+                time = 0;
             }
         });
     }
@@ -221,13 +219,18 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                     }
 
                     HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-                    parameters.add("id", 1 + "");
+                    parameters.add("id", getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("id", 0));
                     parameters.add("target", user.Id + "");
                     HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
-
                         @Override
                         public void onSuccess(ResponseInfo<String> responseInfo) {
-                            ActivityCall.start(getActivity(), user.Id, user.Accid, user.Icon, user.NickName, ActivityCall.CALL_TYPE_AUDIO);
+                            Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
+                            }.getType());
+                            if (resp.code == 200) {
+                                ActivityCall.start(getActivity(), user.Id, user.Accid, user.Icon, user.Name, ActivityCall.CALL_TYPE_AUDIO);
+                            } else {
+                                CommonUtil.toast(resp.desc);
+                            }
                         }
 
                         @Override
