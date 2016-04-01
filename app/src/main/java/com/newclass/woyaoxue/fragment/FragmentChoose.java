@@ -53,7 +53,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
     private MyAdapter adapter;
     private SwipeRefreshLayout srl;
     private TextView tv_time;
-
     private int time = 0;
     private int offset = 1;//递归时间，单位秒
 
@@ -65,7 +64,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                     time += offset;
                     if (visible && time >= 60) {
                         refresh();
-                        time = 0;
                     }
                     tv_time.setText(time + "");
                     sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);
@@ -76,6 +74,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
 
     private void refresh() {
+        time = 0;
         srl.setRefreshing(true);
         HttpUtil.Parameters params = new HttpUtil.Parameters();
         params.add("skip", "0");

@@ -359,6 +359,9 @@ public class ActivityCall extends Activity implements OnClickListener {
                     Log.i(TAG, "onLoadFailed: ");
                 }
             });
+            //外放和静音状态
+            bt_mute.setSelected(true);
+            bt_free.setSelected(false);
         }
 
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
@@ -410,16 +413,10 @@ public class ActivityCall extends Activity implements OnClickListener {
                 break;
 
             case R.id.bt_mute: {
-                if (AVChatManager.getInstance().isMute()) {
-                    // isMute是否处于静音状态
-                    // 关闭音频
-                    AVChatManager.getInstance().setMute(false);
-                } else {
-                    // 打开音频
-                    AVChatManager.getInstance().setMute(true);
-                }
+                // 静音设置
+                AVChatManager.getInstance().setMute(!AVChatManager.getInstance().isMute());
                 CommonUtil.toast(AVChatManager.getInstance().isMute() ? "目前静音" : "目前通话");
-                bt_mute.setSelected(AVChatManager.getInstance().isMute());
+                bt_mute.setSelected(!AVChatManager.getInstance().isMute());
             }
             break;
             case R.id.bt_free: {

@@ -58,24 +58,25 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
     private static Gson gson = new Gson();
     private List<User> list;
     private MyAdapter adapter;
-
+    private int offset = 10;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_DATA:
-                    time += 10;
-                    if (time > 60) {
+                    time += offset;
+                    if (time >= 60) {
                         refresh();
+                        time = 0;
+                        TeacherAutoRefreshService.time = 0;
                     }
-                    Log.i(TAG, "handleMessage: time" + time);
-                    sendEmptyMessageDelayed(REFRESH_DATA, 10 * 1000);//10秒回调一次，一分钟刷新一次
+                    Log.i(TAG, "handleMessage: time=" + time);
+                    sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);//10秒回调一次，一分钟刷新一次
                     break;
             }
         }
     };
     private int time = 0;
-
 
     private void refresh() {
         HttpUtil.Parameters params = new HttpUtil.Parameters();
@@ -97,16 +98,12 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
                 }
                 adapter.notifyDataSetChanged();
                 srl.setRefreshing(false);
-                TeacherAutoRefreshService.time = 0;
-                time = 0;
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 srl.setRefreshing(false);
                 CommonUtil.toast("网络异常");
-                TeacherAutoRefreshService.time = 0;
-                time = 0;
             }
         });
     }
@@ -135,7 +132,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
         Log.i(TAG, "onResume: ");
         super.onResume();
         TeacherAutoRefreshService.time = 0;
-        time = 30;
+        time = 60;
         handler.sendEmptyMessage(REFRESH_DATA);
         Intent service = new Intent(getActivity(), TeacherAutoRefreshService.class);
         getActivity().startService(service);
@@ -146,6 +143,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
         Log.i(TAG, "onPause: ");
         super.onPause();
         TeacherAutoRefreshService.time = 0;
+        time = 0;
         handler.removeCallbacksAndMessages(null);
     }
 
@@ -184,16 +182,12 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
                     }
                     adapter.notifyDataSetChanged();
                     srl.setRefreshing(false);
-                    TeacherAutoRefreshService.time = 0;
-                    time = 0;
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
                     srl.setRefreshing(false);
                     CommonUtil.toast("排队失败");
-                    TeacherAutoRefreshService.time = 0;
-                    time = 0;
                 }
             });
         }

@@ -20,18 +20,20 @@ public class TeacherAutoRefreshService extends Service {
     private static final String TAG = "TeacherAutoRefreshService";
     private static final int REFRESH_DATA = 1;
     public static int time = 0;
+    private int offset = 10;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
 
                 case REFRESH_DATA:
-                    time += 30;//自增30秒
+                    time += offset;//自增30秒
                     if (time > 240) {
                         requestData();
+                        time=0;
                     }
                     Log.i(TAG, "handleMessage: time=" + time);
-                    sendEmptyMessageDelayed(REFRESH_DATA, 30 * 1000);//30秒回调一次，4分钟刷新一次
+                    sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);//30秒回调一次，4分钟刷新一次
                     break;
             }
         }
@@ -45,7 +47,6 @@ public class TeacherAutoRefreshService extends Service {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
-                time = 0;
             }
 
             @Override
@@ -59,7 +60,6 @@ public class TeacherAutoRefreshService extends Service {
     @Override
     public void onCreate() {
         Log.i(TAG, "onCreate: ");
-        time = 0;
         handler.sendEmptyMessage(REFRESH_DATA);
     }
 

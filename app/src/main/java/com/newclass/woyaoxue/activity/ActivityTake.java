@@ -7,7 +7,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -22,6 +25,10 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -47,6 +54,8 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,9 +163,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         public void onReceive(Context context, Intent intent) {
             // 从 intent 中取出自定义通知， intent 中只包含了一个 CustomNotification 对象
             CustomNotification notification = (CustomNotification) intent.getSerializableExtra(NimIntent.EXTRA_BROADCAST_MSG);
-
-            Log.i(TAG, "Content:" + notification.getContent());
-
             NimSysNotice<Theme> notice = gson.fromJson(notification.getContent(), new TypeToken<NimSysNotice<Theme>>() {
             }.getType());
 
@@ -208,6 +214,10 @@ public class ActivityTake extends Activity implements OnClickListener {
                     target.Id = resp.info.Id;
                     target.NickName = resp.info.NickName;
                     tv_nickname.setText(target.NickName);
+
+                    //下载处理,如果有设置头像,则显示头像,
+                    //如果头像已经下载过,则加载本地图片
+                    showImage(getApplicationContext(), iv_icon, resp.info.Icon);
                 }
             }
         });
@@ -216,6 +226,40 @@ public class ActivityTake extends Activity implements OnClickListener {
         list = new ArrayList<>();
         adapter = new MyAdapter(list);
         listview.setAdapter(adapter);
+
+        //外放和静音状态
+        bt_mute.setSelected(true);
+        bt_free.setSelected(false);
+    }
+
+    private void showImage(Context context, ImageView iv_icon, String icon) {
+        if (!TextUtils.isEmpty(icon)) {
+            final File file = new File(getFilesDir(), icon);
+            String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(icon);
+            new BitmapUtils(context).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
+                @Override
+                public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+                    container.setImageBitmap(bitmap);
+
+                    //缓存处理,如果本地照片已经保存过,则不做保存处理
+                    if (!file.exists()) {
+                        file.getParentFile().mkdirs();
+                        try {
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    Log.i(TAG, "onLoadCompleted: uri=" + uri);
+                }
+
+                @Override
+                public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
+                    container.setImageResource(R.drawable.ic_launcher_student);
+                    Log.i(TAG, "onLoadFailed: ");
+                }
+            });
+        }
     }
 
     protected void createRatingDialog() {
@@ -346,24 +390,18 @@ public class ActivityTake extends Activity implements OnClickListener {
                 AVChatManager.getInstance().hangUp(callbackHangup);
                 break;*/
             case R.id.bt_mute: {
-                if (AVChatManager.getInstance().isMute()) {
-                    // isMute是否处于静音状态
-                    // 关闭音频
-                    AVChatManager.getInstance().setMute(false);
-                } else {
-                    // 打开音频
-                    AVChatManager.getInstance().setMute(true);
-                }
-                // bt_mute.setText(AVChatManager.getInstance().isMute() ? "目前静音" : "目前不静音");
+                //是否静音
+                AVChatManager.getInstance().setMute(!AVChatManager.getInstance().isMute());
+                bt_mute.setSelected(!AVChatManager.getInstance().isMute());
             }
             break;
             case R.id.bt_hangup:
                 AVChatManager.getInstance().hangUp(callbackHangup);
                 break;
             case R.id.bt_free: {
-                // 设置扬声器是否开启
+                // 是否外放
                 AVChatManager.getInstance().setSpeaker(!AVChatManager.getInstance().speakerEnabled());
-                //bt_free.setText(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
+                bt_free.setSelected(AVChatManager.getInstance().speakerEnabled());
             }
             break;
 
@@ -378,8 +416,6 @@ public class ActivityTake extends Activity implements OnClickListener {
                 Theme k = new Theme();
                 k.Id = 11;
                 showThemeQuestion(k);
-
-
                 break;
 
             case R.id.bt_face: {
@@ -393,6 +429,10 @@ public class ActivityTake extends Activity implements OnClickListener {
     }
 
     private void showThemeQuestion(Theme theme) {
+        //主题名称
+        tv_theme.setText(theme.Name);
+
+        //主题问题
         Parameters params = new Parameters();
         params.add("id", "" + theme.Id);
         HttpUtil.post(NetworkUtil.themeGetById, params, new RequestCallBack<String>() {
