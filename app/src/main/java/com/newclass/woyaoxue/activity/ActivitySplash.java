@@ -43,7 +43,7 @@ public class ActivitySplash extends Activity {
             if (!TextUtils.equals(version, versionName)) {
                 handler.sendEmptyMessageDelayed(1, 2500);
                 View child = new View(this);
-                child.setBackgroundResource(R.drawable.background);
+                child.setBackgroundResource(R.drawable.splash);
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
                 rl_main.addView(child, params);
                 AnimationSet set = new AnimationSet(true);
