@@ -313,5 +313,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_activity_feedback">1</string>
+    <string name="title_activity_activity_splash">ActivitySplash</string>
 
 </resources>

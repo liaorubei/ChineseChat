@@ -24,7 +24,6 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
 import com.newclass.woyaoxue.bean.DownloadInfo;
 import com.newclass.woyaoxue.database.Database;
-import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
@@ -92,7 +91,7 @@ public class DownloadService extends Service
 						manager.downloading.put(info.Id, info);
 
 						// 下载音频文件
-						new HttpUtils().download(NetworkUtil.getFullPath(info.SoundPath), new File(FolderUtil.rootDir(DownloadService.this), info.SoundPath).getAbsolutePath(), new MyAudioCallBack(info.Id));
+						new HttpUtils().download(NetworkUtil.getFullPath(info.SoundPath), new File(getFilesDir(), info.SoundPath).getAbsolutePath(), new MyAudioCallBack(info.Id));
 						// 下载歌词文件
 						new HttpUtils().send(HttpMethod.GET, NetworkUtil.getDocById(info.Id), new MyLyricCallBack(info.Id));
 					}

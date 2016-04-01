@@ -22,7 +22,6 @@ import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Document;
 import com.newclass.woyaoxue.bean.Folder;
 import com.newclass.woyaoxue.database.Database;
-import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
 
@@ -294,7 +293,7 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                     database.docsDeleteById(viewHelper.document.Id);
 
                     // 从文件夹移除
-                    File file = new File(FolderUtil.rootDir(ActivityDocsDone.this), viewHelper.document.SoundPath);
+                    File file = new File(getFilesDir(), viewHelper.document.SoundPath);
                     if (file.isFile() && file.exists()) {
                         file.delete();
                     }

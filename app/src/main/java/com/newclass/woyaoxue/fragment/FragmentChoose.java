@@ -47,29 +47,33 @@ import java.util.List;
 public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private String TAG = "FragmentChoose";
     private static final int REFRESH_DATA = 1;
-
     private static Gson gson = new Gson();
     private boolean visible = false;
+    private List<User> list;
+    private MyAdapter adapter;
+    private SwipeRefreshLayout srl;
+    private TextView tv_time;
+
+    private int time = 0;
+    private int offset = 1;//递归时间，单位秒
+
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_DATA:
-                    time += 5;
-                    if (visible && time > 60) {
+                    time += offset;
+                    if (visible && time >= 60) {
                         refresh();
+                        time = 0;
                     }
                     tv_time.setText(time + "");
-                    sendEmptyMessageDelayed(REFRESH_DATA, 5000);
+                    sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);
                     break;
             }
         }
     };
-    private List<User> list;
-    private MyAdapter adapter;
-    private SwipeRefreshLayout srl;
-    private int time = 0;
-    private TextView tv_time;
+
 
     private void refresh() {
         srl.setRefreshing(true);
@@ -92,14 +96,12 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                 adapter.notifyDataSetChanged();
                 srl.setVisibility(View.VISIBLE);
                 srl.setRefreshing(false);
-                time = 0;
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
                 CommonUtil.toast("网络异常");
-                time = 0;
             }
         });
     }
@@ -129,7 +131,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
     public void onResume() {
         Log.i(TAG, "onResume: ");
         super.onResume();
-        time = 0;
+        time = 60;
         visible = true;
         handler.removeCallbacksAndMessages(null);
 
@@ -168,7 +170,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             tv_nickname.setText("昵称:" + user.Name);
             TextView tv_about = (TextView) inflate.findViewById(R.id.tv_about);
             tv_about.setText(user.About);
-
 
             //下载处理,如果有设置头像,则显示头像,
             //如果头像已经下载过,则加载本地图片
@@ -240,7 +241,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                     });
                 }
             });
-
             return inflate;
         }
     }

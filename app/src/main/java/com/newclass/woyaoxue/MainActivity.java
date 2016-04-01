@@ -1,5 +1,6 @@
 package com.newclass.woyaoxue;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -8,10 +9,17 @@ import android.support.v4.app.FragmentActivity;
 
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
@@ -48,6 +56,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     //App Secret: 64e52bd091da
     protected static final String TAG = "MainActivity";
     private TextView tv_delete, tv_refresh;
+    private RelativeLayout rl_main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,16 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         //初始化云信铃声及添加来电观察者(注:不要放在Application里面,有些机子会出现异常)
         enableAVChat();
 
+        //文件夹情况
+/*        File[] files = getFilesDir().getParentFile().listFiles();
+        for (File f : files) {
+            Log.i(TAG, "onCreate: File=" + f.getAbsolutePath());
+
+            File[] files1 = f.listFiles();
+            for (File f1 : files1) {
+                Log.i(TAG, "onCreate: __File=" + f1.getAbsolutePath());
+            }
+        }*/
 
         // 下载任务服务
         Intent sIntent = new Intent(this, DownloadService.class);
@@ -66,11 +85,12 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         // 自动升级服务
         Intent service = new Intent(this, AutoUpdateService.class);
         startService(service);
-        DisplayMetrics metrics = new DisplayMetrics();
+
+/*        DisplayMetrics metrics = new DisplayMetrics();
         WindowManager WM = (WindowManager) this.getSystemService(WINDOW_SERVICE);
         WM.getDefaultDisplay().getMetrics(metrics);
         Log.i(TAG, "onCreate: heightPixels=" + metrics.density);
-        Log.i(TAG, "onCreate: scaledDensity=" + metrics.scaledDensity);
+        Log.i(TAG, "onCreate: scaledDensity=" + metrics.scaledDensity);*/
     }
 
     private void enableAVChat() {
@@ -103,7 +123,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         tv_refresh = (TextView) findViewById(R.id.tv_refresh);
         tv_delete = (TextView) findViewById(R.id.tv_delete);
         tv_refresh.setOnClickListener(this);
-        //  tv_delete.setOnClickListener(this);
+        rl_main = (RelativeLayout) findViewById(R.id.rl_main);
 
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(MainActivity.this, getSupportFragmentManager(), R.id.ff_content);
@@ -127,7 +147,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                         tv_refresh.setVisibility(View.INVISIBLE);
                         tv_delete.setVisibility(View.INVISIBLE);
                         break;
-
                 }
             }
         });

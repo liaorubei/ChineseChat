@@ -5,7 +5,6 @@ import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
@@ -25,7 +24,6 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,7 +44,6 @@ import com.newclass.woyaoxue.bean.DownloadInfo;
 import com.newclass.woyaoxue.bean.Lyric;
 import com.newclass.woyaoxue.bean.UrlCache;
 import com.newclass.woyaoxue.database.Database;
-import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.SpecialLyricView;
@@ -141,7 +138,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         initData();
 
         mediaRecorder = new MediaRecorder();
-        recordFile = new File(FolderUtil.rootDir(this), "recode.tmp");
+        recordFile = new File(getFilesDir(), "recode.tmp");
         initMediaRecorder(recordFile.getAbsolutePath());
 
         // 取得屏幕尺寸
@@ -289,7 +286,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             }
 
             // 如果本地音频文件存在,则直接使用本地路径,如果不存在才使用网络路径,因为有可能已经缓存或下载过了
-            File file = new File(FolderUtil.rootDir(this), path);
+            File file = new File(getFilesDir(), path);
             if (file.exists()) {
                 originPlayer.setDataSource(file.getAbsolutePath());
                 originPlayer.prepare();
@@ -457,7 +454,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
                 // 初始化音频录音对播放录音的对象,这两个对象操作的是同一个文件
                 if (recordFile == null) {
-                    recordFile = new File(FolderUtil.rootDir(this), "record.tmp");
+                    recordFile = new File(getFilesDir(), "record.tmp");
                 }
                 if (recordPlayer == null) {
                     initRecordPlayer(recordFile.getAbsolutePath(), recordFile.length() > 0);

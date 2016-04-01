@@ -79,7 +79,7 @@ public class ActivitySignUp extends Activity implements OnClickListener {
                 this.finish();
                 break;
             case R.id.tv_protocol:
-                CommonUtil.toast("暂时无");
+                startActivity(new Intent(this, ActivityUseterm.class));
                 break;
             case R.id.bt_signup: {
                 String email = et_email.getText().toString().trim();

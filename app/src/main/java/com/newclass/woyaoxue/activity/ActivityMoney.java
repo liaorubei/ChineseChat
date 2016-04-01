@@ -1,7 +1,7 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -53,7 +53,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
     private List<Pay> paymentList;
     private BaseAdapter<Pay> paymentAdapter;
     private ListView paymentListView;
-    private AlertDialog paymentDialog;
+    private Dialog paymentDialog;
     private Gson gson = new Gson();
     private ProgressDialog progressDialog;
     private String orderId;
@@ -83,12 +83,12 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         orderListView.setAdapter(orderAdapter);
 
         //取得充值记录
-        username = getSharedPreferences("", MODE_PRIVATE).getString("username", "");
+        username = getSharedPreferences("user", MODE_PRIVATE).getString("username", "");
         if (!TextUtils.isEmpty(username)) {
             HttpUtil.Parameters p = new HttpUtil.Parameters();
             p.add("username", username);
             p.add("skip", 0 + "");
-            p.add("take", 15 + "");
+            p.add("take", 25 + "");
             HttpUtil.post(NetworkUtil.paymentOrderRecords, p, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -103,7 +103,6 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
                             orderList.add(o);
                         }
                     }
-
                     orderAdapter.notifyDataSetChanged();
                 }
 
@@ -115,15 +114,16 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
             });
         }
         //初始化充值对话框
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View view = getLayoutInflater().inflate(R.layout.dialog_payment, null);
         view.findViewById(R.id.iv_close).setOnClickListener(this);
         view.findViewById(R.id.bt_positive).setOnClickListener(this);
         paymentListView = (ListView) view.findViewById(R.id.listview);
-        builder.setView(view);
-        paymentDialog = builder.create();
+
+        paymentDialog = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar);//去标题
+        paymentDialog.setContentView(view);
         paymentDialog.setCancelable(true);
         paymentDialog.setCanceledOnTouchOutside(true);
+        paymentDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);//去背景
 
         //初始化充值金额
         paymentList = new ArrayList<>();

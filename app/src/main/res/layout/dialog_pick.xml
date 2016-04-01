@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="#F0F0F0"
-              android:orientation="vertical">
-
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#F0F0F0"
+    android:orientation="vertical">
+    <!--更换头像时，选择相片或者选择相机-->
     <TextView
         android:id="@+id/tv_album"
         android:layout_width="match_parent"
@@ -15,7 +15,8 @@
         android:gravity="center|left"
         android:paddingLeft="15dp"
         android:text="相册"
-        android:textColor="#000"/>
+        android:textColor="#000"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/tv_camera"
@@ -26,6 +27,6 @@
         android:gravity="center|left"
         android:paddingLeft="15dp"
         android:text="相机"
-        android:textColor="#000"/>
+        android:textColor="#000" />
 
 </LinearLayout>

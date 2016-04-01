@@ -33,7 +33,6 @@ import com.newclass.woyaoxue.activity.ActivityPerson;
 import com.newclass.woyaoxue.activity.ActivitySetting;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
-import com.newclass.woyaoxue.util.FolderUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
@@ -66,12 +65,18 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             HttpUtil.post(NetworkUtil.nimuserGetByUsername, params, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + responseInfo.result);
                     Response<User> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                     }.getType());
 
                     if (resp.code == 200) {
                         tv_coins.setText(resp.info.Coins + "");
                         tv_score.setText(resp.info.Score + "");
+
+                        //保存
+                        SharedPreferences.Editor edit = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).edit();
+                        edit.putInt("coins", resp.info.Coins);
+                        edit.commit();
                     }
                 }
 
@@ -135,9 +140,10 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             tv_nickname.setText(nickname);
             iv_gender.setVisibility(gender == -1 ? View.INVISIBLE : View.VISIBLE);
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
+            tv_coins.setText("" + getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("coins", 0));
 
             BitmapUtils bitmapUtils = new BitmapUtils(getActivity());
-            final File avaterPNG = new File(FolderUtil.rootDir(getActivity()), avater);
+            final File avaterPNG = new File(getActivity().getFilesDir(), avater);
 
             if (avaterPNG.exists() && avaterPNG.isFile()) {
                 //加载本地图片

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_margin="5dp"
-        android:orientation="vertical">
-
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="10dp">
 
         <TextView
             android:id="@+id/tv_folder"
@@ -20,14 +20,21 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="舌尖上的中国"
-            android:textSize="17sp"/>
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/tv_counts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="课程10"
-            android:textSize="15sp"/>
+            android:textSize="12sp" />
     </LinearLayout>
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:padding="15dp"
+        android:src="@drawable/dustbin_checked"
+        android:visibility="gone" />
+</LinearLayout>

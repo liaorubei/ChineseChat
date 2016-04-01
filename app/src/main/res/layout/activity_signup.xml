@@ -83,6 +83,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:button="@drawable/selector_box_check"
+                android:paddingLeft="5dp"
                 android:text="我已阅读"
                 android:textColor="@color/color_app_normal"
                 android:textSize="12sp" />

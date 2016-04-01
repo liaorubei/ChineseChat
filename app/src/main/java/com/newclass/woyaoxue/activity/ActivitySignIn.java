@@ -129,11 +129,13 @@ public class ActivitySignIn extends Activity implements OnClickListener {
 
                 // 开始登录
                 signIn(account, password);
-
                 break;
-
             case R.id.tv_signup:
-                startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
+                if (MyApplication.isStudent()) {
+                    startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
+                } else {
+                    CommonUtil.toast("教师端暂时无法注册");
+                }
                 break;
             case R.id.tv_password:
                 startActivity(new Intent(getApplicationContext(), ActivityReset.class));

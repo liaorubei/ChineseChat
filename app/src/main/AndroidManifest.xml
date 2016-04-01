@@ -98,7 +98,7 @@
             android:name="com.netease.cosine.target.receiver"
             android:value="com.netease.nimlib.service.NimReceiver" />
 
-        <activity android:name="com.newclass.woyaoxue.MainActivity">
+        <activity android:name="com.newclass.woyaoxue.activity.ActivitySplash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -170,7 +170,11 @@
         <service
             android:name="com.newclass.woyaoxue.service.TeacherAutoRefreshService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name="com.newclass.woyaoxue.MainActivity"
+            android:label="@string/title_activity_activity_splash"></activity>
     </application>
 
 </manifest>
