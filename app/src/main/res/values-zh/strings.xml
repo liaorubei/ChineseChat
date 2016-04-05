@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--ActivityPayment-->
+    <string name="activity_payment_select_recharge_mode">请选择你的充值方式</string>
+    <string name="activity_payment_charge_record">充值记录</string>
+    <string name="activity_person_save">保存</string>
+</resources>

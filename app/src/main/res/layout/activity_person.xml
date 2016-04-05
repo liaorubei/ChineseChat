@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="#F0F0F0"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0"
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@id/layout_title"
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#00a478">
 
         <ImageView
             android:id="@+id/iv_home"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
-            android:src="@drawable/home_back"/>
+            android:padding="10dp"
+            android:src="@drawable/home_back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -27,7 +25,7 @@
             android:layout_centerInParent="true"
             android:text="ChineseChat"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_save"
@@ -38,7 +36,7 @@
             android:layout_marginRight="15dp"
             android:text="保存"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"/>
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
@@ -50,12 +48,12 @@
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/iv_avater"
+            android:id="@+id/iv_avatar"
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="20dp"
-            android:src="@drawable/ic_launcher_student"/>
+            android:src="@drawable/ic_launcher_student" />
 
 
         <TextView
@@ -65,8 +63,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:paddingLeft="5dp"
-            android:text="13512345678"
-            />
+            android:text="13512345678" />
 
     </LinearLayout>
 
@@ -84,7 +81,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="昵称:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/et_nickname"
@@ -94,7 +91,7 @@
             android:layout_weight="8"
             android:background="@null"
             android:text="昵称"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -111,7 +108,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="邮箱:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/et_email"
@@ -123,7 +120,7 @@
             android:enabled="false"
             android:inputType="textEmailAddress"
             android:text="chinesenet@chinesenet.cn"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -140,7 +137,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="手机:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <EditText
             android:id="@+id/et_mobile"
@@ -151,7 +148,7 @@
             android:background="@null"
             android:inputType="textPhonetic"
             android:text="13512345671"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -168,7 +165,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="性别:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
 
         <RadioGroup
@@ -187,7 +184,7 @@
                 android:button="@drawable/selector_box_radio"
                 android:checked="true"
                 android:text="女"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
             <RadioButton
                 android:id="@+id/rb_male"
@@ -195,7 +192,7 @@
                 android:layout_height="25dp"
                 android:button="@drawable/selector_box_radio"
                 android:text="男"
-                android:textSize="15sp"/>
+                android:textSize="15sp" />
 
 
         </RadioGroup>
@@ -217,7 +214,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="生日:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/tv_birth"
@@ -226,7 +223,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="8"
             android:text="1990-10-10"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -243,14 +240,15 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="国家:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <Spinner
             android:id="@+id/sp_country"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="8"/>
+            android:layout_weight="8"
+            android:padding="0dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -267,16 +265,15 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="母语:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <Spinner
             android:id="@+id/sp_language"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_weight="8"/>
-
-
+            android:layout_weight="8"
+            android:padding="0dp" />
     </LinearLayout>
 
     <LinearLayout
@@ -293,7 +290,7 @@
             android:layout_weight="2"
             android:gravity="center"
             android:text="职业:"
-            android:textSize="15sp"/>
+            android:textSize="15sp" />
 
         <Spinner
             android:id="@+id/sp_job"
@@ -301,6 +298,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_weight="8"
-            />
+            android:padding="0dp" />
     </LinearLayout>
 </LinearLayout>

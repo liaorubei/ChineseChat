@@ -43,7 +43,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 //个人资料编辑页面
 public class ActivityPerson extends Activity implements View.OnClickListener {
@@ -57,7 +59,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private Spinner sp_job, sp_language, sp_country;
     private RadioGroup rg_gender;
     private RadioButton rb_male, rb_female;
-    private ImageView iv_avater;
+    private ImageView iv_avatar;
 
     private File cropImage;
     private File saveImage;
@@ -68,9 +70,12 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private SimpleDateFormat sdf;
     private Gson gson = new Gson();
 
-    private String[] 国家 = new String[]{"中国", "US", "日本", "韩国", "朝鲜", "老挝", "越南"};
-    private String[] 母语 = new String[]{"普通话", "日语", "韩语", "朝鲜语", "越南语"};
-    private String[] 职业 = new String[]{"老师", "公务员", "司机", "学生", "建筑师", "设计师"};
+    private List<String> countries = new ArrayList<String>();
+    private List<String> languages = new ArrayList<String>();
+    private List<String> vocations = new ArrayList<String>();
+    private ArrayAdapter<String> adapter_countries;
+    private ArrayAdapter<String> adapter_languages;
+    private ArrayAdapter<String> adapter_vocations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +85,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         initView();
         //  initData();
         saveDialog = new ProgressDialog(this);
-        // cropImage = new File(FolderUtil.rootDir(this), "temp_icon.PNG");
         cropImage = new File(Environment.getExternalStorageDirectory(), "crop.png");
         saveImage = new File(Environment.getExternalStorageDirectory(), "save.png");
         if (cropImage.exists()) {
@@ -105,7 +109,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
 
         //编辑区域
         tv_username = (TextView) findViewById(R.id.tv_username);
-        iv_avater = (ImageView) findViewById(R.id.iv_avater);
+        iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
 
         et_nickname = (EditText) findViewById(R.id.et_nickname);
         et_email = (EditText) findViewById(R.id.et_email);
@@ -121,10 +125,14 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         sp_job = (Spinner) findViewById(R.id.sp_job);
 
 
-        iv_avater.setOnClickListener(this);
+        iv_avatar.setOnClickListener(this);
         tv_birth.setOnClickListener(this);
 
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
+
+        //头像
+        CommonUtil.showIcon(getApplicationContext(), iv_avatar, sp.getString("Avatar", ""));
+        //帐号
         tv_username.setText(sp.getString("username", ""));
 
         et_nickname.setText(sp.getString("nickname", ""));
@@ -135,9 +143,43 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         rb_male.setChecked(gender == 1);
         tv_birth.setText(sp.getString("birth", ""));
 
-        sp_country.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 国家));
-        sp_language.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 母语));
-        sp_job.setAdapter(new ArrayAdapter<String>(this, R.layout.listitem_textview, 职业));
+        //显示国家，languages，工作
+        String country = sp.getString("country", "");
+        String language = sp.getString("language", "");
+        String vocation = sp.getString("vocation", "");
+
+        String[] stringArray1 = getResources().getStringArray(R.array.countries);
+        for (String s : stringArray1) {
+            countries.add(s);
+        }
+        if (!countries.contains(country)) {
+            countries.add(0, country);
+        }
+        adapter_countries = new ArrayAdapter<String>(this, R.layout.listitem_textview, countries);
+        sp_country.setAdapter(adapter_countries);
+        sp_country.setSelection(countries.lastIndexOf(country));
+
+        String[] stringArray2 = getResources().getStringArray(R.array.languages);
+        for (String s : stringArray2) {
+            languages.add(s);
+        }
+        if (!languages.contains(language)) {
+            languages.add(0, language);
+        }
+        adapter_languages = new ArrayAdapter<String>(this, R.layout.listitem_textview, languages);
+        sp_language.setAdapter(adapter_languages);
+        sp_language.setSelection(languages.lastIndexOf(language));
+
+        String[] stringArray3 = getResources().getStringArray(R.array.vocations);
+        for (String s : stringArray3) {
+            vocations.add(s);
+        }
+        if (!vocations.contains(vocation)) {
+            vocations.add(0, vocation);
+        }
+        adapter_vocations = new ArrayAdapter<String>(this, R.layout.listitem_textview, vocations);
+        sp_job.setAdapter(adapter_vocations);
+        sp_job.setSelection(vocations.lastIndexOf(vocation));
     }
 
     @Override
@@ -170,17 +212,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                         }.getType());
 
                         if (resp.code == 200) {
-                            //保存用户信息到sp
-                            SharedPreferences.Editor editor = ActivityPerson.this.getSharedPreferences("user", MODE_PRIVATE).edit();
-                            editor.putInt("id", resp.info.Id);
-                            editor.putString("nickname", resp.info.Name);
-                            editor.putString("avater", resp.info.Icon);
-                            editor.putString("email", resp.info.Email);
-                            editor.putString("birth", resp.info.Birth);
-                            editor.putString("mobile", resp.info.Mobile);
-                            editor.putInt("gender", resp.info.Gender);
-                            editor.commit();
-
+                            CommonUtil.saveUserToSP(getApplicationContext(), resp.info);
                             CommonUtil.toast("修改成功");
                         } else {
                             CommonUtil.toast("修改失败");
@@ -196,7 +228,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 });
             }
             break;
-            case R.id.iv_avater:
+            case R.id.iv_avatar:
                 if (dialogPick == null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     View inflate = getLayoutInflater().inflate(R.layout.dialog_pick, null);
@@ -271,23 +303,23 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
             case PHOTO_REQUEST_CROP:
                 Log.i(TAG, "onActivityResult: PHOTO_REQUEST_CROP data=" + data);
                 if (data != null) {
-                    new BitmapUtils(this).display(iv_avater, cropImage.getAbsolutePath());
+                    new BitmapUtils(this).display(iv_avatar, cropImage.getAbsolutePath());
                     isIconSwitch = true;
                 }
                 break;
         }
     }
 
-    private void saveBitmap(Bitmap tempBitmap, File avaterPNG) {
-        if (!avaterPNG.exists()) {
-            if (!avaterPNG.getParentFile().exists()) {
-                avaterPNG.getParentFile().mkdirs();
+    private void saveBitmap(Bitmap tempBitmap, File avatarPNG) {
+        if (!avatarPNG.exists()) {
+            if (!avatarPNG.getParentFile().exists()) {
+                avatarPNG.getParentFile().mkdirs();
             }
             try {
-                OutputStream stream = new FileOutputStream(avaterPNG);
+                OutputStream stream = new FileOutputStream(avatarPNG);
                 tempBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 stream.close();
-                Log.i(TAG, "saveBitmap: " + avaterPNG.getAbsolutePath());
+                Log.i(TAG, "saveBitmap: " + avatarPNG.getAbsolutePath());
             } catch (Exception e) {
                 e.printStackTrace();
             }

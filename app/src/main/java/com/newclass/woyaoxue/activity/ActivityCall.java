@@ -333,36 +333,11 @@ public class ActivityCall extends Activity implements OnClickListener {
 
         //下载处理,如果有设置头像,则显示头像,
         //如果头像已经下载过,则加载本地图片
-        if (!TextUtils.isEmpty(icon)) {
-            final File file = new File(getFilesDir(), icon);
-            String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(icon);
-            new BitmapUtils(ActivityCall.this).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
-                @Override
-                public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-                    container.setImageBitmap(bitmap);
+        CommonUtil.showIcon(this, iv_icon, icon);
 
-                    //缓存处理,如果本地照片已经保存过,则不做保存处理
-                    if (!file.exists()) {
-                        file.getParentFile().mkdirs();
-                        try {
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    Log.i(TAG, "onLoadCompleted: uri=" + uri);
-                }
-
-                @Override
-                public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-                    container.setImageResource(R.drawable.ic_launcher_student);
-                    Log.i(TAG, "onLoadFailed: ");
-                }
-            });
-            //外放和静音状态
-            bt_mute.setSelected(true);
-            bt_free.setSelected(false);
-        }
+        //外放和静音状态
+        bt_mute.setSelected(true);
+        bt_free.setSelected(false);
 
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
         source = new User();

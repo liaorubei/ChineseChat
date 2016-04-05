@@ -1,8 +1,0 @@
-package com.newclass.woyaoxue.util;
-
-import android.graphics.Color;
-
-public class ConstantsUtil {
-
-  //  public static final String PAYPAL_CLIENT_ID = "AT1UzEIE5kAi2W_1wIwMVs4dIaP24LhUvCcBSG8nxGH5IVmPQ1UckiFmQ4AIEKo_RvYURXGlpwrug7_J";
-}

@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 //充值界面
-public class ActivityMoney extends Activity implements View.OnClickListener {
+public class ActivityPayment extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MoneyActivity";
     public static final int RESULTCODE_SUCCESS = 1;
@@ -274,7 +274,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             Pay item = getItem(position);
-            View inflate = View.inflate(ActivityMoney.this, R.layout.listitem_payment, null);
+            View inflate = View.inflate(ActivityPayment.this, R.layout.listitem_payment, null);
             ImageView cb_payment = (ImageView) inflate.findViewById(R.id.iv_payment);
             TextView tv_main = (TextView) inflate.findViewById(R.id.tv_main);
             TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
@@ -345,7 +345,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
         public void run() {
 
             // 构造PayTask 对象
-            PayTask alipay = new PayTask(ActivityMoney.this);
+            PayTask alipay = new PayTask(ActivityPayment.this);
 
             // 调用支付接口，获取支付结果
             // mLastOrderString 最终订单信息,主要包含商户的订单信息，key=“value”形式，以&连接,包含签名和签名类型
@@ -364,7 +364,7 @@ public class ActivityMoney extends Activity implements View.OnClickListener {
      */
     private void launchPayPalPayment(Orders order) {
         PayPalPayment thingsToBuy = new PayPalPayment(order.Amount, order.Currency, order.Main, PayPalPayment.PAYMENT_INTENT_SALE);
-        Intent intent = new Intent(ActivityMoney.this, com.paypal.android.sdk.payments.PaymentActivity.class);
+        Intent intent = new Intent(ActivityPayment.this, com.paypal.android.sdk.payments.PaymentActivity.class);
         intent.putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, paypalConfig);
         intent.putExtra(com.paypal.android.sdk.payments.PaymentActivity.EXTRA_PAYMENT, thingsToBuy);
         startActivityForResult(intent, REQUEST_CODE_PAYPAL);

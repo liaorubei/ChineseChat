@@ -148,9 +148,8 @@
         <activity android:name="com.newclass.woyaoxue.activity.RandomActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityHistory" />
         <activity android:name="com.newclass.woyaoxue.activity.QuestionActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityMoney" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityPayment" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting" />
-        <activity android:name="com.newclass.woyaoxue.activity.PaymentActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson" />
         <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.RecordsActivity" />

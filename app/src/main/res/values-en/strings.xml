@@ -297,6 +297,7 @@
         <item>-1</item>
     </string-array>
 
+    <!--国家数组-->
     <string-array name="countries">
         <item>"AL|阿尔巴尼亚(Shqip ria)"</item>
         <item>"DZ|阿尔及利亚()"</item>　
@@ -538,6 +539,7 @@
         <item>"VA|梵蒂冈(Città del Vaticano)"</item>　
         <item>"FJ|斐济(Fiji)"</item>
     </string-array>
+    <!--母语数组-->
     <string-array name="languages">
         <item>Argentina (Español)</item>
         <item>Australia (English)</item>
@@ -605,6 +607,7 @@
         <item>台灣 (繁體中文)</item>
         <item>日本 (日本語)</item>
     </string-array>
+    <!--职业数组-->
     <string-array name="vocations">
         <item>老师</item>
         <item>司机</item>
@@ -633,14 +636,15 @@
     <string name="title_activity_activity_splash">ActivitySplash</string>
 
     <!--FragmentPerson-->
-    <string name="fragment_person_unlogin">未登录</string>
-    <string name="fragment_person_my_coins">我的学币:</string>
-    <string name="fragment_person_recharge">充值</string>
-    <string name="fragment_person_setting">设置</string>
-    <string name="fragment_person_history">学习记录</string>
+    <string name="fragment_person_unlogin">unlogin</string>
+    <string name="fragment_person_my_coins">MyCoins:</string>
+    <string name="fragment_person_recharge">Recharge</string>
+    <string name="fragment_person_setting">Setting</string>
+    <string name="fragment_person_history">History</string>
     <string name="activity_person_save">save</string>
 
     <!--ActivityPayment-->
-    <string name="activity_payment_select_recharge_mode">plaese choose you recharge mode</string>
-    <string name="activity_payment_charge_record">recharge mode</string>
+    <string name="activity_payment_select_recharge_mode">please choose you recharge mode</string>
+    <string name="activity_payment_charge_record">recharge recode</string>
+
 </resources>

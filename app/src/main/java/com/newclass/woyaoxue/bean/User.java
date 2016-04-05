@@ -10,7 +10,7 @@ public class User {
     public String UserName;
     public String PassWord;
     public String Icon;
-    public String Avater;
+    public String Avatar;
     public int Gender;
     public int Category;
     public String Email;
@@ -21,4 +21,7 @@ public class User {
 
     public String About;
     public String Voice;
+    public String Country;
+    public String Language;
+    public String Job;
 }
