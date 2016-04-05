@@ -86,13 +86,14 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<Rank> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Rank>>() {
+
+                Response resp = gson.fromJson(responseInfo.result, new TypeToken<Response>() {
                 }.getType());
                 list.clear();
 
                 if (resp.code == 200 && resp.info != null) {
-                    List<User> users = resp.info.Data;
-                    for (User user : users) {
+                    Response<Rank> users = gson.fromJson(responseInfo.result,new TypeToken<Response<Rank>>(){}.getType());
+                    for (User user : users.info.Data) {
                         list.add(user);
                     }
                 }
