@@ -141,7 +141,8 @@
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityTake"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity android:name="com.newclass.woyaoxue.activity.ChooseActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.FriendActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.FriendAddActivity" />

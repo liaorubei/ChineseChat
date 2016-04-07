@@ -14,9 +14,9 @@ android {
     }
 
     productFlavors {
-        student {
+ /*       student {
             manifestPlaceholders = [release_value: "student", APPLICATION_ICON: "@drawable/ic_launcher_student"]
-        }
+        }*/
         teacher {
             manifestPlaceholders = [release_value: "teacher", APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
         }
