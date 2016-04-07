@@ -122,7 +122,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         }
     };
 
-
     private Observer<AVChatCommonEvent> observerHangup = new Observer<AVChatCommonEvent>() {
         private static final long serialVersionUID = 1L;
 
