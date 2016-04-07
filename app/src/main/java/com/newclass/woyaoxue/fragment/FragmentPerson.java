@@ -107,7 +107,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                     startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     return;
                 }
-                ActivityHistory.start(getActivity(), accid);
+                ActivityHistory.start(getActivity(), username);
                 break;
             case R.id.rl_setting:
                 startActivity(new Intent(getActivity(), ActivitySetting.class));

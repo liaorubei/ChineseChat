@@ -59,7 +59,7 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
         rl_login = (RelativeLayout) findViewById(R.id.rl_login);
         tv_login = (TextView) findViewById(R.id.tv_login);
 
-        tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? "登出" : "登录");
+        tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
 
         iv_home.setOnClickListener(this);
         rl_login.setOnClickListener(this);
@@ -97,7 +97,7 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                 FileUtil.fileDelete(new File(getFilesDir().getParentFile(), "databases"));
 
                 //主要是清除三个文件夹的内容，cache,files,databases
-                CommonUtil.toast("清除完毕");
+                CommonUtil.toast(getString(R.string.ActivitySetting_Toast_清理完毕));
                 tv_cache.setText("0.00B");
                 dialogWipeData.dismiss();
             }
@@ -115,8 +115,8 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                 if (NIMClient.getStatus() == StatusCode.LOGINED) {
                     NIMClient.getService(AuthService.class).logout();
                     getSharedPreferences("user", MODE_PRIVATE).edit().clear().commit();
-                    CommonUtil.toast("登出成功");
-                    tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? "登出" : "登录");
+                    CommonUtil.toast(getString(R.string.ActivitySetting_Toast_登出成功));
+                    tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
                 } else {
                     startActivity(new Intent(this, ActivitySignIn.class));
                 }

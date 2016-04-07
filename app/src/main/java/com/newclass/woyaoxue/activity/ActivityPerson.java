@@ -55,8 +55,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private static final int PHOTO_REQUEST_CROP = 51;
 
     private TextView tv_birth, tv_username;
-    private EditText et_nickname, et_mobile, et_email;
-    private Spinner sp_job, sp_language, sp_country;
+    private EditText et_nickname, et_mobile, et_email, et_job;
+    private Spinner sp_language, sp_country;
     private RadioGroup rg_gender;
     private RadioButton rb_male, rb_female;
     private ImageView iv_avatar;
@@ -75,7 +75,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private List<String> vocations = new ArrayList<String>();
     private ArrayAdapter<String> adapter_countries;
     private ArrayAdapter<String> adapter_languages;
-    private ArrayAdapter<String> adapter_vocations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,18 +86,23 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         saveDialog = new ProgressDialog(this);
         cropImage = new File(Environment.getExternalStorageDirectory(), "crop.png");
         saveImage = new File(Environment.getExternalStorageDirectory(), "save.png");
-        if (cropImage.exists()) {
-            cropImage.delete();
-        }
-        if (saveImage.exists()) {
-            saveImage.delete();
-        }
 
         createDatePickerDialog();
 
         sdf = new SimpleDateFormat("yyyy-MM-dd");
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (cropImage.exists()) {
+            cropImage.delete();
+        }
+        if (saveImage.exists()) {
+            saveImage.delete();
         }
     }
 
@@ -120,9 +124,9 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
 
         tv_birth = (TextView) findViewById(R.id.tv_birth);
 
+        et_job = (EditText) findViewById(R.id.et_job);
         sp_country = (Spinner) findViewById(R.id.sp_country);
         sp_language = (Spinner) findViewById(R.id.sp_language);
-        sp_job = (Spinner) findViewById(R.id.sp_job);
 
 
         iv_avatar.setOnClickListener(this);
@@ -131,7 +135,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
 
         //头像
-        CommonUtil.showIcon(getApplicationContext(), iv_avatar, sp.getString("Avatar", ""));
+        CommonUtil.showIcon(getApplicationContext(), iv_avatar, sp.getString("avatar", ""));
         //帐号
         tv_username.setText(sp.getString("username", ""));
 
@@ -147,6 +151,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         String country = sp.getString("country", "");
         String language = sp.getString("language", "");
         String vocation = sp.getString("vocation", "");
+
+        et_job.setText(vocation);
 
         String[] stringArray1 = getResources().getStringArray(R.array.countries);
         for (String s : stringArray1) {
@@ -169,17 +175,6 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         adapter_languages = new ArrayAdapter<String>(this, R.layout.listitem_textview, languages);
         sp_language.setAdapter(adapter_languages);
         sp_language.setSelection(languages.lastIndexOf(language));
-
-        String[] stringArray3 = getResources().getStringArray(R.array.vocations);
-        for (String s : stringArray3) {
-            vocations.add(s);
-        }
-        if (!vocations.contains(vocation)) {
-            vocations.add(0, vocation);
-        }
-        adapter_vocations = new ArrayAdapter<String>(this, R.layout.listitem_textview, vocations);
-        sp_job.setAdapter(adapter_vocations);
-        sp_job.setSelection(vocations.lastIndexOf(vocation));
     }
 
     @Override
@@ -199,7 +194,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 params.addBodyParameter("Birth", tv_birth.getText().toString().trim());
                 params.addBodyParameter("country", sp_country.getSelectedItem() + "");
                 params.addBodyParameter("language", sp_language.getSelectedItem() + "");
-                params.addBodyParameter("job", sp_job.getSelectedItem() + "");
+                params.addBodyParameter("job", et_job.getText().toString().trim());
 
                 if (isIconSwitch) {
                     params.addBodyParameter("icon", cropImage);
@@ -212,10 +207,11 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                         }.getType());
 
                         if (resp.code == 200) {
+                            resp.info.Avatar = resp.info.Icon;//保存头像,返回Me的时候可以刷新头像
                             CommonUtil.saveUserToSP(getApplicationContext(), resp.info);
-                            CommonUtil.toast("修改成功");
+                            CommonUtil.toast(getString(R.string.ActivityPerson_success));
                         } else {
-                            CommonUtil.toast("修改失败");
+                            CommonUtil.toast(getString(R.string.ActivityPerson_failure));
                         }
                         saveDialog.dismiss();
                     }
@@ -334,7 +330,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 Log.i(TAG, "onDateSet: year:" + year + " monthOfYear:" + monthOfYear + " dayOfMonth:" + dayOfMonth);
             }
         }, 2000, 1, 1);
-        datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, "确定", new DialogInterface.OnClickListener() {
+        datePickerDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(R.string.ActivityPerson_confirm), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Calendar l = Calendar.getInstance();

@@ -136,7 +136,8 @@
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityCall"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityTake"
             android:launchMode="singleTask"
@@ -171,9 +172,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity
-            android:name="com.newclass.woyaoxue.MainActivity"
-            android:label="@string/title_activity_activity_splash"></activity>
+        <activity android:name="com.newclass.woyaoxue.MainActivity"></activity>
     </application>
 
 </manifest>

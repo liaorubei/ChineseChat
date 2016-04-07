@@ -6,35 +6,21 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.view.Window;
 import android.widget.Chronometer;
 import android.widget.ImageView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -67,8 +53,6 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -103,17 +87,18 @@ public class ActivityCall extends Activity implements OnClickListener {
     private String callId;
     private User source;
     private User target;
+
+    private long delayMillis = 60000;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_DATA: {
                     refresh((String) msg.obj);
-
                     Message message = obtainMessage();
                     message.what = REFRESH_DATA;
                     message.obj = msg.obj;
-                    sendMessageDelayed(message, 60000);
+                    sendMessageDelayed(message, delayMillis);
                 }
                 break;
             }
@@ -130,7 +115,6 @@ public class ActivityCall extends Activity implements OnClickListener {
                 Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                 }.getType());
                 if (resp.code != 200) {
-
                     AVChatManager.getInstance().hangUp(callback_hangup);
                     CommonUtil.toast("学币不足");
                 }
@@ -139,9 +123,12 @@ public class ActivityCall extends Activity implements OnClickListener {
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
+                AVChatManager.getInstance().hangUp(callback_hangup);
+                CommonUtil.toast("网络异常");
             }
         });
     }
+
 
     // 监听网络通话被叫方的响应（接听、拒绝、忙）
     private Observer<AVChatCalleeAckEvent> observerCallAck = new Observer<AVChatCalleeAckEvent>() {
@@ -182,7 +169,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                                 Message message = handler.obtainMessage();
                                 message.what = REFRESH_DATA;
                                 message.obj = callId;
-                                handler.sendMessage(message);
+                                handler.sendMessageDelayed(message, delayMillis);
                             }
 
                             @Override
@@ -216,7 +203,6 @@ public class ActivityCall extends Activity implements OnClickListener {
         @Override
         public void onEvent(AVChatCommonEvent event) {
             Log.i(TAG, "对方已挂断 event.getChatId:" + event.getChatId());
-
             Parameters parameters = new Parameters();
             parameters.add("chatId", event.getChatId());
 
@@ -224,6 +210,17 @@ public class ActivityCall extends Activity implements OnClickListener {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
                     Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
+                    }.getType());
+
+                    //保存学币信息,在Me模块可以查看
+                    if (resp.code == 200) {
+                        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+                        int coins = user.getInt("coins", 0);
+                        user.edit().putInt("coins", coins - resp.info.Coins).commit();
+                    }
+
+                    //退出通话界面
                     finish();
                 }
 
@@ -271,6 +268,16 @@ public class ActivityCall extends Activity implements OnClickListener {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
                     Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
+                    }.getType());
+
+                    //保存学币信息,在Me模块可以查看
+                    if (resp.code == 200) {
+                        SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
+                        int coins = user.getInt("coins", 0);
+                        user.edit().putInt("coins", coins - resp.info.Coins).commit();
+                    }
+
                     finish();
                 }
 

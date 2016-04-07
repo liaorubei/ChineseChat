@@ -56,7 +56,7 @@
     <string name="prepare_data">正在准备数据...</string>
 
     <string name="readed">已读</string>
-    <string name="about">关于</string>
+    <string name="about">About</string>
     <string name="logout">注销</string>
     <string name="version">版本号:</string>
     <string name="account">帐号:</string>
@@ -605,14 +605,6 @@
         <item>台灣 (繁體中文)</item>
         <item>日本 (日本語)</item>
     </string-array>
-    <string-array name="vocations">
-        <item>老师</item>
-        <item>司机</item>
-        <item>学生</item>
-        <item>公务员</item>
-        <item>建筑师</item>
-        <item>设计师</item>
-    </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
 
@@ -627,20 +619,57 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="title_activity_records">a</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_activity_feedback">1</string>
-    <string name="title_activity_activity_splash">ActivitySplash</string>
+    <!--MainActivity-->
+    <string name="MainActivity_Refresh">Refresh</string>
+    <string name="MainActivity_Delete">Delete</string>
 
     <!--FragmentPerson-->
-    <string name="fragment_person_unlogin">未登录</string>
-    <string name="fragment_person_my_coins">我的学币:</string>
-    <string name="fragment_person_recharge">充值</string>
-    <string name="fragment_person_setting">设置</string>
-    <string name="fragment_person_history">学习记录</string>
+    <string name="fragment_person_unlogin">Unlogin</string>
+    <string name="fragment_person_my_coins">Coins:</string>
+    <string name="fragment_person_recharge">Recharge</string>
+    <string name="fragment_person_setting">Setting</string>
+    <string name="fragment_person_history">Study records</string>
     <string name="activity_person_save">save</string>
 
     <!--ActivityPayment-->
     <string name="activity_payment_select_recharge_mode">plaese choose you recharge mode</string>
     <string name="activity_payment_charge_record">recharge mode</string>
+    <!--充值记录-->
+    <string name="项目">"Item: "</string>
+    <string name="金额">"Amount: "</string>
+    <string name="状态">"Status: "</string>
+    <string name="时间">"Time: "</string>
+
+    <!--ActivitySetting-->
+    <string name="ActivitySetting_投诉建议">Complaint and Advice</string>
+    <string name="ActivitySetting_请在WIFI下使用">Please use under the WIFI</string>
+    <string name="ActivitySetting_清理缓存">Clean Cache</string>
+    <string name="ActivitySetting_关于汉问">About ChineseChat</string>
+    <string name="ActivitySetting_登出">Logout</string>
+    <string name="ActivitySetting_登录">Signin</string>
+    <string name="ActivitySetting_Toast_登出成功">Logout Success</string>
+    <string name="ActivitySetting_Toast_清理完毕">Clean Finish</string>
+
+    <!--ActivityPerson-->
+    <string name="ActivityPerson_save">Save</string>
+    <string name="ActivityPerson_nickname">Nickname:</string>
+    <string name="ActivityPerson_email">Email:</string>
+    <string name="ActivityPerson_mobile">Mobile:</string>
+    <string name="ActivityPerson_gender">Gender:</string>
+    <string name="ActivityPerson_birth">Birth:</string>
+    <string name="ActivityPerson_country">Country:</string>
+    <string name="ActivityPerson_language">Language:</string>
+    <string name="ActivityPerson_job">Job:</string>
+    <string name="ActivityPerson_female">Female</string>
+    <string name="ActivityPerson_male">Male</string>
+    <string name="ActivityPerson_success">Update Success</string>
+    <string name="ActivityPerson_failure">Update Failure</string>
+    <string name="ActivityPerson_confirm">Confirm</string>
+
+    <!--ActivityHistory-->
+    <string name="ActivityHistory_theme">Theme:</string>
+    <string name="ActivityHistory_teacher">Teacher:</string>
+    <string name="ActivityHistory_coins">Coins:</string>
+    <string name="ActivityHistory_date">Date:</string>
+    <string name="ActivityHistory_time">Time:</string>
 </resources>

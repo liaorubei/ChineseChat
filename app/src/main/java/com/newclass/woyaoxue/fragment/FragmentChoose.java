@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -55,6 +57,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
     private TextView tv_time;
     private int time = 0;
     private int offset = 1;//递归时间，单位秒
+    private MediaPlayer mediaPlayer;
 
     public Handler handler = new Handler() {
         @Override
@@ -71,7 +74,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             }
         }
     };
-
 
     private void refresh() {
         time = 0;
@@ -106,13 +108,19 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_choose, null);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i(TAG, "onViewCreated: ");
         srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
         srl.setColorSchemeResources(R.color.color_app);
         srl.setOnRefreshListener(this);
@@ -128,7 +136,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onResume() {
-        Log.i(TAG, "onResume: ");
         super.onResume();
         time = 60;
         visible = true;
@@ -141,15 +148,19 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onPause() {
-        Log.i(TAG, "onPause: ");
         super.onPause();
         visible = false;
         handler.removeCallbacksAndMessages(null);
     }
 
-
-    //srl刷新接口实现
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mediaPlayer.release();
+        mediaPlayer = null;
+    }
+
+    @Override //srl刷新接口实现
     public void onRefresh() {
         refresh();
     }
@@ -203,6 +214,19 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             //设置音频
             ImageView iv_voice = (ImageView) inflate.findViewById(R.id.iv_voice);
             if (!TextUtils.isEmpty(user.Voice)) {
+                iv_voice.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            mediaPlayer.reset();
+                            mediaPlayer.setDataSource(NetworkUtil.getFullPath(user.Voice));
+                            mediaPlayer.prepare(); // might take long! (for buffering, etc)
+                            mediaPlayer.start();
+                        } catch (Exception ex) {
+                            CommonUtil.toast("音频播放失败");
+                        }
+                    }
+                });
 
             }
 

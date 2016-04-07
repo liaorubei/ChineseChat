@@ -168,6 +168,20 @@ public class ActivityTake extends Activity implements OnClickListener {
 
             if (notice.NoticeType == NimSysNotice.NoticeType_Card) {
                 CommonUtil.toast("对方点击了:" + notice.info.Name);
+                Parameters params = new Parameters();
+                params.add("chatId", avChatData.getChatId());
+                params.add("themeId", notice.info.Id);
+                HttpUtil.post(NetworkUtil.chatAddTheme, params, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Log.i(TAG, "onSuccess: " + responseInfo.result);
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        Log.i(TAG, "onFailure: " + msg);
+                    }
+                });
             }
 
             showThemeQuestion(notice.info);
@@ -450,7 +464,6 @@ public class ActivityTake extends Activity implements OnClickListener {
     }
 
     private void registerObserver(boolean register) {
-
         // 监听网络通话被叫方的响应（接听、拒绝、忙）
         // AVChatManager.getInstance().observeCalleeAckNotification(observerCallack, register);
 

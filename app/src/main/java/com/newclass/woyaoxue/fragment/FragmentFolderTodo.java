@@ -14,11 +14,17 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.newclass.woyaoxue.activity.ActivityDocsTodo;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Folder;
 import com.newclass.woyaoxue.bean.Level;
+import com.newclass.woyaoxue.bean.Response;
+import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
+import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
 import java.util.List;
@@ -34,7 +40,6 @@ public class FragmentFolderTodo extends Fragment {
     private Gson gson = new Gson();
     private SwipeRefreshLayout srl;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
         Log.i(TAG, "onCreateView: ");
@@ -43,10 +48,43 @@ public class FragmentFolderTodo extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Level level = gson.fromJson(getArguments().getString("level"), new TypeToken<Level>() {
+        final Level level = gson.fromJson(getArguments().getString("level"), new TypeToken<Level>() {
         }.getType());
         srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
-        srl.setColorSchemeColors(R.color.color_app);
+        srl.setColorSchemeResources(R.color.color_app);
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                HttpUtil.Parameters params = new HttpUtil.Parameters();
+                params.add("levelId", level.Id);
+                params.add("ship", 0);
+                params.add("take", 25);
+                HttpUtil.post(NetworkUtil.folderGetByLevelId, params, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Response<List<Folder>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {
+                        }.getType());
+                        list.clear();
+
+                        if (resp.code == 200) {
+                            List<Folder> info = resp.info;
+                            for (Folder f : info) {
+                                list.add(f);
+                            }
+                        }
+
+                        adapter.notifyDataSetChanged();
+                        srl.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        Log.i(TAG, "onFailure: " + msg);
+                        srl.setRefreshing(false);
+                    }
+                });
+            }
+        });
 
         listview = (ListView) view.findViewById(android.R.id.list);
         list = level.Folders;
@@ -63,7 +101,6 @@ public class FragmentFolderTodo extends Fragment {
             }
         });
     }
-
 
     private class MyAdapter extends BaseAdapter<Folder> {
 

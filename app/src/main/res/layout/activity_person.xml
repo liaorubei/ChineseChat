@@ -34,9 +34,8 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
-            android:text="保存"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:text="@string/ActivityPerson_save"
+            android:textColor="#FFFFFF" />
 
     </RelativeLayout>
 
@@ -80,7 +79,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="昵称:"
+            android:text="@string/ActivityPerson_nickname"
             android:textSize="15sp" />
 
         <EditText
@@ -90,7 +89,6 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="8"
             android:background="@null"
-            android:text="昵称"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -107,7 +105,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="邮箱:"
+            android:text="@string/ActivityPerson_email"
             android:textSize="15sp" />
 
         <EditText
@@ -119,7 +117,6 @@
             android:background="@null"
             android:enabled="false"
             android:inputType="textEmailAddress"
-            android:text="chinesenet@chinesenet.cn"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -136,7 +133,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="手机:"
+            android:text="@string/ActivityPerson_mobile"
             android:textSize="15sp" />
 
         <EditText
@@ -147,7 +144,6 @@
             android:layout_weight="8"
             android:background="@null"
             android:inputType="textPhonetic"
-            android:text="13512345671"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -164,7 +160,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="性别:"
+            android:text="@string/ActivityPerson_gender"
             android:textSize="15sp" />
 
 
@@ -183,7 +179,7 @@
                 android:layout_marginRight="15dp"
                 android:button="@drawable/selector_box_radio"
                 android:checked="true"
-                android:text="女"
+                android:text="@string/ActivityPerson_female"
                 android:textSize="15sp" />
 
             <RadioButton
@@ -191,13 +187,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:button="@drawable/selector_box_radio"
-                android:text="男"
+                android:text="@string/ActivityPerson_male"
                 android:textSize="15sp" />
-
-
         </RadioGroup>
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -213,7 +205,7 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="生日:"
+            android:text="@string/ActivityPerson_birth"
             android:textSize="15sp" />
 
         <TextView
@@ -222,7 +214,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="8"
-            android:text="1990-10-10"
             android:textSize="15sp" />
     </LinearLayout>
 
@@ -239,7 +230,33 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="国家:"
+            android:text="@string/ActivityPerson_job"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/et_job"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="8"
+            android:background="@null"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginBottom="1dp"
+        android:background="#FFFFFF"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text="@string/ActivityPerson_country"
             android:textSize="15sp" />
 
         <Spinner
@@ -264,36 +281,11 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="2"
             android:gravity="center"
-            android:text="母语:"
+            android:text="@string/ActivityPerson_language"
             android:textSize="15sp" />
 
         <Spinner
             android:id="@+id/sp_language"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="8"
-            android:padding="0dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_marginBottom="1dp"
-        android:background="#FFFFFF"
-        android:orientation="horizontal">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:text="职业:"
-            android:textSize="15sp" />
-
-        <Spinner
-            android:id="@+id/sp_job"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

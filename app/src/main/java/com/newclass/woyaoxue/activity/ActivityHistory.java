@@ -28,17 +28,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 //聊天记录
 public class ActivityHistory extends Activity {
     protected static final String TAG = "HistoryActivity";
-    private static final String KEY_ACCID = "KEY_ACCID";
+    private static final String KEY_USERNAME = "KEY_USERNAME";
     private ListView listview;
     private List<CallLog> list;
     private BaseAdapter<CallLog> adapter;
-    private String accid;
+    private String username;
     private SimpleDateFormat sdf;
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
@@ -49,8 +48,9 @@ public class ActivityHistory extends Activity {
 
         initView();
         initData();
-        if( getActionBar()!=null){
-            getActionBar().setDisplayHomeAsUpEnabled(true);}
+        if (getActionBar() != null) {
+            getActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
@@ -84,22 +84,23 @@ public class ActivityHistory extends Activity {
 
     public static void start(Context context, String accid) {
         Intent intent = new Intent(context, ActivityHistory.class);
-        intent.putExtra(KEY_ACCID, accid);
+        intent.putExtra(KEY_USERNAME, accid);
         context.startActivity(intent);
     }
 
     private void initData() {
         Intent intent = getIntent();
-        accid = intent.getStringExtra(KEY_ACCID);
+        username = intent.getStringExtra(KEY_USERNAME);
 
         Parameters parameters = new Parameters();
-        parameters.add("accid", accid);
+        parameters.add("username", username);
         parameters.add("skip", 0 + "");
-        parameters.add("take", 15 + "");
+        parameters.add("take", 50 + "");
 
-        HttpUtil.post(NetworkUtil.GetStudentCalllogByAccId, parameters, new RequestCallBack<String>() {
+        HttpUtil.post(NetworkUtil.GetStudentCallLogByUsername, parameters, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<CallLog>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<CallLog>>>() {
                 }.getType());
                 if (resp.code == 200) {
@@ -131,29 +132,23 @@ public class ActivityHistory extends Activity {
             CallLog item = getItem(position);
             View inflate = View.inflate(getApplication(), R.layout.listitem_history, null);
             TextView tv_theme = (TextView) inflate.findViewById(R.id.tv_theme);
-            TextView tv_tiem = (TextView) inflate.findViewById(R.id.tv_time);
-            TextView tv_date = (TextView) inflate.findViewById(R.id.tv_date);
             TextView tv_teacher = (TextView) inflate.findViewById(R.id.tv_teacher);
-            RatingBar rb_score = (RatingBar) inflate.findViewById(R.id.rb_score);
+            TextView tv_coins = (TextView) inflate.findViewById(R.id.tv_coins);
+            TextView tv_date = (TextView) inflate.findViewById(R.id.tv_date);
+            TextView tv_tiem = (TextView) inflate.findViewById(R.id.tv_time);
 
-            tv_theme.setText("");
+            tv_theme.setText(getString(R.string.ActivityHistory_theme) + "未选择");
             if (item.Themes != null && item.Themes.size() > 0) {
                 StringBuilder sb = new StringBuilder();
                 for (int i = 0; i < item.Themes.size(); i++) {
-                    sb.append(item.Themes.get(i).Name + "\r\n");
+                    sb.append(item.Themes.get(i).Name + " > ");
                 }
-                tv_theme.setText(sb.toString());
+                tv_theme.setText(getString(R.string.ActivityHistory_theme) + sb.toString());
             }
-
-            if (item.Finish != null) {
-                tv_tiem.setText(CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
-            }
-
-            tv_date.setText(sdf.format(item.Start));
-            tv_teacher.setText(item.Teacher.Name);
-            rb_score.setNumStars(5);
-            rb_score.setRating(item.Score);
-
+            tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Name);
+            tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
+            tv_date.setText(getString(R.string.ActivityHistory_date) + sdf.format(item.Start));
+            tv_tiem.setText(getString(R.string.ActivityHistory_time) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
             return inflate;
         }
     }

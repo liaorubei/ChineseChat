@@ -310,10 +310,10 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             TextView tv_state = (TextView) inflate.findViewById(R.id.tv_state);
             TextView tv_createtime = (TextView) inflate.findViewById(R.id.tv_createtime);
 
-            tv_main.setText("项目:" + item.Main);
-            tv_amount.setText("金额: " + item.Amount + " " + item.Currency);
-            tv_state.setText("状态:" + item.TradeStatus);
-            tv_createtime.setText("时间:" + item.CreateTime);
+            tv_main.setText(getString(R.string.项目) + item.Main);
+            tv_amount.setText(getString(R.string.金额) + item.Amount + " " + item.Currency);
+            tv_state.setText(getString(R.string.状态) + item.TradeStatus);
+            tv_createtime.setText(getString(R.string.时间) + item.CreateTime);
             return inflate;
         }
     }

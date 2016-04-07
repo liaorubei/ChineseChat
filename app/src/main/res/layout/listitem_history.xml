@@ -1,11 +1,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:orientation="vertical"
-              android:paddingBottom="15dp"
-              android:paddingLeft="25dp"
-              android:paddingTop="15dp"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="15dp"
+    android:paddingLeft="25dp"
+    android:paddingTop="15dp">
+
+    <TextView
+        android:id="@+id/tv_theme"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="@string/ActivityHistory_theme"
+        android:textColor="@color/color_app" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,18 +20,20 @@
         android:orientation="horizontal">
 
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_teacher"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="主题:"
-
-            android:textColor="@color/color_app"/>
+            android:layout_weight="1"
+            android:text="@string/ActivityHistory_teacher"
+            android:textColor="@color/black" />
 
         <TextView
-            android:id="@+id/tv_theme"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_coins"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="论经济发展"
-            android:textColor="@color/color_app"/>
+            android:layout_weight="1"
+            android:text="@string/ActivityHistory_coins"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <LinearLayout
@@ -34,103 +42,20 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="老师:"
-                android:textColor="@color/black"/>
-
-            <TextView
-                android:id="@+id/tv_teacher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="东方不败"
-                android:textColor="@color/black"/>
-        </LinearLayout>
-
-        <LinearLayout
+        <TextView
+            android:id="@id/tv_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="horizontal">
+            android:text="@string/ActivityHistory_date"
+            android:textColor="#949494" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="学币:5"
-                android:textColor="@color/black"/>
-
-
-            <RatingBar
-                android:id="@+id/rb_score"
-                style="?android:attr/ratingBarStyleSmall"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxHeight="15dp"
-                android:minHeight="15dp"
-                android:numStars="5"
-                android:rating="4"
-                android:visibility="invisible"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/ActivityHistory_time"
+            android:textColor="#949494" />
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="日期:"
-                android:textColor="#949494"/>
-
-            <TextView
-                android:id="@id/tv_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="2015-12-12 12:00"
-                android:textColor="#949494"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="时长:"
-                android:textColor="#949494"/>
-
-            <TextView
-                android:id="@+id/tv_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10:00"
-                android:textColor="#949494"/>
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-
 </LinearLayout>
