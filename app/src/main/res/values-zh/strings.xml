@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="activity_payment_select_recharge_mode">请选择你的充值方式</string>
-    <string name="activity_payment_charge_record">充值记录</string>
+    <string name="activity_payment_recharge_records">充值记录</string>
     <string name="activity_person_save">保存</string>
     <string name="时间">时间:</string>
     <string name="状态">状态:</string>
@@ -40,4 +40,27 @@
     <string name="ActivityPerson_nickname">昵称:</string>
     <string name="ActivityPerson_save">保存</string>
     <string name="ActivityPerson_success">修改成功</string>
+    <string name="ActivitySignUp_email">请输入邮箱</string>
+    <string name="ActivitySignUp_login">登录</string>
+    <string name="ActivitySignUp_repassowrd">请重复密码</string>
+    <string name="ActivitySignUp_user_registration">用户注册</string>
+    <string name="ActivitySignUp_user_registration_agreement">《用户注册协议》</string>
+    <string name="ActivitySignUp_registered_users">已注册用户请</string>
+    <string name="ActivitySignUp_password">请输入密码</string>
+    <string name="ActivitySignUp_read_and_agreed">我已阅读并同意</string>
+    <string name="MainActivity_Delete">删除</string>
+    <string name="MainActivity_Refresh">刷新</string>
+    <string name="ActivitySignIn_user_register">新用户注册</string>
+    <string name="ActivitySignUp_next">下一步</string>
+    <string name="ActivitySignIn_email_or_password_not_null">邮箱或密码不能为空</string>
+    <string name="ActivitySignIn_forgot_password">忘记密码？</string>
+    <string name="ActivitySignIn_login">登录</string>
+    <string name="ActivitySignIn_login_failure">登录失败</string>
+    <string name="ActivitySignIn_network_error_login_failure">网络异常，登录失败</string>
+    <string name="ActivitySignIn_type_email">请输入邮箱</string>
+    <string name="ActivitySignIn_type_password">请输入密码</string>
+    <string name="ActivitySignIn_user_login">用户登录</string>
+    <string name="ActivitySetting_title">个人设置</string>
+    <string name="ActivityPerson_title">个人资料</string>
+    <string name="ActivityUsehelp_title">使用帮助</string>
 </resources>

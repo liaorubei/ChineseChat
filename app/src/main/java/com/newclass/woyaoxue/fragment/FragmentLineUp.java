@@ -104,7 +104,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void onFailure(HttpException error, String msg) {
                 srl.setRefreshing(false);
-                CommonUtil.toast("网络异常");
+                CommonUtil.toast(getString(R.string.network_error));
             }
         });
     }

@@ -130,7 +130,7 @@ public class ActivityDocsTodo extends Activity {
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
-                    CommonUtil.toast("网络异常");
+                    CommonUtil.toast(getString(R.string.network_error));
                     srl.setRefreshing(false);
                 }
             });
@@ -151,7 +151,7 @@ public class ActivityDocsTodo extends Activity {
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("网络异常");
+                        CommonUtil.toast(getString(R.string.network_error));
                         srl.setRefreshing(false);
                     }
                 });
@@ -348,7 +348,7 @@ public class ActivityDocsTodo extends Activity {
                 @Override
                 public void onClick(View v) {
                     if (database.docsExists(item.Id)) {
-                        Toast.makeText(ActivityDocsTodo.this, "请不要重复下载", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityDocsTodo.this, getString(R.string.ActivityDocsTodo_alreadyDownload), Toast.LENGTH_SHORT).show();
                     } else {
                         download(item);
                         holder.pb_down.setMax(100);
@@ -378,5 +378,4 @@ public class ActivityDocsTodo extends Activity {
         public ImageView iv_down;
         public CircularProgressBar pb_down;
     }
-
 }

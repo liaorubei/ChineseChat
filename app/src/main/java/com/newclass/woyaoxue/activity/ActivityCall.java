@@ -124,7 +124,7 @@ public class ActivityCall extends Activity implements OnClickListener {
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
                 AVChatManager.getInstance().hangUp(callback_hangup);
-                CommonUtil.toast("网络异常");
+                CommonUtil.toast(getString(R.string.network_error));
             }
         });
     }

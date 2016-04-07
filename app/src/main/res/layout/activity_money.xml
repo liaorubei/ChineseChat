@@ -22,10 +22,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="ChineseChat"
+            android:text="账号充值"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
-
     </RelativeLayout>
 
     <TextView
@@ -111,7 +110,7 @@
         android:layout_marginBottom="1dp"
         android:background="#FFFFFF"
         android:gravity="center"
-        android:text="@string/activity_payment_charge_record" />
+        android:text="@string/activity_payment_recharge_records" />
 
     <ListView
         android:id="@id/listview"

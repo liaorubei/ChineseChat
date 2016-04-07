@@ -41,13 +41,13 @@ public class ActivityFeedback extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 if (progressDialog == null) {
                     progressDialog = new ProgressDialog(ActivityFeedback.this);
-                    progressDialog.setMessage("正在提交中。。。");
+                    progressDialog.setMessage(getString(R.string.ActivityFeedback_Content_IsBeingSubmitted));
                 }
                 progressDialog.show();
                 String content = et_content.getText().toString().trim();
                 String contact = et_contact.getText().toString().trim();
                 if (TextUtils.isEmpty(content)) {
-                    CommonUtil.toast("反馈内容不能为空");
+                    CommonUtil.toast(getString(R.string.ActivityFeedback_Content_CanNotNull));
                     return;
                 }
                 HttpUtil.Parameters params = new HttpUtil.Parameters();
@@ -59,14 +59,14 @@ public class ActivityFeedback extends Activity implements View.OnClickListener {
                         Response o = new Gson().fromJson(responseInfo.result, new TypeToken<Response>() {
                         }.getType());
                         if (o.code == 200) {
-                            CommonUtil.toast("提交成功");
+                            CommonUtil.toast(getString(R.string.ActivityFeedback_Content_submit_success));
                         }
                         progressDialog.dismiss();
                     }
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("网络异常");
+                        CommonUtil.toast(getString(R.string.network_error));
                         progressDialog.dismiss();
                     }
                 });

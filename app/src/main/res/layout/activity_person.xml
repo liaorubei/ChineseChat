@@ -23,17 +23,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="ChineseChat"
+            android:text="@string/ActivityPerson_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
         <TextView
             android:id="@+id/tv_save"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:padding="10dp"
             android:text="@string/ActivityPerson_save"
             android:textColor="#FFFFFF" />
 

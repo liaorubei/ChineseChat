@@ -2,7 +2,6 @@ package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,7 +10,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -54,13 +52,13 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         @Override
         public void onException(Throwable arg0) {
             Log.i("logi", "云信登录异常:" + arg0.getMessage());
-            CommonUtil.toast("网络异常,登录失败");
+            CommonUtil.toastCENTER(R.string.ActivitySignIn_network_error_login_failure);
         }
 
         @Override
         public void onFailed(int arg0) {
             Log.i("logi", "云信登录失败:" + arg0);
-            CommonUtil.toast("网络异常,登录失败");
+            CommonUtil.toastCENTER(R.string.ActivitySignIn_network_error_login_failure);
         }
 
         @Override
@@ -123,7 +121,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 String password = et_password.getText().toString().trim();
 
                 if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)) {
-                    Toast.makeText(ActivitySignIn.this, "帐号或密码不能为空", Toast.LENGTH_SHORT).show();
+                    CommonUtil.toastCENTER(R.string.ActivitySignIn_email_or_password_not_null);
                     return;
                 }
 
@@ -148,17 +146,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-        // 取出保存的用户数据,如果存在就直接登录
-        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-        String username = sp.getString("username", "");
-        String password = sp.getString("password", "");
-        if (!(TextUtils.isEmpty(username) || TextUtils.isEmpty(password))) {
-            // signIn(username, password);
-        }
-
         initView();
-
-        //  NIMClient.getService(AuthService.class).logout();// 登出帐号
     }
 
     public void signIn(final String username, final String password) {
@@ -170,7 +158,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
             @Override
             public void onFailure(HttpException error, String msg) {
                 bt_login.setEnabled(true);
-                Toast.makeText(MyApplication.getContext(), "网络异常,请稍后重试", Toast.LENGTH_SHORT).show();
+                CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);
             }
 
             @Override
@@ -188,7 +176,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                     response.info.PassWord = password;
                     CommonUtil.saveUserToSP(ActivitySignIn.this, response.info);
                 } else {
-                    Toast.makeText(MyApplication.getContext(), "登录失败,帐号密码不匹配", Toast.LENGTH_SHORT).show();
+                    CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);
                 }
             }
         });

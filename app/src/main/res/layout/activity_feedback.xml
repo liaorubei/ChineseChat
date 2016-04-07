@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="投诉/建议"
+            android:text="@string/ActivityFeedback_ComplaintsAndSuggestions"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -37,7 +37,7 @@
         android:layout_weight="1"
         android:background="@drawable/shape_text_signinup"
         android:gravity="top"
-        android:hint="请输入投诉/反馈/建议内容"
+        android:hint="@string/ActivityFeedback_please_type_something"
         android:textSize="12sp" />
 
     <EditText
@@ -47,7 +47,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:background="@drawable/shape_text_signinup"
-        android:hint="期待留下你的邮箱"
+        android:hint="@string/ActivityFeedback_please_email"
         android:textSize="12sp" />
 
 
@@ -58,7 +58,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/selector_button_signniup"
         android:enabled="true"
-        android:text="提交"
+        android:text="@string/ActivityFeedback_Content_submit"
         android:textColor="#FFFFFF"
         android:textSize="15sp" />
 

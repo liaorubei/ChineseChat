@@ -13,6 +13,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -88,5 +90,17 @@ public class CommonUtil {
                 }
             });
         }
+    }
+
+    public static void toastCENTER(int resId) {
+        Toast toast = Toast.makeText(MyApplication.getContext(), resId, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    public static void toastTOP(String text) {
+        Toast toast = Toast.makeText(MyApplication.getContext(), text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 55, MyApplication.getContext().getResources().getDisplayMetrics()));
+        toast.show();
     }
 }

@@ -23,7 +23,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="ChineseChat"
+            android:text="学习记录"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 

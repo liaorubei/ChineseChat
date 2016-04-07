@@ -58,7 +58,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/ib_download"
-            android:text="全部下载"
+            android:text="@string/ActivityDocsTodo_download"
             android:textColor="@color/color_app"
             android:textSize="18sp" />
     </RelativeLayout>

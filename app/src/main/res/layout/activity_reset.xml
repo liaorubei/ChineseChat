@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="密码重置"
+            android:text="@string/ActivityReset_reset_password"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -47,7 +47,7 @@
                 android:layout_marginRight="45dp"
                 android:layout_marginTop="70dp"
                 android:background="@drawable/shape_text_signinup"
-                android:hint="请输入邮箱"
+                android:hint="@string/ActivityReset_please_input_email"
                 android:textSize="12sp" />
 
             <LinearLayout
@@ -64,7 +64,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@drawable/shape_text_signinup"
-                    android:hint="请输入验证码"
+                    android:hint="@string/ActivityReset_please_type_code"
                     android:textSize="12sp" />
 
                 <TextView
@@ -73,7 +73,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginLeft="5dp"
                     android:background="@drawable/shape_text_signinup"
-                    android:text="获取验证码"
+                    android:text="@string/ActivityReset_get_code"
                     android:textSize="12sp" />
             </LinearLayout>
 
@@ -85,7 +85,7 @@
                 android:layout_marginRight="45dp"
                 android:background="@drawable/selector_button_signniup"
                 android:enabled="true"
-                android:text="下一步"
+                android:text="@string/ActivityReset_next"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
         </LinearLayout>
@@ -107,7 +107,7 @@
                 android:layout_marginRight="45dp"
                 android:layout_marginTop="70dp"
                 android:background="@drawable/shape_text_signinup"
-                android:hint="请输入密码"
+                android:hint="@string/ActivityReset_please_type_you_new_password"
                 android:inputType="textPassword"
                 android:textSize="12sp" />
 
@@ -120,10 +120,9 @@
                 android:layout_marginLeft="45dp"
                 android:layout_marginRight="45dp"
                 android:background="@drawable/shape_text_signinup"
-                android:hint="请再次输入密码"
+                android:hint="@string/ActivityReset_please_retype_you_new_password"
                 android:inputType="textPassword"
                 android:textSize="12sp" />
-
 
             <Button
                 android:id="@+id/bt_positive"
@@ -133,7 +132,7 @@
                 android:layout_marginRight="45dp"
                 android:background="@drawable/selector_button_signniup"
                 android:enabled="true"
-                android:text="确定"
+                android:text="@string/ActivityReset_confirm"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp" />
         </LinearLayout>

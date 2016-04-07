@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -158,7 +159,7 @@ public class FragmentListen extends Fragment {
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
-                CommonUtil.toast("网络异常");
+                CommonUtil.toast(getString(R.string.network_error));
             }
         });
     }

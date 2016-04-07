@@ -12,6 +12,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +103,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
-                CommonUtil.toast("网络异常");
+                CommonUtil.toast(getString(R.string.network_error));
             }
         });
     }
@@ -127,6 +128,13 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         srl.setVisibility(View.INVISIBLE);
 
         ListView listview = (ListView) view.findViewById(R.id.listview);
+        TextView emptyView = new TextView(getActivity());
+        emptyView.setText("12305");
+        emptyView.setGravity(Gravity.CENTER);
+        emptyView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        emptyView.setBackgroundResource(R.drawable.chat_background);
+
+        listview.setEmptyView(emptyView);
         list = new ArrayList<User>();
         adapter = new MyAdapter(list);
         listview.setAdapter(adapter);
@@ -172,12 +180,11 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             final User user = getItem(position);
             View inflate = View.inflate(getActivity(), R.layout.listitem_choose, null);
             TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
             ImageView iv_icon = (ImageView) inflate.findViewById(R.id.iv_icon);
-            tv_nickname.setText("昵称:" + user.Name);
+            tv_nickname.setText(user.Name);
             TextView tv_about = (TextView) inflate.findViewById(R.id.tv_about);
             tv_about.setText(user.About);
 

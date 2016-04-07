@@ -5,17 +5,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Size;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.db.sqlite.CursorUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.newclass.woyaoxue.MyApplication;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
@@ -49,7 +53,7 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                         message.obj = tv;
                         sendMessageDelayed(message, 1000);
                     } else {
-                        tv.setText("获取验证码");
+                        tv.setText(MyApplication.getContext().getString(R.string.ActivityReset_get_code));
                         tv.setEnabled(true);
                     }
                     break;
@@ -58,12 +62,16 @@ public class ActivityReset extends Activity implements View.OnClickListener {
     };
     private static int time = 60;
     private Gson gson = new Gson();
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset);
         initView();
+
+        toast = Toast.makeText(getApplicationContext(), "", Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
     }
 
     private void initView() {
@@ -97,7 +105,8 @@ public class ActivityReset extends Activity implements View.OnClickListener {
             case R.id.tv_code: {
                 String email = et_email.getText().toString().trim();
                 if (TextUtils.isEmpty(email)) {
-                    CommonUtil.toast("请输入邮箱");
+                    toast.setText(R.string.ActivityReset_please_input_email);
+                    toast.show();
                     return;
                 }
 
@@ -107,11 +116,14 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                 Matcher matcher = regex.matcher(email);
                 boolean isMatched = matcher.matches();
                 if (!isMatched) {
-                    CommonUtil.toast("邮箱格式不正确");
+                    toast.setText(R.string.ActivityReset_EmailAddressFormatIsNotCorrect);
+                    toast.show();
                     return;
                 }
 
-                CommonUtil.toast("请到邮箱获取验证码");
+                toast.setText(R.string.ActivityReset_Please_check_your_email);
+                toast.show();
+
                 time = 60;
                 tv_code.setText("60S");
                 tv_code.setEnabled(false);
@@ -130,7 +142,8 @@ public class ActivityReset extends Activity implements View.OnClickListener {
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("获取验证码失败");
+                        toast.setText(R.string.ActivityReset_get_code_error);
+                        toast.show();
                         tv_code.setEnabled(true);
                         Log.i(TAG, "onFailure: " + msg);
                     }
@@ -143,7 +156,8 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                 String email = et_email.getText().toString().trim();
                 String code = et_code.getText().toString().trim();
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(code)) {
-                    CommonUtil.toast("邮箱或验证码不能为空");
+                    toast.setText(R.string.ActivityReset_email_and_code_can_not_be_null);
+                    toast.show();
                     return;
                 }
 
@@ -166,7 +180,7 @@ public class ActivityReset extends Activity implements View.OnClickListener {
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("网络异常");
+                        CommonUtil.toast(getString(R.string.network_error));
                         Log.i(TAG, "onFailure: " + msg);
                     }
                 });
@@ -176,14 +190,16 @@ public class ActivityReset extends Activity implements View.OnClickListener {
             case R.id.bt_positive: {
                 String email = et_email.getText().toString().trim();
                 String password = et_password.getText().toString().trim();
-                String repassword = et_repassword.getText().toString().trim();
-                if (TextUtils.isEmpty(repassword) || TextUtils.isEmpty(repassword)) {
-                    CommonUtil.toast("请输入密码");
+                String re_password = et_repassword.getText().toString().trim();
+                if (TextUtils.isEmpty(re_password) || TextUtils.isEmpty(re_password)) {
+                    toast.setText(R.string.ActivityReset_please_input_email);
+                    toast.show();
                     return;
                 }
 
-                if (!TextUtils.equals(password, repassword)) {
-                    CommonUtil.toast("两次输入的密码不一样");
+                if (!TextUtils.equals(password, re_password)) {
+                    toast.setText(R.string.ActivityReset_password_are_not_the_same);
+                    toast.show();
                     return;
                 }
 
@@ -196,14 +212,15 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                         Response<User> user = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                         }.getType());
                         if (user.code == 200) {
-                            CommonUtil.toast("密码修改成功，请使用新密码登录");
+                            toast.setText(R.string.ActivityReset_password_change_success);
+                            toast.show();
                             finish();
                         }
                     }
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("网络异常");
+                        CommonUtil.toast(getString(R.string.network_error));
                         Log.i(TAG, "onFailure: " + msg);
                     }
                 });

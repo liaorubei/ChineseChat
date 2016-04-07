@@ -28,13 +28,12 @@
         <TextView
             android:id="@+id/tv_ctrl"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:text="删除"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/ActivityDocsDone_Delete"
             android:textColor="#FFF" />
-
     </RelativeLayout>
 
     <RelativeLayout
