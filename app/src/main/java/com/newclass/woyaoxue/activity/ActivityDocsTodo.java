@@ -24,7 +24,7 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Document;
 import com.newclass.woyaoxue.bean.DownloadInfo;
@@ -47,7 +47,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.Future;
 
 
 /*
@@ -113,7 +112,7 @@ public class ActivityDocsTodo extends Activity {
 
         String url = NetworkUtil.getDocs(folder.Id + "", 0 + "", pageSize + "");
 
-        UrlCache cache = MyApplication.getDatabase().cacheSelectByUrl(url);
+        UrlCache cache = ChineseChat.getDatabase().cacheSelectByUrl(url);
         if (cache == null) {
 
             HttpUtil.post(url, null, new RequestCallBack<String>() {
@@ -125,7 +124,7 @@ public class ActivityDocsTodo extends Activity {
                     urlCache.Url = this.getRequestUrl();
                     urlCache.Json = responseInfo.result;
                     urlCache.UpdateAt = System.currentTimeMillis();
-                    MyApplication.getDatabase().cacheInsertOrUpdate(urlCache);
+                    ChineseChat.getDatabase().cacheInsertOrUpdate(urlCache);
                 }
 
                 @Override
@@ -146,7 +145,7 @@ public class ActivityDocsTodo extends Activity {
                         urlCache.Url = this.getRequestUrl();
                         urlCache.Json = responseInfo.result;
                         urlCache.UpdateAt = System.currentTimeMillis();
-                        MyApplication.getDatabase().cacheInsertOrUpdate(urlCache);
+                        ChineseChat.getDatabase().cacheInsertOrUpdate(urlCache);
                     }
 
                     @Override

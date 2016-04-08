@@ -9,6 +9,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.newclass.woyaoxue.activity.MessageActivity;
+import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
@@ -23,10 +24,11 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-public class MyApplication extends Application {
-    protected static final String TAG = "MyApplication";
+public class ChineseChat extends Application {
+    protected static final String TAG = "ChineseChat";
     private static Context mContext = null;
     private static Database mDatabase = null;
+    public static User CurrentUser;
     private Observer<StatusCode> observerOnlineStatus = new Observer<StatusCode>() {
         private static final long serialVersionUID = 1L;
 
@@ -46,12 +48,26 @@ public class MyApplication extends Application {
         LoginInfo loginInfo = getLoginInfo();
         NIMClient.init(this, loginInfo, options);
 
+        //是学生端还是教师端
         try {
             release = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getString("release");
             Log.i(TAG, "release: " + release);
         } catch (Exception e) {
             Log.i(TAG, "onCreate: " + e.getMessage());
         }
+
+        //当前用户
+        SharedPreferences preferences = getSharedPreferences("user", MODE_PRIVATE);
+        User user = new User();
+        user.Accid = preferences.getString("accid", "");
+        user.Token = preferences.getString("token", "");
+        user.NickName = preferences.getString("nickname", "");
+        user.Username = preferences.getString("username", "");
+        user.Avatar = preferences.getString("avatar", "");
+        user.Gender = preferences.getInt("gender", -1);
+        user.Coins = preferences.getInt("coins", 0);
+
+        CurrentUser = user;
     }
 
     private SDKOptions getOptions() {

@@ -405,6 +405,11 @@
     <string name="MainActivity_Refresh">Refresh</string>
     <string name="MainActivity_Delete">Delete</string>
 
+    <!--FragmentListen-->
+    <string name="FragmentListen_downloaded">Local</string>
+
+
+
     <!--FragmentPerson-->
     <string name="fragment_person_unlogin">Unlogin</string>
     <string name="fragment_person_my_coins">Coins:</string>
@@ -414,8 +419,16 @@
     <string name="activity_person_save">save</string>
 
     <!--ActivityPayment-->
-    <string name="activity_payment_select_recharge_mode">Please choose you recharge mode</string>
-    <string name="activity_payment_recharge_records">recharge records</string>
+    <string name="ActivityPayment_title">Recharge</string>
+    <string name="ActivityPayment_select_recharge_mode">Please choose you recharge mode</string>
+    <string name="ActivityPayment_recharge_records">recharge records</string>
+    <string name="ActivityPayment_recharge_success">Recharge success</string>
+    <string name="ActivityPayment_recharge_failure">Recharge failure</string>
+    <string name="ActivityPayment_pricelist_failure">pricelist failure</string>
+    <string name="ActivityPayment_select_topup_money">Please select a topup amount</string>
+    <string name="ActivityPayment_creating_order">is creating order</string>
+    <string name="ActivityPayment_order_failure">Creating order failure</string>
+    <string name="ActivityPayment_check_order">Checking order</string>
 
     <!--充值记录-->
     <string name="项目">"Item: "</string>
@@ -467,7 +480,7 @@
 
 
     <!--ActivityFeedback-->
-    <string name="ActivityFeedback_ComplaintsAndSuggestions">"Complaints and Suggestions"</string>
+    <string name="ActivityFeedback_ComplaintsAndSuggestions">Complaints and Suggestions</string>
     <string name="ActivityFeedback_please_type_something">Please type something</string>
     <string name="ActivityFeedback_please_email">Expect you Email</string>
     <string name="ActivityFeedback_Content_submit">Submit</string>
@@ -476,9 +489,9 @@
     <string name="ActivityFeedback_Content_submit_success">Submit success</string>
 
     <!--ActivityAbout-->
-    <string name="ActivityAbout_about_chinese">About Chinese</string>
+    <string name="ActivityAbout_title">About ChineseChat</string>
     <string name="ActivityAbout_update_version">Version Check</string>
-    <string name="ActivityAbout_user_help">User Help</string>
+    <string name="ActivityAbout_use_help">Use Help</string>
     <string name="ActivityAbout_user_agreement">User Agreement</string>
 
     <!--ActivityReset-->
@@ -518,7 +531,9 @@
     <string name="ActivitySignUp_login">Login</string>
     <string name="ActivitySignUp_user_registration_agreement">《Agreement》</string>
     <string name="ActivitySignUp_next">Next</string>
+
     <string name="ActivitySetting_title">Setting</string>
     <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityUsehelp_title">Use Help</string>
+
 </resources>

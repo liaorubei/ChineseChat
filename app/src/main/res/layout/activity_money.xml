@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="账号充值"
+            android:text="@string/ActivityPayment_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
     </RelativeLayout>
@@ -33,7 +33,7 @@
         android:layout_marginBottom="1dp"
         android:background="#FFFFFF"
         android:gravity="center"
-        android:text="@string/activity_payment_select_recharge_mode" />
+        android:text="@string/ActivityPayment_select_recharge_mode" />
 
     <LinearLayout
         android:id="@+id/ll_ctrl"
@@ -110,7 +110,7 @@
         android:layout_marginBottom="1dp"
         android:background="#FFFFFF"
         android:gravity="center"
-        android:text="@string/activity_payment_recharge_records" />
+        android:text="@string/ActivityPayment_recharge_records" />
 
     <ListView
         android:id="@id/listview"

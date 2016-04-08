@@ -18,6 +18,7 @@ public class Orders {
     public String TradeStatus;
     public String LastOrderString;
     public String CreateTime;
+    public int Coin;
 
 
     public Orders(BigDecimal amount, String currency, String main, String body) {

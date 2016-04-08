@@ -95,9 +95,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     private ImageView iv_rec_pause, iv_rec_origin, iv_rec_prev, iv_rec_button, iv_rec_record, iv_rec_next, iv_rec_back;
 
     private LinearLayout ll_lyrics, ll_play, ll_tape;
-    private MediaRecorder mediaRecorder;// 音频录音对象
 
-    private MediaPlayer originPlayer, recordPlayer;// 原音,录音播放对象
+    private MediaRecorder recorder;// 音频录音对象
+    private MediaPlayer playerOrigin, playerRecord;// 原音,录音播放对象
+
     private DisplayMetrics outMetrics = new DisplayMetrics();
 
     private FrameLayout.LayoutParams playParams, recordParams;// 控制按钮布局的布局参数
@@ -137,7 +138,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         database = new Database(this);
         initData();
 
-        mediaRecorder = new MediaRecorder();
+        recorder = new MediaRecorder();
         recordFile = new File(getFilesDir(), "recode.tmp");
         initMediaRecorder(recordFile.getAbsolutePath());
 
@@ -200,11 +201,11 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     }
 
     private int getCurrentIndex() {
-        if (specialLyricViews != null && originPlayer != null && originPlayer.getDuration() > 0) {
-            int current = originPlayer.getCurrentPosition();
+        if (specialLyricViews != null && playerOrigin != null && playerOrigin.getDuration() > 0) {
+            int current = playerOrigin.getCurrentPosition();
             for (int i = 0; i < specialLyricViews.size(); i++) {
                 Integer timeA = specialLyricViews.get(i).getTimeLabel();
-                Integer timeB = i == (specialLyricViews.size() - 1) ? originPlayer.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
+                Integer timeB = i == (specialLyricViews.size() - 1) ? playerOrigin.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
                 // 含头不含尾,因为当暂停之后再seekto时,current会等于sideA,所以要含头不含尾
                 if (timeA <= current && current < timeB) {
                     return i;
@@ -261,14 +262,14 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
     private void initMediaRecorder(String path) {
         try {
-            if (mediaRecorder == null) {
-                mediaRecorder = new MediaRecorder();
+            if (recorder == null) {
+                recorder = new MediaRecorder();
             }
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            mediaRecorder.setOutputFile(path);
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            mediaRecorder.prepare();
+            recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            recorder.setOutputFile(path);
+            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            recorder.prepare();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -276,23 +277,23 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
     private void initOriginPlayer(String path) {
         try {
-            if (originPlayer == null) {
-                originPlayer = new MediaPlayer();
-                originPlayer.setLooping(true);
-                originPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                originPlayer.setOnPreparedListener(this);
-                originPlayer.setOnErrorListener(this);
-                originPlayer.setOnInfoListener(this);
+            if (playerOrigin == null) {
+                playerOrigin = new MediaPlayer();
+                playerOrigin.setLooping(true);
+                playerOrigin.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                playerOrigin.setOnPreparedListener(this);
+                playerOrigin.setOnErrorListener(this);
+                playerOrigin.setOnInfoListener(this);
             }
 
             // 如果本地音频文件存在,则直接使用本地路径,如果不存在才使用网络路径,因为有可能已经缓存或下载过了
             File file = new File(getFilesDir(), path);
             if (file.exists()) {
-                originPlayer.setDataSource(file.getAbsolutePath());
-                originPlayer.prepare();
+                playerOrigin.setDataSource(file.getAbsolutePath());
+                playerOrigin.prepare();
             } else {
-                originPlayer.setDataSource(NetworkUtil.getFullPath(path));
-                originPlayer.prepareAsync();
+                playerOrigin.setDataSource(NetworkUtil.getFullPath(path));
+                playerOrigin.prepareAsync();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -301,24 +302,24 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
     private void initRecordPlayer(String path, boolean prepare) {
         try {
-            if (recordPlayer == null) {
-                recordPlayer = new MediaPlayer();
-                recordPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                recordPlayer.setOnCompletionListener(new OnCompletionListener() {
+            if (playerRecord == null) {
+                playerRecord = new MediaPlayer();
+                playerRecord.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                playerRecord.setOnCompletionListener(new OnCompletionListener() {
 
                     @Override
                     public void onCompletion(MediaPlayer mp) {
                         if (currentState == MediaState.播放录音) {
                             seekToCurrentLine();
-                            originPlayer.start();
+                            playerOrigin.start();
                             currentState = MediaState.播放原音;
                         }
                     }
                 });
             }
             if (prepare) {
-                recordPlayer.setDataSource(path);
-                recordPlayer.prepare();
+                playerRecord.setDataSource(path);
+                playerRecord.prepare();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -381,8 +382,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 // 如果由用户手动拖动则更改左右两边的时间标签内容
-                if (fromUser && originPlayer != null) {
-                    tv_aSide.setText(millisecondsFormat(originPlayer.getCurrentPosition()));
+                if (fromUser && playerOrigin != null) {
+                    tv_aSide.setText(millisecondsFormat(playerOrigin.getCurrentPosition()));
                 }
             }
 
@@ -393,8 +394,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
             @Override
             public void onStopTrackingTouch(SeekBar sb) {
-                if (originPlayer != null) {
-                    originPlayer.seekTo(sb.getProgress());
+                if (playerOrigin != null) {
+                    playerOrigin.seekTo(sb.getProgress());
                 }
 
             }
@@ -434,11 +435,11 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 seekToPrevLine();
                 break;
             case R.id.iv_play:
-                if (originPlayer.isPlaying()) {
-                    originPlayer.pause();
+                if (playerOrigin.isPlaying()) {
+                    playerOrigin.pause();
                     iv_play.setImageResource(R.drawable.play_btn_play_checked);
                 } else {
-                    originPlayer.start();
+                    playerOrigin.start();
                     iv_play.setImageResource(R.drawable.play_btn_pause_checked);
                 }
                 break;
@@ -456,10 +457,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 if (recordFile == null) {
                     recordFile = new File(getFilesDir(), "record.tmp");
                 }
-                if (recordPlayer == null) {
+                if (playerRecord == null) {
                     initRecordPlayer(recordFile.getAbsolutePath(), recordFile.length() > 0);
                 }
-                if (mediaRecorder == null) {
+                if (recorder == null) {
                     initMediaRecorder(recordFile.getAbsolutePath());
                 }
 
@@ -469,39 +470,68 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 iv_rec_pause.setImageResource(R.drawable.play_btn_pause_checked);
                 break;
 
-            case R.id.iv_rec_pause:
+            case R.id.iv_rec_pause: {
                 iv_rec_pause.setSelected(!iv_rec_pause.isSelected());
-                iv_rec_pause.setImageResource(iv_rec_pause.isSelected() ? R.drawable.play_btn_play_checked : R.drawable.play_btn_pause_checked);
-                stopOrPauseMedia(iv_rec_pause.isSelected(), false);
-                currentState = MediaState.全部暂停;
-                break;
+                Log.i(TAG, "iv_rec_pause.isSelected=" + iv_rec_pause.isSelected());
+                if (iv_rec_pause.isSelected()) {
+                    //如果是暂停，那么暂停所有的，包括正在录音，播放录音，播放原音
+                    if (recorder != null && currentState == MediaState.正在录音) {
+                        recorder.stop();
+                    }
+
+                    if (playerRecord != null && currentState == MediaState.播放录音) {
+                        playerRecord.pause();
+                    }
+
+                    if (playerOrigin != null && currentState == MediaState.播放原音) {
+                        playerOrigin.pause();
+                    }
+                } else {
+                    switch (currentState) {
+                        case 播放原音:
+                            playerOrigin.start();
+                            break;
+                        case 播放录音:
+                            playerRecord.start();
+                            break;
+                        case 正在录音:
+                            recorder.reset();
+                            recorder.start();
+                            break;
+                    }
+                }
+            }
+            break;
             case R.id.iv_rec_origin:
                 stopOrPauseMedia(false, false);
                 seekToCurrentLine();
-                originPlayer.start();
+                playerOrigin.start();
                 currentState = MediaState.播放原音;
                 break;
             case R.id.iv_rec_prev:
                 stopOrPauseMedia(false, false);
                 seekToPrevLine();
-                originPlayer.start();
+                playerOrigin.start();
                 currentState = MediaState.播放原音;
                 break;
             case R.id.iv_rec_button:
+                //录音暂停键复原
+                iv_rec_pause.setSelected(false);
+
                 iv_rec_button.setSelected(!iv_rec_button.isSelected());
                 stopOrPauseMedia(false, iv_rec_button.isSelected());
 
                 if (iv_rec_button.isSelected()) {
-                    mediaRecorder.reset();
+                    recorder.reset();
                     initMediaRecorder(recordFile.getAbsolutePath());
-                    mediaRecorder.start();
+                    recorder.start();
                     currentState = MediaState.正在录音;
                     iv_rec_button.setImageResource(R.drawable.play_btn_recording_selected);
                 } else {
                     if (recordFile.exists() && recordFile.length() > 0) {
-                        recordPlayer.reset();
+                        playerRecord.reset();
                         initRecordPlayer(recordFile.getAbsolutePath(), true);
-                        recordPlayer.start();
+                        playerRecord.start();
                         currentState = MediaState.播放录音;
                         iv_rec_button.setImageResource(R.drawable.play_btn_recording_uncheck);
                     }
@@ -510,16 +540,16 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             case R.id.iv_rec_next:
                 stopOrPauseMedia(false, false);
                 seekToNextLine();
-                originPlayer.start();
+                playerOrigin.start();
                 currentState = MediaState.播放原音;
 
                 break;
             case R.id.iv_rec_record:
                 stopOrPauseMedia(false, false);
                 if (recordFile.exists() && recordFile.length() > 0) {
-                    recordPlayer.reset();
+                    playerRecord.reset();
                     initRecordPlayer(recordFile.getAbsolutePath(), true);
-                    recordPlayer.start();
+                    playerRecord.start();
                     currentState = MediaState.播放录音;
                 }
                 break;
@@ -528,7 +558,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 // 控制栏右移动,切换到正常模式,同时把录音播放和录音的对象停止
                 toRAnimator.start();
                 tv_play_record_time.setVisibility(View.INVISIBLE);
-                originPlayer.start();
+                playerOrigin.start();
                 currentState = MediaState.播放原音;
                 break;
 
@@ -549,14 +579,14 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         Log.i(TAG, "onDestroy: ");
         super.onDestroy();
         handler.removeCallbacksAndMessages(null);
-        if (originPlayer != null) {
-            originPlayer.release();
-            originPlayer = null;
+        if (playerOrigin != null) {
+            playerOrigin.release();
+            playerOrigin = null;
         }
 
-        if (mediaRecorder != null) {
-            mediaRecorder.release();
-            mediaRecorder = null;
+        if (recorder != null) {
+            recorder.release();
+            recorder = null;
         }
         if (database != null) {
             database.closeConnection();
@@ -641,17 +671,17 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         sideB = mp.getDuration();
 
         // 点出播放单句,同时重置A-B两端
-        if (specialLyricViews != null && originPlayer != null && originPlayer.getDuration() > 0) {
+        if (specialLyricViews != null && playerOrigin != null && playerOrigin.getDuration() > 0) {
             for (int i = 0; i < specialLyricViews.size(); i++) {
                 final Integer timeA = specialLyricViews.get(i).getTimeLabel();
-                final Integer timeB = i == (specialLyricViews.size() - 1) ? originPlayer.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
+                final Integer timeB = i == (specialLyricViews.size() - 1) ? playerOrigin.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
                 specialLyricViews.get(i).setOnClickListener(new OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
                         sideA = timeA;
                         sideB = timeB;
-                        originPlayer.seekTo(sideA);
+                        playerOrigin.seekTo(sideA);
                     }
                 });
 
@@ -664,7 +694,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             @Override
             public void run() {
 
-                if (originPlayer != null) // && mediaPlayer.isPlaying())
+                if (playerOrigin != null) // && mediaPlayer.isPlaying())
                 {
                     handler.sendEmptyMessage(REFRESH_SEEKBAR);
                 }
@@ -681,23 +711,23 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         long currentLineTime = 0;
         long nextLineTime = 0;
 
-        if (originPlayer == null) {
+        if (playerOrigin == null) {
             return;
         }
 
-        int currentPosition = originPlayer.getCurrentPosition();
-        seekBar.setProgress(originPlayer.getCurrentPosition());
-        tv_aSide.setText(millisecondsFormat(originPlayer.getCurrentPosition()));
+        int currentPosition = playerOrigin.getCurrentPosition();
+        seekBar.setProgress(playerOrigin.getCurrentPosition());
+        tv_aSide.setText(millisecondsFormat(playerOrigin.getCurrentPosition()));
 
         if (isOneLineLoop && currentPosition > sideB) {
-            originPlayer.seekTo(sideA);
+            playerOrigin.seekTo(sideA);
         }
 
         for (int i = 0; i < specialLyricViews.size(); i++) {
             SpecialLyricView view = specialLyricViews.get(i);
             currentLineTime = view.getTimeLabel();
 
-            nextLineTime = (i + 1 == specialLyricViews.size()) ? originPlayer.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
+            nextLineTime = (i + 1 == specialLyricViews.size()) ? playerOrigin.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
 
             if (currentLineTime <= currentPosition && currentPosition < nextLineTime) {
                 // 高亮显示字幕
@@ -716,8 +746,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         }
 
         if (isOneLineLoop) {
-            if (originPlayer.getCurrentPosition() > sideB) {
-                originPlayer.seekTo(sideA);
+            if (playerOrigin.getCurrentPosition() > sideB) {
+                playerOrigin.seekTo(sideA);
             }
         }
 
@@ -735,10 +765,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 SpecialLyricView n = specialLyricViews.get(index + 1);
                 sideB = n.getTimeLabel();
             } else {
-                sideB = originPlayer.getDuration();
+                sideB = playerOrigin.getDuration();
             }
 
-            originPlayer.seekTo(sideA);
+            playerOrigin.seekTo(sideA);
         }
     }
 
@@ -749,7 +779,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             SpecialLyricView nextNext = specialLyricViews.get(index + 2);
             sideA = next.getTimeLabel();
             sideB = nextNext.getTimeLabel();
-            originPlayer.seekTo(sideA);
+            playerOrigin.seekTo(sideA);
         }
     }
 
@@ -760,16 +790,16 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             SpecialLyricView curr = specialLyricViews.get(index);
             sideA = prev.getTimeLabel();
             sideB = curr.getTimeLabel();
-            originPlayer.seekTo(sideA);
+            playerOrigin.seekTo(sideA);
         }
     }
 
     private void setSideASideB() {
-        if (specialLyricViews != null && originPlayer != null && originPlayer.getDuration() > 0) {
-            int currentPosition = originPlayer.getCurrentPosition();
+        if (specialLyricViews != null && playerOrigin != null && playerOrigin.getDuration() > 0) {
+            int currentPosition = playerOrigin.getCurrentPosition();
             for (int i = 0; i < specialLyricViews.size(); i++) {
                 Integer timeA = specialLyricViews.get(i).getTimeLabel();
-                Integer timeB = i == (specialLyricViews.size() - 1) ? originPlayer.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
+                Integer timeB = i == (specialLyricViews.size() - 1) ? playerOrigin.getDuration() : specialLyricViews.get(i + 1).getTimeLabel();
                 if (timeA < currentPosition && currentPosition < timeB) {
                     sideA = timeA;
                     sideB = timeB;
@@ -820,12 +850,12 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         elapsedTime = 0;
         iv_rec_pause.setSelected(pause);
         iv_rec_button.setSelected(record);
-        if (currentState == MediaState.播放原音 && originPlayer != null) {
-            originPlayer.pause();
+        if (currentState == MediaState.播放原音 && playerOrigin != null) {
+            playerOrigin.pause();
         } else if (currentState == MediaState.播放录音) {
-            recordPlayer.pause();
+            playerRecord.pause();
         } else if (currentState == MediaState.正在录音) {
-            mediaRecorder.stop();
+            recorder.stop();
         }
     }
 }

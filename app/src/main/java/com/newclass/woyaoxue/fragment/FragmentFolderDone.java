@@ -12,12 +12,11 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivityDocsDone;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Document;
 import com.newclass.woyaoxue.bean.Folder;
-import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
 
@@ -40,7 +39,7 @@ public class FragmentFolderDone extends Fragment {
         super.onResume();
         Log.i(TAG, "onResume: " + list.size() + " list=" + list);
 
-        List<Folder> folders = MyApplication.getDatabase().folderSelectListWithDocsCount();
+        List<Folder> folders = ChineseChat.getDatabase().folderSelectListWithDocsCount();
         list.clear();
         for (Folder folder : folders) {
             if (folder.DocsCount > 0) {
@@ -102,9 +101,9 @@ public class FragmentFolderDone extends Fragment {
                     dialog.findViewById(R.id.bt_positive).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            List<Document> documents = MyApplication.getDatabase().docsSelectListByFolderId(item.Id);
+                            List<Document> documents = ChineseChat.getDatabase().docsSelectListByFolderId(item.Id);
                             for (Document d : documents) {
-                                MyApplication.getDatabase().docsDeleteById(d.Id);
+                                ChineseChat.getDatabase().docsDeleteById(d.Id);
                                 File file = new File(getActivity().getFilesDir(), d.SoundPath);
                                 if (file.exists()) {
                                     file.delete();

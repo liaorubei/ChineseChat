@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.ActivityHistory;
 import com.newclass.woyaoxue.activity.ActivityPayment;
@@ -70,13 +71,12 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         super.onResume();
         if (NIMClient.getStatus() == StatusCode.LOGINED) {
             //显示头像，昵称，性别，学币
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE);
-            username = sharedPreferences.getString("username", "");
-            accid = sharedPreferences.getString("accid", "");
-            String avatar = sharedPreferences.getString("avatar", "");
-            String nickname = sharedPreferences.getString("nickname", "");
-            int gender = sharedPreferences.getInt("gender", -1);
-            int coins = sharedPreferences.getInt("coins", 0);
+            username = ChineseChat.CurrentUser.Username;
+            accid = ChineseChat.CurrentUser.Accid;
+            String avatar = ChineseChat.CurrentUser.Avatar;
+            String nickname = ChineseChat.CurrentUser.NickName;
+            int gender = ChineseChat.CurrentUser.Gender;
+            int coins = ChineseChat.CurrentUser.Coins;
 
             Log.i(TAG, "onResume: Avatar=" + avatar + " nickname=" + nickname + " gender=" + gender + " coins=" + coins);
 

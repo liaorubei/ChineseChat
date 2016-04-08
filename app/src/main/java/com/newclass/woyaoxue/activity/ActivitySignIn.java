@@ -26,7 +26,7 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
@@ -129,7 +129,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 signIn(account, password);
                 break;
             case R.id.tv_signup:
-                if (MyApplication.isStudent()) {
+                if (ChineseChat.isStudent()) {
                     startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
                 } else {
                     CommonUtil.toast("教师端暂时无法注册");
@@ -172,8 +172,11 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                     signInNim(response.info.Accid, response.info.Token);
 
                     // 保护登录信息
-                    response.info.UserName = username;
+                    response.info.Username = username;
                     response.info.PassWord = password;
+
+                    ChineseChat.CurrentUser = response.info;
+
                     CommonUtil.saveUserToSP(ActivitySignIn.this, response.info);
                 } else {
                     CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);

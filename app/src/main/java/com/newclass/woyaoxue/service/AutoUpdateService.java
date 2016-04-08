@@ -22,7 +22,7 @@ import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.bean.UpgradePatch;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
@@ -165,7 +165,7 @@ public class AutoUpdateService extends Service {
 
         // 1.请求网络---升级数据请求,建议放到spash界面
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-        parameters.add("versionType", (MyApplication.isStudent()? 0 : 1) + "");
+        parameters.add("versionType", (ChineseChat.isStudent()? 0 : 1) + "");
         HttpUtil.post(NetworkUtil.checkUpdate, parameters, new RequestCallBack<String>() {
 
             @Override

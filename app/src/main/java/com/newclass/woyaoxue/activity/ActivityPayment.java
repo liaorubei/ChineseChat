@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,6 +22,8 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.netease.nimlib.sdk.NIMClient;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Orders;
 import com.newclass.woyaoxue.bean.PayResult;
@@ -44,7 +47,6 @@ import java.util.List;
 public class ActivityPayment extends Activity implements View.OnClickListener {
 
     private static final String TAG = "MoneyActivity";
-    public static final int RESULTCODE_SUCCESS = 1;
     private LinearLayout ll_paypal, ll_alipay;
     private RadioButton rb_paypal, rb_alipay;
     private List<Orders> orderList;
@@ -62,13 +64,12 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
     private static final String PAYPAL_CLIENT_ID = "ARWTsXI5z88D8wWRIcy8WqR2WfTSpxeHWqL1LLQh15RwYqsfTJx08plA5Lczhm3NmCzZglArvmQ_6Y8h";
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX).clientId(PAYPAL_CLIENT_ID);
     private static final int REQUEST_CODE_PAYPAL = 50;
-    private String username;
+    private Pay pay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_money);
-
         initView();
         initData();
         if (getActionBar() != null) {
@@ -83,12 +84,12 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         orderListView.setAdapter(orderAdapter);
 
         //取得充值记录
-        username = getSharedPreferences("user", MODE_PRIVATE).getString("username", "");
+        String username = ChineseChat.CurrentUser.Username;
         if (!TextUtils.isEmpty(username)) {
             HttpUtil.Parameters p = new HttpUtil.Parameters();
             p.add("username", username);
-            p.add("skip", 0 + "");
-            p.add("take", 25 + "");
+            p.add("skip", 0);
+            p.add("take", 50);
             HttpUtil.post(NetworkUtil.paymentOrderRecords, p, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -109,7 +110,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 @Override
                 public void onFailure(HttpException error, String msg) {
                     Log.i(TAG, "onFailure: " + msg);
-                    CommonUtil.toast("充值记录加载失败");
+                    CommonUtil.toast(R.string.network_error);
                 }
             });
         }
@@ -157,7 +158,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
             @Override
             public void onFailure(HttpException error, String msg) {
-
+                CommonUtil.toast(R.string.ActivityPayment_pricelist_failure);
             }
         });
 
@@ -208,7 +209,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             }
             break;
             case R.id.bt_positive: {
-                Pay pay = null;
+                pay = null;
                 for (Pay p : paymentList) {
                     if (p.is_check) {
                         pay = p;
@@ -217,18 +218,18 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 }
 
                 if (pay == null) {
-                    CommonUtil.toast("请选择充值金额");
+                    CommonUtil.toast(R.string.ActivityPayment_select_topup_money);
                     return;
                 }
 
-                progressDialog.setMessage("正在创建订单");
+                progressDialog.setMessage(getString(R.string.ActivityPayment_creating_order));
                 progressDialog.show();
 
                 //注意测试环境
-                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : new BigDecimal("0.01"), rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat " + pay.subject, "ChineseChat " + pay.subject);
+                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : pay.cny, rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat " + pay.subject, "ChineseChat " + pay.subject);
                 HttpUtil.Parameters p = new HttpUtil.Parameters();
                 p.add("id", 0 + "");
-                p.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
+                p.add("username", ChineseChat.CurrentUser.Username);
                 p.add("Currency", order.Currency);
                 p.add("Amount", order.Amount + "");
                 p.add("Quantity", order.Quantity + "");
@@ -256,7 +257,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                     @Override
                     public void onFailure(HttpException error, String msg) {
                         progressDialog.dismiss();
-                        CommonUtil.toast("订单创建失败");
+                        CommonUtil.toast(R.string.ActivityPayment_order_failure);
                         android.util.Log.i(TAG, "onFailure: " + msg);
                     }
                 });
@@ -281,7 +282,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
             cb_payment.setSelected(item.is_check);
             tv_main.setText(item.subject);
-            tv_price.setText(rb_paypal.isChecked() ? ("USD " + item.usd) : ("CNY " + item.cny));
+            tv_price.setText(rb_paypal.isChecked() ? (item.usd + " USD") : (item.cny + " CNY"));
             return inflate;
         }
     }
@@ -313,6 +314,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             tv_main.setText(getString(R.string.项目) + item.Main);
             tv_amount.setText(getString(R.string.金额) + item.Amount + " " + item.Currency);
             tv_state.setText(getString(R.string.状态) + item.TradeStatus);
+            tv_state.setTextColor("SUCCESS".equals(item.TradeStatus) ? Color.BLACK : Color.RED);
             tv_createtime.setText(getString(R.string.时间) + item.CreateTime);
             return inflate;
         }
@@ -328,7 +330,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
         public Pay(int coin, BigDecimal us, BigDecimal cn) {
             this.coin = coin;
-            this.subject = coin + " 学币";
+            this.subject = "Coins " + coin;
             this.usd = us;
             this.cny = cn;
         }
@@ -393,14 +395,18 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                     }.getType());
 
                     if (resp.code == 200) {
-                        CommonUtil.toast("支付成功");
+                        CommonUtil.toast(R.string.ActivityPayment_recharge_success);
+
+                        //保存到应用
+                        ChineseChat.CurrentUser.Coins += pay.coin;
+                        getSharedPreferences("user", MODE_PRIVATE).edit().putInt("coins", ChineseChat.CurrentUser.Coins).commit();
                         finish();
-                        setResult(RESULTCODE_SUCCESS);
                     }
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
+                    CommonUtil.toast(R.string.ActivityPayment_recharge_failure);
                 }
             });
 
@@ -415,7 +421,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                         CommonUtil.toast("支付结果确认中");
                     } else {
                         // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
-                        CommonUtil.toast("支付失败");
+                        CommonUtil.toast(R.string.ActivityPayment_recharge_failure);
                     }
                 }
             });
@@ -427,7 +433,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             case Activity.RESULT_OK: {
                 PaymentConfirmation confirm = data.getParcelableExtra(com.paypal.android.sdk.payments.PaymentActivity.EXTRA_RESULT_CONFIRMATION);
                 if ("approved".equals(confirm.getProofOfPayment().getState())) {
-                    progressDialog.setMessage("正在验证订单");
+                    progressDialog.setMessage(getString(R.string.ActivityPayment_check_order));
                     progressDialog.show();
 
                     HttpUtil.Parameters p = new HttpUtil.Parameters();
@@ -438,14 +444,18 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                         public void onSuccess(ResponseInfo<String> responseInfo) {
                             Log.i(TAG, "onSuccess: " + responseInfo.result);
                             progressDialog.dismiss();
-                            CommonUtil.toast("支付成功");
-                            setResult(RESULTCODE_SUCCESS);
+                            CommonUtil.toast(R.string.ActivityPayment_recharge_success);
+
+                            //保存到应用
+                            ChineseChat.CurrentUser.Coins += pay.coin;
+                            getSharedPreferences("user", MODE_PRIVATE).edit().putInt("coins", ChineseChat.CurrentUser.Coins).commit();
+
                             finish();
                         }
 
                         @Override
                         public void onFailure(HttpException error, String msg) {
-                            CommonUtil.toast("支付失败");
+                            CommonUtil.toast(R.string.ActivityPayment_recharge_failure);
                         }
                     });
                 }

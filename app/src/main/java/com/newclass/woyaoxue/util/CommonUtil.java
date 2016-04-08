@@ -4,7 +4,7 @@ import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.bean.User;
 import com.voc.woyaoxue.R;
 
@@ -27,8 +27,12 @@ public class CommonUtil {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
 
+    public static void toast(int resId) {
+        Toast.makeText(ChineseChat.getContext(), resId, Toast.LENGTH_SHORT).show();
+    }
+
     public static void toast(String text) {
-        toast(MyApplication.getContext(), text);
+        toast(ChineseChat.getContext(), text);
     }
 
     public static String millisecondsFormat(long milliseconds) {
@@ -55,7 +59,7 @@ public class CommonUtil {
         editor.putString("language", user.Language);
         editor.putString("vocation", user.Job);
 
-        editor.putString("username", user.UserName);
+        editor.putString("username", user.Username);
         editor.putString("password", user.PassWord);
         editor.commit();
     }
@@ -93,14 +97,14 @@ public class CommonUtil {
     }
 
     public static void toastCENTER(int resId) {
-        Toast toast = Toast.makeText(MyApplication.getContext(), resId, Toast.LENGTH_SHORT);
+        Toast toast = Toast.makeText(ChineseChat.getContext(), resId, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
 
     public static void toastTOP(String text) {
-        Toast toast = Toast.makeText(MyApplication.getContext(), text, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.TOP, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 55, MyApplication.getContext().getResources().getDisplayMetrics()));
+        Toast toast = Toast.makeText(ChineseChat.getContext(), text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.TOP, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 55, ChineseChat.getContext().getResources().getDisplayMetrics()));
         toast.show();
     }
 }

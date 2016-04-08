@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="activity_payment_select_recharge_mode">请选择你的充值方式</string>
-    <string name="activity_payment_recharge_records">充值记录</string>
+    <string name="ActivityPayment_select_recharge_mode">请选择你的充值方式</string>
+    <string name="ActivityPayment_recharge_records">充值记录</string>
     <string name="activity_person_save">保存</string>
     <string name="时间">时间:</string>
     <string name="状态">状态:</string>
@@ -63,4 +63,20 @@
     <string name="ActivitySetting_title">个人设置</string>
     <string name="ActivityPerson_title">个人资料</string>
     <string name="ActivityUsehelp_title">使用帮助</string>
+    <string name="ActivityAbout_title">关于汉问</string>
+    <string name="ActivityAbout_update_version">版本更新</string>
+    <string name="ActivityAbout_user_agreement">用户协议</string>
+    <string name="ActivityAbout_use_help">使用帮助</string>
+    <string name="ActivityDocsDone_Delete">删除</string>
+    <string name="ActivityDocsTodo_alreadyDownload">已经在下载列表中</string>
+    <string name="ActivityFeedback_please_type_something">请输入你的投诉或建议</string>
+    <string name="ActivityPayment_title">账号充值</string>
+    <string name="ActivityPayment_check_order">正在验证订单</string>
+    <string name="ActivityPayment_creating_order">正在创建订单</string>
+    <string name="ActivityPayment_order_failure">创建订单失败</string>
+    <string name="ActivityPayment_pricelist_failure">初始化价目表失败</string>
+    <string name="ActivityPayment_recharge_failure">充值失败</string>
+    <string name="ActivityPayment_recharge_success">充值成功</string>
+    <string name="ActivityPayment_select_topup_money">请选择充值金额</string>
+    <string name="FragmentListen_downloaded">已下载</string>
 </resources>

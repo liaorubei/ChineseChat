@@ -97,7 +97,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_play" />
+                android:src="@drawable/selector_play_rec_pause" />
 
             <ImageView
                 android:id="@+id/iv_rec_origin"

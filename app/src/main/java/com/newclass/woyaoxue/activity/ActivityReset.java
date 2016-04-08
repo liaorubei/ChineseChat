@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Size;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.EditText;
@@ -19,7 +17,7 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
@@ -53,7 +51,7 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                         message.obj = tv;
                         sendMessageDelayed(message, 1000);
                     } else {
-                        tv.setText(MyApplication.getContext().getString(R.string.ActivityReset_get_code));
+                        tv.setText(ChineseChat.getContext().getString(R.string.ActivityReset_get_code));
                         tv.setEnabled(true);
                     }
                     break;

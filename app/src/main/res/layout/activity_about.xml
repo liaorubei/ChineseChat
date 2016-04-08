@@ -22,7 +22,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="@string/ActivityAbout_about_chinese"
+            android:text="@string/ActivityAbout_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -78,7 +78,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="@string/ActivityAbout_user_help" />
+            android:text="@string/ActivityAbout_use_help" />
 
         <ImageView
             android:layout_width="wrap_content"

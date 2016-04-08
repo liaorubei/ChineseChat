@@ -2,27 +2,24 @@ package com.newclass.woyaoxue.fragment;
 
 import android.app.Activity;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.newclass.woyaoxue.MyApplication;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.bean.Folder;
 import com.newclass.woyaoxue.bean.Level;
 import com.newclass.woyaoxue.bean.Response;
@@ -134,13 +131,13 @@ public class FragmentListen extends Fragment {
 
                 if (resp.code == 200 && resp.info.size() > 0) {
                     for (Level l : resp.info) {
-                        if (!MyApplication.getDatabase().levelExists(l.Id)) {
-                            MyApplication.getDatabase().levelInsert(l);
+                        if (!ChineseChat.getDatabase().levelExists(l.Id)) {
+                            ChineseChat.getDatabase().levelInsert(l);
                         }
 
                         for (Folder f : l.Folders) {
-                            if (!MyApplication.getDatabase().folderExists(f.Id)) {
-                                MyApplication.getDatabase().folderInsert(f);
+                            if (!ChineseChat.getDatabase().folderExists(f.Id)) {
+                                ChineseChat.getDatabase().folderInsert(f);
                             }
                         }
 
@@ -149,7 +146,7 @@ public class FragmentListen extends Fragment {
 
 
                 initTabs(responseInfo.result);
-                Database database = new Database(MyApplication.getContext());
+                Database database = new Database(ChineseChat.getContext());
                 UrlCache urlCache = new UrlCache(this.getRequestUrl(), responseInfo.result, System.currentTimeMillis());
                 database.cacheInsertOrUpdate(urlCache);
                 database.closeConnection();
@@ -198,7 +195,7 @@ public class FragmentListen extends Fragment {
         //添加已下载项
         TextView child = new TextView(getActivity());
         child.setGravity(Gravity.CENTER);
-        child.setText("已下载");
+        child.setText(R.string.FragmentListen_downloaded);
         child.setTextColor(colors);
         ll_ctrl.addView(child, params);
         fragments.add(new FragmentFolderDone());

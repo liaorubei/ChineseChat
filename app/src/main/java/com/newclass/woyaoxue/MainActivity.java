@@ -1,33 +1,26 @@
 package com.newclass.woyaoxue;
 
-import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTabHost;
-import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatRingerConfig;
 import com.newclass.woyaoxue.activity.ActivityTake;
+import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.fragment.FragmentChoose;
 import com.newclass.woyaoxue.fragment.FragmentLineUp;
 import com.newclass.woyaoxue.fragment.FragmentPerson;
@@ -36,14 +29,6 @@ import com.newclass.woyaoxue.service.AutoUpdateService;
 import com.newclass.woyaoxue.service.DownloadService;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener {
     // Monkey测试代码
@@ -67,7 +52,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         //初始化云信铃声及添加来电观察者(注:不要放在Application里面,有些机子会出现异常)
         enableAVChat();
-
         //文件夹情况
 /*        File[] files = getFilesDir().getParentFile().listFiles();
         for (File f : files) {
@@ -127,7 +111,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(MainActivity.this, getSupportFragmentManager(), R.id.ff_content);
-        tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), MyApplication.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
+        tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), ChineseChat.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
         tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentListen.class, null);
         tabHost.addTab(tabHost.newTabSpec("me").setIndicator(initIndicator("Me")), FragmentPerson.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
