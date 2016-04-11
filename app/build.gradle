@@ -9,7 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "20160401"
+        versionName "20160408"
         manifestPlaceholders = [APPLICATION_ICON: "@drawable/ic_launcher_student"]
     }
 
@@ -17,9 +17,9 @@ android {
         student {
             manifestPlaceholders = [release_value: "student", APPLICATION_ICON: "@drawable/ic_launcher_student"]
         }
-        teacher {
+/*        teacher {
             manifestPlaceholders = [release_value: "teacher", APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
-        }
+        }*/
     }
 
     signingConfigs {
