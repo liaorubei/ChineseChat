@@ -93,6 +93,9 @@ public class ActivityTake extends Activity implements OnClickListener {
             isAccept = true;
             IS_CHATTING = true;
             cm_time.start();
+
+            bt_mute.setSelected(AVChatManager.getInstance().isMute());
+            bt_free.setSelected(!AVChatManager.getInstance().speakerEnabled());
         }
     };
 
@@ -239,10 +242,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         list = new ArrayList<>();
         adapter = new MyAdapter(list);
         listview.setAdapter(adapter);
-
-        //外放和静音状态
-        bt_mute.setSelected(true);
-        bt_free.setSelected(false);
     }
 
     protected void createRatingDialog() {
@@ -375,7 +374,7 @@ public class ActivityTake extends Activity implements OnClickListener {
             case R.id.bt_mute: {
                 //是否静音
                 AVChatManager.getInstance().setMute(!AVChatManager.getInstance().isMute());
-                bt_mute.setSelected(!AVChatManager.getInstance().isMute());
+                bt_mute.setSelected(AVChatManager.getInstance().isMute());
             }
             break;
             case R.id.bt_hangup:
@@ -384,7 +383,7 @@ public class ActivityTake extends Activity implements OnClickListener {
             case R.id.bt_free: {
                 // 是否外放
                 AVChatManager.getInstance().setSpeaker(!AVChatManager.getInstance().speakerEnabled());
-                bt_free.setSelected(AVChatManager.getInstance().speakerEnabled());
+                bt_free.setSelected(!AVChatManager.getInstance().speakerEnabled());
             }
             break;
 
@@ -449,6 +448,9 @@ public class ActivityTake extends Activity implements OnClickListener {
 
         initView();
         initData();
+
+        ll_call.setVisibility(View.INVISIBLE);
+        ll_hang.setVisibility(View.VISIBLE);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(this.getPackageName() + NimIntent.ACTION_RECEIVE_CUSTOM_NOTIFICATION);
