@@ -1,6 +1,7 @@
 package com.newclass.woyaoxue.activity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -30,15 +31,15 @@ import com.voc.woyaoxue.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ThemeActivity extends FragmentActivity implements FragmentThemes.OnFragmentInteractionListener {
-    private static final String TAG = "ThemeActivity";
+public class ActivityTheme extends FragmentActivity implements FragmentThemes.OnFragmentInteractionListener {
+    private static final String TAG = "ActivityTheme";
     private LinearLayout ll_indicator;
     private ViewPager viewPager;
     private List<Fragment> fragments;
-    private List<View> views;
     private FragmentPagerAdapter adapter;
     private Gson gson = new Gson();
-    private LinearLayout.LayoutParams params;
+    private int[] colors = new int[]{Color.parseColor("#BCE0AF"), Color.parseColor("#A1C9D6"), Color.parseColor("#E0AFE0"), Color.parseColor("#E0CBAF")};
+
     private FragmentThemes.ViewModel currentTheme = null;
 
     @Override
@@ -48,7 +49,6 @@ public class ThemeActivity extends FragmentActivity implements FragmentThemes.On
 
         initView();
         initData();
-        params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
     }
 
     private void initData() {
@@ -59,13 +59,16 @@ public class ThemeActivity extends FragmentActivity implements FragmentThemes.On
                 }.getType());
 
                 if (resp.code == 200) {
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
                     for (int i = 0; i < resp.info.size(); i++) {
                         final int post = i;
                         HsLevel h = resp.info.get(i);
-                        TextView textView = new TextView(ThemeActivity.this);
+                        h.Color = colors[i];
+                        TextView textView = new TextView(ActivityTheme.this);
                         textView.setGravity(Gravity.CENTER);
                         textView.setText(h.Name);
                         textView.setBackgroundResource(R.drawable.selector_levels);
+                        textView.setSelected(i == 0);
                         textView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -89,7 +92,6 @@ public class ThemeActivity extends FragmentActivity implements FragmentThemes.On
                 Log.i(TAG, "onFailure: " + msg);
             }
         });
-
     }
 
     private void initView() {
@@ -126,6 +128,26 @@ public class ThemeActivity extends FragmentActivity implements FragmentThemes.On
         fragments = new ArrayList<Fragment>();
         adapter = new MyPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                int count = ll_indicator.getChildCount();
+                for (int i = 0; i < count; i++) {
+                    View childAt = ll_indicator.getChildAt(i);
+                    childAt.setSelected(position == i);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     @Override

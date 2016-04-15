@@ -135,7 +135,7 @@ public class ChooseActivity extends Activity
 			TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
 			TextView tv_username = (TextView) inflate.findViewById(R.id.tv_username);
 			TextView tv_category = (TextView) inflate.findViewById(R.id.tv_category);
-			tv_nickname.setText(user.Name);
+			tv_nickname.setText(user.Nickname);
 			tv_username.setText(user.Username);
 			tv_category.setText(user.Category == 1 ? "教师" : "学生");
 
@@ -157,7 +157,7 @@ public class ChooseActivity extends Activity
 						{
 							Intent intent = new Intent(getApplication(), ActivityCall.class);
 							intent.putExtra(ActivityCall.KEY_TARGET_ACCID, user.Accid);
-							intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, user.NickName);
+							intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, user.Nickname);
 							intent.putExtra(ActivityCall.CALL_TYPE_KEY, ActivityCall.CALL_TYPE_AUDIO);
 							startActivity(intent);
 						}

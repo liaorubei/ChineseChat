@@ -59,9 +59,10 @@ public class ChineseChat extends Application {
         //当前用户
         SharedPreferences preferences = getSharedPreferences("user", MODE_PRIVATE);
         User user = new User();
+        user.Id = preferences.getInt("id", 0);
         user.Accid = preferences.getString("accid", "");
         user.Token = preferences.getString("token", "");
-        user.NickName = preferences.getString("nickname", "");
+        user.Nickname = preferences.getString("nickname", "");
         user.Username = preferences.getString("username", "");
         user.Avatar = preferences.getString("avatar", "");
         user.Gender = preferences.getInt("gender", -1);

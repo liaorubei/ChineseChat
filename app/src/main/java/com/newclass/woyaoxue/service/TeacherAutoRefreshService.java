@@ -2,15 +2,14 @@ package com.newclass.woyaoxue.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.preference.PreferenceManager;
 
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
@@ -19,20 +18,20 @@ import com.newclass.woyaoxue.util.NetworkUtil;
 public class TeacherAutoRefreshService extends Service {
     private static final String TAG = "TeacherAutoRefreshService";
     private static final int REFRESH_DATA = 1;
-    public static int time = 0;
-    private int offset = 10;
+    private static int time = 0;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
 
                 case REFRESH_DATA:
+                    int offset = 10;//回调间隔，秒
                     time += offset;//自增30秒
-                    if (time > 240) {
-                        requestData();
-                        time=0;
-                    }
                     Log.i(TAG, "handleMessage: time=" + time);
+                    if (time >= 300) {
+                        requestData();
+                        time = 0;
+                    }
                     sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);//30秒回调一次，4分钟刷新一次
                     break;
             }
@@ -41,9 +40,8 @@ public class TeacherAutoRefreshService extends Service {
 
     private void requestData() {
         HttpUtil.Parameters params = new HttpUtil.Parameters();
-        params.add("username", getSharedPreferences("user", MODE_PRIVATE).getString("username", ""));
-        params.add("refresh", true);
-        HttpUtil.post(NetworkUtil.teacherEnqueue, params, new RequestCallBack<String>() {
+        params.add("id", ChineseChat.CurrentUser.Id);
+        HttpUtil.post(NetworkUtil.teacherRefresh, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
@@ -52,6 +50,7 @@ public class TeacherAutoRefreshService extends Service {
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
+                time=300;
             }
         });
     }
@@ -78,5 +77,4 @@ public class TeacherAutoRefreshService extends Service {
     public void onDestroy() {
         handler.removeCallbacksAndMessages(null);
     }
-
 }

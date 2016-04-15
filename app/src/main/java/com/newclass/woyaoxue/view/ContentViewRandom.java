@@ -91,7 +91,7 @@ public class ContentViewRandom extends ContentView implements OnClickListener
 						Intent intent = new Intent(mContext, ActivityCall.class);
 						intent.putExtra(ActivityCall.KEY_TARGET_ID, response.info.Id);
 						intent.putExtra(ActivityCall.KEY_TARGET_ACCID, response.info.Accid);
-						intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, response.info.Name);
+						intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, response.info.Nickname);
 						mContext.startActivity(intent);
 					}
 					else

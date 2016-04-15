@@ -3,10 +3,13 @@ package com.newclass.woyaoxue;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import android.support.v4.app.FragmentTabHost;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,6 +30,7 @@ import com.newclass.woyaoxue.fragment.FragmentPerson;
 import com.newclass.woyaoxue.fragment.FragmentListen;
 import com.newclass.woyaoxue.service.AutoUpdateService;
 import com.newclass.woyaoxue.service.DownloadService;
+import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.voc.woyaoxue.R;
 
@@ -42,6 +46,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     protected static final String TAG = "MainActivity";
     private TextView tv_delete, tv_refresh;
     private RelativeLayout rl_main;
+    private long lastTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +80,20 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         WM.getDefaultDisplay().getMetrics(metrics);
         Log.i(TAG, "onCreate: heightPixels=" + metrics.density);
         Log.i(TAG, "onCreate: scaledDensity=" + metrics.scaledDensity);*/
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - lastTime) > 2000) {
+                CommonUtil.toast(R.string.MainActivity_one_more_time_quit);
+                lastTime = System.currentTimeMillis();
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void enableAVChat() {

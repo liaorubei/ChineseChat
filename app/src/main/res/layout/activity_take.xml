@@ -24,7 +24,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:text="昵称" />
+            android:text="昵称"
+            android:textColor="@color/color_app" />
 
         <TextView
             android:id="@+id/tv_time"
@@ -32,12 +33,14 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="总时长:125小时  次数:250次"
+            android:textColor="@color/color_app"
             android:visibility="invisible" />
 
         <Chronometer
             android:id="@+id/cm_time"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/color_app" />
     </LinearLayout>
 
     <LinearLayout
@@ -95,7 +98,7 @@
                 android:layout_margin="15dp"
                 android:background="@drawable/shape_oval_red"
                 android:padding="20dp"
-                android:src="@drawable/icon_call_handup" />
+                android:src="@drawable/icon_call_handup_a" />
 
             <ImageView
                 android:id="@+id/bt_free"
@@ -114,7 +117,7 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:visibility="invisible">
 
             <Button
                 android:id="@+id/bt_reject"

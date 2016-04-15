@@ -3,23 +3,12 @@ package com.newclass.woyaoxue.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.friend.FriendService;
 import com.netease.nimlib.sdk.uinfo.UserService;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 import com.newclass.woyaoxue.base.BaseAdapter;
-import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
-import com.newclass.woyaoxue.util.CommonUtil;
-import com.newclass.woyaoxue.util.HttpUtil;
-import com.newclass.woyaoxue.util.HttpUtil.Parameters;
-import com.newclass.woyaoxue.util.Log;
-import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
 import android.app.Activity;
@@ -62,7 +51,7 @@ public class FriendActivity extends Activity
 		{
 			User user = new User();
 			user.Accid = nim.getAccount();
-			user.NickName = nim.getName();
+			user.Nickname = nim.getName();
 			list.add(user);
 		}
 		adapter.notifyDataSetInvalidated();
@@ -94,7 +83,7 @@ public class FriendActivity extends Activity
 			TextView tv_username = (TextView) inflate.findViewById(R.id.tv_username);
 			TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
 			tv_username.setText(user.Username);
-			tv_nickname.setText(user.NickName);
+			tv_nickname.setText(user.Nickname);
 
 			Button bt_call = (Button) inflate.findViewById(R.id.bt_call);
 			bt_call.setOnClickListener(new OnClickListener()

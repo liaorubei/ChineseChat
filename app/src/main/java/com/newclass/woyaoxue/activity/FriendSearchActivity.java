@@ -22,7 +22,6 @@ import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -151,7 +150,7 @@ public class FriendSearchActivity extends Activity
 			TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
 			TextView tv_category = (TextView) inflate.findViewById(R.id.tv_category);
 			tv_username.setText(user.Username);
-			tv_nickname.setText(user.NickName);
+			tv_nickname.setText(user.Nickname);
 			tv_category.setText(user.Category == 1 ? "教师" : "学生");
 
 			Button bt_call = (Button) inflate.findViewById(R.id.bt_call);

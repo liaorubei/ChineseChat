@@ -47,7 +47,7 @@ public class CommonUtil {
         editor.putInt("id", user.Id);
         editor.putString("accid", user.Accid);
         editor.putString("token", user.Token);
-        editor.putString("nickname", user.NickName);
+        editor.putString("nickname", user.Nickname);
         editor.putInt("gender", user.Gender);
         editor.putString("avatar", user.Avatar);
         editor.putString("email", user.Email);

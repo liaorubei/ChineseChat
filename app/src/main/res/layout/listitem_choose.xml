@@ -29,18 +29,18 @@
             android:layout_margin="3dp"
             android:background="@drawable/shape_choose_mute"
             android:padding="7dp"
-            android:src="@drawable/icon_choose_mute" />
+            android:src="@drawable/icon_choose_mute"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/bt_call"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
             android:layout_margin="3dp"
-            android:background="@drawable/shape_choose_call"
-            android:padding="7dp"
+            android:background="@drawable/selector_choose_call"
+            android:padding="15dp"
             android:src="@drawable/icon_choose_call" />
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"

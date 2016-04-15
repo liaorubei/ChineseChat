@@ -2,6 +2,7 @@ package com.newclass.woyaoxue.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -35,12 +36,13 @@ public class FragmentThemes extends Fragment {
     private MyAdapter adapter;
     private GridView gridView;
     private List<ViewModel> list;
+    private HsLevel hsLevel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
 
-        HsLevel hsLevel = gson.fromJson(getArguments().getString("HsLevel"), new TypeToken<HsLevel>() {
+        hsLevel = gson.fromJson(getArguments().getString("HsLevel"), new TypeToken<HsLevel>() {
         }.getType());
 
         View inflate = inflater.inflate(R.layout.fragment_themes, container, false);
@@ -90,8 +92,14 @@ public class FragmentThemes extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewModel item = getItem(position);
             View inflate = View.inflate(getActivity(), R.layout.griditem_card, null);
+            inflate.findViewById(R.id.iv_card).setBackgroundColor(hsLevel.Color);
+
             TextView tv_theme = (TextView) inflate.findViewById(R.id.tv_theme);
+            TextView tv_number = (TextView) inflate.findViewById(R.id.tv_number);
+
             tv_theme.setText(item.Name);
+            tv_number.setText("" + (position + 1));
+
             inflate.findViewById(R.id.iv_card).setVisibility(item.isChecked ? View.INVISIBLE : View.VISIBLE);
             return inflate;
         }
@@ -131,8 +139,8 @@ public class FragmentThemes extends Fragment {
         public boolean isChecked;
 
         public ViewModel(Theme theme) {
-            this.Id=theme.Id;
-            this.Name=theme.Name;
+            this.Id = theme.Id;
+            this.Name = theme.Name;
         }
     }
 
@@ -163,7 +171,6 @@ public class FragmentThemes extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(ViewModel theme);
     }
 }

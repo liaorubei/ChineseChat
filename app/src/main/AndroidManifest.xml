@@ -153,7 +153,7 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivityPayment" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson" />
-        <activity android:name="com.newclass.woyaoxue.activity.ThemeActivity" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityTheme" />
         <activity android:name="com.newclass.woyaoxue.activity.RecordsActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityFeedback" />
 

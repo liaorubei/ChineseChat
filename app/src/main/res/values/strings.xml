@@ -404,10 +404,29 @@
     <!--MainActivity-->
     <string name="MainActivity_Refresh">Refresh</string>
     <string name="MainActivity_Delete">Delete</string>
+    <string name="MainActivity_one_more_time_quit">One more time Quit</string>
 
     <!--FragmentListen-->
-    <string name="FragmentListen_downloaded">Local</string>
+    <string name="FragmentListen_downloaded">已下载</string>
 
+    <!--FragmentChoose-->
+    <string name="FragmentChoose_busy">The teacher is busy</string>
+    <string name="FragmentChoose_offline">The teacher is offline</string>
+
+
+    <!--ActivityCall-->
+    <string name="ActivityCall_pick_theme">pick a theme</string>
+    <string name="ActivityCall_switch_theme">switch a theme</string>
+    <string name="ActivityCall_can_not_back">can not back when talking</string>
+    <string name="ActivityCall_hangup">Are you sure?</string>
+    <string name="ActivityCall_cancel">Cancel</string>
+    <string name="ActivityCall_confirm">Confirm</string>
+
+    <!--ActivityTake-->
+    <string name="ActivityTake_can_not_back">can not back when talking</string>
+    <string name="ActivityTake_hangup">Are you sure?</string>
+    <string name="ActivityTake_cancel">Cancel</string>
+    <string name="ActivityTake_confirm">Confirm</string>
 
 
     <!--FragmentPerson-->
@@ -535,5 +554,9 @@
     <string name="ActivitySetting_title">Setting</string>
     <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityUsehelp_title">Use Help</string>
+
+    <!--ActivityTheme-->
+    <string name="ActivityTheme_title">Theme</string>
+    <string name="ActivityTheme_confirm">Confirm</string>
 
 </resources>

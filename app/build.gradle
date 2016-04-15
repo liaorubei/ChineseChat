@@ -9,16 +9,15 @@ android {
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
-        versionName "20160408"
+        versionName "V 1.0.0"
         manifestPlaceholders = [APPLICATION_ICON: "@drawable/ic_launcher_student"]
     }
 
     productFlavors {
-      student {
+        student {
             manifestPlaceholders = [release_value: "student", APPLICATION_ICON: "@drawable/ic_launcher_student"]
         }
-        
-       teacher {
+        teacher {
             manifestPlaceholders = [release_value: "teacher", APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
         }
     }
@@ -47,6 +46,15 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+
+/*    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            output.outputFile = new File(output.outputFile.parent, output.name.replace(".apk", ("-" + defaultConfig.versionName + ".apk")))
+        }
+
+        *//*    def file = variant.outputFile
+            variant.outputFile = new File(file.parent, file.name.replace(".apk", "-" + defaultConfig.versionName + ".apk"))*//*
+    }*/
 }
 
 dependencies {
@@ -57,8 +65,6 @@ dependencies {
     compile files('libs/netty-4.0.23-for-yx.final.jar')
 
     //圆形图片
-
-
     compile files('libs/alipaySdk-20160120.jar')
 
     compile 'com.android.support:support-v13:22.2.1'

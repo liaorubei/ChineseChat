@@ -1,8 +1,6 @@
 package com.newclass.woyaoxue.fragment;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
@@ -36,6 +34,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private RelativeLayout rl_history;
     private String username;
     private String accid;
+    private View rl_coins;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,6 +51,8 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         tv_nickname = (TextView) view.findViewById(R.id.tv_nickname);
         iv_gender = (ImageView) view.findViewById(R.id.iv_gender);
         tv_coins = (TextView) view.findViewById(R.id.tv_coins);
+
+        rl_coins = view.findViewById(R.id.rl_coins);
 
         //充值，设置，学习记录菜单
         rl_payment = (RelativeLayout) view.findViewById(R.id.rl_payment);
@@ -74,7 +75,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             username = ChineseChat.CurrentUser.Username;
             accid = ChineseChat.CurrentUser.Accid;
             String avatar = ChineseChat.CurrentUser.Avatar;
-            String nickname = ChineseChat.CurrentUser.NickName;
+            String nickname = ChineseChat.CurrentUser.Nickname;
             int gender = ChineseChat.CurrentUser.Gender;
             int coins = ChineseChat.CurrentUser.Coins;
 
@@ -85,6 +86,13 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
             iv_gender.setVisibility(gender > -1 ? View.VISIBLE : View.INVISIBLE);
             tv_coins.setText("" + coins);
+
+
+            //如果是教师端，则不显示我的学币，充值和学习记录
+            boolean isStudent = ChineseChat.isStudent();
+            rl_coins.setVisibility(isStudent ? View.VISIBLE : View.INVISIBLE);
+            rl_payment.setVisibility(isStudent ? View.VISIBLE : View.GONE);
+            rl_history.setVisibility(isStudent ? View.VISIBLE : View.GONE);
         }
     }
 

@@ -3,6 +3,7 @@ package com.newclass.woyaoxue.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,6 +30,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Rank;
@@ -68,7 +70,6 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
                     if (time >= 60) {
                         refresh();
                         time = 0;
-                        TeacherAutoRefreshService.time = 0;
                     }
                     Log.i(TAG, "handleMessage: time=" + time);
                     sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);//10秒回调一次，一分钟刷新一次
@@ -79,21 +80,22 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
     private int time = 0;
 
     private void refresh() {
+        srl.setRefreshing(true);
         HttpUtil.Parameters params = new HttpUtil.Parameters();
-        params.add("username", getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getString("username", ""));
-        params.add("refresh", true);
-        HttpUtil.post(NetworkUtil.teacherEnqueue, params, new RequestCallBack<String>() {
+        params.add("skip", 0);
+        params.add("take", "50");
+        HttpUtil.post(NetworkUtil.getTeacher, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
 
-                Response resp = gson.fromJson(responseInfo.result, new TypeToken<Response>() {
+                Response<List<User>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<User>>>() {
                 }.getType());
                 list.clear();
 
-                if (resp.code == 200 && resp.info != null) {
-                    Response<Rank> users = gson.fromJson(responseInfo.result,new TypeToken<Response<Rank>>(){}.getType());
-                    for (User user : users.info.Data) {
+                if (resp.code == 200) {
+                    List<User> users = resp.info;
+                    for (User user : users) {
                         list.add(user);
                     }
                 }
@@ -132,7 +134,6 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
     public void onResume() {
         Log.i(TAG, "onResume: ");
         super.onResume();
-        TeacherAutoRefreshService.time = 0;
         time = 60;
         handler.sendEmptyMessage(REFRESH_DATA);
         Intent service = new Intent(getActivity(), TeacherAutoRefreshService.class);
@@ -143,7 +144,6 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
     public void onPause() {
         Log.i(TAG, "onPause: ");
         super.onPause();
-        TeacherAutoRefreshService.time = 0;
         time = 0;
         handler.removeCallbacksAndMessages(null);
     }
@@ -156,38 +156,27 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
     @Override//view点击事件
     public void onClick(View v) {
         if (v.getId() == R.id.iv_enqueue) {
-            StatusCode status = NIMClient.getStatus();
-            if (status != StatusCode.LOGINED) {
+            if (NIMClient.getStatus() != StatusCode.LOGINED) {
                 getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
                 return;
             }
-
-            srl.setRefreshing(true);
             HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-            parameters.add("username", getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getString("username", ""));
-            parameters.add("refresh", false);
+            parameters.add("id", ChineseChat.CurrentUser.Id);
+            Log.i(TAG, "onClick: " + ChineseChat.CurrentUser.Id);
             HttpUtil.post(NetworkUtil.teacherEnqueue, parameters, new RequestCallBack<String>() {
 
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
                     Log.i(TAG, "onSuccess: " + responseInfo.result);
-                    Response<Rank> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Rank>>() {
+                    Response resp = gson.fromJson(responseInfo.result, new TypeToken<Response>() {
                     }.getType());
-                    list.clear();
-
-                    if (resp.code == 200 && resp.info != null) {
-                        List<User> users = resp.info.Data;
-                        for (User user : users) {
-                            list.add(user);
-                        }
+                    if (resp.code == 200) {
+                        refresh();
                     }
-                    adapter.notifyDataSetChanged();
-                    srl.setRefreshing(false);
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
-                    srl.setRefreshing(false);
                     CommonUtil.toast("排队失败");
                 }
             });
@@ -202,21 +191,26 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             User user = getItem(position);
-            String accid = getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getString("accid", "");
             View inflate = View.inflate(getActivity(), R.layout.listitem_teacherqueue, null);
             TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
             TextView tv_about = (TextView) inflate.findViewById(R.id.tv_about);
             ImageView iv_icon = (ImageView) inflate.findViewById(R.id.iv_icon);
 
             //昵称,简介
-            tv_nickname.setText(user.Name + (accid.equals(user.Accid) ? "(本人)" : ""));
+            tv_nickname.setText(user.Nickname + (TextUtils.equals(user.Accid, ChineseChat.CurrentUser.Accid) ? "(本人)" : ""));
+            if (user.IsOnline) {
+                tv_nickname.setTextColor(user.IsEnable ? Color.parseColor("#00A478") : Color.RED);
+            } else {
+                tv_nickname.setTextColor(Color.GRAY);
+            }
+
             tv_about.setText(user.About);
 
             //下载处理,如果有设置头像,则显示头像,
             //如果头像已经下载过,则加载本地图片
-            if (!TextUtils.isEmpty(user.Icon)) {
-                final File file = new File(getActivity().getFilesDir(), user.Icon);
-                String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(user.Icon);
+            if (!TextUtils.isEmpty(user.Avatar)) {
+                final File file = new File(getActivity().getFilesDir(), user.Avatar);
+                String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(user.Avatar);
                 new BitmapUtils(getActivity()).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
                     @Override
                     public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {

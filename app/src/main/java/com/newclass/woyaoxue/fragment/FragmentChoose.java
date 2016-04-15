@@ -3,6 +3,7 @@ package com.newclass.woyaoxue.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -81,8 +82,8 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         srl.setRefreshing(true);
         HttpUtil.Parameters params = new HttpUtil.Parameters();
         params.add("skip", "0");
-        params.add("take", "5");//每次只取最前面5个
-        HttpUtil.post(NetworkUtil.teacherInQueue, params, new RequestCallBack<String>() {
+        params.add("take", "50");//每次只取最前面5个
+        HttpUtil.post(NetworkUtil.getTeacher, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
@@ -103,7 +104,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
-                CommonUtil.toast(getString(R.string.network_error));
+                CommonUtil.toast(R.string.network_error);
             }
         });
     }
@@ -125,7 +126,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
         srl.setColorSchemeResources(R.color.color_app);
         srl.setOnRefreshListener(this);
-        srl.setVisibility(View.INVISIBLE);
 
         ListView listview = (ListView) view.findViewById(R.id.listview);
         TextView emptyView = new TextView(getActivity());
@@ -184,15 +184,22 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             View inflate = View.inflate(getActivity(), R.layout.listitem_choose, null);
             TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
             ImageView iv_icon = (ImageView) inflate.findViewById(R.id.iv_icon);
-            tv_nickname.setText(user.Name);
             TextView tv_about = (TextView) inflate.findViewById(R.id.tv_about);
+
+            //三种状态，在线，忙线，掉线 {绿，红，灰}
+            tv_nickname.setText(user.Nickname);
+            if (user.IsOnline) {
+                tv_nickname.setTextColor(user.IsEnable ? Color.parseColor("#00A478") : Color.RED);
+            } else {
+                tv_nickname.setTextColor(Color.GRAY);
+            }
             tv_about.setText(user.About);
 
             //下载处理,如果有设置头像,则显示头像,
             //如果头像已经下载过,则加载本地图片
-            if (!TextUtils.isEmpty(user.Icon)) {
-                final File file = new File(getActivity().getFilesDir(), user.Icon);
-                String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(user.Icon);
+            if (!TextUtils.isEmpty(user.Avatar)) {
+                final File file = new File(getActivity().getFilesDir(), user.Avatar);
+                String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(user.Avatar);
                 new BitmapUtils(getActivity()).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
                     @Override
                     public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
@@ -239,26 +246,38 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
             //设置点击
             ImageView bt_call = (ImageView) inflate.findViewById(R.id.bt_call);
+            bt_call.setEnabled(user.IsEnable && user.IsOnline);
             bt_call.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
-
+                    //如果没有登录,那么要求登录
                     if (NIMClient.getStatus() != StatusCode.LOGINED) {
                         getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
                         return;
                     }
 
+                    if (!user.IsOnline) {
+                        CommonUtil.toast(R.string.FragmentChoose_offline);
+                        return;
+                    }
+
+                    if (!user.IsEnable) {
+                        CommonUtil.toast(R.string.FragmentChoose_busy);
+                        return;
+                    }
+
+
                     HttpUtil.Parameters parameters = new HttpUtil.Parameters();
                     parameters.add("id", getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("id", 0));
-                    parameters.add("target", user.Id + "");
+                    parameters.add("target", user.Id);
                     HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
                         @Override
                         public void onSuccess(ResponseInfo<String> responseInfo) {
                             Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                             }.getType());
                             if (resp.code == 200) {
-                                ActivityCall.start(getActivity(), user.Id, user.Accid, user.Icon, user.Name, ActivityCall.CALL_TYPE_AUDIO);
+                                ActivityCall.start(getActivity(), user.Id, user.Accid, user.Avatar, user.Username, ActivityCall.CALL_TYPE_AUDIO);
                             } else {
                                 CommonUtil.toast(resp.desc);
                             }

@@ -3,9 +3,8 @@ package com.newclass.woyaoxue.bean;
 public class User {
     public int Id;
     public String Token;
-    public String Accid = "bf09f7dd02e549f4a16af0cf8e9a5701";
-    public String Name;
-    public String NickName;
+    public String Accid;
+    public String Nickname;
     public String Username;
     public String PassWord;
     public String Icon;
@@ -23,4 +22,6 @@ public class User {
     public String Country;
     public String Language;
     public String Job;
+    public boolean IsEnable;
+    public boolean IsOnline;
 }

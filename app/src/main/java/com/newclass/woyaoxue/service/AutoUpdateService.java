@@ -165,7 +165,7 @@ public class AutoUpdateService extends Service {
 
         // 1.请求网络---升级数据请求,建议放到spash界面
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-        parameters.add("versionType", (ChineseChat.isStudent()? 0 : 1) + "");
+        parameters.add("versionType", (ChineseChat.isStudent() ? 0 : 1) + "");
         HttpUtil.post(NetworkUtil.checkUpdate, parameters, new RequestCallBack<String>() {
 
             @Override
@@ -179,7 +179,7 @@ public class AutoUpdateService extends Service {
                 try {
                     upgradePatch = new Gson().fromJson(responseInfo.result, UpgradePatch.class);
                     PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS);
-                    installPack = new File(Environment.getExternalStorageDirectory(), "Download/" + packageInfo.packageName + "_" + upgradePatch.VersionName + ".apk");
+                    installPack = new File(Environment.getExternalStorageDirectory(), "Download/" + packageInfo.packageName + "_" + upgradePatch.VersionName + (ChineseChat.isStudent() ? "_Student" : "_Teacher") + ".apk");
                     if (!installPack.getParentFile().exists()) {
                         Log.i("logi", "创建更新下载目录");
                         installPack.getParentFile().mkdirs();

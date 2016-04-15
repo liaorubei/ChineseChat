@@ -78,5 +78,11 @@
     <string name="ActivityPayment_recharge_failure">充值失败</string>
     <string name="ActivityPayment_recharge_success">充值成功</string>
     <string name="ActivityPayment_select_topup_money">请选择充值金额</string>
-    <string name="FragmentListen_downloaded">已下载</string>
+    <string name="ActivityCall_can_not_back">正在通话时无法退出</string>
+    <string name="ActivityCall_cancel">取消</string>
+    <string name="ActivityCall_confirm">确定</string>
+    <string name="ActivityCall_hangup">你确定退出吗？</string>
+    <string name="ActivityCall_pick_theme">选话题</string>
+    <string name="ActivityCall_switch_theme">换话题</string>
+    <string name="MainActivity_one_more_time_quit">请再按一次退出</string>
 </resources>

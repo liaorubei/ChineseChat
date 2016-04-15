@@ -3,8 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <RelativeLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@id/layout_title"
         android:layout_width="match_parent"
         android:layout_height="45dp"
@@ -12,17 +11,17 @@
 
         <ImageView
             android:id="@+id/iv_home"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="15dp"
+            android:padding="10dp"
             android:src="@drawable/home_back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="选择主题"
+            android:text="@string/ActivityTheme_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
@@ -33,7 +32,7 @@
             android:layout_alignParentRight="true"
             android:gravity="center"
             android:padding="10dp"
-            android:text="选择"
+            android:text="@string/ActivityTheme_confirm"
             android:textColor="#FFFFFF" />
     </RelativeLayout>
 

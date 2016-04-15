@@ -65,7 +65,7 @@ public class RandomActivity extends Activity implements OnClickListener
 						Intent intent = new Intent(getApplication(), ActivityCall.class);
 						intent.putExtra(ActivityCall.KEY_TARGET_ID, response.info.Id);
 						intent.putExtra(ActivityCall.KEY_TARGET_ACCID, response.info.Accid);
-						intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, response.info.Name);
+						intent.putExtra(ActivityCall.KEY_TARGET_NICKNAME, response.info.Nickname);
 						startActivity(intent);
 					}
 					else

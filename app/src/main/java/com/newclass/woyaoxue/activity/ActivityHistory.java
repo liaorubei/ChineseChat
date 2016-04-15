@@ -145,7 +145,7 @@ public class ActivityHistory extends Activity {
                 }
                 tv_theme.setText(getString(R.string.ActivityHistory_theme) + sb.toString());
             }
-            tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Name);
+            tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Nickname);
             tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
             tv_date.setText(getString(R.string.ActivityHistory_date) + sdf.format(item.Start));
             tv_tiem.setText(getString(R.string.ActivityHistory_time) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
