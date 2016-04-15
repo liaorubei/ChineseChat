@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:text="20160322" />
+        android:text="V 1.0.0" />
 
     <RelativeLayout
         android:id="@+id/rl_version"

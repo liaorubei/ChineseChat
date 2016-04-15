@@ -476,11 +476,23 @@
     <string name="ActivityPerson_country">Country:</string>
     <string name="ActivityPerson_language">Language:</string>
     <string name="ActivityPerson_job">Job:</string>
+    <string name="ActivityPerson_school">School</string>
     <string name="ActivityPerson_female">Female</string>
     <string name="ActivityPerson_male">Male</string>
     <string name="ActivityPerson_success">Update Success</string>
     <string name="ActivityPerson_failure">Update Failure</string>
     <string name="ActivityPerson_confirm">Confirm</string>
+    <string name="ActivityPerson_about">Self description</string>
+    <string name="ActivityPerson_photo">Photo</string>
+
+    <string name="ActivityPerson_hint_nickname">Nickname please</string>
+    <string name="ActivityPerson_hint_email">Email can not change</string>
+    <string name="ActivityPerson_hint_mobile">Mobile please</string>
+    <string name="ActivityPerson_hint_birth">Click set your birthday</string>
+    <string name="ActivityPerson_hint_job">you job</string>
+    <string name="ActivityPerson_hint_school">School</string>
+    <string name="ActivityPerson_hint_about">Self description or something else can generalize yourself</string>
+
 
     <!--ActivityHistory-->
     <string name="ActivityHistory_theme">Theme:</string>
@@ -512,6 +524,18 @@
     <string name="ActivityAbout_update_version">Version Check</string>
     <string name="ActivityAbout_use_help">Use Help</string>
     <string name="ActivityAbout_user_agreement">User Agreement</string>
+
+    <string name="ActivityAbout_dialog_title">User Agreement</string>
+    <string name="ActivityAbout_dialog_positive">Confirm</string>
+    <string name="ActivityAbout_dialog_negative">Cancel</string>
+
+    <string name="ActivityAbout_app_update">Update package is being downloaded</string>
+    <string name="ActivityAbout_download_failure">Update package download failure</string>
+    <string name="ActivityAbout_download_start">Download begin</string>
+    <string name="ActivityAbout_already_up_to_date">ChineseChat is already up to date</string>
+
+    <string name="ActivityAbout_check_sdcard">SD card not work properly</string>
+
 
     <!--ActivityReset-->
     <string name="ActivityReset_reset_password">Reset Password</string>
@@ -558,5 +582,6 @@
     <!--ActivityTheme-->
     <string name="ActivityTheme_title">Theme</string>
     <string name="ActivityTheme_confirm">Confirm</string>
+    <string name="title_activity_activity_detail">ActivityDetail</string>
 
 </resources>

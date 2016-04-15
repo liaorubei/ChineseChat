@@ -37,7 +37,7 @@
             android:layout_width="55dp"
             android:layout_height="55dp"
             android:layout_margin="3dp"
-            android:background="@drawable/selector_choose_call"
+            android:background="@drawable/selector_choose_calla"
             android:padding="15dp"
             android:src="@drawable/icon_choose_call" />
     </LinearLayout>

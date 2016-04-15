@@ -1,6 +1,7 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -240,7 +241,7 @@ public class ActivityTake extends Activity implements OnClickListener {
             break;
             case R.id.bt_hangup:
                 if (IS_CALL_ESTABLISHED) {
-                    Builder builder = new Builder(this);
+                    Builder builder = new Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                     builder.setNegativeButton(R.string.ActivityTake_cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

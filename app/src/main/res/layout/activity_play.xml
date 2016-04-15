@@ -267,16 +267,13 @@
                 android:minWidth="150dp" />
         </RelativeLayout>
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_cover"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="100dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="100dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
             android:scaleType="centerCrop"
-            android:src="@drawable/background"
+            android:src="@drawable/ic_launcher_student"
             android:visibility="invisible" />
     </FrameLayout>
 

@@ -324,7 +324,7 @@ public class ActivityCall extends Activity implements OnClickListener {
         switch (v.getId()) {
             case R.id.bt_hangup:
                 if (IS_CALL_ESTABLISHED) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
                     builder.setPositiveButton(R.string.ActivityCall_confirm, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

@@ -85,4 +85,7 @@
     <string name="ActivityCall_pick_theme">选话题</string>
     <string name="ActivityCall_switch_theme">换话题</string>
     <string name="MainActivity_one_more_time_quit">请再按一次退出</string>
+    <string name="ActivityPerson_photo">相册</string>
+    <string name="ActivityPerson_school">学校</string>
+    <string name="ActivityPerson_about">简介</string>
 </resources>

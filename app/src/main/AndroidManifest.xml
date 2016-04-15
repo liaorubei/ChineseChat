@@ -173,7 +173,10 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name="com.newclass.woyaoxue.MainActivity"></activity>
+        <activity android:name="com.newclass.woyaoxue.MainActivity" />
+        <activity
+            android:name="com.newclass.woyaoxue.activity.ActivityDetail"
+            android:label="@string/title_activity_activity_detail"></activity>
     </application>
 
 </manifest>

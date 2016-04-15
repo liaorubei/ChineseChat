@@ -246,6 +246,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
             //设置点击
             ImageView bt_call = (ImageView) inflate.findViewById(R.id.bt_call);
+            bt_call.setBackgroundResource(!user.IsEnable && user.IsOnline ? R.drawable.selector_choose_calla : R.drawable.selector_choose_callb);
             bt_call.setEnabled(user.IsEnable && user.IsOnline);
             bt_call.setOnClickListener(new View.OnClickListener() {
 
