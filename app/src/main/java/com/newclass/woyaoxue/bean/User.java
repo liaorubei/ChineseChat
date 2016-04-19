@@ -24,4 +24,5 @@ public class User {
     public String Job;
     public boolean IsEnable;
     public boolean IsOnline;
+    public String[] Photos;
 }

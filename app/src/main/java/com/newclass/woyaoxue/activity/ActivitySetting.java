@@ -1,7 +1,9 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -23,11 +25,9 @@ import java.io.File;
 
 public class ActivitySetting extends Activity implements View.OnClickListener {
     private static final String TAG = "SettingActivity";
-    private RelativeLayout rl_feedback, rl_login;
-    private TextView tv_login;
-    private ImageView iv_home;
-    private TextView tv_cache;
+    private TextView tv_login, tv_cache;
     private Dialog dialogWipeData;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,31 +38,28 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
     }
 
     private void initData() {
-
-        //清除缓存菜单数据
-        long length = FileUtil.fileLength(getFilesDir()) + FileUtil.fileLength(getCacheDir()) + FileUtil.fileLength(new File(getFilesDir().getParentFile(), "databases"));
+        //清除缓存菜单数据,只显示两个文件的大小,一个是自己的下载文件夹,一个是数据库文件夹
+        long length = FileUtil.fileLength(new File(getFilesDir(), "File")) + FileUtil.fileLength(new File(getFilesDir().getParentFile(), "databases"));
         tv_cache.setText(Formatter.formatFileSize(getApplicationContext(), length));
 
+        //登录菜单的文本显示
+        tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
     }
 
     private void initView() {
-        //标题栏
-        iv_home = (ImageView) findViewById(R.id.iv_home);
+        findViewById(R.id.iv_home).setOnClickListener(this);
+
+        View rl_security = findViewById(R.id.rl_security);
+        rl_security.setOnClickListener(this);
+        rl_security.setVisibility(NIMClient.getStatus() == StatusCode.LOGINED ? View.VISIBLE : View.INVISIBLE);
+
         findViewById(R.id.rl_feedback).setOnClickListener(this);
         findViewById(R.id.rl_wipedata).setOnClickListener(this);
         findViewById(R.id.rl_aboutapp).setOnClickListener(this);
-
+        findViewById(R.id.rl_login).setOnClickListener(this);
 
         tv_cache = (TextView) findViewById(R.id.tv_cache);
-
-
-        rl_login = (RelativeLayout) findViewById(R.id.rl_login);
         tv_login = (TextView) findViewById(R.id.tv_login);
-
-        tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
-
-        iv_home.setOnClickListener(this);
-        rl_login.setOnClickListener(this);
     }
 
     @Override
@@ -72,13 +69,17 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
             case R.id.iv_home:
                 this.finish();
                 break;
+            case R.id.rl_security: {
+                startActivity(new Intent(getApplicationContext(), ActivitySecurity.class));
+            }
+            break;
             case R.id.rl_feedback: {
                 Intent intent = new Intent(getApplicationContext(), ActivityFeedback.class);
                 startActivity(intent);
             }
             break;
             case R.id.rl_wipedata: {
-                if (dialogWipeData == null) {
+/*                if (dialogWipeData == null) {
                     dialogWipeData = new Dialog(this);
                     dialogWipeData.requestWindowFeature(Window.FEATURE_NO_TITLE);
                     dialogWipeData.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
@@ -88,22 +89,25 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                     dialogWipeData.setCancelable(true);
                     dialogWipeData.setCanceledOnTouchOutside(true);
                 }
-                dialogWipeData.show();
-            }
-            break;
-            case R.id.bt_positive: {//清除缓存——确定
-                FileUtil.fileDelete(getCacheDir());
-                FileUtil.fileDelete(getFilesDir());
-                FileUtil.fileDelete(new File(getFilesDir().getParentFile(), "databases"));
+                dialogWipeData.show();*/
 
-                //主要是清除三个文件夹的内容，cache,files,databases
-                CommonUtil.toast(getString(R.string.ActivitySetting_Toast_清理完毕));
-                tv_cache.setText("0.00B");
-                dialogWipeData.dismiss();
-            }
-            break;
-            case R.id.bt_negative: {//清除缓存——取消
-                dialogWipeData.dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.ActivitySetting_dialog_title);
+                builder.setMessage(R.string.ActivitySetting_dialog_message);
+                builder.setPositiveButton(R.string.ActivitySetting_dialog_positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //只删除下载的文件,清除数据库对应的数据
+                        FileUtil.fileDelete(new File(getFilesDir(), "File"));
+                        FileUtil.cleanMyDatabase();
+
+                        //主要是清除三个文件夹的内容，cache,files,databases
+                        CommonUtil.toast(getString(R.string.ActivitySetting_Toast_清理完毕));
+                        tv_cache.setText("0.00B");
+                    }
+                });
+                builder.setNegativeButton(R.string.ActivitySetting_dialog_negative, null);
+                builder.show();
             }
             break;
             case R.id.rl_aboutapp: {
@@ -121,8 +125,6 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                     startActivity(new Intent(this, ActivitySignIn.class));
                 }
                 break;
-
-
         }
     }
 }

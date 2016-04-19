@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
+import com.newclass.woyaoxue.activity.ActivityTeacher;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Rank;
 import com.newclass.woyaoxue.bean.Response;
@@ -122,10 +124,16 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
         srl.setColorSchemeResources(R.color.color_app);
         srl.setOnRefreshListener(this);
 
-        ListView listview = (ListView) view.findViewById(R.id.listview);
+        final ListView listview = (ListView) view.findViewById(R.id.listview);
         list = new ArrayList<User>();
         adapter = new MyAdapter(list);
         listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ActivityTeacher.start(getActivity(), list.get(position));
+            }
+        });
 
         view.findViewById(R.id.iv_enqueue).setOnClickListener(this);
     }

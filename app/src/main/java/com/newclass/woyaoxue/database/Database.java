@@ -208,4 +208,9 @@ public class Database {
         cursor.close();
         return info;
     }
+
+    public void deleteTable(String table) {
+        Log.i(TAG, "deleteTable: " + mWritable.delete(table, null, null));
+        ;
+    }
 }

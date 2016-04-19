@@ -1,6 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="90dp">
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    android:descendantFocusability="blocksDescendants">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_icon"
@@ -10,8 +11,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="20dp"
-        android:src="@drawable/ic_launcher_student"
-        />
+        android:src="@drawable/ic_launcher_student" />
 
 
     <LinearLayout
@@ -25,7 +25,7 @@
             android:id="@+id/tv_nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="昵称:全职教师"/>
+            android:text="昵称:全职教师" />
 
         <TextView
             android:id="@+id/tv_about"
@@ -34,7 +34,7 @@
             android:ellipsize="end"
             android:lines="3"
             android:text="简介:中共党员，毕业于四川师范大学外语系，英语副教授,基础部副主任，公共英语教研室主任。长期从事英语教学，先后承担了《大学英语》、《财经英语》、《英语听说》、大学英语二三级、专升本考前辅导等英语教学工作。积极探索教学教法，并参与多项科研活动，工作认真负责，教学效果好。"
-            android:textColor="#3C3C3C"/>
+            android:textColor="#3C3C3C" />
     </LinearLayout>
 
 </RelativeLayout>

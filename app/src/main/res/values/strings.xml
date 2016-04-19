@@ -456,6 +456,8 @@
     <string name="时间">"Time: "</string>
 
     <!--ActivitySetting-->
+    <string name="ActivitySetting_title">Setting</string>
+    <string name="ActivitySetting_security">Account security</string>
     <string name="ActivitySetting_投诉建议">Complaint and Advice</string>
     <string name="ActivitySetting_请在WIFI下使用">Please use under the WIFI</string>
     <string name="ActivitySetting_清理缓存">Clean Cache</string>
@@ -465,6 +467,24 @@
     <string name="ActivitySetting_Toast_登出成功">Logout Success</string>
     <string name="ActivitySetting_Toast_清理完毕">Clean Finish</string>
 
+    <string name="ActivitySetting_dialog_title">Clean Cache</string>
+    <string name="ActivitySetting_dialog_message">Will clean you downloaded document and Login data,do you want to continue?</string>
+    <string name="ActivitySetting_dialog_positive">Confirm</string>
+    <string name="ActivitySetting_dialog_negative">Cancel</string>
+
+    <!--ActivitySecurity-->
+    <string name="ActivitySecurity_title">Security</string>
+    <string name="ActivitySecurity_old_password">Old password</string>
+    <string name="ActivitySecurity_new_password">New password</string>
+    <string name="ActivitySecurity_re_password">repassword</string>
+    <string name="ActivitySecurity_confirm">Confirm</string>
+    <string name="ActivitySecurity_can_not_null">old and new password can not null</string>
+    <string name="ActivitySecurity_at_least">The old password or new password At least 8</string>
+    <string name="ActivitySecurity_old_password_wrong">The old password is wrong</string>
+    <string name="ActivitySecurity_old_password_new_password_the_same">The old password and the new password are the same</string>
+    <string name="ActivitySecurity_new_password_not_same">new password and repassword are not same</string>
+    <string name="ActivitySecurity_modify_success">Success! you now can use the new password to login ChineseChat</string>
+    <string name="ActivitySecurity_modify_failure">Failure! Please try again</string>
 
     <!--ActivityPerson-->
     <string name="ActivityPerson_save">Save</string>
@@ -575,7 +595,7 @@
     <string name="ActivitySignUp_user_registration_agreement">《Agreement》</string>
     <string name="ActivitySignUp_next">Next</string>
 
-    <string name="ActivitySetting_title">Setting</string>
+
     <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityUsehelp_title">Use Help</string>
 
@@ -583,5 +603,10 @@
     <string name="ActivityTheme_title">Theme</string>
     <string name="ActivityTheme_confirm">Confirm</string>
     <string name="title_activity_activity_detail">ActivityDetail</string>
+    <string name="title_activity_activity_teacher">ActivityTeacher</string>
 
+    <!--ActivityTeacher-->
+    <string name="ActivityTeacher_title">About teacher</string>
+    <string name="ActivityTeacher_about">About</string>
+    <string name="title_activity_activity_security">ActivitySecurity</string>
 </resources>

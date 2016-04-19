@@ -104,10 +104,8 @@ public class FragmentListen extends Fragment {
             }
         });
 
-        Database database = new Database(getActivity());
         String url = NetworkUtil.levelAndFolders;
-        UrlCache cache = database.cacheSelectByUrl(url);
-        database.closeConnection();
+        UrlCache cache = ChineseChat.getDatabase().cacheSelectByUrl(url);
 
         if (cache == null) {
             lastJson(url);
@@ -116,9 +114,7 @@ public class FragmentListen extends Fragment {
             if (cache.UpdateAt < (System.currentTimeMillis() - 10 * 60 * 1000)) {
                 lastJson(url);
             }
-
         }
-
     }
 
     private void lastJson(String url) {

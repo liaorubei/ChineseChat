@@ -48,6 +48,8 @@ public class NetworkUtil {
     public static String GetStudentCallLogByUsername = domain + "/Api/CallLog/GetStudentByUsername";
     public static String chatAddTheme = domain + "/Api/CallLog/AddTheme";
     public static String getTeacher = domain + "/Api/NimUser/GetTeacher";
+    public static String nimuserGetPhotosByUsername = domain + "/Api/NimUser/GetPhotosByUsername";
+    public static String nimUserModifyPassword = domain + "/Api/NimUser/ModifyPassword";
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {

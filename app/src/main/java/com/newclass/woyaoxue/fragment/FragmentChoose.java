@@ -17,6 +17,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,6 +35,7 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.activity.ActivityCall;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
+import com.newclass.woyaoxue.activity.ActivityTeacher;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
@@ -138,6 +140,12 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         list = new ArrayList<User>();
         adapter = new MyAdapter(list);
         listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ActivityTeacher.start(getActivity(), list.get(position));
+            }
+        });
 
         tv_time = (TextView) view.findViewById(R.id.tv_time);
     }

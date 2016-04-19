@@ -7,10 +7,10 @@
     android:background="#00a478">
 
     <ImageView
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="15dp"
+        android:padding="10dp"
         android:src="@drawable/home_back"/>
 
     <TextView

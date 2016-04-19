@@ -7,10 +7,9 @@ android {
     defaultConfig {
         applicationId "com.voc.woyaoxue"
         minSdkVersion 15
-        targetSdkVersion 22
+        targetSdkVersion 20
         versionCode 1
-        versionName "V 1.0.0"
-        manifestPlaceholders = [APPLICATION_ICON: "@drawable/ic_launcher_student"]
+        versionName "V 1.0.1"
     }
 
     productFlavors {

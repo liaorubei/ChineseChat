@@ -1,7 +1,11 @@
 package com.newclass.woyaoxue.util;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Environment;
+
+import com.newclass.woyaoxue.ChineseChat;
+import com.newclass.woyaoxue.database.Database;
 
 import java.io.File;
 
@@ -115,5 +119,11 @@ public class FileUtil {
             length = file.length();
         }
         return length;
+    }
+
+    public static void cleanMyDatabase() {
+        Database database = ChineseChat.getDatabase();
+        database.deleteTable("document");
+        database.deleteTable("UrlCache");
     }
 }
