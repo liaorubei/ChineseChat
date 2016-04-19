@@ -33,6 +33,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivityCall;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.ActivityTeacher;
@@ -143,6 +144,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemClick: "+list.get(position).Accid);
                 ActivityTeacher.start(getActivity(), list.get(position));
             }
         });
@@ -278,7 +280,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
 
 
                     HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-                    parameters.add("id", getActivity().getSharedPreferences("user", Context.MODE_PRIVATE).getInt("id", 0));
+                    parameters.add("id", ChineseChat.CurrentUser.Id);
                     parameters.add("target", user.Id);
                     HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
                         @Override

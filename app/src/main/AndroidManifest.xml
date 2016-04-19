@@ -131,7 +131,6 @@
         <activity android:name="com.newclass.woyaoxue.activity.MessageActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.LiveChatActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ContactActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.StudentActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.GroupCreate" />
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityCall"

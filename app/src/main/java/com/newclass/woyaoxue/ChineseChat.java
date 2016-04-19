@@ -9,6 +9,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.newclass.woyaoxue.activity.MessageActivity;
+import com.newclass.woyaoxue.bean.Product;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.Log;
@@ -67,6 +68,10 @@ public class ChineseChat extends Application {
         user.Avatar = preferences.getString("avatar", "");
         user.Gender = preferences.getInt("gender", -1);
         user.Coins = preferences.getInt("coins", 0);
+        user.Country = preferences.getString("country", "");
+        user.Language = preferences.getString("language", "");
+        user.Job = preferences.getString("job", "");
+        user.About = preferences.getString("about", "");
 
         CurrentUser = user;
     }

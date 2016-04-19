@@ -68,7 +68,6 @@ public class ActivityTake extends Activity implements OnClickListener {
     private Gson gson = new Gson();
     private ImageView iv_icon;
     private boolean IS_CALL_ESTABLISHED = false;//通话是否已经建立
-    private User target;
     private TextView tv_nickname, tv_time, tv_theme;
     private AVChatData avChatData;
     private LinearLayout ll_theme;
@@ -127,35 +126,12 @@ public class ActivityTake extends Activity implements OnClickListener {
     private void initData() {
         Intent intent = getIntent();
         avChatData = (AVChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
-        target = new User();
-        target.Accid = avChatData.getAccount();
+        User source = gson.fromJson(avChatData.getExtra(), new TypeToken<User>() {
+        }.getType());
 
-        //取得来电用户头像
-        Parameters parameters = new Parameters();
-        parameters.add("accid", target.Accid);
-        HttpUtil.post(NetworkUtil.userGetByAccId, parameters, new RequestCallBack<String>() {
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "onFailure: " + msg);
-            }
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
-                }.getType());
-                if (resp.code == 200) {
-                    target.Id = resp.info.Id;
-                    target.Nickname = resp.info.Nickname;
-                    tv_nickname.setText(target.Nickname);
-
-                    //下载处理,如果有设置头像,则显示头像,
-                    //如果头像已经下载过,则加载本地图片
-                    CommonUtil.showIcon(getApplicationContext(), iv_icon, resp.info.Icon);
-                }
-            }
-        });
+        tv_nickname.setText(source.Nickname);
+        CommonUtil.showIcon(getApplicationContext(), iv_icon, source.Avatar);
+        cm_time.start();
     }
 
     private void initView() {
@@ -419,6 +395,11 @@ public class ActivityTake extends Activity implements OnClickListener {
         @Override
         public void onOpenDeviceError(int i) {
             Log.i(TAG, "onOpenDeviceError: ");
+        }
+
+        @Override
+        public void onRecordEnd(String[] strings, int i) {
+
         }
     }
 

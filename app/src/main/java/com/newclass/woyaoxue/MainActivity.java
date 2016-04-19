@@ -117,6 +117,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
             @Override
             public void onEvent(AVChatData chatData) {
+                Log.i(TAG, "IncomingCall: Extra="+chatData.getExtra());
                 ActivityTake.start(MainActivity.this, chatData);
             }
         }, register);

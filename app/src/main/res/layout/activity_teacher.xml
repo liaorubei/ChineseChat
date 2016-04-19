@@ -67,7 +67,7 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentRight="true"
-            android:background="@drawable/selector_choose_calla"
+            android:background="@drawable/selector_choose_callb"
             android:padding="15dp"
             android:src="@drawable/icon_choose_call" />
     </RelativeLayout>

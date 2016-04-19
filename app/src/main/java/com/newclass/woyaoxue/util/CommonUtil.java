@@ -42,7 +42,7 @@ public class CommonUtil {
     }
 
 
-    public static void saveUserToSP(Context context, User user) {
+    public static void saveUserToSP(Context context, User user, boolean savePassword) {
         SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
         editor.putInt("id", user.Id);
         editor.putString("accid", user.Accid);
@@ -57,10 +57,13 @@ public class CommonUtil {
 
         editor.putString("country", user.Country);
         editor.putString("language", user.Language);
-        editor.putString("vocation", user.Job);
+        editor.putString("job", user.Job);
+        editor.putString("about", user.About);
 
         editor.putString("username", user.Username);
-        editor.putString("password", user.PassWord);
+        if (savePassword) {
+            editor.putString("password", user.PassWord);
+        }
         editor.commit();
     }
 

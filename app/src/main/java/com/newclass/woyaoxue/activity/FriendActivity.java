@@ -45,7 +45,7 @@ public class FriendActivity extends Activity
 		// 构建通讯录
 		// 如果使用网易云信用户关系、用户资料托管，构建通讯录，先获取我所有好友帐号，再根据帐号去获取对应的用户资料，代码示例如下:
 		List<String> accounts = NIMClient.getService(FriendService.class).getFriendAccounts(); // 获取所有好友帐号
-		List<NimUserInfo> users = NIMClient.getService(UserService.class).getUserInfo(accounts); // 获取所有好友用户资料
+		List<NimUserInfo> users = NIMClient.getService(UserService.class).getUserInfoList(accounts); // 获取所有好友用户资料
 
 		for (NimUserInfo nim : users)
 		{

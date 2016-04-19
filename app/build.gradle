@@ -57,13 +57,11 @@ android {
 }
 
 dependencies {
+
     compile files('libs/cosinesdk.jar')
-    compile files('libs/nim-sdk-1.7.0.jar')
+    compile files('libs/nim-sdk-2.1.2.jar')
+    compile files('libs/nrtc-sdk.jar')
 
-    //支付相关
-    compile files('libs/netty-4.0.23-for-yx.final.jar')
-
-    //圆形图片
     compile files('libs/alipaySdk-20160120.jar')
 
     compile 'com.android.support:support-v13:22.2.1'

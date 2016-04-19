@@ -174,10 +174,9 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                     // 保护登录信息
                     response.info.Username = username;
                     response.info.PassWord = password;
-
                     ChineseChat.CurrentUser = response.info;
 
-                    CommonUtil.saveUserToSP(ActivitySignIn.this, response.info);
+                    CommonUtil.saveUserToSP(ActivitySignIn.this, response.info, true);
                 } else {
                     CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);
                 }

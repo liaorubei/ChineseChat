@@ -50,7 +50,7 @@ public class LiveChatActivity extends Activity implements OnClickListener
 		if (CHAT_STATE == CHATSTATE_CALL)
 		{
 			VideoChatParam param = new VideoChatParam(sv_video, 0);
-			AVChatManager.getInstance().call(target, AVChatType.AUDIO, param, new AVChatCallback<AVChatData>()
+			AVChatManager.getInstance().call(target, AVChatType.AUDIO, param,null, new AVChatCallback<AVChatData>()
 			{
 				@Override
 				public void onSuccess(AVChatData avChatData)

@@ -36,11 +36,13 @@ import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 import com.netease.nimlib.sdk.avchat.model.AVChatCalleeAckEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatCommonEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
+import com.netease.nimlib.sdk.avchat.model.AVChatNotifyOption;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.Observer.ObserverHangup;
 import com.newclass.woyaoxue.Observer.ObserverTimeOut;
 import com.newclass.woyaoxue.base.BaseAdapter;
@@ -90,7 +92,6 @@ public class ActivityCall extends Activity implements OnClickListener {
     private TextView tv_nickname, bt_card;
 
     private String callId;
-    private User source;
     private User target;
     private boolean IS_CALL_ESTABLISHED = false;
     private int REQUEST_CODE_THEME = 1;
@@ -154,15 +155,14 @@ public class ActivityCall extends Activity implements OnClickListener {
                         chatId = event.getChatId();
 
                         CommonUtil.toast("设备正常,开始通话");
-                        cm_time.setBase(SystemClock.elapsedRealtime());
                         Log.i(TAG, "被叫方同意接听: ackEvent.getChatId():" + event.getChatId());
 
                         //添加对话记录
                         Parameters parameters = new Parameters();
-                        parameters.add("chatId", event.getChatId() + "");
-                        parameters.add("chatType", event.getChatType().getValue() + "");
-                        parameters.add("target", target.Id + "");
-                        parameters.add("source", source.Id + "");
+                        parameters.add("chatId", event.getChatId());
+                        parameters.add("chatType", event.getChatType().getValue());
+                        parameters.add("target", target.Id);
+                        parameters.add("source", ChineseChat.CurrentUser.Id);
                         HttpUtil.post(NetworkUtil.callstart, parameters, new RequestCallBack<String>() {
 
                             @Override
@@ -278,19 +278,18 @@ public class ActivityCall extends Activity implements OnClickListener {
         //如果头像已经下载过,则加载本地图片
         CommonUtil.showIcon(this, iv_icon, icon);
 
-        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-        source = new User();
-        source.Id = sp.getInt("id", 0);
-        source.Accid = sp.getString("accid", "");
-        source.Nickname = sp.getString("", "");
-
         target = new User();
         target.Id = intent.getIntExtra(KEY_TARGET_ID, 0);
         target.Accid = intent.getStringExtra(KEY_TARGET_ACCID);
         target.Nickname = intent.getStringExtra(KEY_TARGET_NICKNAME);
         target.Icon = intent.getStringExtra(KEY_TARGET_ICON);
 
-        AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, callback_call);
+        AVChatNotifyOption notifyOption = new AVChatNotifyOption();
+        notifyOption.apnsBadge = false;
+        notifyOption.apnsInuse = true;
+        notifyOption.apnsSound = "video_chat_tip_receiver.aac";
+        notifyOption.extendMessage = gson.toJson(ChineseChat.CurrentUser);//把呼叫者的用户名,头像发送过去
+        AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, notifyOption, callback_call);
         registerObserver(true);
     }
 
@@ -549,6 +548,11 @@ public class ActivityCall extends Activity implements OnClickListener {
 
         @Override
         public void onOpenDeviceError(int i) {
+
+        }
+
+        @Override
+        public void onRecordEnd(String[] strings, int i) {
 
         }
     }

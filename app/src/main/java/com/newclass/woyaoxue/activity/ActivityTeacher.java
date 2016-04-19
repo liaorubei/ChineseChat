@@ -68,27 +68,19 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
 
     public static void start(Context context, User user) {
         Intent intent = new Intent(context, ActivityTeacher.class);
-        intent.putExtra("Avatar", user.Avatar);
-        intent.putExtra("Nickname", user.Nickname);
-        intent.putExtra("Username", user.Username);
-        intent.putExtra("Gender", user.Gender);
-        intent.putExtra("About", user.About);
+        intent.putExtra("user", new Gson().toJson(user));
         context.startActivity(intent);
     }
 
     private void initData() {
         Intent intent = getIntent();
-        user = new User();
-        user.Avatar = intent.getStringExtra("Avatar");
-        user.Nickname = intent.getStringExtra("Nickname");
-        user.Username = intent.getStringExtra("Username");
-        user.Gender = intent.getIntExtra("Gender", -1);
-        user.About = intent.getStringExtra("About");
+        user = new Gson().fromJson(intent.getStringExtra("user"), User.class);
 
         CommonUtil.showIcon(this, iv_avatar, user.Avatar);
         tv_nickname.setText(user.Nickname);
         tv_username.setText(user.Username);
         tv_about.setText(user.About);
+        iv_call.setEnabled(user.IsEnable && user.IsOnline);
 
         photos = new ArrayList<>();
         adapter = new MyAdapter();
@@ -144,9 +136,8 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
                     return;
                 }
 
-
                 HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-                parameters.add("id", getSharedPreferences("user", Context.MODE_PRIVATE).getInt("id", 0));
+                parameters.add("id", ChineseChat.CurrentUser.Id);
                 parameters.add("target", user.Id);
                 HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
                     @Override
@@ -154,7 +145,7 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
                         Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                         }.getType());
                         if (resp.code == 200) {
-                            ActivityCall.start(ActivityTeacher.this, user.Id, user.Accid, user.Avatar, user.Username, ActivityCall.CALL_TYPE_AUDIO);
+                            ActivityCall.start(ActivityTeacher.this, user.Id, user.Accid, user.Avatar, user.Nickname, ActivityCall.CALL_TYPE_AUDIO);
                         } else {
                             CommonUtil.toast(resp.desc);
                         }

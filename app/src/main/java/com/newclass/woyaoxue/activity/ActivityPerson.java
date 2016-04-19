@@ -7,7 +7,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,6 +31,7 @@ import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
@@ -55,7 +55,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private static final int PHOTO_REQUEST_CROP = 51;
 
     private TextView tv_birth, tv_username;
-    private EditText et_nickname, et_mobile, et_email, et_job;
+    private EditText et_nickname, et_mobile, et_email, et_job, et_school, et_about;
     private Spinner sp_language, sp_country;
     private RadioGroup rg_gender;
     private RadioButton rb_male, rb_female;
@@ -72,9 +72,9 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
 
     private List<String> countries = new ArrayList<String>();
     private List<String> languages = new ArrayList<String>();
-    private List<String> vocations = new ArrayList<String>();
     private ArrayAdapter<String> adapter_countries;
     private ArrayAdapter<String> adapter_languages;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +82,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_person);
 
         initView();
-        //  initData();
+        initData();
+
         saveDialog = new ProgressDialog(this);
         cropImage = new File(Environment.getExternalStorageDirectory(), "crop.png");
         saveImage = new File(Environment.getExternalStorageDirectory(), "save.png");
@@ -127,32 +128,31 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         et_job = (EditText) findViewById(R.id.et_job);
         sp_country = (Spinner) findViewById(R.id.sp_country);
         sp_language = (Spinner) findViewById(R.id.sp_language);
-
+        et_about = (EditText) findViewById(R.id.et_about);
+        et_school = (EditText) findViewById(R.id.et_school);
 
         iv_avatar.setOnClickListener(this);
         tv_birth.setOnClickListener(this);
+    }
 
-        SharedPreferences sp = getSharedPreferences("user", MODE_PRIVATE);
-
+    private void initData() {
+        User user = ChineseChat.CurrentUser;
         //头像
-        CommonUtil.showIcon(getApplicationContext(), iv_avatar, sp.getString("avatar", ""));
+        CommonUtil.showIcon(getApplicationContext(), iv_avatar, user.Avatar);
         //帐号
-        tv_username.setText(sp.getString("username", ""));
-
-        et_nickname.setText(sp.getString("nickname", ""));
-        et_email.setText(sp.getString("email", ""));
-        et_mobile.setText(sp.getString("mobile", ""));
-        int gender = sp.getInt("gender", -1);
-        rb_female.setChecked(gender == 0);
-        rb_male.setChecked(gender == 1);
-        tv_birth.setText(sp.getString("birth", ""));
+        tv_username.setText(user.Username);
+        et_nickname.setText(user.Nickname);
+        et_email.setText(user.Email);
+        et_mobile.setText(user.Mobile);
+        rb_female.setChecked(user.Gender == 0);
+        rb_male.setChecked(user.Gender == 1);
+        tv_birth.setText(user.Birth);
+        et_job.setText(user.Job);
+        et_about.setText(user.About);
 
         //显示国家，languages，工作
-        String country = sp.getString("country", "");
-        String language = sp.getString("language", "");
-        String vocation = sp.getString("vocation", "");
-
-        et_job.setText(vocation);
+        String country = user.Country;
+        String language = user.Language;
 
         String[] stringArray1 = getResources().getStringArray(R.array.countries);
         for (String s : stringArray1) {
@@ -195,6 +195,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 params.addBodyParameter("country", sp_country.getSelectedItem() + "");
                 params.addBodyParameter("language", sp_language.getSelectedItem() + "");
                 params.addBodyParameter("job", et_job.getText().toString().trim());
+                params.addBodyParameter("school", et_school.getText().toString().trim());
+                params.addBodyParameter("about", et_about.getText().toString().trim());
 
                 if (isIconSwitch) {
                     params.addBodyParameter("icon", cropImage);
@@ -207,8 +209,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                         }.getType());
 
                         if (resp.code == 200) {
-                            resp.info.Avatar = resp.info.Icon;//保存头像,返回Me的时候可以刷新头像
-                            CommonUtil.saveUserToSP(getApplicationContext(), resp.info);
+                            ChineseChat.CurrentUser = resp.info;
+                            CommonUtil.saveUserToSP(getApplicationContext(), resp.info, false);
                             CommonUtil.toast(getString(R.string.ActivityPerson_success));
                         } else {
                             CommonUtil.toast(getString(R.string.ActivityPerson_failure));
