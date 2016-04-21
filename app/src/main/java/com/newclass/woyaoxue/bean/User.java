@@ -25,4 +25,7 @@ public class User {
     public boolean IsEnable;
     public boolean IsOnline;
     public String[] Photos;
+    public String Education;
+    public String Spoken;
+    public String Hobbies;
 }

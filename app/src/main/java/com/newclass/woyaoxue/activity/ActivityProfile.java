@@ -6,9 +6,13 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -30,24 +34,25 @@ import com.voc.woyaoxue.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityTeacher extends Activity implements View.OnClickListener {
+public class ActivityProfile extends Activity implements View.OnClickListener {
 
-    private static final String TAG = "ActivityTeacher";
+    private static final String TAG = "ActivityProfile";
     private ImageView iv_avatar;
     private TextView tv_nickname;
     private TextView tv_username;
-    private TextView tv_about;
-    private ViewPager viewpager;
-    private List<ImageView> photos;
+    private TextView tv_about, tv_school, tv_language, tv_hobby;
+    private LinearLayout ll_album;
+
     private ImageView iv_call;
     private User user;
     private Gson gson = new Gson();
-    private MyAdapter adapter;
+
+    private String[] photos1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_teacher);
+        setContentView(R.layout.activity_profile);
         initView();
         initData();
     }
@@ -59,7 +64,12 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
         tv_nickname = (TextView) findViewById(R.id.tv_nickname);
         tv_username = (TextView) findViewById(R.id.tv_username);
         tv_about = (TextView) findViewById(R.id.tv_about);
-        viewpager = (ViewPager) findViewById(R.id.viewpager);
+        tv_school = (TextView) findViewById(R.id.tv_school);
+        tv_language = (TextView) findViewById(R.id.tv_language);
+        tv_hobby = (TextView) findViewById(R.id.tv_hobby);
+        ll_album = (LinearLayout) findViewById(R.id.ll_album);
+        ll_album.setOnClickListener(this);
+        //viewpager = (ViewPager) findViewById(R.id.viewpager);
 
         iv_call.setOnClickListener(this);
         //在学生端才可以拨打
@@ -67,7 +77,7 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
     }
 
     public static void start(Context context, User user) {
-        Intent intent = new Intent(context, ActivityTeacher.class);
+        Intent intent = new Intent(context, ActivityProfile.class);
         intent.putExtra("user", new Gson().toJson(user));
         context.startActivity(intent);
     }
@@ -80,11 +90,14 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
         tv_nickname.setText(user.Nickname);
         tv_username.setText(user.Username);
         tv_about.setText(user.About);
+        tv_school.setText(user.Education);
+        tv_language.setText(user.Spoken);
+        tv_hobby.setText(user.Hobbies);
         iv_call.setEnabled(user.IsEnable && user.IsOnline);
 
-        photos = new ArrayList<>();
-        adapter = new MyAdapter();
-        viewpager.setAdapter(adapter);
+
+        //viewpager.setAdapter(adapter);
+
 
         HttpUtil.Parameters params = new HttpUtil.Parameters();
         params.add("username", user.Username);
@@ -95,13 +108,22 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
                 Response<User> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                 }.getType());
                 if (o.code == 200) {
-                    photos.clear();
-                    for (String path : o.info.Photos) {
+                    ll_album.removeAllViews();
+                    int padding = ll_album.getPaddingLeft();
+                    int width = ll_album.getMeasuredWidth();
+                    int imageWidth = (width - padding * 5) / 4;
+                    Log.i(TAG, "imageWidth: " + imageWidth);
+
+                    photos1 = o.info.Photos;
+                    for (int i = 0; i < photos1.length; i++) {
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imageWidth, imageWidth);
                         ImageView imageView = new ImageView(getApplicationContext());
-                        imageView.setTag(path);
-                        photos.add(imageView);
+                        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                        layoutParams.setMargins(i == 0 ? 0 : padding, 0, 0, 0);//显示参数,添加marginLeft
+                        CommonUtil.showIcon(getApplicationContext(), imageView, photos1[i]);//加载图片
+                        ll_album.addView(imageView, layoutParams);//添加图片
+                        ll_album.setOnClickListener(ActivityProfile.this);
                     }
-                    adapter.notifyDataSetChanged();
                 }
             }
 
@@ -119,6 +141,18 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
             case R.id.iv_home:
                 this.finish();
                 break;
+            case R.id.ll_album: {
+/*                PopupWindow popupWindow = new PopupWindow(-1, -1);
+                ImageView imageView = new ImageView(getApplicationContext());
+                imageView.setImageResource(R.drawable.ic_launcher_student);
+                popupWindow.setContentView(imageView);
+                popupWindow.showAtLocation(ll_album, Gravity.BOTTOM, 0, 0);*/
+                if (photos1 != null && photos1.length > 0) {
+                    ActivityAlbum.start(ActivityProfile.this, photos1);
+                }
+
+            }
+            break;
             case R.id.iv_call: {
                 //如果没有登录,那么要求登录
                 if (NIMClient.getStatus() != StatusCode.LOGINED) {
@@ -145,7 +179,7 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
                         Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                         }.getType());
                         if (resp.code == 200) {
-                            ActivityCall.start(ActivityTeacher.this, user.Id, user.Accid, user.Avatar, user.Nickname, ActivityCall.CALL_TYPE_AUDIO);
+                            ActivityCall.start(ActivityProfile.this, user.Id, user.Accid, user.Avatar, user.Nickname, ActivityCall.CALL_TYPE_AUDIO);
                         } else {
                             CommonUtil.toast(resp.desc);
                         }
@@ -161,31 +195,5 @@ public class ActivityTeacher extends Activity implements View.OnClickListener {
         }
     }
 
-    private class MyAdapter extends PagerAdapter {
-        private ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-        @Override
-        public int getCount() {
-            return photos.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view.equals(object);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ImageView imageView = photos.get(position);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            CommonUtil.showIcon(getApplicationContext(), imageView, (String) imageView.getTag());
-            container.addView(imageView, params);
-            return imageView;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-    }
 }

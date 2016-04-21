@@ -602,11 +602,14 @@
     <!--ActivityTheme-->
     <string name="ActivityTheme_title">Theme</string>
     <string name="ActivityTheme_confirm">Confirm</string>
-    <string name="title_activity_activity_detail">ActivityDetail</string>
-    <string name="title_activity_activity_teacher">ActivityTeacher</string>
 
-    <!--ActivityTeacher-->
-    <string name="ActivityTeacher_title">About teacher</string>
-    <string name="ActivityTeacher_about">About</string>
-    <string name="title_activity_activity_security">ActivitySecurity</string>
+    <!--ActivityProfile-->
+    <string name="ActivityProfile_title">Profile</string>
+    <string name="ActivityProfile_about">About me</string>
+    <string name="ActivityProfile_education">Education</string>
+    <string name="ActivityProfile_languages">Spoken Languages</string>
+    <string name="ActivityProfile_hobbies">Hobbies</string>
+    <string name="ActivityProfile_album">Album</string>
+    <string name="title_activity_activity_album">ActivityAlbum</string>
+
 </resources>

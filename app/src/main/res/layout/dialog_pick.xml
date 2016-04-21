@@ -16,7 +16,7 @@
         android:paddingLeft="15dp"
         android:text="相册"
         android:textColor="#000"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_camera"

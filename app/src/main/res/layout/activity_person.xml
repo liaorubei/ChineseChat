@@ -103,6 +103,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_email"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
@@ -132,6 +133,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_mobile"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="10dp"
@@ -160,6 +162,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_gender"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
@@ -205,6 +208,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_birth"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="10dp"
@@ -231,11 +235,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_job"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="0dp"
@@ -258,6 +264,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_education"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
@@ -285,11 +292,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_country"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="0dp"
@@ -310,11 +319,13 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_language"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="10dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="0dp"
@@ -335,11 +346,14 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_about"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal">
+                android:longClickable="false"
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="0dp"
@@ -362,6 +376,13 @@
                     android:paddingRight="10dp"
                     android:textSize="15sp" />
             </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_photos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="10dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

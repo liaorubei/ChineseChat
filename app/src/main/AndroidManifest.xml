@@ -173,15 +173,17 @@
             android:exported="true" />
 
         <activity android:name="com.newclass.woyaoxue.MainActivity" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityDetail" />
         <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityDetail"
-            android:label="@string/title_activity_activity_detail" />
-        <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityTeacher"
-            android:label="@string/title_activity_activity_teacher" />
+            android:name="com.newclass.woyaoxue.activity.ActivityProfile"
+            android:label="@string/ActivityProfile_title" />
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivitySecurity"
-            android:label="@string/title_activity_activity_security"></activity>
+            android:label="@string/ActivitySecurity_title" />
+        <activity
+            android:name="com.newclass.woyaoxue.activity.ActivityAlbum"
+            android:label="@string/title_activity_activity_album"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
     </application>
 
 </manifest>

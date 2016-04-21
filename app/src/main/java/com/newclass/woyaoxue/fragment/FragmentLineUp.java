@@ -1,6 +1,5 @@
 package com.newclass.woyaoxue.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -33,9 +32,8 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
-import com.newclass.woyaoxue.activity.ActivityTeacher;
+import com.newclass.woyaoxue.activity.ActivityProfile;
 import com.newclass.woyaoxue.base.BaseAdapter;
-import com.newclass.woyaoxue.bean.Rank;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.service.TeacherAutoRefreshService;
@@ -131,7 +129,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ActivityTeacher.start(getActivity(), list.get(position));
+                ActivityProfile.start(getActivity(), list.get(position));
             }
         });
 

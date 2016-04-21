@@ -1,6 +1,5 @@
 package com.newclass.woyaoxue.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -36,7 +35,7 @@ import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivityCall;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
-import com.newclass.woyaoxue.activity.ActivityTeacher;
+import com.newclass.woyaoxue.activity.ActivityProfile;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
@@ -145,7 +144,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(TAG, "onItemClick: "+list.get(position).Accid);
-                ActivityTeacher.start(getActivity(), list.get(position));
+                ActivityProfile.start(getActivity(), list.get(position));
             }
         });
 
