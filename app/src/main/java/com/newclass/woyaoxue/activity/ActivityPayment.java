@@ -22,7 +22,6 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.netease.nimlib.sdk.NIMClient;
 import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Orders;
@@ -49,15 +48,17 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
     private static final String TAG = "MoneyActivity";
     private LinearLayout ll_paypal, ll_alipay;
     private RadioButton rb_paypal, rb_alipay;
-    private List<Orders> orderList;
     private ListView orderListView;
-    private BaseAdapter<Orders> orderAdapter;
-    private List<Pay> paymentList;
-    private BaseAdapter<Pay> paymentAdapter;
     private ListView paymentListView;
+
+    private List<Orders> listOrder;
+    private List<Pay> listPay;
+    private BaseAdapter<Orders> adapterOrder;
+    private BaseAdapter<Pay> adapterPay;
     private Dialog paymentDialog;
-    private Gson gson = new Gson();
     private ProgressDialog progressDialog;
+
+    private Gson gson = new Gson();
     private String orderId;
 
     private static final int SDK_PAY_FLAG = 1;
@@ -79,9 +80,9 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
     private void initData() {
         //初始化充值记录
-        orderList = new ArrayList<Orders>();
-        orderAdapter = new OrderAdapter(orderList);
-        orderListView.setAdapter(orderAdapter);
+        listOrder = new ArrayList<Orders>();
+        adapterOrder = new AdapterOrder(listOrder);
+        orderListView.setAdapter(adapterOrder);
 
         //取得充值记录
         String username = ChineseChat.CurrentUser.Username;
@@ -97,14 +98,14 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                     Response<List<Orders>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Orders>>>() {
                     }.getType());
 
-                    orderList.clear();
+                    listOrder.clear();
                     if (resp.code == 200) {
                         List<Orders> info = resp.info;
                         for (Orders o : info) {
-                            orderList.add(o);
+                            listOrder.add(o);
                         }
                     }
-                    orderAdapter.notifyDataSetChanged();
+                    adapterOrder.notifyDataSetChanged();
                 }
 
                 @Override
@@ -127,16 +128,16 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         paymentDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);//去背景
 
         //初始化充值金额
-        paymentList = new ArrayList<>();
-        paymentAdapter = new MyAdapter(paymentList);
-        paymentListView.setAdapter(paymentAdapter);
+        listPay = new ArrayList<>();
+        adapterPay = new AdapterPay(listPay);
+        paymentListView.setAdapter(adapterPay);
         paymentListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                for (int i = 0; i < paymentList.size(); i++) {
-                    paymentList.get(i).is_check = i == position;
+                for (int i = 0; i < listPay.size(); i++) {
+                    listPay.get(i).is_check = i == position;
                 }
-                paymentAdapter.notifyDataSetChanged();
+                adapterPay.notifyDataSetChanged();
             }
         });
 
@@ -147,13 +148,13 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<Product>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Product>>>() {
                 }.getType());
-                paymentList.clear();
+                listPay.clear();
                 if (resp.code == 200) {
                     for (Product p : resp.info) {
-                        paymentList.add(new Pay(p.Coin, p.USD, p.CNY));
+                        listPay.add(new Pay(p.Coin, p.USD, p.CNY));
                     }
                 }
-                paymentAdapter.notifyDataSetChanged();
+                adapterPay.notifyDataSetChanged();
             }
 
             @Override
@@ -202,15 +203,15 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             case R.id.iv_close: {
                 //充值对话框隐藏及充值金额选中状态重置
                 paymentDialog.dismiss();
-                for (Pay p : paymentList) {
+                for (Pay p : listPay) {
                     p.is_check = false;
                 }
-                paymentAdapter.notifyDataSetChanged();
+                adapterPay.notifyDataSetChanged();
             }
             break;
             case R.id.bt_positive: {
                 pay = null;
-                for (Pay p : paymentList) {
+                for (Pay p : listPay) {
                     if (p.is_check) {
                         pay = p;
                         break;
@@ -267,8 +268,18 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         }
     }
 
-    private class MyAdapter extends BaseAdapter<Pay> {
-        public MyAdapter(List<Pay> list) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+
+            case REQUEST_CODE_PAYPAL:
+                handlePaypalResult(resultCode, data);
+                break;
+        }
+    }
+
+    private class AdapterPay extends BaseAdapter<Pay> {
+        public AdapterPay(List<Pay> list) {
             super(list);
         }
 
@@ -282,23 +293,13 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
             cb_payment.setSelected(item.is_check);
             tv_main.setText(item.subject);
-            tv_price.setText(rb_paypal.isChecked() ? (item.usd + " USD") : (item.cny + " CNY"));
+            tv_price.setText(rb_paypal.isChecked() ? (item.usd + " USD") : (item.cny + " RMB"));
             return inflate;
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-
-            case REQUEST_CODE_PAYPAL:
-                handlePaypalResult(resultCode, data);
-                break;
-        }
-    }
-
-    private class OrderAdapter extends BaseAdapter<Orders> {
-        public OrderAdapter(List<Orders> list) {
+    private class AdapterOrder extends BaseAdapter<Orders> {
+        public AdapterOrder(List<Orders> list) {
             super(list);
         }
 
@@ -312,14 +313,13 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             TextView tv_createtime = (TextView) inflate.findViewById(R.id.tv_createtime);
 
             tv_main.setText(getString(R.string.项目) + item.Main);
-            tv_amount.setText(getString(R.string.金额) + item.Amount + " " + item.Currency);
+            tv_amount.setText(getString(R.string.金额) + item.Amount + " " + ("USD".equals(item.Currency) ? "USD" : "RMB"));
             tv_state.setText(getString(R.string.状态) + item.TradeStatus);
             tv_state.setTextColor("SUCCESS".equals(item.TradeStatus) ? Color.BLACK : Color.RED);
             tv_createtime.setText(getString(R.string.时间) + item.CreateTime);
             return inflate;
         }
     }
-
 
     private class Pay {
         int coin;
@@ -330,7 +330,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
         public Pay(int coin, BigDecimal us, BigDecimal cn) {
             this.coin = coin;
-            this.subject = "Coins " + coin;
+            this.subject = coin + " Coins";
             this.usd = us;
             this.cny = cn;
         }

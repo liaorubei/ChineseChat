@@ -405,6 +405,10 @@
     <string name="MainActivity_Refresh">Refresh</string>
     <string name="MainActivity_Delete">Delete</string>
     <string name="MainActivity_one_more_time_quit">One more time Quit</string>
+    <string name="MainActivity_Chat">One more time Quit</string>
+    <string name="MainActivity_Listen">One more time Quit</string>
+    <string name="MainActivity_Me">One more time Quit</string>
+
 
     <!--FragmentListen-->
     <string name="FragmentListen_downloaded">已下载</string>
@@ -439,7 +443,7 @@
 
     <!--ActivityPayment-->
     <string name="ActivityPayment_title">Recharge</string>
-    <string name="ActivityPayment_select_recharge_mode">Please choose you recharge mode</string>
+    <string name="ActivityPayment_select_recharge_mode">Please choose recharge mode</string>
     <string name="ActivityPayment_recharge_records">recharge records</string>
     <string name="ActivityPayment_recharge_success">Recharge success</string>
     <string name="ActivityPayment_recharge_failure">Recharge failure</string>
@@ -457,7 +461,7 @@
 
     <!--ActivitySetting-->
     <string name="ActivitySetting_title">Setting</string>
-    <string name="ActivitySetting_security">Account security</string>
+    <string name="ActivitySetting_change_password">Change the password</string>
     <string name="ActivitySetting_投诉建议">Complaint and Advice</string>
     <string name="ActivitySetting_请在WIFI下使用">Please use under the WIFI</string>
     <string name="ActivitySetting_清理缓存">Clean Cache</string>
@@ -473,7 +477,7 @@
     <string name="ActivitySetting_dialog_negative">Cancel</string>
 
     <!--ActivitySecurity-->
-    <string name="ActivitySecurity_title">Security</string>
+    <string name="ActivitySecurity_title">Change the password</string>
     <string name="ActivitySecurity_old_password">Old password</string>
     <string name="ActivitySecurity_new_password">New password</string>
     <string name="ActivitySecurity_re_password">repassword</string>
@@ -495,32 +499,41 @@
     <string name="ActivityPerson_birth">Birth:</string>
     <string name="ActivityPerson_country">Country:</string>
     <string name="ActivityPerson_language">Language:</string>
-    <string name="ActivityPerson_job">Job:</string>
-    <string name="ActivityPerson_school">School</string>
+    <string name="ActivityPerson_job">Profession:</string>
+
     <string name="ActivityPerson_female">Female</string>
     <string name="ActivityPerson_male">Male</string>
     <string name="ActivityPerson_success">Update Success</string>
     <string name="ActivityPerson_failure">Update Failure</string>
     <string name="ActivityPerson_confirm">Confirm</string>
-    <string name="ActivityPerson_about">Self description</string>
-    <string name="ActivityPerson_photo">Photo</string>
 
+    <string name="ActivityPerson_school">School</string>
+    <string name="ActivityPerson_hobbies">hobbies</string>
+    <string name="ActivityPerson_spoken">Spoken Languages</string>
+    <string name="ActivityPerson_location">Location</string>
+    <string name="ActivityPerson_about">Self description</string>
+
+
+    <string name="ActivityPerson_photo">Photo</string>
     <string name="ActivityPerson_hint_nickname">Nickname please</string>
     <string name="ActivityPerson_hint_email">Email can not change</string>
     <string name="ActivityPerson_hint_mobile">Mobile please</string>
     <string name="ActivityPerson_hint_birth">Click set your birthday</string>
     <string name="ActivityPerson_hint_job">you job</string>
     <string name="ActivityPerson_hint_school">School</string>
+    <string name="ActivityPerson_hint_hobbies">Hobbies</string>
+    <string name="ActivityPerson_hint_spoken">Spoken Languages</string>
+    <string name="ActivityPerson_hint_location">Location</string>
     <string name="ActivityPerson_hint_about">Self description or something else can generalize yourself</string>
 
 
     <!--ActivityHistory-->
+    <string name="ActivityHistory_title">Study record</string>
     <string name="ActivityHistory_theme">Theme:</string>
     <string name="ActivityHistory_teacher">Teacher:</string>
     <string name="ActivityHistory_coins">Coins:</string>
     <string name="ActivityHistory_date">Date:</string>
     <string name="ActivityHistory_time">Time:</string>
-
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_download">Download</string>
@@ -579,7 +592,7 @@
     <string name="ActivitySignIn_type_password">Password</string>
     <string name="ActivitySignIn_login">Login</string>
     <string name="ActivitySignIn_forgot_password">Forgot you password?</string>
-    <string name="ActivitySignIn_user_register">New user register</string>
+    <string name="ActivitySignIn_user_register">User registration</string>
     <string name="ActivitySignIn_login_failure">Login failure</string>
     <string name="ActivitySignIn_email_or_password_not_null">Sorry,Email or the password can not be null!</string>
     <string name="ActivitySignIn_network_error_login_failure">Network error,Login failure</string>

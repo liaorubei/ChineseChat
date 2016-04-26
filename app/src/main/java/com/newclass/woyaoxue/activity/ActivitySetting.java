@@ -51,7 +51,6 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
 
         View rl_security = findViewById(R.id.rl_security);
         rl_security.setOnClickListener(this);
-        rl_security.setVisibility(NIMClient.getStatus() == StatusCode.LOGINED ? View.VISIBLE : View.INVISIBLE);
 
         findViewById(R.id.rl_feedback).setOnClickListener(this);
         findViewById(R.id.rl_wipedata).setOnClickListener(this);

@@ -49,6 +49,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/ll_avatar"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
                 android:layout_marginBottom="10dp"
@@ -76,6 +77,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_nickname"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
@@ -108,7 +110,8 @@
                 android:layout_height="45dp"
                 android:layout_marginBottom="1dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="0dp"
@@ -136,9 +139,10 @@
                 android:id="@+id/ll_mobile"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginBottom="10dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="visible"
+                android:layout_marginBottom="1dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -162,10 +166,37 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/ll_birth"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="#FFFFFF"
+                android:orientation="horizontal"
+                android:layout_marginBottom="1dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="@string/ActivityPerson_birth"
+                    android:textSize="15sp" />
+
+                <TextView
+                    android:id="@+id/tv_birth"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="8"
+                    android:hint="@string/ActivityPerson_hint_birth"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/ll_gender"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_marginBottom="1dp"
+                android:layout_marginBottom="10dp"
                 android:background="#FFFFFF"
                 android:orientation="horizontal">
 
@@ -205,33 +236,6 @@
                         android:text="@string/ActivityPerson_male"
                         android:textSize="15sp" />
                 </RadioGroup>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_birth"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginBottom="10dp"
-                android:background="#FFFFFF"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
-                    android:text="@string/ActivityPerson_birth"
-                    android:textSize="15sp" />
-
-                <TextView
-                    android:id="@+id/tv_birth"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
-                    android:hint="@string/ActivityPerson_hint_birth"
-                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -346,34 +350,117 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_about"
+                android:id="@+id/ll_hobby"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_height="45dp"
                 android:background="#FFFFFF"
-                android:longClickable="false"
                 android:orientation="horizontal"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|top"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="2"
                     android:gravity="center"
+                    android:text="@string/ActivityPerson_hobbies"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/et_hobby"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="8"
+                    android:background="@null"
+                    android:hint="@string/ActivityPerson_hint_hobbies"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_location"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="10dp"
+                android:background="#FFFFFF"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:text="@string/ActivityPerson_location"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/et_location"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="8"
+                    android:background="@null"
+                    android:hint="@string/ActivityPerson_hint_location"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_spoken"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#FFFFFF"
+                    android:padding="10dp"
+                    android:text="@string/ActivityPerson_spoken"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/et_spoken"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#FFFFFF"
+                    android:gravity="top"
+                    android:hint="@string/ActivityPerson_hint_spoken"
+                    android:minLines="2"
+                    android:padding="10dp"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_about"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="#FFFFFF"
+                    android:padding="10dp"
                     android:text="@string/ActivityPerson_about"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_about"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|top"
-                    android:layout_weight="8"
-                    android:background="@null"
+                    android:background="#FFFFFF"
+                    android:gravity="top"
                     android:hint="@string/ActivityPerson_hint_about"
                     android:minLines="5"
-                    android:paddingRight="10dp"
+                    android:padding="10dp"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -381,6 +468,7 @@
                 android:id="@+id/ll_photos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#ffffff"
                 android:orientation="horizontal"
                 android:padding="10dp" />
         </LinearLayout>

@@ -134,6 +134,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
         });
 
         view.findViewById(R.id.iv_enqueue).setOnClickListener(this);
+        view.findViewById(R.id.iv_dequeue).setOnClickListener(this);
     }
 
     @Override
@@ -161,31 +162,55 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override//view点击事件
     public void onClick(View v) {
-        if (v.getId() == R.id.iv_enqueue) {
-            if (NIMClient.getStatus() != StatusCode.LOGINED) {
-                getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
-                return;
-            }
-            HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-            parameters.add("id", ChineseChat.CurrentUser.Id);
-            Log.i(TAG, "onClick: " + ChineseChat.CurrentUser.Id);
-            HttpUtil.post(NetworkUtil.teacherEnqueue, parameters, new RequestCallBack<String>() {
+        switch (v.getId()) {
+            case R.id.iv_enqueue: {
+                if (NIMClient.getStatus() != StatusCode.LOGINED) {
+                    getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
+                    return;
+                }
+                HttpUtil.Parameters parameters = new HttpUtil.Parameters();
+                parameters.add("id", ChineseChat.CurrentUser.Id);
+                Log.i(TAG, "onClick: " + ChineseChat.CurrentUser.Id);
+                HttpUtil.post(NetworkUtil.teacherEnqueue, parameters, new RequestCallBack<String>() {
 
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Log.i(TAG, "onSuccess: " + responseInfo.result);
-                    Response resp = gson.fromJson(responseInfo.result, new TypeToken<Response>() {
-                    }.getType());
-                    if (resp.code == 200) {
-                        refresh();
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Log.i(TAG, "onSuccess: " + responseInfo.result);
+                        Response resp = gson.fromJson(responseInfo.result, new TypeToken<Response>() {
+                        }.getType());
+                        if (resp.code == 200) {
+                            refresh();
+                        }
                     }
-                }
 
-                @Override
-                public void onFailure(HttpException error, String msg) {
-                    CommonUtil.toast("排队失败");
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        CommonUtil.toast("排队失败");
+                    }
+                });
+            }
+            break;
+            case R.id.iv_dequeue: {
+                if (NIMClient.getStatus() != StatusCode.LOGINED) {
+                    getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
+                    return;
                 }
-            });
+                HttpUtil.Parameters parameters = new HttpUtil.Parameters();
+                parameters.add("id", ChineseChat.CurrentUser.Id);
+                HttpUtil.post(NetworkUtil.teacherDequeue, parameters, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+
+                        CommonUtil.toast("退出排除成功");
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        CommonUtil.toast("退出排队失败");
+                    }
+                });
+            }
+            break;
         }
     }
 

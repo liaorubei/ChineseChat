@@ -1,5 +1,7 @@
 package com.newclass.woyaoxue.bean;
 
+import java.util.Set;
+
 public class User {
     public int Id;
     public String Token;
@@ -24,8 +26,8 @@ public class User {
     public String Job;
     public boolean IsEnable;
     public boolean IsOnline;
-    public String[] Photos;
-    public String Education;
+    public Set<String> Photos;
+    public String School;
     public String Spoken;
     public String Hobbies;
 }

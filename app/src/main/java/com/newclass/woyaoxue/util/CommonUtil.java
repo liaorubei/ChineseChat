@@ -23,6 +23,8 @@ import java.io.FileOutputStream;
 
 public class CommonUtil {
 
+    private static BitmapUtils bitmapUtils;
+
     public static void toast(Context context, String text) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
@@ -41,7 +43,6 @@ public class CommonUtil {
         return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
-
     public static void saveUserToSP(Context context, User user, boolean savePassword) {
         SharedPreferences.Editor editor = context.getSharedPreferences("user", Context.MODE_PRIVATE).edit();
         editor.putInt("id", user.Id);
@@ -59,6 +60,10 @@ public class CommonUtil {
         editor.putString("language", user.Language);
         editor.putString("job", user.Job);
         editor.putString("about", user.About);
+        editor.putString("school", user.School);
+        editor.putString("hobbies", user.Hobbies);
+        editor.putString("spoken", user.Spoken);
+        editor.putStringSet("photos", user.Photos);
 
         editor.putString("username", user.Username);
         if (savePassword) {
@@ -109,5 +114,12 @@ public class CommonUtil {
         Toast toast = Toast.makeText(ChineseChat.getContext(), text, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.TOP, 0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 55, ChineseChat.getContext().getResources().getDisplayMetrics()));
         toast.show();
+    }
+
+    public static void showBitmap(ImageView imageView, String absolutePath) {
+        if (bitmapUtils == null) {
+            bitmapUtils = new BitmapUtils(ChineseChat.getContext(), ChineseChat.getContext().getCacheDir().getAbsolutePath());
+        }
+        bitmapUtils.display(imageView, absolutePath);
     }
 }

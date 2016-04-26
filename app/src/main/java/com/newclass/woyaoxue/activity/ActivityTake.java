@@ -9,11 +9,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Chronometer;
@@ -115,7 +117,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         }
     };
 
-
     public static void start(Context context, AVChatData avChatData) {
         Intent intent = new Intent(context, ActivityTake.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -126,11 +127,18 @@ public class ActivityTake extends Activity implements OnClickListener {
     private void initData() {
         Intent intent = getIntent();
         avChatData = (AVChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
-        User source = gson.fromJson(avChatData.getExtra(), new TypeToken<User>() {
-        }.getType());
 
-        tv_nickname.setText(source.Nickname);
-        CommonUtil.showIcon(getApplicationContext(), iv_icon, source.Avatar);
+        //如果拨打方云信SDK版本过低,不支持avChatData.getExtra(),那就不显示头像吧
+        try {
+            User source = gson.fromJson(avChatData.getExtra(), new TypeToken<User>() {
+            }.getType());
+
+            tv_nickname.setText(source.Nickname);
+            CommonUtil.showIcon(getApplicationContext(), iv_icon, source.Avatar);
+        } catch (Exception ex) {
+            Log.i(TAG, "initData: 对方云信SDK版本过低");
+        }
+
         cm_time.start();
     }
 
@@ -292,6 +300,7 @@ public class ActivityTake extends Activity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_take);
 
         initView();

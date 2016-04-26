@@ -21,6 +21,7 @@ import com.newclass.woyaoxue.activity.ActivityPerson;
 import com.newclass.woyaoxue.activity.ActivitySetting;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.Log;
+import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
 public class FragmentPerson extends Fragment implements View.OnClickListener {
@@ -81,7 +82,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
 
             Log.i(TAG, "onResume: Avatar=" + avatar + " nickname=" + nickname + " gender=" + gender + " coins=" + coins);
 
-            CommonUtil.showIcon(getActivity(), iv_avatar, avatar);
+            CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(avatar));
             tv_nickname.setText(nickname);
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
             iv_gender.setVisibility(gender > -1 ? View.VISIBLE : View.INVISIBLE);

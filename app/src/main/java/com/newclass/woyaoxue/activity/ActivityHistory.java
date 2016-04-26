@@ -120,7 +120,6 @@ public class ActivityHistory extends Activity {
         });
     }
 
-
     private class MyAdapter extends BaseAdapter<CallLog> {
 
         public MyAdapter(List<CallLog> list) {
@@ -135,20 +134,16 @@ public class ActivityHistory extends Activity {
             TextView tv_teacher = (TextView) inflate.findViewById(R.id.tv_teacher);
             TextView tv_coins = (TextView) inflate.findViewById(R.id.tv_coins);
             TextView tv_date = (TextView) inflate.findViewById(R.id.tv_date);
-            TextView tv_tiem = (TextView) inflate.findViewById(R.id.tv_time);
+            TextView tv_time = (TextView) inflate.findViewById(R.id.tv_time);
 
             tv_theme.setText(getString(R.string.ActivityHistory_theme) + "未选择");
             if (item.Themes != null && item.Themes.size() > 0) {
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < item.Themes.size(); i++) {
-                    sb.append(item.Themes.get(i).Name + " > ");
-                }
-                tv_theme.setText(getString(R.string.ActivityHistory_theme) + sb.toString());
+                tv_theme.setText(getString(R.string.ActivityHistory_theme) + item.Themes.get(0).Name);
             }
             tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Nickname);
             tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
             tv_date.setText(getString(R.string.ActivityHistory_date) + sdf.format(item.Start));
-            tv_tiem.setText(getString(R.string.ActivityHistory_time) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
+            tv_time.setText(getString(R.string.ActivityHistory_time) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
             return inflate;
         }
     }

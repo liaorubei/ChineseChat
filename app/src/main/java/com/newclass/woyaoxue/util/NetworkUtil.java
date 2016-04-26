@@ -1,5 +1,7 @@
 package com.newclass.woyaoxue.util;
 
+import android.text.TextUtils;
+
 public class NetworkUtil {
     // public static String domain = "http://192.168.3.121:801";
     public static String domain = "http://voc2015.azurewebsites.net";
@@ -12,6 +14,7 @@ public class NetworkUtil {
     public static final String ObtainTeacher = domain + "/Api/nimUser/ObtainTeacher";
     public static final String studentCall = domain + "/Api/student/call";
     public static final String teacherEnqueue = domain + "/Api/NimUser/TeacherEnqueue";
+    public static final String teacherDequeue = domain + "/Api/NimUser/TeacherDequeue";
     public static final String teacherRefresh = domain + "/Api/NimUser/TeacherRefresh";
     public static final String teacherGroup = domain + "/Api/teacher/group";
     public static final String teacherInQueue = domain + "/Api/NimUser/TeacherInqueue";
@@ -50,6 +53,9 @@ public class NetworkUtil {
     public static String getTeacher = domain + "/Api/NimUser/GetTeacher";
     public static String nimuserGetPhotosByUsername = domain + "/Api/NimUser/GetPhotosByUsername";
     public static String nimUserModifyPassword = domain + "/Api/NimUser/ModifyPassword";
+    public static String nimUserUpdateTeacher = domain + "/Api/NimUser/UpdateTeacher";
+    public static String nimUserUpdateStudent = domain + "/Api/NimUser/UpdateStudent";
+
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {
@@ -92,8 +98,7 @@ public class NetworkUtil {
      * @return
      */
     public static String getFullPath(String path) {
-
-        return domain + path;
+        return TextUtils.isEmpty(path) ? null : domain + path;
     }
 
     /**

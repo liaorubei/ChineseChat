@@ -41,8 +41,7 @@
         android:name="com.newclass.woyaoxue.ChineseChat"
         android:icon="${APPLICATION_ICON}"
         android:label="ChineseChat"
-        android:theme="@android:style/Theme.Holo.Light.NoActionBar">
-
+        android:theme="@android:style/Theme.Light.NoTitleBar">
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"

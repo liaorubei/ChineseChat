@@ -24,4 +24,15 @@
         android:background="@drawable/shape_oval_green"
         android:padding="10dp"
         android:src="@drawable/icon_enqueue" />
+
+    <ImageView
+        android:id="@+id/iv_dequeue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/iv_enqueue"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="25dp"
+        android:background="@drawable/shape_oval_gray"
+        android:padding="10dp"
+        android:src="@drawable/icon_dequeue" />
 </RelativeLayout>

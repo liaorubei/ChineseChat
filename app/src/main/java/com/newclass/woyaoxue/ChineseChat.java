@@ -25,6 +25,11 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.prefs.PreferenceChangeEvent;
+
 public class ChineseChat extends Application {
     protected static final String TAG = "ChineseChat";
     private static Context mContext = null;
@@ -63,6 +68,7 @@ public class ChineseChat extends Application {
         user.Id = preferences.getInt("id", 0);
         user.Accid = preferences.getString("accid", "");
         user.Token = preferences.getString("token", "");
+        user.Birth = preferences.getString("birth", "");
         user.Nickname = preferences.getString("nickname", "");
         user.Username = preferences.getString("username", "");
         user.Avatar = preferences.getString("avatar", "");
@@ -71,8 +77,11 @@ public class ChineseChat extends Application {
         user.Country = preferences.getString("country", "");
         user.Language = preferences.getString("language", "");
         user.Job = preferences.getString("job", "");
+        user.School = preferences.getString("school", "");
+        user.Hobbies = preferences.getString("hobbies", "");
+        user.Spoken = preferences.getString("spoken", "");
         user.About = preferences.getString("about", "");
-
+        user.Photos = preferences.getStringSet("photos", new HashSet<String>());
         CurrentUser = user;
     }
 

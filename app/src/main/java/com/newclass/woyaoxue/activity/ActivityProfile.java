@@ -1,18 +1,13 @@
 package com.newclass.woyaoxue.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -31,23 +26,24 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 public class ActivityProfile extends Activity implements View.OnClickListener {
 
     private static final String TAG = "ActivityProfile";
     private ImageView iv_avatar;
     private TextView tv_nickname;
-    private TextView tv_username;
+    private TextView tv_location;
     private TextView tv_about, tv_school, tv_language, tv_hobby;
     private LinearLayout ll_album;
 
     private ImageView iv_call;
     private User user;
     private Gson gson = new Gson();
-
-    private String[] photos1;
+    private Set<String> photos1;
+    private ProgressDialog progressDialog;
+    private int padding = 0;
+    private int size = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +58,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
         iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
         iv_call = (ImageView) findViewById(R.id.iv_call);
         tv_nickname = (TextView) findViewById(R.id.tv_nickname);
-        tv_username = (TextView) findViewById(R.id.tv_username);
+        tv_location = (TextView) findViewById(R.id.tv_location);
         tv_about = (TextView) findViewById(R.id.tv_about);
         tv_school = (TextView) findViewById(R.id.tv_school);
         tv_language = (TextView) findViewById(R.id.tv_language);
@@ -88,16 +84,26 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
 
         CommonUtil.showIcon(this, iv_avatar, user.Avatar);
         tv_nickname.setText(user.Nickname);
-        tv_username.setText(user.Username);
+        tv_location.setText(user.Country);
         tv_about.setText(user.About);
-        tv_school.setText(user.Education);
+        tv_school.setText(user.School);
         tv_language.setText(user.Spoken);
         tv_hobby.setText(user.Hobbies);
         iv_call.setEnabled(user.IsEnable && user.IsOnline);
 
+        padding = ll_album.getPaddingLeft();
+        int width = getResources().getDisplayMetrics().widthPixels;
+        size = (width - padding * 5) / 4;
 
-        //viewpager.setAdapter(adapter);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(size, size);
+        ImageView imageView = new ImageView(getApplicationContext());
+        layoutParams.setMargins(0, 0, 0, 0);//显示参数,添加marginLeft
+        ll_album.addView(imageView, layoutParams);//添加图片
+        ll_album.setOnClickListener(ActivityProfile.this);
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("正在加载中");
+        progressDialog.show();
 
         HttpUtil.Parameters params = new HttpUtil.Parameters();
         params.add("username", user.Username);
@@ -108,28 +114,35 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                 Response<User> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                 }.getType());
                 if (o.code == 200) {
-                    ll_album.removeAllViews();
-                    int padding = ll_album.getPaddingLeft();
-                    int width = ll_album.getMeasuredWidth();
-                    int imageWidth = (width - padding * 5) / 4;
-                    Log.i(TAG, "imageWidth: " + imageWidth);
+                    User info = o.info;
+                    tv_location.setText(info.Country);
+                    tv_school.setText(info.School);
+                    tv_language.setText(info.Spoken);
+                    tv_hobby.setText(info.Hobbies);
 
-                    photos1 = o.info.Photos;
-                    for (int i = 0; i < photos1.length; i++) {
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(imageWidth, imageWidth);
+                    if (info.Photos.size() > 0) {
+                        ll_album.removeAllViews();
+                    }
+
+                    photos1 = info.Photos;
+                    for (String s : photos1) {
+                        LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(size, size);
                         ImageView imageView = new ImageView(getApplicationContext());
                         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                        layoutParams.setMargins(i == 0 ? 0 : padding, 0, 0, 0);//显示参数,添加marginLeft
-                        CommonUtil.showIcon(getApplicationContext(), imageView, photos1[i]);//加载图片
-                        ll_album.addView(imageView, layoutParams);//添加图片
-                        ll_album.setOnClickListener(ActivityProfile.this);
+                        imageView.setBackgroundResource(R.color.color_app_normal);
+                        layout.setMargins(0, 0, padding, 0);//显示参数,添加marginLeft
+                        CommonUtil.showBitmap(imageView, NetworkUtil.getFullPath(s));//加载图片
+                        ll_album.addView(imageView, layout);//添加图片
                     }
                 }
+                progressDialog.dismiss();
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
+                progressDialog.dismiss();
+                CommonUtil.toast(R.string.network_error);
             }
         });
     }
@@ -142,13 +155,8 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                 this.finish();
                 break;
             case R.id.ll_album: {
-/*                PopupWindow popupWindow = new PopupWindow(-1, -1);
-                ImageView imageView = new ImageView(getApplicationContext());
-                imageView.setImageResource(R.drawable.ic_launcher_student);
-                popupWindow.setContentView(imageView);
-                popupWindow.showAtLocation(ll_album, Gravity.BOTTOM, 0, 0);*/
-                if (photos1 != null && photos1.length > 0) {
-                    ActivityAlbum.start(ActivityProfile.this, photos1);
+                if (photos1 != null && photos1.size() > 0) {
+                    ActivityAlbum.start(ActivityProfile.this, photos1.toArray(new String[photos1.size()]));
                 }
 
             }
@@ -194,6 +202,4 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
             break;
         }
     }
-
-
 }
