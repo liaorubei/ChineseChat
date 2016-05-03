@@ -13,7 +13,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
-import android.util.TypedValue;
+import android.util.*;
 import android.view.Gravity;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 
 public class CommonUtil {
 
+    private static final String TAG = "CommonUtil";
     private static BitmapUtils bitmapUtils;
 
     public static void toast(Context context, String text) {
@@ -116,10 +117,11 @@ public class CommonUtil {
         toast.show();
     }
 
-    /*
-    * 如果absolutePath为空,则不请求网络,直接显示默认图片,如果没有默认图片则显示空白
-    * params imageView
-    * */
+    /**
+     * 显示图片,并缓存,如果缓存中已经存在图片,则从缓存读取
+     * @param imageView    要显示图片的控件
+     * @param absolutePath 图片的全路径,如域名
+     */
     public static void showBitmap(ImageView imageView, String absolutePath) {
         if (bitmapUtils == null) {
             bitmapUtils = new BitmapUtils(ChineseChat.getContext(), ChineseChat.getContext().getCacheDir().getAbsolutePath());

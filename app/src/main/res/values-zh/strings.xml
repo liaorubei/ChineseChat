@@ -93,7 +93,7 @@
     <string name="ActivityAbout_check_sdcard">SD Card访问异常</string>
     <string name="ActivityAbout_dialog_negative">取消</string>
     <string name="ActivityAbout_dialog_positive">确定</string>
-    <string name="ActivityAbout_dialog_title">用户确认</string>
+    <string name="ActivityAbout_dialog_title">升级提示</string>
     <string name="ActivityAbout_download_failure">更新包下载失败</string>
     <string name="ActivityAbout_download_start">开始下载</string>
     <string name="ActivityReset_reset_password">重置密码</string>
@@ -165,4 +165,5 @@
     <string name="ActivityHistory_title">学习记录</string>
     <string name="ActivityDocsTodo_title">课程</string>
     <string name="ActivityPlay_title">播放</string>
+    <string name="ActivityAbout_have_new_version">有新版本，马上更新</string>
 </resources>

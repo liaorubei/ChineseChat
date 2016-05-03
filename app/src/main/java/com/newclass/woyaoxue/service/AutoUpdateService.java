@@ -9,6 +9,7 @@ import android.app.Service;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -43,7 +44,7 @@ public class AutoUpdateService extends Service {
     private UpgradePatch upgradePatch;
 
     private void builderDownloadDialog() {
-        Builder builder = new AlertDialog.Builder(getApplicationContext(), AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        Builder builder = new AlertDialog.Builder(AutoUpdateService.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setTitle(R.string.upgrade_tips);
         String string = getResources().getString(R.string.new_versions_message);
         string += "\r\n" + upgradePatch.UpgradeInfo;
@@ -88,7 +89,6 @@ public class AutoUpdateService extends Service {
                             }
                             isNowSetupDialog.show();
                             notificationManager.cancel(0);
-                            ;
                         }
 
                         public void onLoading(long total, long current, boolean isUploading) {
@@ -178,10 +178,17 @@ public class AutoUpdateService extends Service {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
                 try {
                     upgradePatch = new Gson().fromJson(responseInfo.result, UpgradePatch.class);
+                    //把网上的版本信息保存起来，在关于的时候会用到，
+                    SharedPreferences.Editor editor = getSharedPreferences("version", MODE_PRIVATE).edit();
+                    editor.putString("VersionName", upgradePatch.VersionName);
+                    editor.putString("UpgradeInfo", upgradePatch.UpgradeInfo);
+                    editor.putLong("PackageSize", upgradePatch.PackageSize);
+                    editor.putString("PackagePath", upgradePatch.PackagePath);
+                    editor.apply();
+
                     PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS);
                     installPack = new File(Environment.getExternalStorageDirectory(), "Download/" + packageInfo.packageName + "_" + upgradePatch.VersionName + (ChineseChat.isStudent() ? "_Student" : "_Teacher") + ".apk");
                     if (!installPack.getParentFile().exists()) {
-                        Log.i("logi", "创建更新下载目录");
                         installPack.getParentFile().mkdirs();
                     }
 

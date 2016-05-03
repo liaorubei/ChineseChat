@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.newclass.woyaoxue.util.CommonUtil;
+import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
 import java.util.ArrayList;
@@ -38,7 +39,7 @@ public class ActivityAlbum extends Activity {
         for (String path : paths) {
             ImageView imageView = new ImageView(getApplicationContext());
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            CommonUtil.showIcon(getApplicationContext(), imageView, path);
+            CommonUtil.showBitmap(imageView, NetworkUtil.getFullPath(path));
             photos.add(imageView);
         }
 

@@ -558,7 +558,7 @@
     <string name="ActivityAbout_use_help">Use Help</string>
     <string name="ActivityAbout_user_agreement">User Agreement</string>
 
-    <string name="ActivityAbout_dialog_title">User Agreement</string>
+    <string name="ActivityAbout_dialog_title">Update tip</string>
     <string name="ActivityAbout_dialog_positive">Confirm</string>
     <string name="ActivityAbout_dialog_negative">Cancel</string>
 
@@ -568,7 +568,8 @@
     <string name="ActivityAbout_already_up_to_date">ChineseChat is already up to date</string>
 
     <string name="ActivityAbout_check_sdcard">SD card not work properly</string>
-
+    <string name="ActivityAbout_already_latest">Already the latest</string>
+    <string name="ActivityAbout_have_new_version">Have new version,update now!</string>
 
     <!--ActivityReset-->
     <string name="ActivityReset_reset_password">Reset Password</string>
