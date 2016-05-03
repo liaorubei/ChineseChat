@@ -1,39 +1,29 @@
 package com.newclass.woyaoxue.fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.ChineseChat;
-import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.ActivityProfile;
-import com.newclass.woyaoxue.base.BaseAdapter;
+import com.newclass.woyaoxue.activity.ActivitySignIn;
+import com.newclass.woyaoxue.adapter.AdapterTeacher;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.service.TeacherAutoRefreshService;
@@ -43,8 +33,6 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,7 +47,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
     private SwipeRefreshLayout srl;
     private static Gson gson = new Gson();
     private List<User> list;
-    private MyAdapter adapter;
+    private AdapterTeacher adapter;
     private int offset = 10;
     private Handler handler = new Handler() {
         @Override
@@ -124,7 +112,7 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
 
         final ListView listview = (ListView) view.findViewById(R.id.listview);
         list = new ArrayList<User>();
-        adapter = new MyAdapter(list);
+        adapter = new AdapterTeacher(list, getActivity());
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -181,11 +169,12 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
                         if (resp.code == 200) {
                             refresh();
                         }
+                        CommonUtil.toast(R.string.FragmentLineUp_enqueue_success);
                     }
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("排队失败");
+                        CommonUtil.toast(R.string.FragmentLineUp_enqueue_failure);
                     }
                 });
             }
@@ -201,73 +190,16 @@ public class FragmentLineUp extends Fragment implements SwipeRefreshLayout.OnRef
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
 
-                        CommonUtil.toast("退出排除成功");
+                        CommonUtil.toast(R.string.FragmentLineUp_dequeue_success);
                     }
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        CommonUtil.toast("退出排队失败");
+                        CommonUtil.toast(R.string.FragmentLineUp_dequeue_failure);
                     }
                 });
             }
             break;
         }
     }
-
-    private class MyAdapter extends BaseAdapter<User> {
-        public MyAdapter(List<User> list) {
-            super(list);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            User user = getItem(position);
-            View inflate = View.inflate(getActivity(), R.layout.listitem_teacherqueue, null);
-            TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
-            TextView tv_about = (TextView) inflate.findViewById(R.id.tv_about);
-            ImageView iv_icon = (ImageView) inflate.findViewById(R.id.iv_icon);
-
-            //昵称,简介
-            tv_nickname.setText(user.Nickname + (TextUtils.equals(user.Accid, ChineseChat.CurrentUser.Accid) ? "(本人)" : ""));
-            if (user.IsOnline) {
-                tv_nickname.setTextColor(user.IsEnable ? Color.parseColor("#00A478") : Color.RED);
-            } else {
-                tv_nickname.setTextColor(Color.GRAY);
-            }
-
-            tv_about.setText(user.About);
-
-            //下载处理,如果有设置头像,则显示头像,
-            //如果头像已经下载过,则加载本地图片
-            if (!TextUtils.isEmpty(user.Avatar)) {
-                final File file = new File(getActivity().getFilesDir(), user.Avatar);
-                String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(user.Avatar);
-                new BitmapUtils(getActivity()).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
-                    @Override
-                    public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-                        container.setImageBitmap(bitmap);
-
-                        //缓存处理,如果本地照片已经保存过,则不做保存处理
-                        if (!file.exists()) {
-                            file.getParentFile().mkdirs();
-                            try {
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        Log.i(TAG, "onLoadCompleted: uri=" + uri);
-                    }
-
-                    @Override
-                    public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-                        container.setImageResource(R.drawable.ic_launcher_student);
-                        Log.i(TAG, "onLoadFailed: ");
-                    }
-                });
-            }
-            return inflate;
-        }
-    }
-
 }

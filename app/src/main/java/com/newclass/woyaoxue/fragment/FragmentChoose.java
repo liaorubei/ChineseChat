@@ -1,9 +1,7 @@
 package com.newclass.woyaoxue.fragment;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -23,10 +21,6 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
-import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -45,8 +39,6 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -143,7 +135,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "onItemClick: "+list.get(position).Accid);
+                Log.i(TAG, "onItemClick: " + list.get(position).Accid);
                 ActivityProfile.start(getActivity(), list.get(position));
             }
         });
@@ -182,7 +174,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         refresh();
     }
 
-    private class MyAdapter extends BaseAdapter<User> {
+    public class MyAdapter extends BaseAdapter<User> {
         public MyAdapter(List<User> list) {
             super(list);
         }
@@ -190,54 +182,28 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final User user = getItem(position);
-            View inflate = View.inflate(getActivity(), R.layout.listitem_choose, null);
-            TextView tv_nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
-            ImageView iv_icon = (ImageView) inflate.findViewById(R.id.iv_icon);
-            TextView tv_about = (TextView) inflate.findViewById(R.id.tv_about);
+            if (convertView == null) {
+                convertView = View.inflate(getActivity(), R.layout.listitem_choose, null);
+                convertView.setTag(new ViewHolder(convertView));
+            }
+            ViewHolder holder = (ViewHolder) convertView.getTag();
 
             //三种状态，在线，忙线，掉线 {绿，红，灰}
-            tv_nickname.setText(user.Nickname);
-            if (user.IsOnline) {
-                tv_nickname.setTextColor(user.IsEnable ? Color.parseColor("#00A478") : Color.RED);
-            } else {
-                tv_nickname.setTextColor(Color.GRAY);
-            }
-            tv_about.setText(user.About);
+            holder.tv_nickname.setText(user.Nickname);
+            holder.tv_nickname.setTextColor(user.IsEnable ? getResources().getColor(R.color.color_app) : Color.RED);
+            holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : getResources().getColor(R.color.color_app_normal));
+            holder.tv_spoken.setText(user.Spoken);
+            holder.tv_location.setText(user.Country);
 
-            //下载处理,如果有设置头像,则显示头像,
-            //如果头像已经下载过,则加载本地图片
-            if (!TextUtils.isEmpty(user.Avatar)) {
-                final File file = new File(getActivity().getFilesDir(), user.Avatar);
-                String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(user.Avatar);
-                new BitmapUtils(getActivity()).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
-                    @Override
-                    public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-                        container.setImageBitmap(bitmap);
-
-                        //缓存处理,如果本地照片已经保存过,则不做保存处理
-                        if (!file.exists()) {
-                            file.getParentFile().mkdirs();
-                            try {
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, new FileOutputStream(file));
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        Log.i(TAG, "onLoadCompleted: uri=" + uri);
-                    }
-
-                    @Override
-                    public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-                        container.setImageResource(R.drawable.ic_launcher_student);
-                        Log.i(TAG, "onLoadFailed: ");
-                    }
-                });
+            CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
+            holder.iv_status.setImageResource(user.IsEnable ? R.drawable.teacher_online : R.drawable.teacher_busy);
+            if (!user.IsOnline) {
+                holder.iv_status.setImageResource(R.drawable.teacher_offline);
             }
 
             //设置音频
-            ImageView iv_voice = (ImageView) inflate.findViewById(R.id.iv_voice);
             if (!TextUtils.isEmpty(user.Voice)) {
-                iv_voice.setOnClickListener(new View.OnClickListener() {
+                holder.iv_voice.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         try {
@@ -250,14 +216,13 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                         }
                     }
                 });
-
             }
 
             //设置点击
-            ImageView bt_call = (ImageView) inflate.findViewById(R.id.bt_call);
-            bt_call.setBackgroundResource(!user.IsEnable && user.IsOnline ? R.drawable.selector_choose_calla : R.drawable.selector_choose_callb);
-            bt_call.setEnabled(user.IsEnable && user.IsOnline);
-            bt_call.setOnClickListener(new View.OnClickListener() {
+
+            holder.bt_call.setBackgroundResource(R.drawable.selector_choose_callb);
+            holder.bt_call.setEnabled(user.IsEnable && user.IsOnline);
+            holder.bt_call.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -276,7 +241,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                         CommonUtil.toast(R.string.FragmentChoose_busy);
                         return;
                     }
-
 
                     HttpUtil.Parameters parameters = new HttpUtil.Parameters();
                     parameters.add("id", ChineseChat.CurrentUser.Id);
@@ -300,7 +264,24 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                     });
                 }
             });
-            return inflate;
+            return convertView;
+        }
+    }
+
+    private class ViewHolder {
+        public TextView tv_nickname, tv_location;
+        public ImageView iv_avatar, iv_status;
+        public TextView tv_spoken;
+        public ImageView bt_call;
+        public ImageView iv_voice;
+
+        public ViewHolder(View convertView) {
+            this.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
+            this.iv_status = (ImageView) convertView.findViewById(R.id.iv_status);
+            this.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
+            this.tv_spoken = (TextView) convertView.findViewById(R.id.tv_spoken);
+            this.bt_call = (ImageView) convertView.findViewById(R.id.bt_call);
+            this.tv_location = (TextView) convertView.findViewById(R.id.tv_location);
         }
     }
 }

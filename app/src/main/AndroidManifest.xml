@@ -41,7 +41,7 @@
         android:name="com.newclass.woyaoxue.ChineseChat"
         android:icon="${APPLICATION_ICON}"
         android:label="ChineseChat"
-        android:theme="@android:style/Theme.Light.NoTitleBar">
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
@@ -118,8 +118,7 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivityPlay" />
         <!-- 更多界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.MoreActivity" />
-        <!-- 测试界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.TestActivity" />
+
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivitySignIn"
             android:label="用户登录"

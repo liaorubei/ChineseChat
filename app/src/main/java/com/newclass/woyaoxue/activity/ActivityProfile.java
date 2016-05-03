@@ -84,7 +84,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
 
         CommonUtil.showIcon(this, iv_avatar, user.Avatar);
         tv_nickname.setText(user.Nickname);
-        tv_location.setText(user.Country);
+        tv_location.setText(user.Spoken);
         tv_about.setText(user.About);
         tv_school.setText(user.School);
         tv_language.setText(user.Spoken);
@@ -115,7 +115,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                 }.getType());
                 if (o.code == 200) {
                     User info = o.info;
-                    tv_location.setText(info.Country);
+                    tv_location.setText(info.Spoken);
                     tv_school.setText(info.School);
                     tv_language.setText(info.Spoken);
                     tv_hobby.setText(info.Hobbies);

@@ -143,7 +143,7 @@ public class ActivityHistory extends Activity {
             tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Nickname);
             tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
             tv_date.setText(getString(R.string.ActivityHistory_date) + sdf.format(item.Start));
-            tv_time.setText(getString(R.string.ActivityHistory_time) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
+            tv_time.setText(getString(R.string.ActivityHistory_duration) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
             return inflate;
         }
     }

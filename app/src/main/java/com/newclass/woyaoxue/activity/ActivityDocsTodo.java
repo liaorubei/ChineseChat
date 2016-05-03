@@ -159,20 +159,6 @@ public class ActivityDocsTodo extends Activity {
             }
 
         }
-
-
-        try {
-            HttpURLConnection conn = null;
-            conn.setRequestMethod("GET");
-            conn.setConnectTimeout(2500);
-            int code = conn.getResponseCode();
-            if (code == 200) {
-                InputStream inputStream = conn.getInputStream();
-            }
-        } catch (Exception e) {
-        }
-
-
     }
 
     private void lastPost(String json) {

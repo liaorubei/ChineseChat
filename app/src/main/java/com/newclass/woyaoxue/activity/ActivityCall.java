@@ -7,6 +7,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -115,6 +118,8 @@ public class ActivityCall extends Activity implements OnClickListener {
         }
     };
     private AVChatStateObserver observerChatState;
+    private int soundId;
+    private SoundPool soundPool;
 
     private void refresh(String callId) {
         Parameters params = new Parameters();
@@ -147,6 +152,7 @@ public class ActivityCall extends Activity implements OnClickListener {
 
         @Override
         public void onEvent(AVChatCalleeAckEvent event) {
+            soundPool.release();
             switch (event.getEvent()) {
                 case CALLEE_ACK_AGREE:// 被叫方同意接听
                     if (event.isDeviceReady()) {
@@ -215,6 +221,7 @@ public class ActivityCall extends Activity implements OnClickListener {
         @Override
         public void onException(Throwable arg0) {
             Log.i("logi", "callactivity hangUp onException:" + arg0.getMessage());
+            soundPool.release();
             finish();
         }
 
@@ -244,6 +251,7 @@ public class ActivityCall extends Activity implements OnClickListener {
         @Override
         public void onSuccess(AVChatData avChatData) {
             cm_time.start();
+            soundPool.play(soundId, 1, 1, 0, -1, 1);
             Log.i(TAG, "onSuccess: " + "拨打成功");
         }
     };
@@ -283,6 +291,11 @@ public class ActivityCall extends Activity implements OnClickListener {
         target.Accid = intent.getStringExtra(KEY_TARGET_ACCID);
         target.Nickname = intent.getStringExtra(KEY_TARGET_NICKNAME);
         target.Icon = intent.getStringExtra(KEY_TARGET_ICON);
+
+        //回铃声
+        soundPool = new SoundPool(2, AudioManager.STREAM_RING, 0);
+        soundId = soundPool.load(this, R.raw.avchat_ring, 1);
+
 
         AVChatNotifyOption notifyOption = new AVChatNotifyOption();
         notifyOption.apnsBadge = false;
@@ -445,6 +458,9 @@ public class ActivityCall extends Activity implements OnClickListener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (soundPool != null) {
+            soundPool.release();
+        }
         registerObserver(false);
         recordChatFinish();
         handler.removeCallbacksAndMessages(null);

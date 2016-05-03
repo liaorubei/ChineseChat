@@ -9,13 +9,13 @@ android {
         minSdkVersion 15
         targetSdkVersion 20
         versionCode 1
-        versionName "V 1.0.2"
+        versionName "V 1.0.3"
     }
 
     productFlavors {
-/*        student {
+        student {
             manifestPlaceholders = [release_value: "student", APPLICATION_ICON: "@drawable/ic_launcher_student"]
-        }*/
+        }
         teacher {
             manifestPlaceholders = [release_value: "teacher", APPLICATION_ICON: "@drawable/ic_launcher_teacher"]
         }

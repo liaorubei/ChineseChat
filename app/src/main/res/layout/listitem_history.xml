@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="@string/ActivityHistory_time"
+            android:text="@string/ActivityHistory_duration"
             android:textColor="#3c3c3c" />
     </LinearLayout>
 

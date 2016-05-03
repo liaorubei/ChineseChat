@@ -404,10 +404,10 @@
     <!--MainActivity-->
     <string name="MainActivity_Refresh">Refresh</string>
     <string name="MainActivity_Delete">Delete</string>
-    <string name="MainActivity_one_more_time_quit">One more time Quit</string>
-    <string name="MainActivity_Chat">One more time Quit</string>
-    <string name="MainActivity_Listen">One more time Quit</string>
-    <string name="MainActivity_Me">One more time Quit</string>
+    <string name="MainActivity_one_more_time_quit">Click one more time to quit</string>
+    <string name="MainActivity_Chat">Chat</string>
+    <string name="MainActivity_Listen">Listen</string>
+    <string name="MainActivity_Me">Me</string>
 
 
     <!--FragmentListen-->
@@ -528,12 +528,12 @@
 
 
     <!--ActivityHistory-->
-    <string name="ActivityHistory_title">Study record</string>
+    <string name="ActivityHistory_title">Study records</string>
     <string name="ActivityHistory_theme">Theme:</string>
     <string name="ActivityHistory_teacher">Teacher:</string>
     <string name="ActivityHistory_coins">Coins:</string>
     <string name="ActivityHistory_date">Date:</string>
-    <string name="ActivityHistory_time">Time:</string>
+    <string name="ActivityHistory_duration">Duration:</string>
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_download">Download</string>
@@ -574,7 +574,7 @@
     <string name="ActivityReset_reset_password">Reset Password</string>
     <string name="ActivityReset_please_input_email">Please type you email</string>
     <string name="ActivityReset_please_type_code">the verification code</string>
-    <string name="ActivityReset_get_code">Get The Code</string>
+    <string name="ActivityReset_get_code">Get verification code</string>
     <string name="ActivityReset_next">Next</string>
     <string name="ActivityReset_please_type_you_new_password">Please type you new password</string>
     <string name="ActivityReset_please_retype_you_new_password">Please retype you new password</string>
@@ -582,7 +582,7 @@
     <string name="ActivityReset_EmailAddressFormatIsNotCorrect">Email address format is not correct</string>
     <string name="ActivityReset_Please_check_your_email">Please check your email and get the code</string>
     <string name="ActivityReset_email_and_code_can_not_be_null">Email and code can not be null</string>
-    <string name="ActivityReset_get_code_error">Get code failure,Please try again!</string>
+    <string name="ActivityReset_get_code_error">Get verification code failure,Please try again!</string>
     <string name="ActivityReset_password_are_not_the_same">The two password are not same</string>
     <string name="ActivityReset_password_change_success">Reset password success,please use the new password login</string>
 
@@ -625,4 +625,16 @@
     <string name="ActivityProfile_album">Album</string>
     <string name="title_activity_activity_album">ActivityAlbum</string>
 
+    <!--FragmentLineUp-->
+    <string name="FragmentLineUp_dequeue_success">我已下线</string>
+    <string name="FragmentLineUp_dequeue_failure">下线失败</string>
+    <string name="FragmentLineUp_enqueue_success">入队成功</string>
+    <string name="FragmentLineUp_enqueue_failure">入队失败</string>
+
+    <!--ActivityDocsTodo-->
+    <string name="ActivityDocsTodo_title">Course</string>
+
+
+    <!--ActivityPlay-->
+    <string name="ActivityPlay_title">Play</string>
 </resources>

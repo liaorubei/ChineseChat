@@ -55,20 +55,18 @@ import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.view.FylxListView;
 import com.voc.woyaoxue.R;
 
-public class TestActivity extends FragmentActivity
-{
-	private CheckBox cb;
-	private PopupWindow window;
-	private boolean isShow = false;
-	private boolean isDown = false;
+public class TestActivity extends FragmentActivity {
+    private CheckBox cb;
+    private PopupWindow window;
+    private boolean isShow = false;
+    private boolean isDown = false;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_test);
 
 
-		
-
-	}
+    }
 
 }

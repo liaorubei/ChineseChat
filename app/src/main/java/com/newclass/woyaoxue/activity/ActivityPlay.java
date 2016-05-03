@@ -86,7 +86,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     private ImageView iv_cover;
 
     //状态栏按钮
-    private Button bt_home, bt_menu;
+    private View iv_home, bt_menu;
 
     //播放栏按钮
     private ImageView iv_line, iv_prev, iv_play, iv_next, iv_tape;
@@ -229,7 +229,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         UrlCache cache = database.cacheSelectByUrl(url);
         if (cache == null || (System.currentTimeMillis() - cache.UpdateAt > 6000000)) // 60分钟
         {
-            Log.i("logi", "使用网络:" + url);
             new HttpUtils().send(HttpMethod.GET, url, new RequestCallBack<String>() {
 
                 @Override
@@ -253,7 +252,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
             });
         } else {
-            Log.i("logi", "使用缓存:" + url);
             Document document = new Gson().fromJson(cache.Json, Document.class);
             fillData(document);
         }
@@ -262,9 +260,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
     private void initMediaRecorder(String path) {
         try {
-            if (recorder == null) {
-                recorder = new MediaRecorder();
-            }
+            recorder = new MediaRecorder();
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
             recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
             recorder.setOutputFile(path);
@@ -309,6 +305,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
                     @Override
                     public void onCompletion(MediaPlayer mp) {
+                        Log.i(TAG, "onCompletion: 录音播放完毕");
                         if (currentState == MediaState.播放录音) {
                             seekToCurrentLine();
                             playerOrigin.start();
@@ -328,9 +325,9 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
     private void initView() {
         //标题栏按钮
-        bt_home = (Button) findViewById(R.id.bt_home);
+        iv_home = findViewById(R.id.iv_home);
         bt_menu = (Button) findViewById(R.id.bt_menu);
-        bt_home.setOnClickListener(this);
+        iv_home.setOnClickListener(this);
         bt_menu.setOnClickListener(this);
 
         // 播放栏按钮
@@ -411,8 +408,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-
-            case R.id.bt_home:
+            case R.id.iv_home:
                 this.finish();
                 break;
             case R.id.bt_menu:
@@ -467,16 +463,15 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 // 播放当前的原音单句,并把录音栏的暂停按钮重置为"可以暂停"
                 elapsedTime = 0;
                 seekToCurrentLine();
-                iv_rec_pause.setImageResource(R.drawable.play_btn_pause_checked);
                 break;
 
             case R.id.iv_rec_pause: {
                 iv_rec_pause.setSelected(!iv_rec_pause.isSelected());
-                Log.i(TAG, "iv_rec_pause.isSelected=" + iv_rec_pause.isSelected());
                 if (iv_rec_pause.isSelected()) {
                     //如果是暂停，那么暂停所有的，包括正在录音，播放录音，播放原音
                     if (recorder != null && currentState == MediaState.正在录音) {
                         recorder.stop();
+                        iv_rec_button.setSelected(false);
                     }
 
                     if (playerRecord != null && currentState == MediaState.播放录音) {
@@ -495,7 +490,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                             playerRecord.start();
                             break;
                         case 正在录音:
-                            recorder.reset();
+                            initMediaRecorder(recordFile.getAbsolutePath());
                             recorder.start();
                             break;
                     }
@@ -515,27 +510,39 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 currentState = MediaState.播放原音;
                 break;
             case R.id.iv_rec_button:
-                //录音暂停键复原
+                Log.i(TAG, "onClick: iv_rec_button=" + iv_rec_button.isSelected());
+
+                int currentIndex = getCurrentIndex();
+                Log.i(TAG, "onClick: " + currentIndex);
+
+                //暂停键复原,并所有的声音暂停
                 iv_rec_pause.setSelected(false);
+                if (playerOrigin.isPlaying()) {
+                    playerOrigin.pause();
+                }
+                if (playerRecord.isPlaying()) {
+                    playerRecord.pause();
+                }
 
-                iv_rec_button.setSelected(!iv_rec_button.isSelected());
-                stopOrPauseMedia(false, iv_rec_button.isSelected());
-
-                if (iv_rec_button.isSelected()) {
+                //如果暂停键没有选中
+                if (iv_rec_button.isSelected() && currentState == MediaState.正在录音) {//如果正在录音状态,那么录音停止,并播放录音
+                    elapsedTime = 0;
+                    recorder.stop();//停止录音
+                    initRecordPlayer(recordFile.getAbsolutePath(), true);
+                    playerRecord.start();//播放录音文件
+                    currentState = MediaState.播放录音;
+                    iv_rec_button.setSelected(false);
+                    iv_rec_button.setImageResource(R.drawable.play_btn_recording_uncheck);
+                } else {
+                    elapsedTime = 0;
                     recorder.reset();
                     initMediaRecorder(recordFile.getAbsolutePath());
                     recorder.start();
                     currentState = MediaState.正在录音;
+                    iv_rec_button.setSelected(true);
                     iv_rec_button.setImageResource(R.drawable.play_btn_recording_selected);
-                } else {
-                    if (recordFile.exists() && recordFile.length() > 0) {
-                        playerRecord.reset();
-                        initRecordPlayer(recordFile.getAbsolutePath(), true);
-                        playerRecord.start();
-                        currentState = MediaState.播放录音;
-                        iv_rec_button.setImageResource(R.drawable.play_btn_recording_uncheck);
-                    }
                 }
+
                 break;
             case R.id.iv_rec_next:
                 stopOrPauseMedia(false, false);
@@ -584,6 +591,11 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             playerOrigin = null;
         }
 
+        if (playerRecord != null) {
+            playerRecord.release();
+            playerRecord = null;
+        }
+
         if (recorder != null) {
             recorder.release();
             recorder = null;
@@ -596,7 +608,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
-        Log.i("logi", "onError:" + " what=" + what + " extra=" + extra);
+        Log.i(TAG, "onError:" + " what=" + what + " extra=" + extra);
         return false;
     }
 

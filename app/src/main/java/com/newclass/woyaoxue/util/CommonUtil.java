@@ -116,9 +116,16 @@ public class CommonUtil {
         toast.show();
     }
 
+    /*
+    * 如果absolutePath为空,则不请求网络,直接显示默认图片,如果没有默认图片则显示空白
+    * params imageView
+    * */
     public static void showBitmap(ImageView imageView, String absolutePath) {
         if (bitmapUtils == null) {
             bitmapUtils = new BitmapUtils(ChineseChat.getContext(), ChineseChat.getContext().getCacheDir().getAbsolutePath());
+        }
+        if (TextUtils.isEmpty(absolutePath)) {
+            return;
         }
         bitmapUtils.display(imageView, absolutePath);
     }
