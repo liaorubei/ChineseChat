@@ -7,7 +7,7 @@ public class CallLog {
     public String Id;
     public Theme Theme;
     public User Teacher;
-    public User Sutdent;
+    public User Student;
     public Date Start;
     public Date Finish;
     public List<Theme> Themes;

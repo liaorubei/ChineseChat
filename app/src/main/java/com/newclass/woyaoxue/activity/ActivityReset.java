@@ -202,9 +202,9 @@ public class ActivityReset extends Activity implements View.OnClickListener {
                 }
 
                 HttpUtil.Parameters params = new HttpUtil.Parameters();
-                params.add("email", email);
+                params.add("username", email);
                 params.add("password", password);
-                HttpUtil.post(NetworkUtil.nimuserChangePassword, params, new RequestCallBack<String>() {
+                HttpUtil.post(NetworkUtil.nimUserChangePassword, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
                         Response<User> user = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {

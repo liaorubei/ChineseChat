@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.alipay.sdk.app.PayTask;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -39,6 +41,7 @@ import com.paypal.android.sdk.payments.PaymentConfirmation;
 import com.voc.woyaoxue.R;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +61,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
     private Dialog paymentDialog;
     private ProgressDialog progressDialog;
 
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
     private String orderId;
 
     private static final int SDK_PAY_FLAG = 1;
@@ -66,6 +69,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
     private static PayPalConfiguration paypalConfig = new PayPalConfiguration().environment(PayPalConfiguration.ENVIRONMENT_SANDBOX).clientId(PAYPAL_CLIENT_ID);
     private static final int REQUEST_CODE_PAYPAL = 50;
     private Pay pay;
+    private SimpleDateFormat sdf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+        sdf = new SimpleDateFormat("HH:mm:ss   E,dd/MM/yyyy");
     }
 
     private void initData() {
@@ -288,11 +293,11 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             Pay item = getItem(position);
             View inflate = View.inflate(ActivityPayment.this, R.layout.listitem_payment, null);
             ImageView cb_payment = (ImageView) inflate.findViewById(R.id.iv_payment);
-            TextView tv_main = (TextView) inflate.findViewById(R.id.tv_main);
+            TextView tv_coins = (TextView) inflate.findViewById(R.id.tv_coins);
             TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
 
             cb_payment.setSelected(item.is_check);
-            tv_main.setText(item.subject);
+            tv_coins.setText(item.subject);
             tv_price.setText(rb_paypal.isChecked() ? (item.usd + " USD") : (item.cny + " RMB"));
             return inflate;
         }
@@ -310,13 +315,12 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             TextView tv_main = (TextView) inflate.findViewById(R.id.tv_main);
             TextView tv_amount = (TextView) inflate.findViewById(R.id.tv_amount);
             TextView tv_state = (TextView) inflate.findViewById(R.id.tv_state);
-            TextView tv_createtime = (TextView) inflate.findViewById(R.id.tv_createtime);
+            TextView tv_time = (TextView) inflate.findViewById(R.id.tv_createtime);
 
-            tv_main.setText(getString(R.string.项目) + item.Main);
-            tv_amount.setText(getString(R.string.金额) + item.Amount + " " + ("USD".equals(item.Currency) ? "USD" : "RMB"));
-            tv_state.setText(getString(R.string.状态) + item.TradeStatus);
-            tv_state.setTextColor("SUCCESS".equals(item.TradeStatus) ? Color.BLACK : Color.RED);
-            tv_createtime.setText(getString(R.string.时间) + item.CreateTime);
+            tv_main.setText(getString(R.string.ActivityPayment_item) + item.Main);
+            tv_amount.setText(getString(R.string.ActivityPayment_amount) + item.Amount + " " + ("USD".equals(item.Currency) ? "USD" : "RMB"));
+            tv_state.setText(Html.fromHtml(getString(R.string.ActivityPayment_status) + "<font " + ("SUCCESS".equals(item.TradeStatus) ? ">" : " color='#ff0000'>") + ("SUCCESS".equals(item.TradeStatus) ? "Completed" : "Failure") + "</font>"));
+            tv_time.setText(sdf.format(item.CreateTime));
             return inflate;
         }
     }
@@ -330,7 +334,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
         public Pay(int coin, BigDecimal us, BigDecimal cn) {
             this.coin = coin;
-            this.subject = coin + " Coins";
+            this.subject = "Coin " + coin;
             this.usd = us;
             this.cny = cn;
         }

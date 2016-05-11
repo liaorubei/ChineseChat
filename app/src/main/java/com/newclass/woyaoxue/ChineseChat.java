@@ -8,11 +8,12 @@ import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
-import com.newclass.woyaoxue.activity.MessageActivity;
-import com.newclass.woyaoxue.bean.Product;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.Log;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.voc.woyaoxue.R;
 
 import android.app.Application;
@@ -25,10 +26,7 @@ import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Set;
-import java.util.prefs.PreferenceChangeEvent;
 
 public class ChineseChat extends Application {
     protected static final String TAG = "ChineseChat";
@@ -83,6 +81,23 @@ public class ChineseChat extends Application {
         user.About = preferences.getString("about", "");
         user.Photos = preferences.getStringSet("photos", new HashSet<String>());
         CurrentUser = user;
+
+
+        DisplayImageOptions defaultOptions = new DisplayImageOptions
+                .Builder()
+                .showImageForEmptyUri(R.drawable.ic_launcher_student)
+                .showImageOnFail(R.drawable.ic_launcher_student)
+                .cacheInMemory(true)
+                .cacheOnDisc(true)
+                .build();
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration
+                .Builder(getApplicationContext())
+                .defaultDisplayImageOptions(defaultOptions)
+                .discCacheSize(50 * 1024 * 1024)//
+                .discCacheFileCount(100)//缓存一百张图片
+                .writeDebugLogs()
+                .build();
+        ImageLoader.getInstance().init(config);
     }
 
     private SDKOptions getOptions() {
@@ -90,10 +105,10 @@ public class ChineseChat extends Application {
         options.appKey = "599551c5de7282b9a1d686ee40abf74c";
 
         // 如果将新消息通知提醒托管给 SDK 完成，需要添加以下配置。否则无需设置。
-        StatusBarNotificationConfig config = new StatusBarNotificationConfig();
-        config.notificationEntrance = MessageActivity.class; // 点击通知栏跳转到该Activity
-        config.notificationSmallIconId = R.drawable.ic_launcher;
-        options.statusBarNotificationConfig = config;
+        //StatusBarNotificationConfig config = new StatusBarNotificationConfig();
+        //config.notificationEntrance = MessageActivity.class; // 点击通知栏跳转到该Activity
+        //config.notificationSmallIconId = R.drawable.ic_launcher;
+        //options.statusBarNotificationConfig = config;
 
         // 配置保存图片，文件，log 等数据的目录
         // 如果 options 中没有设置这个值，SDK 会使用下面代码示例中的位置作为 SDK 的数据目录。

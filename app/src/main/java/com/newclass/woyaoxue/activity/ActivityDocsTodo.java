@@ -198,9 +198,10 @@ public class ActivityDocsTodo extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent play = new Intent(ActivityDocsTodo.this, ActivityPlay.class);
-                play.putExtra("Id", list.get(position).Id);
-                startActivity(play);
+                Intent intent = new Intent(ActivityDocsTodo.this, ActivityPlay.class);
+                intent.putExtra("Id", list.get(position).Id);
+                intent.putExtra("mode", "Online");
+                startActivity(intent);
             }
         });
 

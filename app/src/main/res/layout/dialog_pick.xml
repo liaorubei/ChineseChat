@@ -14,7 +14,7 @@
         android:drawableLeft="@drawable/icon_album"
         android:gravity="center|left"
         android:paddingLeft="15dp"
-        android:text="相册"
+        android:text="@string/ActivityPerson_album"
         android:textColor="#000"
         android:visibility="visible" />
 
@@ -26,7 +26,7 @@
         android:drawableLeft="@drawable/icon_camera"
         android:gravity="center|left"
         android:paddingLeft="15dp"
-        android:text="相机"
+        android:text="@string/ActivityPerson_camera"
         android:textColor="#000" />
 
 </LinearLayout>

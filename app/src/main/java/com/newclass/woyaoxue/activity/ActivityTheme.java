@@ -41,6 +41,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
     private int[] colors = new int[]{Color.parseColor("#BCE0AF"), Color.parseColor("#A1C9D6"), Color.parseColor("#E0AFE0"), Color.parseColor("#E0CBAF")};
 
     private FragmentThemes.ViewModel currentTheme = null;
+    private View iv_menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +98,8 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
     private void initView() {
         //标题
         ImageView iv_home = (ImageView) findViewById(R.id.iv_home);
-        TextView tv_pick = (TextView) findViewById(R.id.tv_pick);
-
+        iv_menu = findViewById(R.id.iv_menu);
+        iv_menu.setVisibility(View.INVISIBLE);
         iv_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,7 +107,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
             }
         });
 
-        tv_pick.setOnClickListener(new View.OnClickListener() {
+        iv_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (currentTheme == null) {
@@ -120,10 +121,8 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
             }
         });
 
-
         ll_indicator = (LinearLayout) findViewById(R.id.ll_indicator);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-
 
         fragments = new ArrayList<Fragment>();
         adapter = new MyPagerAdapter(getSupportFragmentManager());
@@ -159,7 +158,8 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
         for (Fragment f : fragments) {
             f.onResume();
         }
-        Log.i(TAG, "onFragmentInteraction: 选择了=" + currentTheme.Name);
+
+        iv_menu.setVisibility(currentTheme == null ? View.INVISIBLE : View.VISIBLE);
     }
 
     private class MyPagerAdapter extends FragmentPagerAdapter {

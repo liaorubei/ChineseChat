@@ -21,19 +21,17 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="ChineseChat"
+            android:text="@string/ActivityDocsTodo_title"
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/tv_ctrl"
-            android:layout_width="wrap_content"
+        <ImageView
+            android:id="@+id/iv_menu"
+            android:layout_width="45dp"
             android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:padding="10dp"
-            android:text="@string/ActivityDocsDone_Delete"
-            android:textColor="#FFF" />
+            android:padding="12dp"
+            android:src="@drawable/selector_icon_delete" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -59,11 +57,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/selector_box_check" />
-
+            android:padding="10dp"
+            android:src="@drawable/selector_box_check" />
     </RelativeLayout>
-
 
     <ListView
         android:id="@+id/listview"
@@ -72,7 +68,7 @@
         android:layout_alignParentBottom="true"
         android:layout_below="@id/tv_folder"
         android:background="#F0F0F0"
-        android:scrollbars="none"></ListView>
+        android:scrollbars="none" />
 
     <ImageView
         android:id="@+id/iv_delete"

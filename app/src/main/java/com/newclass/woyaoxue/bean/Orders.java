@@ -1,6 +1,7 @@
 package com.newclass.woyaoxue.bean;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * Created by liaorubei on 2016/2/16.
@@ -17,7 +18,7 @@ public class Orders {
     public String TradeNo;
     public String TradeStatus;
     public String LastOrderString;
-    public String CreateTime;
+    public Date CreateTime;
     public int Coin;
 
 

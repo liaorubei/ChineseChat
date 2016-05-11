@@ -27,6 +27,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 import com.newclass.woyaoxue.ChineseChat;
+import com.newclass.woyaoxue.MainActivity;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
 import com.newclass.woyaoxue.util.CommonUtil;
@@ -47,34 +48,8 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     private Button bt_login;
     private EditText et_username, et_password;
     private TextView tv_signup;
+    private boolean enter_main = false;
 
-    private RequestCallback<LoginInfo> callbackSignin = new RequestCallback<LoginInfo>() {
-        @Override
-        public void onException(Throwable arg0) {
-            Log.i("logi", "云信登录异常:" + arg0.getMessage());
-            CommonUtil.toastCENTER(R.string.ActivitySignIn_network_error_login_failure);
-        }
-
-        @Override
-        public void onFailed(int arg0) {
-            Log.i("logi", "云信登录失败:" + arg0);
-            CommonUtil.toastCENTER(R.string.ActivitySignIn_network_error_login_failure);
-        }
-
-        @Override
-        public void onSuccess(LoginInfo info) {
-            Log.i(TAG, "云信登录成功,Account:" + info.getAccount() + " token=" + info.getToken());
-
-            Editor editor = ActivitySignIn.this.getSharedPreferences("user", MODE_PRIVATE).edit();
-            editor.putString("accid", info.getAccount());
-            editor.putString("token", info.getToken());
-            editor.commit();
-
-            initAVChatManager();
-
-            finish();
-        }
-    };
     private Observer<List<IMMessage>> observerReceiveMessage = new Observer<List<IMMessage>>() {
         private static final long serialVersionUID = 1L;
 
@@ -85,6 +60,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
             }
         }
     };
+
 
     private void initView() {
         findViewById(R.id.iv_home).setOnClickListener(this);
@@ -147,6 +123,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         setContentView(R.layout.activity_signin);
 
         initView();
+        enter_main = getIntent().getBooleanExtra("enter_main", false);
     }
 
     public void signIn(final String username, final String password) {
@@ -186,7 +163,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
 
     @SuppressWarnings("unchecked")
     private void signInNim(String accid, String token) {
-        NIMClient.getService(AuthService.class).login(new LoginInfo(accid, token)).setCallback(callbackSignin);
+        NIMClient.getService(AuthService.class).login(new LoginInfo(accid, token)).setCallback(new CallbackLogin());
 
         // 监听用户在线状态
         //NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(observerOnlineStatus, true);
@@ -197,4 +174,36 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(observerReceiveMessage, true);
     }
 
+    private class CallbackLogin implements RequestCallback<LoginInfo> {
+        @Override
+        public void onException(Throwable arg0) {
+            Log.i(TAG, "云信登录异常:" + arg0.getMessage());
+            CommonUtil.toastCENTER(R.string.ActivitySignIn_network_error_login_failure);
+        }
+
+        @Override
+        public void onFailed(int arg0) {
+            Log.i(TAG, "云信登录失败:" + arg0);
+            CommonUtil.toastCENTER(R.string.ActivitySignIn_network_error_login_failure);
+        }
+
+        @Override
+        public void onSuccess(LoginInfo info) {
+            Log.i(TAG, "云信登录成功,Account:" + info.getAccount() + " token=" + info.getToken());
+
+            Editor editor = ActivitySignIn.this.getSharedPreferences("user", MODE_PRIVATE).edit();
+            editor.putString("accid", info.getAccount());
+            editor.putString("token", info.getToken());
+            editor.commit();
+
+            initAVChatManager();
+
+            if (enter_main) {
+                //进入到MainActivity主界面
+                startActivity(new Intent(ActivitySignIn.this, MainActivity.class));
+            }
+
+            finish();
+        }
+    }
 }

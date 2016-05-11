@@ -1,6 +1,5 @@
 <!--充值金额listitem-->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:background="#f0f0f0"
@@ -14,22 +13,21 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginRight="10dp"
-        android:background="@drawable/selector_box_radio"/>
-
-    <TextView
-        android:id="@+id/tv_main"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:gravity="center_vertical"
-        android:text="1000学币"
-        />
+        android:background="@drawable/selector_box_radio" />
 
     <TextView
         android:id="@+id/tv_price"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:gravity="right|center_vertical"
-        android:text="$ 30.00"
-        />
+        android:gravity="center_vertical"
+        android:text="50.00 USD" />
+
+    <TextView
+        android:id="@+id/tv_coins"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="end"
+        android:text="Coins 500" />
 </LinearLayout>
 

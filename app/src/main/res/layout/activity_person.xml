@@ -85,20 +85,18 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_nickname"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_nickname"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_nickname"
                     android:textSize="15sp" />
@@ -114,20 +112,19 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_email"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_email"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:background="@null"
                     android:enabled="false"
                     android:hint="Email can not change"
@@ -139,26 +136,25 @@
                 android:id="@+id/ll_mobile"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
+                android:layout_marginBottom="1dp"
                 android:background="#FFFFFF"
                 android:orientation="horizontal"
-                android:visibility="visible"
-                android:layout_marginBottom="1dp">
+                android:visibility="visible">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_mobile"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_mobile"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_mobile"
                     android:inputType="textPhonetic"
@@ -169,25 +165,24 @@
                 android:id="@+id/ll_birth"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
+                android:layout_marginBottom="1dp"
                 android:background="#FFFFFF"
-                android:orientation="horizontal"
-                android:layout_marginBottom="1dp">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_birth"
                     android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tv_birth"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:hint="@string/ActivityPerson_hint_birth"
                     android:textSize="15sp" />
             </LinearLayout>
@@ -201,21 +196,20 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_gender"
                     android:textSize="15sp" />
 
 
                 <RadioGroup
                     android:id="@+id/rg_gender"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:orientation="horizontal">
 
                     <RadioButton
@@ -248,20 +242,19 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_job"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_job"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_job"
                     android:textSize="15sp" />
@@ -276,20 +269,19 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_school"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_school"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_school"
                     android:textSize="15sp" />
@@ -305,20 +297,19 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_country"
                     android:textSize="15sp" />
 
                 <Spinner
                     android:id="@+id/sp_country"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="8"
+
                     android:padding="0dp" />
             </LinearLayout>
 
@@ -332,20 +323,19 @@
                 android:visibility="gone">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_language"
                     android:textSize="15sp" />
 
                 <Spinner
                     android:id="@+id/sp_language"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="8"
+
                     android:padding="0dp" />
             </LinearLayout>
 
@@ -358,20 +348,19 @@
                 android:visibility="visible">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_hobbies"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_hobby"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_hobbies"
                     android:textSize="15sp" />
@@ -387,20 +376,19 @@
                 android:visibility="visible">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="2"
-                    android:gravity="center"
+                    android:layout_gravity="center"
+                    android:layout_margin="10dp"
                     android:text="@string/ActivityPerson_location"
                     android:textSize="15sp" />
 
                 <EditText
                     android:id="@+id/et_location"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_weight="8"
+
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_location"
                     android:textSize="15sp" />

@@ -4,6 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -11,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.newclass.woyaoxue.fragment.ImageDetailFragment;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
@@ -18,11 +23,10 @@ import com.voc.woyaoxue.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityAlbum extends Activity {
+public class ActivityAlbum extends FragmentActivity {
 
     private ViewPager viewpager;
-    private MyAdapter adapter;
-    private List<ImageView> photos;
+    private ImagePagerAdapter adapter;
     private TextView tv_count;
 
     @Override
@@ -35,17 +39,10 @@ public class ActivityAlbum extends Activity {
 
     private void initData() {
         String[] paths = getIntent().getStringArrayExtra("photos");
-        photos = new ArrayList<>();
-        for (String path : paths) {
-            ImageView imageView = new ImageView(getApplicationContext());
-            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            CommonUtil.showBitmap(imageView, NetworkUtil.getFullPath(path));
-            photos.add(imageView);
-        }
-
         //左下角角标
         tv_count.setText("1/" + paths.length);
-        adapter = new MyAdapter();
+
+        adapter = new ImagePagerAdapter(getSupportFragmentManager(), paths);
         viewpager.setAdapter(adapter);
         viewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -76,29 +73,25 @@ public class ActivityAlbum extends Activity {
         context.startActivity(intent);
     }
 
-    private class MyAdapter extends PagerAdapter {
-        private ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    private class ImagePagerAdapter extends FragmentStatePagerAdapter {
+
+        public String[] fileList;
+
+        public ImagePagerAdapter(FragmentManager fm, String[] fileList) {
+            super(fm);
+            this.fileList = fileList;
+        }
 
         @Override
         public int getCount() {
-            return photos.size();
+            return fileList == null ? 0 : fileList.length;
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view.equals(object);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ImageView imageView = photos.get(position);
-            container.addView(imageView, params);
-            return imageView;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
+        public Fragment getItem(int position) {
+            String url = fileList[position];
+            return ImageDetailFragment.newInstance(url);
         }
     }
+
 }

@@ -44,9 +44,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     //App Key: 599551c5de7282b9a1d686ee40abf74c
     //App Secret: 64e52bd091da
     protected static final String TAG = "MainActivity";
-    private TextView tv_delete, tv_refresh, tv_title;
+    private TextView tv_delete;
     private RelativeLayout rl_main;
     private long lastTime = 0;
+    private View tv_refresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,9 +125,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     private void initView() {
-        tv_refresh = (TextView) findViewById(R.id.tv_refresh);
+        tv_refresh = findViewById(R.id.tv_refresh);
         tv_delete = (TextView) findViewById(R.id.tv_delete);
-        tv_title = (TextView) findViewById(R.id.tv_title);
         tv_refresh.setOnClickListener(this);
         rl_main = (RelativeLayout) findViewById(R.id.rl_main);
 
@@ -143,17 +143,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     case "chat":
                         tv_refresh.setVisibility(View.VISIBLE);
                         tv_delete.setVisibility(View.INVISIBLE);
-                        tv_title.setText(R.string.MainActivity_Chat);
                         break;
                     case "listen":
                         tv_refresh.setVisibility(View.INVISIBLE);
                         tv_delete.setVisibility(View.INVISIBLE);
-                        tv_title.setText(R.string.MainActivity_Listen);
                         break;
                     case "me":
                         tv_refresh.setVisibility(View.INVISIBLE);
                         tv_delete.setVisibility(View.INVISIBLE);
-                        tv_title.setText(R.string.MainActivity_Me);
                         break;
                 }
             }

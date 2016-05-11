@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?><!--过场轮播图最后一张-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_splash"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/background" />
+
+    <Button
+        android:id="@+id/bt_enter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/shape_button_signinup_enabled"
+        android:text="进入应用"
+        android:visibility="gone" />
+
+</RelativeLayout>

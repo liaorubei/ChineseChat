@@ -12,14 +12,6 @@
     <string name="has_download_message">"更新包下载完毕,是否安装?"</string>
 
     <!-- 下拉刷新与上拉加载 -->
-    <string name="xlistview_header_hint_normal">下拉刷新</string>
-    <string name="xlistview_header_hint_ready">松开刷新数据</string>
-    <string name="xlistview_header_hint_loading">正在加载...</string>
-    <string name="xlistview_header_last_time">上次更新时间：</string>
-    <string name="xlistview_footer_hint_normal">查看更多</string>
-    <string name="xlistview_footer_hint_nomore">到底儿了</string>
-    <string name="xlistview_footer_hint_errors">加载失败</string>
-    <string name="xlistview_footer_hint_ready">松开载入更多</string>
 
     <!-- 菜单项 -->
     <string name="batch_remove">批量删除</string>
@@ -75,245 +67,230 @@
     </string-array>
 
     <string-array name="countries">
-        <item>"AL|阿尔巴尼亚(Shqip ria)"</item>
-        <item>"DZ|阿尔及利亚()"</item>　
-        <item>"AF|阿富汗()"</item>　
-        <item>"AR|阿根廷(Argentina)"</item>　
-        <item>"AE|阿拉伯联合酋长国()"</item>　
-        <item>"AW|阿鲁巴(Aruba)"</item>　
-        <item>"OM|阿曼()"</item>　
-        <item>"AZ|阿塞拜疆(Az rbaycan)"</item>　
-        <item>"EG|埃及()"</item>　
-        <item>"ET|埃塞俄比亚(Ityop'iya)"</item>　
-        <item>"IE|爱尔兰(Ireland)"</item>　
-        <item>"EE|爱沙尼亚(Eesti)"</item>　
-        <item>"AD|安道尔(Andorra)"</item>　
-        <item>"AO|安哥拉(Angola)"</item>　
-        <item>"AI|安圭拉(Anguilla)"</item>　
-        <item>"AG|安提瓜和巴布达(Antigua and Barbuda)"</item>　
-        <item>"AT|奥地利( sterreich)"</item>　
-        <item>"AU|澳大利亚(Australia)"</item>　
-        <item>"BB|巴巴多斯(Barbados)"</item>　
-        <item>"PG|巴布亚新几内亚(Papua New Guinea)"</item>　
-        <item>"BS|巴哈马(Bahamas)"</item>　
-        <item>"PK|巴基斯坦()"</item>　
-        <item>"PY|巴拉圭(Paraguay)"</item>　
-        <item>"PS|巴勒斯坦(Palestine)"</item>　
-        <item>"BH|巴林()"</item>　
-        <item>"PA|巴拿马(Panamá)"</item>　
-        <item>"BR|巴西(Brasil)"</item>　
-        <item>"BY|白俄罗斯(Белару сь)"</item>　
-        <item>"BM|百慕大(Bermuda)"</item>　
-        <item>"BG|保加利亚(България)"</item>　
-        <item>"MP|北马里亚纳群岛(Northern Mariana Islands)"</item>　
-        <item>"BJ|贝宁(Bénin)"</item>　
-        <item>"BE|比利时(Belgi )"</item>　
-        <item>"IS|冰岛(ísland)"</item>　
-        <item>"BO|玻利维亚(Bolivia)"</item>　
-        <item>"PR|波多黎各(Puerto Rico)"</item>　
-        <item>"PL|波兰(Polska)"</item>　
-        <item>"BA|波斯尼亚和黑塞哥维那(Bosna i Hercegovina)"</item>　
-        <item>"BW|博茨瓦纳(Botswana)"</item>　
-        <item>"BZ|伯利兹(Belize)"</item>　
-        <item>"BT|不丹()"</item>　
-        <item>"BF|布基纳法索(Burkina Faso)"</item>　
-        <item>"BI|布隆迪(Uburundi)"</item>　
-        <item>"BV|布韦岛(Bouvet Island)"</item>　
-        <item>"KP|朝鲜()"</item>　
-        <item>"GQ|赤道几内亚(Guinea Ecuatorial)"</item>　
-        <item>"DK|丹麦(Danmark)"</item>　
-        <item>"DE|德国(Deutschland)"</item>　
-        <item>"TL|东帝汶(Timor-Leste)"</item>　
-        <item>"TG|多哥(Togo)"</item>　
-        <item>"DO|多米尼加共和国(Dominican Republic)"</item>　
-        <item>"DM|多米尼克(Dominica)"</item>　
-        <item>"RU|俄罗斯(Россия)"</item>　
-        <item>"EC|厄瓜多尔(Ecuador)"</item>　
-        <item>"ER|厄立特里亚(Ertra)"</item>　
-        <item>"FR|法国(France)"</item>　
-        <item>"FO|法罗群岛(Faroe Islands)"</item>　
-        <item>"PF|法属波利尼西亚(French Polynesia)"</item>　
-        <item>"GF|法属圭亚那(French Guiana)"</item>　
-        <item>"TF|法属南部领地(French Southern Territories)"</item>　
-        <item>"PH|菲律宾(Pilipinas)"</item>　
-        <item>"FI|芬兰(Suomi)"</item>　
-        <item>"CV|佛得角(Cabo Verde)"</item>　
-        <item>"AX|福克兰群岛( land Islands)"</item>　
-        <item>"FK|福克兰群岛(Falkland Islands)"</item>　
-        <item>"GM|冈比亚(Gambia)"</item>　
-        <item>"CG|刚果(Congo)"</item>　
-        <item>"CD|刚果民主共和国(Congo, Democratic Republic of the)"</item>　
-        <item>"CO|哥伦比亚(Colombia)"</item>　
-        <item>"CR|哥斯达黎加(Costa Rica)"</item>　
-        <item>"GG|格恩西岛(Guernsey)"</item>　
-        <item>"GD|格林纳达(Grenada)"</item>　
-        <item>"GL|格陵兰(Greenland)"</item>　
-        <item>"GE|格鲁吉亚()"</item>　
-        <item>"CU|古巴(Cuba)"</item>　
-        <item>"GP|瓜德罗普(Guadeloupe)"</item>　
-        <item>"GU|关岛(Guam)"</item>　
-        <item>"GY|圭亚那(Guyana)"</item>　
-        <item>"KZ|哈萨克斯坦( аза стан)"</item>　
-        <item>"HT|海地(Ha ti)"</item>　
-        <item>"KR|韩国()"</item>　
-        <item>"NL|荷兰(Nederland)"</item>　
-        <item>"AN|荷属安的列斯(Netherlands Antilles)"</item>　
-        <item>"HM|赫德和麦克唐纳群岛(Heard Island and McDonald Islands)"</item>
-        <item>"HN|洪都拉斯(Honduras)"</item>　
-        <item>"KI|基里巴斯(Kiribati)"</item>　
-        <item>"DJ|吉布提(Djibouti)"</item>　
-        <item>"KG|吉尔吉斯斯坦(Кыргызстан)"</item>　
-        <item>"GN|几内亚(Guinée)"</item>　
-        <item>"GW|几内亚比绍(Guiné-Bissau)"</item>　
-        <item>"CA|加拿大(Canada)"</item>　
-        <item>"GH|加纳(Ghana)"</item>　
-        <item>"GA|加蓬(Gabon)"</item>　
-        <item>"KH|柬埔寨(Kampuchea)"</item>　
-        <item>"CZ|捷克共和国( esko)"</item>　
-        <item>"ZW|津巴布韦(Zimbabwe)"</item>　
-        <item>"CM|喀麦隆(Cameroun)"</item>　
-        <item>"QA|卡塔尔()"</item>　
-        <item>"KY|开曼群岛(Cayman Islands)"</item>　
-        <item>"CC|科科斯群岛(Cocos Islands)"</item>　
-        <item>"KM|科摩罗(Comores)"</item>　
-        <item>"CI|科特迪瓦(C te d'Ivoire)"</item>　
-        <item>"KW|科威特()"</item>　
-        <item>"HR|克罗地亚(Hrvatska)"</item>　
-        <item>"KE|肯尼亚(Kenya)"</item>　
-        <item>"CK|库克群岛(Cook Islands)"</item>　
-        <item>"LV|拉脱维亚(Latvija)"</item>　
-        <item>"LS|莱索托(Lesotho)"</item>　
-        <item>"LA|老挝()"</item>　
-        <item>"LB|黎巴嫩()"</item>　
-        <item>"LR|利比里亚(Liberia)"</item>　
-        <item>"LY|利比亚()"</item>　
-        <item>"LT|立陶宛(Lietuva)"</item>　
-        <item>"LI|列支敦士登(Liechtenstein)"</item>　
-        <item>"RE|留尼汪岛(Reunion)"</item>　
-        <item>"LU|卢森堡(L tzebuerg)"</item>　
-        <item>"RW|卢旺达(Rwanda)"</item>　
-        <item>"RO|罗马尼亚(Romania)"</item>　
-        <item>"MG|马达加斯加(Madagasikara)"</item>　
-        <item>"MT|马耳他(Malta)"</item>　
-        <item>"MV|马尔代夫()"</item>　
-        <item>"MW|马拉维(Malawi)"</item>　
-        <item>"MY|马来西亚(Malaysia)"</item>　
-        <item>"ML|马里(Mali)"</item>　
-        <item>"MK|马其顿(Македони а)"</item>　
-        <item>"MH|马绍尔群岛(Marshall Islands)"</item>　
-        <item>"MQ|马提尼克(Martinique)"</item>　
-        <item>"YT|马约特岛(Mayotte)"</item>　
-        <item>"MU|毛里求斯(Mauritius)"</item>　
-        <item>"MR|毛里塔尼亚()"</item>　
-        <item>"US|美国(United States)"</item>　
-        <item>"AS|美属萨摩亚(American Samoa)"</item>　
-        <item>"UM|美属外岛(United States minor outlying islands)"</item>　
-        <item>"MN|蒙古(Монгол Улс)"</item>　
-        <item>"MS|蒙特塞拉特(Montserrat)"</item>　
-        <item>"BD|孟加拉()"</item>　
-        <item>"PE|秘鲁(Perú)"</item>　
-        <item>"FM|密克罗尼西亚(Micronesia)"</item>　
-        <item>"MM|缅甸()"</item>　
-        <item>"MD|摩尔多瓦(Moldova)"</item>　
-        <item>"MA|摩洛哥()"</item>　
-        <item>"MC|摩纳哥(Monaco)"</item>　
-        <item>"MZ|莫桑比克(Mo ambique)"</item>　
-        <item>"MX|墨西哥(México)"</item>　
-        <item>"NA|纳米比亚(Namibia)"</item>　
-        <item>"ZA|南非(South Africa)"</item>　
-        <item>"AQ|南极洲(Antarctica)"</item>　
-        <item>"GS|南乔治亚和南桑德威奇群岛(South Georgia and the South Sandwich Islands)"</item>
-        <item>"NP|尼泊尔()"</item>　
-        <item>"NI|尼加拉瓜(Nicaragua)"</item>　
-        <item>"NE|尼日尔(Niger)"</item>　
-        <item>"NG|尼日利亚(Nigeria)"</item>　
-        <item>"NU|纽埃(Niue)"</item>　
-        <item>"NO|挪威(Norge)"</item>　
-        <item>"NF|诺福克岛(Norfolk Island)"</item>　
-        <item>"PW|帕劳(Belau)"</item>　
-        <item>"PN|皮特凯恩(Pitcairn)"</item>　
-        <item>"PT|葡萄牙(Portugal)"</item>　
-        <item>"JP|日本"</item>　
-        <item>"SE|瑞典(Sverige)"</item>　
-        <item>"CH|瑞士(Schweiz)"</item>　
-        <item>"SV|萨尔瓦多(El Salvador)"</item>　
-        <item>"WS|萨摩亚(Samoa)"</item>　
-        <item>"CS|塞尔维亚及蒙蒂纳哥(Срби а и Црна Гора)"</item>　
-        <item>"SL|塞拉利昂(Sierra Leone)"</item>　
-        <item>"SN|塞内加尔(Sénégal)"</item>　
-        <item>"CY|塞浦路斯(Κυπρο )"</item>　
-        <item>"SC|塞舌尔(Seychelles)"</item>　
-        <item>"SA|沙特阿拉伯()"</item>　
-        <item>"CX|圣诞岛(Christmas Island)"</item>　
-        <item>"ST|圣多美和普林西比(S o Tomé and Príncipe)"</item>　
-        <item>"SH|圣赫勒拿(Saint Helena)"</item>　
-        <item>"KN|圣基茨和尼维斯(Saint Kitts and Nevis)"</item>　
-        <item>"LC|圣卢西亚(Saint Lucia)"</item>　
-        <item>"SM|圣马力诺(San Marino)"</item>　
-        <item>"PM|圣皮埃尔和密克隆群岛(Saint Pierre and Miquelon)"</item>　
-        <item>"VC|圣文森特和格林纳丁斯(Saint Vincent and the Grenadines)"</item>　
-        <item>"LK|斯里兰卡(Sri Lanka)"</item>　
-        <item>"SK|斯洛伐克(Slovensko)"</item>　
-        <item>"SI|斯洛文尼亚(Slovenija)"</item>　
-        <item>"SJ|斯瓦尔巴和扬马延(Svalbard and Jan Mayen)"</item>　
-        <item>"SZ|斯威士兰(Swaziland)"</item>　
-        <item>"SD|苏丹()"</item>　
-        <item>"SR|苏里南(Suriname)"</item>　
-        <item>"SO|索马里(Soomaaliya)"</item>　
-        <item>"SB|所罗门群岛(Solomon Islands)"</item>　
-        <item>"TJ|塔吉克斯坦(То икистон)"</item>　
-        <item>"TH|泰国()"</item>　
-        <item>"TZ|坦桑尼亚(Tanzania)"</item>　
-        <item>"TO|汤加(Tonga)"</item>　
-        <item>"TC|特克斯和凯科斯群岛(Turks and Caicos Islands)"</item>　
-        <item>"TT|特立尼达和多巴哥(Trinidad and Tobago)"</item>　
-        <item>"TN|突尼斯()"</item>　
-        <item>"TV|图瓦卢(Tuvalu)"</item>　
-        <item>"TR|土耳其(Türkiye)"</item>　
-        <item>"TM|土库曼斯坦(Türkmenistan)"</item>　
-        <item>"TK|托克劳(Tokelau)"</item>　
-        <item>"WF|瓦利斯和福图纳(Wallis and Futuna)"</item>　
-        <item>"VU|瓦努阿图(Vanuatu)"</item>　
-        <item>"GT|危地马拉(Guatemala)"</item>　
-        <item>"VI|维尔京群岛，美属(Virgin Islands, U.S.)"</item>　
-        <item>"VG|维尔京群岛，英属(Virgin Islands, British)"</item>　
-        <item>"VE|委内瑞拉(Venezuela)"</item>　
-        <item>"BN|文莱(Brunei Darussalam)"</item>　
-        <item>"UG|乌干达(Uganda)"</item>　
-        <item>"UA|乌克兰(Укра на)"</item>　
-        <item>"UY|乌拉圭(Uruguay)"</item>　
-        <item>"UZ|乌兹别克斯坦(O'zbekiston)"</item>　
-        <item>"ES|西班牙(Espa a)"</item>　
-        <item>"EH|西撒哈拉()"</item>　
-        <item>"GR|希腊('Eλλα )"</item>　
-        <item>"SG|新加坡(Singapura)"</item>　
-        <item>"NC|新喀里多尼亚(New Caledonia)"</item>　
-        <item>"NZ|新西兰(New Zealand)"</item>　
-        <item>"HU|匈牙利(Magyarország)"</item>　
-        <item>"SY|叙利亚()"</item>　
-        <item>"JM|牙买加(Jamaica)"</item>　
-        <item>"AM|亚美尼亚()"</item>　
-        <item>"YE|也门()"</item>　
-        <item>"IQ|伊拉克()"</item>　
-        <item>"IR|伊朗()"</item>　
-        <item>"IL|以色列()"</item>　
-        <item>"IT|意大利(Italia)"</item>　
-        <item>"IN|印度(India)"</item>　
-        <item>"ID|印度尼西亚(Indonesia)"</item>　
-        <item>"GB|英国(United Kingdom)"</item>　
-        <item>"IO|英属印度洋领地(British Indian Ocean Territory)"</item>　
-        <item>"JO|约旦()"</item>　
-        <item>"VN|越南(Vi t Nam)"</item>　
-        <item>"ZM|赞比亚(Zambia)"</item>　
-        <item>"JE|泽西岛(Jersey)"</item>　
-        <item>"TD|乍得(Tchad)"</item>　
-        <item>"GI|直布罗陀(Gibraltar)"</item>　
-        <item>"CL|智利(Chile)"</item>　
-        <item>"CF|中非共和国(République Centrafricaine)"</item>　
-        <item>"CN|中国(Chinese)"</item>　
-        <item>"NR|瑙鲁(Naoero)"</item>　
-        <item>"VA|梵蒂冈(Città del Vaticano)"</item>　
-        <item>"FJ|斐济(Fiji)"</item>
+        <item>Afghanistan</item>
+        <item>Albania</item>
+        <item>Algeria</item>
+        <item>American Samoa</item>
+        <item>Andorra</item>
+        <item>Angola </item>
+        <item>Anguilla</item>
+        <item>Antigua and Barbuda</item>
+        <item>Argentina</item>
+        <item>Armenia</item>
+        <item>Aruba</item>
+        <item>Australia</item>
+        <item>Austria</item>
+        <item>Azerbaijan</item>
+        <item>Azores Islands</item>
+        <item>Bahamas</item>
+        <item>Bahrain</item>
+        <item>Bangladesh</item>
+        <item>Barbados</item>
+        <item>Belarus</item>
+        <item>Belgium</item>
+        <item>Belize</item>
+        <item>Benin</item>
+        <item>Bermuda</item>
+        <item>Bhutan</item>
+        <item>Bolivia</item>
+        <item>Bosnian and Herzegovina</item>
+        <item>Botswana </item>
+        <item>Brazil</item>
+        <item>Britain</item>
+        <item>British Virgin Islands</item>
+        <item>Brunei</item>
+        <item>Bulgaria</item>
+        <item>Burkina Faso</item>
+        <item>Burundi</item>
+        <item>Cambodia</item>
+        <item>Cameroon</item>
+        <item>Canada</item>
+        <item>Canary Islands</item>
+        <item>Cape Verde</item>
+        <item>Cayman Islands</item>
+        <item>Central Africa</item>
+        <item>Chad</item>
+        <item>Chile</item>
+        <item>China</item>
+        <item>Colombia</item>
+        <item>Comoros</item>
+        <item>Congo (Democratic Republic of Congo)</item>
+        <item>Congo (The Republic of Congo)</item>
+        <item>Cook Islands</item>
+        <item>Costa Rica</item>
+        <item>"Côte d ' Ivoire"</item>
+        <item>Croatia</item>
+        <item>Cuba</item>
+        <item>Cyprus</item>
+        <item>Czech</item>
+        <item>Denmark </item>
+        <item>Djibouti</item>
+        <item>Dominica</item>
+        <item>Ecuador</item>
+        <item>Egypt</item>
+        <item>El Salvador</item>
+        <item>Equatorial Guinea</item>
+        <item>Eritrea (The State of Eritrea)</item>
+        <item>Estonia</item>
+        <item>Ethiopia</item>
+        <item>Fiji Islands</item>
+        <item>Finland</item>
+        <item>France</item>
+        <item>French Polynesia</item>
+        <item>French Guiana</item>
+        <item>Gabon</item>
+        <item>Gambia</item>
+        <item>Georgia</item>
+        <item>Germany</item>
+        <item>Ghana</item>
+        <item>Greece</item>
+        <item>Greenland</item>
+        <item>Grenada</item>
+        <item>Guadeloupe</item>
+        <item>Guam</item>
+        <item>Guatemala</item>
+        <item>Guinea</item>
+        <item>Guinea-Bissau</item>
+        <item>Guyana</item>
+        <item>Haiti</item>
+        <item>Honduras</item>
+        <item>Hungary</item>
+        <item>Iceland </item>
+        <item>India</item>
+        <item>Indonesia</item>
+        <item>Iran</item>
+        <item>Iraq</item>
+        <item>Ireland</item>
+        <item>Israel</item>
+        <item>Italy</item>
+        <item>Jamaica</item>
+        <item>Japan</item>
+        <item>Jordan</item>
+        <item>Kazakhstan</item>
+        <item>Kenya</item>
+        <item>Kiribati</item>
+        <item>Kuwait</item>
+        <item>Kyrgyzstan</item>
+        <item>Laos</item>
+        <item>Latvia</item>
+        <item>Lebanon</item>
+        <item>Lesotho</item>
+        <item>Liberia</item>
+        <item>Libya </item>
+        <item>Liechtenstein</item>
+        <item>Lithuania</item>
+        <item>Luxembourg</item>
+        <item>Macedonia</item>
+        <item>Madagascar</item>
+        <item>Madeira Islands</item>
+        <item>Malawi</item>
+        <item>Malaysia</item>
+        <item>Maldives</item>
+        <item>Mali</item>
+        <item>Malta</item>
+        <item>Marshall Islands</item>
+        <item>Martinique</item>
+        <item>Mauritania</item>
+        <item>Mauritius</item>
+        <item>Mexico</item>
+        <item>Micronesia</item>
+        <item>Moldova</item>
+        <item>Monaco</item>
+        <item>Mongolia</item>
+        <item>Montserrat</item>
+        <item>Morocco </item>
+        <item>Mozambique </item>
+        <item>Myanmar</item>
+        <item>Namibia</item>
+        <item>Nauru</item>
+        <item>Nepal</item>
+        <item>Netherlands</item>
+        <item>New Caledonia</item>
+        <item>New Zealand</item>
+        <item>Nicaragua</item>
+        <item>Niger</item>
+        <item>Nigeria</item>
+        <item>Niue</item>
+        <item>North Korea</item>
+        <item>Northern Mariana Islands</item>
+        <item>Norway </item>
+        <item>Oman</item>
+        <item>Pakistan</item>
+        <item>Palau</item>
+        <item>Palestine</item>
+        <item>Panama </item>
+        <item>Papua New Guinea</item>
+        <item>Paraguay</item>
+        <item>Peru</item>
+        <item>Philippines</item>
+        <item>Pitcairn Island</item>
+        <item>Poland</item>
+        <item>Portugal</item>
+        <item>Puerto Rico</item>
+        <item>Qatar</item>
+        <item>Reunion </item>
+        <item>Romania</item>
+        <item>Russia</item>
+        <item>Rwanda</item>
+        <item>Saint Helena</item>
+        <item>Saint Kitts and Nevis</item>
+        <item>Saint Lucia</item>
+        <item>Saint Vincent and the Grenadines</item>
+        <item>Samoa</item>
+        <item>San Marino</item>
+        <item>Sao Tome and Principe </item>
+        <item>Saudi Arabia</item>
+        <item>Senegal</item>
+        <item>Serbia</item>
+        <item>Seychelles</item>
+        <item>Sierra Leone</item>
+        <item>Singapore</item>
+        <item>Slovakia</item>
+        <item>Slovenia</item>
+        <item>Solomon Islands</item>
+        <item>Somalia</item>
+        <item>South Africa </item>
+        <item>South Korea</item>
+        <item>Spain</item>
+        <item>Sri Lanka</item>
+        <item>Sudan</item>
+        <item>Surinam</item>
+        <item>Swaziland</item>
+        <item>Sweden </item>
+        <item>Switzerland</item>
+        <item>Syria</item>
+        <item>Tajikistan</item>
+        <item>Tanzania</item>
+        <item>Thailand</item>
+        <item>The Faroe Islands</item>
+        <item>the Dominican Republic</item>
+        <item>the Netherlands Antilles</item>
+        <item>the United States</item>
+        <item>Timor-Leste</item>
+        <item>Togo</item>
+        <item>Tokelau</item>
+        <item>Tonga</item>
+        <item>Trinidad and Tobago</item>
+        <item>Tunisia</item>
+        <item>Turkey</item>
+        <item>Turkmenistan</item>
+        <item>Turks and Caicos Islands</item>
+        <item>Tuvalu</item>
+        <item>UAE</item>
+        <item>Uganda</item>
+        <item>Ukraine</item>
+        <item>Uruguay</item>
+        <item>Uzbekistan</item>
+        <item>Vanuatu</item>
+        <item>Vatican</item>
+        <item>Venezuela</item>
+        <item>Vietnam</item>
+        <item>Virgin Islands of the United States</item>
+        <item>Wallis and Futuna</item>
+        <item>Western Sahara</item>
+        <item>Yemen</item>
+        <item>Zambia</item>
+        <item>Zimbabwe</item>
     </string-array>
     <string-array name="languages">
         <item>Argentina (Español)</item>
@@ -394,21 +371,20 @@
     <string name="pref_ringtone_silent">Silent</string>
 
     <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_records">a</string>
-
+    <string name="title_activity_records">a</string>/
 
     <!-- - -   - - - - -->
-    <string name="network_error">Network Error</string>
-    <string name="network_error_try">Network Error,Please try again</string>
+    <string name="network_error">Network error</string>
+    <string name="network_error_try">Network error,Please try again</string>
+
+
+    <!---->
+    <string name="ActivitySplash_enter">Enter App</string>
 
     <!--MainActivity-->
     <string name="MainActivity_Refresh">Refresh</string>
     <string name="MainActivity_Delete">Delete</string>
     <string name="MainActivity_one_more_time_quit">Click one more time to quit</string>
-    <string name="MainActivity_Chat">Chat</string>
-    <string name="MainActivity_Listen">Listen</string>
-    <string name="MainActivity_Me">Me</string>
-
 
     <!--FragmentListen-->
     <string name="FragmentListen_downloaded">已下载</string>
@@ -417,71 +393,79 @@
     <string name="FragmentChoose_busy">The teacher is busy</string>
     <string name="FragmentChoose_offline">The teacher is offline</string>
 
-
     <!--ActivityCall-->
-    <string name="ActivityCall_pick_theme">pick a theme</string>
-    <string name="ActivityCall_switch_theme">switch a theme</string>
-    <string name="ActivityCall_can_not_back">can not back when talking</string>
-    <string name="ActivityCall_hangup">Are you sure?</string>
+    <string name="ActivityCall_pick_theme">Topic Bank</string>
+    <string name="ActivityCall_switch_theme">Change</string>
+    <string name="ActivityCall_can_not_back">Return key invalid</string>
+    <string name="ActivityCall_hangup">Are you sure you want to hang up?</string>
     <string name="ActivityCall_cancel">Cancel</string>
-    <string name="ActivityCall_confirm">Confirm</string>
+    <string name="ActivityCall_confirm">OK</string>
 
     <!--ActivityTake-->
-    <string name="ActivityTake_can_not_back">can not back when talking</string>
-    <string name="ActivityTake_hangup">Are you sure?</string>
+    <string name="ActivityTake_can_not_back">Return key invalid</string>
+    <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
     <string name="ActivityTake_cancel">Cancel</string>
-    <string name="ActivityTake_confirm">Confirm</string>
+    <string name="ActivityTake_confirm">OK</string>
 
 
     <!--FragmentPerson-->
     <string name="fragment_person_unlogin">Unlogin</string>
-    <string name="fragment_person_my_coins">Coins:</string>
+    <string name="fragment_person_my_coins">Balance：</string>
     <string name="fragment_person_recharge">Recharge</string>
-    <string name="fragment_person_setting">Setting</string>
-    <string name="fragment_person_history">Study records</string>
-    <string name="activity_person_save">save</string>
+    <string name="fragment_person_setting">Settings</string>
+    <string name="fragment_person_history">Study history</string>
+    <string name="fragment_person_lessons">Lessons history</string>
+
+    <string name="fragment_person_dialog_title">Tips</string>
+    <string name="fragment_person_dialog_message">Please log in first!</string>
+    <string name="fragment_person_dialog_positive">OK</string>
+    <string name="fragment_person_dialog_negative">Cancel</string>
 
     <!--ActivityPayment-->
     <string name="ActivityPayment_title">Recharge</string>
-    <string name="ActivityPayment_select_recharge_mode">Please choose recharge mode</string>
-    <string name="ActivityPayment_recharge_records">recharge records</string>
+    <string name="ActivityPayment_select_recharge_mode">Please select payment method</string>
+    <string name="ActivityPayment_recharge_records">Payment history</string>
     <string name="ActivityPayment_recharge_success">Recharge success</string>
-    <string name="ActivityPayment_recharge_failure">Recharge failure</string>
-    <string name="ActivityPayment_pricelist_failure">pricelist failure</string>
-    <string name="ActivityPayment_select_topup_money">Please select a topup amount</string>
-    <string name="ActivityPayment_creating_order">is creating order</string>
+    <string name="ActivityPayment_recharge_failure">Recharge failed</string>
+    <string name="ActivityPayment_pricelist_failure">Price list failure</string>
+    <string name="ActivityPayment_select_topup_money">Please select payment amount</string>
+    <string name="ActivityPayment_creating_order">Creating order</string>
     <string name="ActivityPayment_order_failure">Creating order failure</string>
     <string name="ActivityPayment_check_order">Checking order</string>
 
+    <!--价格条-->
+    <string name="ActivityPayment_confirm">Confirm</string>
     <!--充值记录-->
-    <string name="项目">"Item: "</string>
-    <string name="金额">"Amount: "</string>
-    <string name="状态">"Status: "</string>
-    <string name="时间">"Time: "</string>
+    <string name="ActivityPayment_item">"Item："</string>
+    <string name="ActivityPayment_amount">"Amount："</string>
+    <string name="ActivityPayment_status">"Status："</string>
+    <string name="ActivityPayment_date">"Date："</string>
+
 
     <!--ActivitySetting-->
-    <string name="ActivitySetting_title">Setting</string>
-    <string name="ActivitySetting_change_password">Change the password</string>
-    <string name="ActivitySetting_投诉建议">Complaint and Advice</string>
+    <string name="ActivitySetting_title">Settings</string>
+    <string name="ActivitySetting_change_password">Change your password</string>
+    <string name="ActivitySetting_投诉建议">Complaints</string>
     <string name="ActivitySetting_请在WIFI下使用">Please use under the WIFI</string>
     <string name="ActivitySetting_清理缓存">Clean Cache</string>
     <string name="ActivitySetting_关于汉问">About ChineseChat</string>
     <string name="ActivitySetting_登出">Logout</string>
-    <string name="ActivitySetting_登录">Signin</string>
-    <string name="ActivitySetting_Toast_登出成功">Logout Success</string>
+    <string name="ActivitySetting_登录">Login</string>
+    <string name="ActivitySetting_Toast_logout_success">Logout completed</string>
     <string name="ActivitySetting_Toast_清理完毕">Clean Finish</string>
 
     <string name="ActivitySetting_dialog_title">Clean Cache</string>
     <string name="ActivitySetting_dialog_message">Will clean you downloaded document and Login data,do you want to continue?</string>
-    <string name="ActivitySetting_dialog_positive">Confirm</string>
+    <string name="ActivitySetting_dialog_positive">OK</string>
     <string name="ActivitySetting_dialog_negative">Cancel</string>
 
     <!--ActivitySecurity-->
-    <string name="ActivitySecurity_title">Change the password</string>
+    <string name="ActivitySecurity_title">Change your password</string>
     <string name="ActivitySecurity_old_password">Old password</string>
     <string name="ActivitySecurity_new_password">New password</string>
-    <string name="ActivitySecurity_re_password">repassword</string>
-    <string name="ActivitySecurity_confirm">Confirm</string>
+    <string name="ActivitySecurity_re_password">Confirm new password</string>
+
+    <string name="ActivitySecurity_confirm">OK</string>
     <string name="ActivitySecurity_can_not_null">old and new password can not null</string>
     <string name="ActivitySecurity_at_least">The old password or new password At least 8</string>
     <string name="ActivitySecurity_old_password_wrong">The old password is wrong</string>
@@ -491,6 +475,7 @@
     <string name="ActivitySecurity_modify_failure">Failure! Please try again</string>
 
     <!--ActivityPerson-->
+    <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityPerson_save">Save</string>
     <string name="ActivityPerson_nickname">Nickname:</string>
     <string name="ActivityPerson_email">Email:</string>
@@ -499,26 +484,26 @@
     <string name="ActivityPerson_birth">Birth:</string>
     <string name="ActivityPerson_country">Country:</string>
     <string name="ActivityPerson_language">Language:</string>
-    <string name="ActivityPerson_job">Profession:</string>
-
+    <string name="ActivityPerson_job">Career:</string>
+    <string name="ActivityPerson_school">School:</string>
+    <string name="ActivityPerson_hobbies">hobbies:</string>
+    <string name="ActivityPerson_location">Location:</string>
+    <string name="ActivityPerson_spoken">Spoken Languages</string>
+    <string name="ActivityPerson_about">Self description</string>
     <string name="ActivityPerson_female">Female</string>
     <string name="ActivityPerson_male">Male</string>
     <string name="ActivityPerson_success">Update Success</string>
     <string name="ActivityPerson_failure">Update Failure</string>
-    <string name="ActivityPerson_confirm">Confirm</string>
+    <string name="ActivityPerson_confirm">OK</string>
 
-    <string name="ActivityPerson_school">School</string>
-    <string name="ActivityPerson_hobbies">hobbies</string>
-    <string name="ActivityPerson_spoken">Spoken Languages</string>
-    <string name="ActivityPerson_location">Location</string>
-    <string name="ActivityPerson_about">Self description</string>
-
+    <string name="ActivityPerson_album">Album</string>
+    <string name="ActivityPerson_camera">Camera</string>
 
     <string name="ActivityPerson_photo">Photo</string>
     <string name="ActivityPerson_hint_nickname">Nickname please</string>
     <string name="ActivityPerson_hint_email">Email can not change</string>
-    <string name="ActivityPerson_hint_mobile">Mobile please</string>
-    <string name="ActivityPerson_hint_birth">Click set your birthday</string>
+    <string name="ActivityPerson_hint_mobile">Enter mobile number</string>
+    <string name="ActivityPerson_hint_birth">Select birth date</string>
     <string name="ActivityPerson_hint_job">you job</string>
     <string name="ActivityPerson_hint_school">School</string>
     <string name="ActivityPerson_hint_hobbies">Hobbies</string>
@@ -528,12 +513,13 @@
 
 
     <!--ActivityHistory-->
-    <string name="ActivityHistory_title">Study records</string>
-    <string name="ActivityHistory_theme">Theme:</string>
-    <string name="ActivityHistory_teacher">Teacher:</string>
-    <string name="ActivityHistory_coins">Coins:</string>
+    <string name="ActivityHistory_title">Study history</string>
+    <string name="ActivityHistory_theme">"Topic："</string>
+    <string name="ActivityHistory_teacher">"Tutor："</string>
+    <string name="ActivityHistory_student">"Student："</string>
+    <string name="ActivityHistory_coins">"ChineseChat Coin："</string>
     <string name="ActivityHistory_date">Date:</string>
-    <string name="ActivityHistory_duration">Duration:</string>
+    <string name="ActivityHistory_duration">"Duration："</string>
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_download">Download</string>
@@ -544,9 +530,9 @@
 
 
     <!--ActivityFeedback-->
-    <string name="ActivityFeedback_ComplaintsAndSuggestions">Complaints and Suggestions</string>
-    <string name="ActivityFeedback_please_type_something">Please type something</string>
-    <string name="ActivityFeedback_please_email">Expect you Email</string>
+    <string name="ActivityFeedback_title">Complaints</string>
+    <string name="ActivityFeedback_please_type_something">Enter your complaints</string>
+    <string name="ActivityFeedback_please_email">Enter your e-mail address</string>
     <string name="ActivityFeedback_Content_submit">Submit</string>
     <string name="ActivityFeedback_Content_IsBeingSubmitted">Is being submitted</string>
     <string name="ActivityFeedback_Content_CanNotNull">Content can not be null</string>
@@ -554,12 +540,12 @@
 
     <!--ActivityAbout-->
     <string name="ActivityAbout_title">About ChineseChat</string>
-    <string name="ActivityAbout_update_version">Version Check</string>
-    <string name="ActivityAbout_use_help">Use Help</string>
-    <string name="ActivityAbout_user_agreement">User Agreement</string>
+    <string name="ActivityAbout_update_version">Check for update</string>
+    <string name="ActivityAbout_use_help">How to use</string>
+    <string name="ActivityAbout_user_agreement">Users Agreement</string>
 
     <string name="ActivityAbout_dialog_title">Update tip</string>
-    <string name="ActivityAbout_dialog_positive">Confirm</string>
+    <string name="ActivityAbout_dialog_positive">OK</string>
     <string name="ActivityAbout_dialog_negative">Cancel</string>
 
     <string name="ActivityAbout_app_update">Update package is being downloaded</string>
@@ -568,57 +554,63 @@
     <string name="ActivityAbout_already_up_to_date">ChineseChat is already up to date</string>
 
     <string name="ActivityAbout_check_sdcard">SD card not work properly</string>
-    <string name="ActivityAbout_already_latest">Already the latest</string>
+    <string name="ActivityAbout_already_latest">This is the latest version</string>
     <string name="ActivityAbout_have_new_version">Have new version,update now!</string>
 
     <!--ActivityReset-->
     <string name="ActivityReset_reset_password">Reset Password</string>
-    <string name="ActivityReset_please_input_email">Please type you email</string>
-    <string name="ActivityReset_please_type_code">the verification code</string>
-    <string name="ActivityReset_get_code">Get verification code</string>
+    <string name="ActivityReset_please_input_email">Enter e-mail address</string>
+    <string name="ActivityReset_please_type_code">Verify code</string>
+    <string name="ActivityReset_get_code">Gain verify code</string>
     <string name="ActivityReset_next">Next</string>
-    <string name="ActivityReset_please_type_you_new_password">Please type you new password</string>
-    <string name="ActivityReset_please_retype_you_new_password">Please retype you new password</string>
-    <string name="ActivityReset_confirm">Confirm</string>
+    <string name="ActivityReset_please_type_you_new_password">Enter password</string>
+    <string name="ActivityReset_please_retype_you_new_password">Confirm password</string>
+    <string name="ActivityReset_confirm">OK</string>
     <string name="ActivityReset_EmailAddressFormatIsNotCorrect">Email address format is not correct</string>
-    <string name="ActivityReset_Please_check_your_email">Please check your email and get the code</string>
-    <string name="ActivityReset_email_and_code_can_not_be_null">Email and code can not be null</string>
-    <string name="ActivityReset_get_code_error">Get verification code failure,Please try again!</string>
+    <string name="ActivityReset_Please_check_your_email">Please check your email and gain the code</string>
+    <string name="ActivityReset_email_and_code_can_not_be_null">Email and verify code cannot be empty</string>
+    <string name="ActivityReset_get_code_error">Gain verify code failure,Please try again!</string>
     <string name="ActivityReset_password_are_not_the_same">The two password are not same</string>
-    <string name="ActivityReset_password_change_success">Reset password success,please use the new password login</string>
+    <string name="ActivityReset_password_change_success">Reset password success,please use the new password to login</string>
 
     <!--ActivitySignIn-->
-    <string name="ActivitySignIn_user_login">User Login</string>
-    <string name="ActivitySignIn_type_email">Email</string>
+    <string name="ActivitySignIn_title">Login</string>
+    <string name="ActivitySignIn_type_email">E-mail</string>
     <string name="ActivitySignIn_type_password">Password</string>
     <string name="ActivitySignIn_login">Login</string>
-    <string name="ActivitySignIn_forgot_password">Forgot you password?</string>
-    <string name="ActivitySignIn_user_register">User registration</string>
-    <string name="ActivitySignIn_login_failure">Login failure</string>
+    <string name="ActivitySignIn_forgot_password">Forget password?</string>
+    <string name="ActivitySignIn_user_register">Registration</string>
+    <string name="ActivitySignIn_login_failure">Login failed</string>
     <string name="ActivitySignIn_email_or_password_not_null">Sorry,Email or the password can not be null!</string>
     <string name="ActivitySignIn_network_error_login_failure">Network error,Login failure</string>
 
     <!--ActivitySignUp-->
-    <string name="ActivitySignUp_user_registration">User registration</string>
-    <string name="ActivitySignUp_email">Email</string>
-    <string name="ActivitySignUp_password">Password</string>
-    <string name="ActivitySignUp_repassowrd">Repeat password</string>
-    <string name="ActivitySignUp_read_and_agreed">I have read and agreed</string>
-    <string name="ActivitySignUp_registered_users">Registered users please</string>
+    <string name="ActivitySignUp_title">Registration</string>
+    <string name="ActivitySignUp_email">E-mail</string>
+    <string name="ActivitySignUp_password">Password no less than 8 digits</string>
+    <string name="ActivitySignUp_re_password">Confirm password</string>
+    <string name="ActivitySignUp_read_and_agreed">I have read and accept</string>
+    <string name="ActivitySignUp_registered_users">"Registered users please "</string>
     <string name="ActivitySignUp_login">Login</string>
-    <string name="ActivitySignUp_user_registration_agreement">《Agreement》</string>
-    <string name="ActivitySignUp_next">Next</string>
+    <string name="ActivitySignUp_user_registration_agreement">《User Agreement》</string>
+    <string name="ActivitySignUp_next">Register</string>
+
+    <string name="ActivitySignUp_email_password_can_not_null">Please fill out all the information required</string>
+    <string name="ActivitySignUp_email_format_wrong">Please enter the correct e-mail address</string>
+    <string name="ActivitySignUp_password_less_than">Password no less than 8 characters</string>
+    <string name="ActivitySignUp_password_are_not_same">Please enter the same password</string>
+    <string name="ActivitySignUp_register_success">Register success</string>
+    <string name="ActivitySignUp_register_failure">Register failure</string>
 
 
-    <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityUsehelp_title">Use Help</string>
 
     <!--ActivityTheme-->
     <string name="ActivityTheme_title">Theme</string>
-    <string name="ActivityTheme_confirm">Confirm</string>
+    <string name="ActivityTheme_confirm">OK</string>
 
     <!--ActivityProfile-->
-    <string name="ActivityProfile_title">Profile</string>
+    <string name="ActivityProfile_title">Tutor profile</string>
     <string name="ActivityProfile_about">About me</string>
     <string name="ActivityProfile_education">Education</string>
     <string name="ActivityProfile_languages">Spoken Languages</string>
@@ -633,9 +625,22 @@
     <string name="FragmentLineUp_enqueue_failure">入队失败</string>
 
     <!--ActivityDocsTodo-->
-    <string name="ActivityDocsTodo_title">Course</string>
+    <string name="ActivityDocsTodo_title">Course list</string>
 
 
     <!--ActivityPlay-->
     <string name="ActivityPlay_title">Play</string>
+    <string name="ActivityPlay_Recording">Recording</string>
+    <string name="ActivityPlay_play_record">Play recording</string>
+    <string name="ActivityPlay_play_origin">Play original sound</string>
+
+    <string name="title_activity_activity_lessons">ActivityLessons</string>
+    <string name="xlistview_footer_hint_errors">Load error</string>
+    <string name="xlistview_footer_hint_nomore">End</string>
+    <string name="xlistview_footer_hint_normal">Load more</string>
+    <string name="xlistview_footer_hint_ready">Release load more</string>
+    <string name="xlistview_header_hint_loading">Loading&#8230;</string>
+    <string name="xlistview_header_hint_normal">Pull down to refresh</string>
+    <string name="xlistview_header_hint_ready">Release to refersh</string>
+    <string name="xlistview_header_last_time">Last refresh time</string>
 </resources>

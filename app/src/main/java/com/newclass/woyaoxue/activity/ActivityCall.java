@@ -278,13 +278,12 @@ public class ActivityCall extends Activity implements OnClickListener {
     private void initData() {
         Intent intent = getIntent();
         String nickname = intent.getStringExtra(KEY_TARGET_NICKNAME);
-        tv_nickname.setText(nickname);
-
         String icon = intent.getStringExtra(KEY_TARGET_ICON);
+        tv_nickname.setText(nickname);
 
         //下载处理,如果有设置头像,则显示头像,
         //如果头像已经下载过,则加载本地图片
-        CommonUtil.showIcon(this, iv_icon, icon);
+        CommonUtil.showBitmap(iv_icon, NetworkUtil.getFullPath(icon));
 
         target = new User();
         target.Id = intent.getIntExtra(KEY_TARGET_ID, 0);
@@ -296,13 +295,20 @@ public class ActivityCall extends Activity implements OnClickListener {
         soundPool = new SoundPool(2, AudioManager.STREAM_RING, 0);
         soundId = soundPool.load(this, R.raw.avchat_ring, 1);
 
-
+        //public abstract void call(java.lang.String account,AVChatType callType,VideoChatParam videoChatParam,boolean serverAudioRecord,boolean serverVideoRecord,AVChatNotifyOption notifyOption,AVChatCallback<AVChatData> callback)
+        //account - 对方帐号
+        //callType - 通话类型：语音、视频
+        //videoChatParam - 发起视频通话时传入，发起音频通话传null
+        //serverAudioRecord - 服务器是否录制语音(还需要后台额外的配置)
+        //serverVideoRecord - 服务器是否录制视频(还需要后台额外的配置)
+        //notifyOption - 可选通知参数
+        //callback - 回调函数，返回NetCallInfo
         AVChatNotifyOption notifyOption = new AVChatNotifyOption();
         notifyOption.apnsBadge = false;
         notifyOption.apnsInuse = true;
         notifyOption.apnsSound = "video_chat_tip_receiver.aac";
         notifyOption.extendMessage = gson.toJson(ChineseChat.CurrentUser);//把呼叫者的用户名,头像发送过去
-        AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, notifyOption, callback_call);
+        AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, false, false, notifyOption, callback_call);
         registerObserver(true);
     }
 
@@ -336,20 +342,20 @@ public class ActivityCall extends Activity implements OnClickListener {
         switch (v.getId()) {
             case R.id.bt_hangup:
                 if (IS_CALL_ESTABLISHED) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
-                    builder.setPositiveButton(R.string.ActivityCall_confirm, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            AVChatManager.getInstance().hangUp(callback_hangup);
-                        }
-                    });
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setMessage(R.string.ActivityCall_hangup);
                     builder.setNegativeButton(R.string.ActivityCall_cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
                         }
                     });
-                    builder.setMessage(R.string.ActivityCall_hangup);
+                    builder.setPositiveButton(R.string.ActivityCall_confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            AVChatManager.getInstance().hangUp(callback_hangup);
+                        }
+                    });
                     builder.show();
                 } else {
                     //直接挂断
@@ -360,7 +366,7 @@ public class ActivityCall extends Activity implements OnClickListener {
             case R.id.bt_mute: {
                 // 静音设置
                 AVChatManager.getInstance().setMute(!AVChatManager.getInstance().isMute());
-                CommonUtil.toast(AVChatManager.getInstance().isMute() ? "目前静音" : "目前通话");
+                //CommonUtil.toast(AVChatManager.getInstance().isMute() ? "目前静音" : "目前通话");
                 bt_mute.setSelected(AVChatManager.getInstance().isMute());
             }
             break;
@@ -370,7 +376,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                 AVChatManager.getInstance().setSpeaker(!AVChatManager.getInstance().speakerEnabled());
                 Log.i(TAG, "speakerEnabled: " + AVChatManager.getInstance().speakerEnabled());
 
-                CommonUtil.toast(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
+                //CommonUtil.toast(AVChatManager.getInstance().speakerEnabled() ? "目前外放" : "目前耳机");
                 bt_free.setSelected(!AVChatManager.getInstance().speakerEnabled());
             }
             break;
@@ -523,7 +529,7 @@ public class ActivityCall extends Activity implements OnClickListener {
 
     private class ObserverChatState implements AVChatStateObserver {
         @Override
-        public void onConnectedServer(int i) {
+        public void onConnectedServer(int i, String s, String s1) {
 
         }
 

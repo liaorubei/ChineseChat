@@ -45,10 +45,12 @@ public class NetworkUtil {
     public static String productSelect = domain + "/Api/Product/Select";
     public static String nimuserGetCode = domain + "/Api/NimUser/GetCode";
     public static String nimuserVerify = domain + "/Api/NimUser/Verify";
-    public static String nimuserChangePassword = domain + "/Api/NimUser/ChangePassword";
+    public static String nimUserChangePassword = domain + "/Api/NimUser/ChangePassword";
     public static String nimuserGetByUsername = domain + "/Api/NimUser/GetByUsername";
     public static String callRefresh = domain + "/Api/CallLog/Refresh";
     public static String GetStudentCallLogByUsername = domain + "/Api/CallLog/GetStudentByUsername";
+    public static String GetTeacherCallLogByUsername = domain + "/Api/CallLog/GetTeacherByUsername";
+
     public static String chatAddTheme = domain + "/Api/CallLog/AddTheme";
     public static String getTeacher = domain + "/Api/NimUser/GetTeacher";
     public static String nimuserGetPhotosByUsername = domain + "/Api/NimUser/GetPhotosByUsername";

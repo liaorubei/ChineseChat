@@ -410,6 +410,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                     CommonUtil.toast(getString(R.string.ActivityPerson_failure));
                 }
                 saveDialog.dismiss();
+                finish();
             }
 
             @Override
@@ -445,6 +446,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                     CommonUtil.toast(R.string.ActivityPerson_failure);
                 }
                 saveDialog.dismiss();
+                finish();
             }
 
             @Override

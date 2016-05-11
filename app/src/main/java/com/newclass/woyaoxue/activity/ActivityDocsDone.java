@@ -39,18 +39,15 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
     private List<ViewHelper> list;
     private int folderId;
     private MyAdapter adapter;
-
     private Database database;
     private ListView listview;
-
     private int levelId;
-
     protected RelativeLayout tv_folder;
-    private TextView tv_ctrl;
     private ImageView iv_delete;
     private boolean deleteMode = false;
     private ImageView cb_delete;
     private TextView tv_name;
+    private View iv_menu;
 
     public static void start(Context context, Folder folder) {
         Intent intent = new Intent(context, ActivityDocsDone.class);
@@ -83,9 +80,10 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent play = new Intent(ActivityDocsDone.this, ActivityPlay.class);
-                play.putExtra("Id", list.get(position).document.Id);
-                startActivity(play);
+                Intent intent = new Intent(ActivityDocsDone.this, ActivityPlay.class);
+                intent.putExtra("Id", list.get(position).document.Id);
+                intent.putExtra("mode", "Offline");
+                startActivity(intent);
             }
         });
         if (getActionBar() != null) {
@@ -101,9 +99,12 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         tv_folder = (RelativeLayout) findViewById(R.id.tv_folder);
         tv_name = (TextView) findViewById(R.id.tv_name);
         listview = (ListView) findViewById(R.id.listview);
+        iv_menu = findViewById(R.id.iv_menu);
 
-        tv_ctrl = (TextView) findViewById(R.id.tv_ctrl);
-        tv_ctrl.setOnClickListener(this);
+        iv_menu.setOnClickListener(this);
+
+        //tv_ctrl = (TextView) findViewById(R.id.tv_ctrl);
+        //tv_ctrl.setOnClickListener(this);
 
         iv_delete = (ImageView) findViewById(R.id.iv_delete);
         iv_delete.setVisibility(View.INVISIBLE);
@@ -169,6 +170,59 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         database.closeConnection();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_home:
+                this.finish();
+                break;
+            case R.id.iv_menu:
+                deleteMode = !deleteMode;
+
+                for (ViewHelper i : list) {
+                    i.isShow = deleteMode;
+                }
+
+                iv_menu.setSelected(deleteMode);
+                iv_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
+                cb_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
+                adapter.notifyDataSetChanged();
+                break;
+            case R.id.iv_delete:
+                List<ViewHelper> removeList = new ArrayList<ViewHelper>();// 被删除的集合
+
+                for (ViewHelper viewHelper : list) {
+                    if (viewHelper.isChecked) {
+                        removeList.add(viewHelper);// 把被删除的对象收集到一个集合中
+                    }
+                }
+
+                list.removeAll(removeList);
+
+                // 清除数据库及文件夹里面的数据
+                for (ViewHelper viewHelper : removeList) {
+                    // 从数据库移除
+                    database.docsDeleteById(viewHelper.document.Id);
+
+                    // 从文件夹移除
+                    File file = new File(getFilesDir(), viewHelper.document.SoundPath);
+                    if (file.isFile() && file.exists()) {
+                        file.delete();
+                    }
+                    Log.i("" + viewHelper.document.Title + " " + file.getAbsolutePath() + " 被移除了");
+                }
+
+                adapter.notifyDataSetChanged();
+
+                //tv_ctrl.setText("删除");
+                deleteMode = false;
+                cb_delete.setVisibility(View.INVISIBLE);
+                iv_delete.setVisibility(View.INVISIBLE);
+                break;
+
+        }
+    }
+
     private void loadMore() {
         new AsyncTask<Integer, Integer, List<Document>>() {
 
@@ -185,7 +239,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
             }
         }.execute(folderId);
     }
-
 
     private class MyAdapter extends BaseAdapter<ViewHelper> {
 
@@ -229,6 +282,9 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                         }
                     }
                     iv_delete.setImageResource(c > 0 ? R.drawable.dustbin_checked : R.drawable.dustbin_uncheck);
+
+                    //全选按钮
+                    cb_delete.setSelected(c == list.size());
                 }
             });
 
@@ -257,58 +313,4 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         public boolean isChecked;
         public Document document;
     }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.iv_home:
-                this.finish();
-                break;
-            case R.id.tv_ctrl:
-                deleteMode = !deleteMode;
-
-                for (ViewHelper i : list) {
-                    i.isShow = deleteMode;
-                }
-                tv_ctrl.setText(deleteMode ? "取消" : "删除");
-
-                iv_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
-                cb_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
-                adapter.notifyDataSetChanged();
-                break;
-            case R.id.iv_delete:
-                List<ViewHelper> removeList = new ArrayList<ViewHelper>();// 被删除的集合
-
-                for (ViewHelper viewHelper : list) {
-                    if (viewHelper.isChecked) {
-                        removeList.add(viewHelper);// 把被删除的对象收集到一个集合中
-                    }
-                }
-
-                list.removeAll(removeList);
-
-                // 清除数据库及文件夹里面的数据
-                for (ViewHelper viewHelper : removeList) {
-                    // 从数据库移除
-                    database.docsDeleteById(viewHelper.document.Id);
-
-                    // 从文件夹移除
-                    File file = new File(getFilesDir(), viewHelper.document.SoundPath);
-                    if (file.isFile() && file.exists()) {
-                        file.delete();
-                    }
-                    Log.i("" + viewHelper.document.Title + " " + file.getAbsolutePath() + " 被移除了");
-                }
-
-                adapter.notifyDataSetChanged();
-
-                tv_ctrl.setText("删除");
-                deleteMode = false;
-                cb_delete.setVisibility(View.INVISIBLE);
-                iv_delete.setVisibility(View.INVISIBLE);
-                break;
-
-        }
-    }
-
 }

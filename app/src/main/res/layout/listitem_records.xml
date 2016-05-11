@@ -6,18 +6,18 @@
     android:paddingLeft="30dp">
 
     <TextView
-        android:id="@+id/tv_main"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:gravity="center_vertical"
-        android:text="项目:ChineseChat充值10000学币" />
-
-    <TextView
         android:id="@+id/tv_amount"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:gravity="center_vertical"
         android:text="金额:10.00 USD" />
+
+    <TextView
+        android:id="@+id/tv_main"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center_vertical"
+        android:text="项目:ChineseChat充值10000学币" />
 
     <TextView
         android:id="@+id/tv_state"

@@ -1,5 +1,7 @@
 package com.newclass.woyaoxue.fragment;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
@@ -42,6 +44,7 @@ import com.voc.woyaoxue.R;
 import java.util.ArrayList;
 import java.util.List;
 
+//#DEAE12
 public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private String TAG = "FragmentChoose";
     private static final int REFRESH_DATA = 1;
@@ -70,6 +73,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             }
         }
     };
+    private AlertDialog dialogLogin;
 
     private void refresh() {
         time = 0;
@@ -189,9 +193,17 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             ViewHolder holder = (ViewHolder) convertView.getTag();
 
             //三种状态，在线，忙线，掉线 {绿，红，灰}
+            int status = 0;
+            if (user.IsOnline) {
+                status = (user.IsEnable && position < 5) ? 2 : 1;
+            }
+
+
             holder.tv_nickname.setText(user.Nickname);
             holder.tv_nickname.setTextColor(user.IsEnable ? getResources().getColor(R.color.color_app) : Color.RED);
             holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : getResources().getColor(R.color.color_app_normal));
+
+
             holder.tv_spoken.setText(user.Spoken);
             holder.tv_location.setText(user.Country);
 
@@ -221,14 +233,14 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             //设置点击
 
             holder.bt_call.setBackgroundResource(R.drawable.selector_choose_callb);
-            holder.bt_call.setEnabled(user.IsEnable && user.IsOnline);
+            holder.bt_call.setEnabled(user.IsEnable && user.IsOnline && position < 5);
             holder.bt_call.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
                     //如果没有登录,那么要求登录
                     if (NIMClient.getStatus() != StatusCode.LOGINED) {
-                        getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
+                        showLoginDialog();
                         return;
                     }
 
@@ -251,7 +263,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
                             Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                             }.getType());
                             if (resp.code == 200) {
-                                ActivityCall.start(getActivity(), user.Id, user.Accid, user.Avatar, user.Username, ActivityCall.CALL_TYPE_AUDIO);
+                                ActivityCall.start(getActivity(), user.Id, user.Accid, user.Avatar, user.Nickname, ActivityCall.CALL_TYPE_AUDIO);
                             } else {
                                 CommonUtil.toast(resp.desc);
                             }
@@ -283,5 +295,29 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             this.bt_call = (ImageView) convertView.findViewById(R.id.bt_call);
             this.tv_location = (TextView) convertView.findViewById(R.id.tv_location);
         }
+    }
+
+    private void showLoginDialog() {
+        if (dialogLogin == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle(R.string.fragment_person_dialog_title);
+            builder.setMessage(R.string.fragment_person_dialog_message);
+            builder.setPositiveButton(R.string.fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(getActivity(), ActivitySignIn.class));
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton(R.string.fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialogLogin = builder.create();
+        }
+        dialogLogin.show();
     }
 }

@@ -41,145 +41,120 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class ContactActivity extends Activity implements OnClickListener
-{
-	private ListView listview;
-	private List<People> list;
-	private MyAdapter adapter;
-	private String accid;
+public class ContactActivity extends Activity implements OnClickListener {
+    private ListView listview;
+    private List<People> list;
+    private MyAdapter adapter;
+    private String accid;
 
-	private Button bt_call;
+    private Button bt_call;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		accid = getIntent().getStringExtra("accid");
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_contact);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        accid = getIntent().getStringExtra("accid");
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_contact);
 
-		initView();
-		listview = (ListView) findViewById(R.id.listview);
-		list = new ArrayList<People>();
-		adapter = new MyAdapter(list);
-		listview.setAdapter(adapter);
-		listview.setOnItemClickListener(new OnItemClickListener()
-		{
+        initView();
+        listview = (ListView) findViewById(R.id.listview);
+        list = new ArrayList<People>();
+        adapter = new MyAdapter(list);
+        listview.setAdapter(adapter);
+        listview.setOnItemClickListener(new OnItemClickListener() {
 
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-			{
-				list.get(position);
-				Intent intent = new Intent(ContactActivity.this, MessageActivity.class);
-				intent.putExtra("target", list.get(position).AccId);
-				startActivity(intent);
-			}
-		});
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                list.get(position);
+                Intent intent = new Intent(ContactActivity.this, null);
+                intent.putExtra("target", list.get(position).AccId);
+                startActivity(intent);
+            }
+        });
 
-		new HttpUtils().send(HttpMethod.POST, NetworkUtil.userSelect, new RequestCallBack<String>()
-		{
+        new HttpUtils().send(HttpMethod.POST, NetworkUtil.userSelect, new RequestCallBack<String>() {
 
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo)
-			{
-				Answer answer = new Gson().fromJson(responseInfo.result, Answer.class);
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Answer answer = new Gson().fromJson(responseInfo.result, Answer.class);
 
-				if (200 == answer.code)
-				{
-					List<People> others = answer.info.others;
-					for (People people : others)
-					{
-						if (!people.AccId.equals(accid))
-						{
-							list.add(people);
-						}
-						else
-						{
-							Log.i("logi", "accid=" + accid);
-						}
-					}
-					adapter.notifyDataSetChanged();
-				}
+                if (200 == answer.code) {
+                    List<People> others = answer.info.others;
+                    for (People people : others) {
+                        if (!people.AccId.equals(accid)) {
+                            list.add(people);
+                        } else {
+                            Log.i("logi", "accid=" + accid);
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                }
 
-			}
+            }
 
-			@Override
-			public void onFailure(HttpException error, String msg)
-			{
-			}
-		});
+            @Override
+            public void onFailure(HttpException error, String msg) {
+            }
+        });
 
-	}
+    }
 
-	private void initView()
-	{
-		bt_call = (Button) findViewById(R.id.bt_call);
+    private void initView() {
+        bt_call = (Button) findViewById(R.id.bt_call);
 
-		bt_call.setOnClickListener(this);
-	}
+        bt_call.setOnClickListener(this);
+    }
 
-	private class MyAdapter extends BaseAdapter<People>
-	{
+    private class MyAdapter extends BaseAdapter<People> {
 
-		public MyAdapter(List<People> list)
-		{
-			super(list);
-		}
+        public MyAdapter(List<People> list) {
+            super(list);
+        }
 
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent)
-		{
-			People item = getItem(position);
-			TextView textView = (TextView) View.inflate(ContactActivity.this, R.layout.listitem_listactivity, null);
-			textView.setText(item.NickName);
-			return textView;
-		}
-	}
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            People item = getItem(position);
+            TextView textView = (TextView) View.inflate(ContactActivity.this, R.layout.listitem_listactivity, null);
+            textView.setText(item.NickName);
+            return textView;
+        }
+    }
 
-	private void call(String teacherAccid)
-	{		
+    private void call(String teacherAccid) {
 
 
-	
+    }
 
-	}
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_call:
 
-	@Override
-	public void onClick(View v)
-	{
-		switch (v.getId())
-		{
-		case R.id.bt_call:
+                String targetAccid = "bf09f7dd02e549f4a16af0cf8e9a5701";
+                call(targetAccid);
 
-			String targetAccid = "bf09f7dd02e549f4a16af0cf8e9a5701";
-			call(targetAccid);
+                // getCallTarget();
 
-			// getCallTarget();
+                break;
 
-			break;
+            default:
+                break;
+        }
+    }
 
-		default:
-			break;
-		}
-	}
+    private void getCallTarget() {
+        RequestParams para = new RequestParams();
+        new HttpUtils().send(HttpMethod.POST, NetworkUtil.studentCall, para, new RequestCallBack<String>() {
 
-	private void getCallTarget()
-	{
-		RequestParams para = new RequestParams();
-		new HttpUtils().send(HttpMethod.POST, NetworkUtil.studentCall, para, new RequestCallBack<String>()
-		{
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                String teacherAccid = "";
+                call(teacherAccid);
+            }
 
-			@Override
-			public void onSuccess(ResponseInfo<String> responseInfo)
-			{
-				String teacherAccid = "";
-				call(teacherAccid);
-			}
-
-			@Override
-			public void onFailure(HttpException error, String msg)
-			{
-				CommonUtil.toast(ContactActivity.this, "网络异常,请重试");
-			}
-		});
-	}
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                CommonUtil.toast(ContactActivity.this, "网络异常,请重试");
+            }
+        });
+    }
 }

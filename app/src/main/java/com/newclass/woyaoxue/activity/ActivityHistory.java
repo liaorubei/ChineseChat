@@ -51,7 +51,7 @@ public class ActivityHistory extends Activity {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
-        sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf = new SimpleDateFormat("HH:mm:ss   E,dd/MM/yyyy");
     }
 
     @Override
@@ -136,13 +136,13 @@ public class ActivityHistory extends Activity {
             TextView tv_date = (TextView) inflate.findViewById(R.id.tv_date);
             TextView tv_time = (TextView) inflate.findViewById(R.id.tv_time);
 
-            tv_theme.setText(getString(R.string.ActivityHistory_theme) + "未选择");
+            tv_theme.setText(getString(R.string.ActivityHistory_theme) + "Unselected");
             if (item.Themes != null && item.Themes.size() > 0) {
                 tv_theme.setText(getString(R.string.ActivityHistory_theme) + item.Themes.get(0).Name);
             }
             tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Nickname);
             tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
-            tv_date.setText(getString(R.string.ActivityHistory_date) + sdf.format(item.Start));
+            tv_date.setText(sdf.format(item.Start));
             tv_time.setText(getString(R.string.ActivityHistory_duration) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
             return inflate;
         }

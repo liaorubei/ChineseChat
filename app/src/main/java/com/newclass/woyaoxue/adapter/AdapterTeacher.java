@@ -3,6 +3,7 @@ package com.newclass.woyaoxue.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -51,7 +52,7 @@ public class AdapterTeacher extends BaseAdapter<User> {
         ViewHolder holder = (ViewHolder) convertView.getTag();
 
         //三种状态，在线，忙线，掉线 {绿，红，灰}
-        holder.tv_nickname.setText(user.Nickname);
+        holder.tv_nickname.setText(user.Nickname + (TextUtils.equals(user.Nickname, ChineseChat.CurrentUser.Nickname) ? " [本人]" : ""));
         holder.tv_nickname.setTextColor(user.IsEnable ? this.mContext.getResources().getColor(R.color.color_app) : Color.RED);
         holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : this.mContext.getResources().getColor(R.color.color_app_normal));
         holder.tv_spoken.setText(user.Spoken);

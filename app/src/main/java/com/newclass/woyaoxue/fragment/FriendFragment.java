@@ -66,7 +66,7 @@ public class FriendFragment extends Fragment implements OnClickListener {
 
                 VideoChatParam param = new VideoChatParam(sv_video, 0);
                 AVChatNotifyOption avChatNotifyOption = new AVChatNotifyOption();
-                AVChatManager.getInstance().call(teacherAccid, AVChatType.AUDIO, param, avChatNotifyOption, new AVChatCallback<AVChatData>() {
+                AVChatManager.getInstance().call(teacherAccid, AVChatType.AUDIO, param,false,false, avChatNotifyOption, new AVChatCallback<AVChatData>() {
                     @Override
                     public void onSuccess(AVChatData avChatData) {
                         CommonUtil.toast("拨打成功");

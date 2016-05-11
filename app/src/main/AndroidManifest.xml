@@ -41,7 +41,8 @@
         android:name="com.newclass.woyaoxue.ChineseChat"
         android:icon="${APPLICATION_ICON}"
         android:label="ChineseChat"
-        android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
@@ -115,10 +116,11 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivityDocsTodo" />
 
         <!-- 播放界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityPlay" />
+        <activity
+            android:name="com.newclass.woyaoxue.activity.ActivityPlay"
+            android:screenOrientation="portrait" />
         <!-- 更多界面 -->
         <activity android:name="com.newclass.woyaoxue.activity.MoreActivity" />
-
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivitySignIn"
             android:label="用户登录"
@@ -126,20 +128,18 @@
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivitySignUp"
             android:label="注册帐号" />
-        <activity android:name="com.newclass.woyaoxue.activity.MessageActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.LiveChatActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ContactActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.GroupCreate" />
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityCall"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityTake"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
         <activity android:name="com.newclass.woyaoxue.activity.ChooseActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.FriendActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.FriendAddActivity" />
@@ -159,29 +159,23 @@
 
         <!-- 批量下载服务 -->
         <service android:name="com.newclass.woyaoxue.service.DownloadService" />
-
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityAbout" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityUsehelp" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityUseterm" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityReset" />
-
         <service
             android:name="com.newclass.woyaoxue.service.TeacherAutoRefreshService"
             android:enabled="true"
             android:exported="true" />
 
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityAbout" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityUsehelp" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityUseterm" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityReset" />
         <activity android:name="com.newclass.woyaoxue.MainActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityDetail" />
-        <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityProfile"
-            android:label="@string/ActivityProfile_title" />
-        <activity
-            android:name="com.newclass.woyaoxue.activity.ActivitySecurity"
-            android:label="@string/ActivitySecurity_title" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityProfile" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivitySecurity" />
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityAlbum"
-            android:label="@string/title_activity_activity_album"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"></activity>
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name="com.newclass.woyaoxue.activity.ActivityLessons" />
     </application>
 
 </manifest>

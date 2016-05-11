@@ -214,7 +214,13 @@ public class ActivityTake extends Activity implements OnClickListener {
                     }
                 });
                 ll_hang.startAnimation(animation);
-                AVChatManager.getInstance().accept(null, callbackAccept);
+
+                //public abstract void accept(VideoChatParam videoParam,boolean serverAudioRecord,boolean serverVideoRecord,AVChatCallback<java.lang.Void> callback)
+                //videoParam - 视频通话渲染视频所需的参数，接听音频通话传null
+                //serverAudioRecord - 服务器是否录制语音(还需要后台额外的配置)
+                //serverVideoRecord - 服务器是否录制视频(还需要后台额外的配置)
+                //callback - 回调函数，返回接听后，本地音视频设备启动是否成功。 回调onSuccess表示成功；回调onFailed表示失败，错误码-1表示初始化引擎失败，需要重试。 注意：由于音视频引擎析构需要时间，请尽可能保持上一次通话挂断到本次电话接听时间间隔在2秒以上，否则有可能在接听时出现初始化引擎失败（code = -1）
+                AVChatManager.getInstance().accept(null, false, false, callbackAccept);
             }
             break;
             case R.id.bt_mute: {
@@ -225,7 +231,7 @@ public class ActivityTake extends Activity implements OnClickListener {
             break;
             case R.id.bt_hangup:
                 if (IS_CALL_ESTABLISHED) {
-                    Builder builder = new Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+                    Builder builder = new Builder(this);
                     builder.setNegativeButton(R.string.ActivityTake_cancel, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -325,7 +331,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         return super.onKeyDown(keyCode, event);
     }
 
-
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
@@ -362,8 +367,8 @@ public class ActivityTake extends Activity implements OnClickListener {
 
     private class Observer_ChatState implements AVChatStateObserver {
         @Override
-        public void onConnectedServer(int i) {
-            Log.i(TAG, "onConnectedServer: " + i);
+        public void onConnectedServer(int i, String s, String s1) {
+
         }
 
         @Override

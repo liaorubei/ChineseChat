@@ -1,19 +1,5 @@
 package com.newclass.woyaoxue.activity;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.newclass.woyaoxue.bean.Response;
-import com.newclass.woyaoxue.bean.User;
-import com.newclass.woyaoxue.util.CommonUtil;
-import com.newclass.woyaoxue.util.HttpUtil;
-import com.newclass.woyaoxue.util.HttpUtil.Parameters;
-import com.newclass.woyaoxue.util.Log;
-import com.newclass.woyaoxue.util.NetworkUtil;
-import com.voc.woyaoxue.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,9 +10,20 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.newclass.woyaoxue.bean.Response;
+import com.newclass.woyaoxue.bean.User;
+import com.newclass.woyaoxue.util.CommonUtil;
+import com.newclass.woyaoxue.util.HttpUtil;
+import com.newclass.woyaoxue.util.HttpUtil.Parameters;
+import com.newclass.woyaoxue.util.NetworkUtil;
+import com.voc.woyaoxue.R;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -87,7 +84,7 @@ public class ActivitySignUp extends Activity implements OnClickListener {
                 String repassword = et_repassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(repassword)) {
-                    CommonUtil.toast("数据不能为空");
+                    CommonUtil.toast(R.string.ActivitySignUp_email_password_can_not_null);
                     return;
                 }
 
@@ -97,19 +94,19 @@ public class ActivitySignUp extends Activity implements OnClickListener {
                 Matcher matcher = regex.matcher(email);
                 boolean isMatched = matcher.matches();
                 if (!isMatched) {
-                    CommonUtil.toast("邮箱格式不正确");
+                    CommonUtil.toast(R.string.ActivitySignUp_email_format_wrong);
                     return;
                 }
 
                 if (!password.equals(repassword)) {
-                    CommonUtil.toast("两次输入的密码不一致");
+                    CommonUtil.toast(R.string.ActivitySignUp_password_are_not_same);
                     return;
                 }
 
                 Parameters parameters = new Parameters();
                 parameters.add("email", email);
                 parameters.add("password", password);
-                parameters.add("category", "" + 0);
+                parameters.add("category", 0);
                 HttpUtil.post(NetworkUtil.userCreate, parameters, new RequestCallBack<String>() {
 
                     @Override
@@ -118,9 +115,8 @@ public class ActivitySignUp extends Activity implements OnClickListener {
                         Response<User> json = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
                         }.getType());
 
-                        Log.i("logi", "创建成功:" + json.toString());
                         if (200 == json.code) {
-                            Toast.makeText(ActivitySignUp.this, "注册成功", Toast.LENGTH_SHORT).show();
+                            CommonUtil.toast(R.string.ActivitySignUp_register_success);
                             // 返回注册信息
                             Intent data = new Intent();
                             data.putExtra("email", et_email.getText().toString().trim());
@@ -134,7 +130,7 @@ public class ActivitySignUp extends Activity implements OnClickListener {
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        Toast.makeText(ActivitySignUp.this, "网络异常,请重试", Toast.LENGTH_SHORT).show();
+                        CommonUtil.toast(R.string.network_error);
                         bt_signup.setEnabled(true);
                     }
                 });

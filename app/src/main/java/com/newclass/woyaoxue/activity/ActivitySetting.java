@@ -9,9 +9,6 @@ import android.os.Bundle;
 
 import android.text.format.Formatter;
 import android.view.View;
-import android.view.Window;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.netease.nimlib.sdk.NIMClient;
@@ -27,6 +24,7 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
     private static final String TAG = "SettingActivity";
     private TextView tv_login, tv_cache;
     private Dialog dialogWipeData;
+    private AlertDialog dialogLogin;
 
 
     @Override
@@ -41,9 +39,13 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
         //清除缓存菜单数据,只显示两个文件的大小,一个是自己的下载文件夹,一个是数据库文件夹
         long length = FileUtil.fileLength(new File(getFilesDir(), "File")) + FileUtil.fileLength(new File(getFilesDir().getParentFile(), "databases"));
         tv_cache.setText(Formatter.formatFileSize(getApplicationContext(), length));
+    }
 
+    @Override
+    protected void onResume() {
         //登录菜单的文本显示
         tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
+        super.onResume();
     }
 
     private void initView() {
@@ -61,6 +63,30 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
         tv_login = (TextView) findViewById(R.id.tv_login);
     }
 
+    private void showLoginDialog() {
+        if (dialogLogin == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.fragment_person_dialog_title);
+            builder.setMessage(R.string.fragment_person_dialog_message);
+            builder.setPositiveButton(R.string.fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startActivity(new Intent(ActivitySetting.this, ActivitySignIn.class));
+                    dialog.dismiss();
+                }
+            });
+            builder.setNegativeButton(R.string.fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            dialogLogin = builder.create();
+        }
+        dialogLogin.show();
+    }
+
     @Override
     public void onClick(View v) {
 
@@ -69,6 +95,12 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                 this.finish();
                 break;
             case R.id.rl_security: {
+                if (NIMClient.getStatus() != StatusCode.LOGINED) {
+                    showLoginDialog();
+                    return;
+                }
+
+
                 startActivity(new Intent(getApplicationContext(), ActivitySecurity.class));
             }
             break;
@@ -118,7 +150,7 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                 if (NIMClient.getStatus() == StatusCode.LOGINED) {
                     NIMClient.getService(AuthService.class).logout();
                     getSharedPreferences("user", MODE_PRIVATE).edit().clear().commit();
-                    CommonUtil.toast(getString(R.string.ActivitySetting_Toast_登出成功));
+                    CommonUtil.toast(getString(R.string.ActivitySetting_Toast_logout_success));
                     tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
                 } else {
                     startActivity(new Intent(this, ActivitySignIn.class));
