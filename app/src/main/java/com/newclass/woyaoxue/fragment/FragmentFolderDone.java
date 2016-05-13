@@ -88,7 +88,7 @@ public class FragmentFolderDone extends Fragment {
             ViewHolder holder = (ViewHolder) convertView.getTag();
             holder.tv_folder.setText(item.Name);
             holder.tv_counts.setText("课程:" + item.DocsCount);
-            holder.iv_delete.setVisibility(View.VISIBLE);
+            holder.iv_delete.setVisibility(View.GONE);
             holder.iv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

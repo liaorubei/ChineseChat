@@ -261,14 +261,6 @@ public class ActivityTake extends Activity implements OnClickListener {
                 k.Id = 11;
                 showThemeQuestion(k);
                 break;
-
-            case R.id.bt_face: {
-                ActivityHistory.start(ActivityTake.this, avChatData.getAccount());
-            }
-            break;
-
-            default:
-                break;
         }
     }
 

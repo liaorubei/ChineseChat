@@ -387,7 +387,7 @@
     <string name="MainActivity_one_more_time_quit">Click one more time to quit</string>
 
     <!--FragmentListen-->
-    <string name="FragmentListen_downloaded">已下载</string>
+    <string name="FragmentListen_downloaded">DOWNLD</string>
 
     <!--FragmentChoose-->
     <string name="FragmentChoose_busy">The teacher is busy</string>
@@ -417,7 +417,7 @@
     <string name="fragment_person_lessons">Lessons history</string>
 
     <string name="fragment_person_dialog_title">Tips</string>
-    <string name="fragment_person_dialog_message">Please log in first!</string>
+    <string name="fragment_person_dialog_message">Please log in first</string>
     <string name="fragment_person_dialog_positive">OK</string>
     <string name="fragment_person_dialog_negative">Cancel</string>
 
@@ -523,7 +523,7 @@
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_download">Download</string>
-    <string name="ActivityDocsTodo_alreadyDownload">Already in download queue</string>
+    <string name="ActivityDocsTodo_alreadyDownload">The course has been downloaded</string>
 
     <!--ActivityDocsDone-->
     <string name="ActivityDocsDone_Delete">Delete</string>
@@ -560,16 +560,16 @@
     <!--ActivityReset-->
     <string name="ActivityReset_reset_password">Reset Password</string>
     <string name="ActivityReset_please_input_email">Enter e-mail address</string>
-    <string name="ActivityReset_please_type_code">Verify code</string>
-    <string name="ActivityReset_get_code">Gain verify code</string>
+    <string name="ActivityReset_please_type_code">Code</string>
+    <string name="ActivityReset_get_code">Obtain verification code</string>
     <string name="ActivityReset_next">Next</string>
     <string name="ActivityReset_please_type_you_new_password">Enter password</string>
     <string name="ActivityReset_please_retype_you_new_password">Confirm password</string>
     <string name="ActivityReset_confirm">OK</string>
     <string name="ActivityReset_EmailAddressFormatIsNotCorrect">Email address format is not correct</string>
     <string name="ActivityReset_Please_check_your_email">Please check your email and gain the code</string>
-    <string name="ActivityReset_email_and_code_can_not_be_null">Email and verify code cannot be empty</string>
-    <string name="ActivityReset_get_code_error">Gain verify code failure,Please try again!</string>
+    <string name="ActivityReset_email_and_code_can_not_be_null">Email and verification code cannot be empty</string>
+    <string name="ActivityReset_get_code_error">Obtain verification code failure,Please try again!</string>
     <string name="ActivityReset_password_are_not_the_same">The two password are not same</string>
     <string name="ActivityReset_password_change_success">Reset password success,please use the new password to login</string>
 
@@ -578,7 +578,7 @@
     <string name="ActivitySignIn_type_email">E-mail</string>
     <string name="ActivitySignIn_type_password">Password</string>
     <string name="ActivitySignIn_login">Login</string>
-    <string name="ActivitySignIn_forgot_password">Forget password?</string>
+    <string name="ActivitySignIn_forgot_password">Forgot password?</string>
     <string name="ActivitySignIn_user_register">Registration</string>
     <string name="ActivitySignIn_login_failure">Login failed</string>
     <string name="ActivitySignIn_email_or_password_not_null">Sorry,Email or the password can not be null!</string>

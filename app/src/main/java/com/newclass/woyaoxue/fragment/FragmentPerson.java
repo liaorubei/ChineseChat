@@ -33,27 +33,22 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private ImageView iv_gender;
     private TextView tv_coins;
     private View rl_payment, rl_setting, rl_history, rl_lessons;
-    private String username;
-    private String accid;
     private View rl_coins;
     private AlertDialog dialogLogin;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView: ");
         return inflater.inflate(R.layout.fragment_person, null);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i(TAG, "onViewCreated: ");
         super.onViewCreated(view, savedInstanceState);
         //头像，昵称,性别，学币
         iv_avatar = (ImageView) view.findViewById(R.id.iv_avatar);
         tv_nickname = (TextView) view.findViewById(R.id.tv_nickname);
         iv_gender = (ImageView) view.findViewById(R.id.iv_gender);
         tv_coins = (TextView) view.findViewById(R.id.tv_coins);
-
         rl_coins = view.findViewById(R.id.rl_coins);
 
         //充值，设置，学习记录菜单
@@ -61,7 +56,6 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         rl_setting = view.findViewById(R.id.rl_setting);
         rl_history = view.findViewById(R.id.rl_history);
         rl_lessons = view.findViewById(R.id.rl_lessons);
-        rl_lessons.setVisibility(ChineseChat.isStudent() ? view.INVISIBLE : View.VISIBLE);
 
         //点击事件
         view.findViewById(R.id.ll_person).setOnClickListener(this);
@@ -77,8 +71,6 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         super.onResume();
         if (NIMClient.getStatus() == StatusCode.LOGINED) {
             //显示头像，昵称，性别，学币
-            username = ChineseChat.CurrentUser.Username;
-            accid = ChineseChat.CurrentUser.Accid;
             String avatar = ChineseChat.CurrentUser.Avatar;
             String nickname = ChineseChat.CurrentUser.Nickname;
             int gender = ChineseChat.CurrentUser.Gender;
@@ -90,10 +82,15 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
             tv_nickname.setText(nickname);
             iv_gender.setImageResource(gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
             iv_gender.setVisibility(gender > -1 ? View.VISIBLE : View.INVISIBLE);
-            tv_coins.setText(coins + " Coins");
+            tv_coins.setText(coins + " coins");
+        } else {
+            iv_avatar.setImageResource(R.drawable.ic_launcher_student);
+            tv_nickname.setText(R.string.fragment_person_unlogin);
+            iv_gender.setVisibility(View.GONE);
         }
 
         //如果是教师端，则不显示我的学币，充值和学习记录
+        rl_lessons.setVisibility(ChineseChat.isStudent() ? View.INVISIBLE : View.VISIBLE);
         boolean isStudent = ChineseChat.isStudent();
         rl_coins.setVisibility(isStudent ? View.VISIBLE : View.INVISIBLE);
         rl_payment.setVisibility(isStudent ? View.VISIBLE : View.GONE);
@@ -121,16 +118,15 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                 }
                 startActivity(new Intent(getActivity(), ActivityPayment.class));
                 break;
-
+            case R.id.rl_setting:
+                startActivity(new Intent(getActivity(), ActivitySetting.class));
+                break;
             case R.id.rl_history:
                 if (NIMClient.getStatus() != StatusCode.LOGINED) {
                     showLoginDialog();
                     return;
                 }
-                ActivityHistory.start(getActivity(), username);
-                break;
-            case R.id.rl_setting:
-                startActivity(new Intent(getActivity(), ActivitySetting.class));
+                startActivity(new Intent(getActivity(), ActivityHistory.class));
                 break;
             case R.id.rl_lessons:
                 if (NIMClient.getStatus() != StatusCode.LOGINED) {

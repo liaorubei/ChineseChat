@@ -19,7 +19,7 @@
             android:layout_height="45dp"
             android:layout_centerInParent="true"
             android:padding="10dp"
-            android:src="@drawable/download_disable" />
+            android:src="@drawable/selector_box_check" />
 
         <com.newclass.woyaoxue.view.CircularProgressBar
             android:id="@+id/pb_down"
@@ -33,7 +33,6 @@
             fylx:textColor="@color/color_app"
             fylx:textIsDisplayable="true"
             fylx:textSize="10sp" />
-
     </RelativeLayout>
 
     <RelativeLayout

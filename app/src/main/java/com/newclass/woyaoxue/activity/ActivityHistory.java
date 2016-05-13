@@ -3,6 +3,7 @@ package com.newclass.woyaoxue.activity;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -10,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.CallLog;
 import com.newclass.woyaoxue.bean.Response;
@@ -18,12 +20,15 @@ import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.HttpUtil.Parameters;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
+import com.newclass.woyaoxue.view.XListView;
+import com.newclass.woyaoxue.view.XListViewFooter;
 import com.voc.woyaoxue.R;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,13 +38,13 @@ import android.widget.TextView;
 //聊天记录
 public class ActivityHistory extends Activity {
     protected static final String TAG = "HistoryActivity";
-    private static final String KEY_USERNAME = "KEY_USERNAME";
-    private ListView listview;
+    private XListView listview;
     private List<CallLog> list;
     private BaseAdapter<CallLog> adapter;
-    private String username;
     private SimpleDateFormat sdf;
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+    private SwipeRefreshLayout srl;
+    private int take = 50;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +52,11 @@ public class ActivityHistory extends Activity {
         setContentView(R.layout.activity_history);
 
         initView();
-        initData();
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
         sdf = new SimpleDateFormat("HH:mm:ss   E,dd/MM/yyyy");
+        refresh(true);
     }
 
     @Override
@@ -76,26 +81,39 @@ public class ActivityHistory extends Activity {
             }
         });
 
-        listview = (ListView) findViewById(R.id.listview);
+        srl = (SwipeRefreshLayout) findViewById(R.id.srl);
+        srl.setColorSchemeResources(R.color.color_app);
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh(true);
+            }
+        });
+
         list = new ArrayList<CallLog>();
         adapter = new MyAdapter(list);
+        listview = (XListView) findViewById(R.id.listview);
+        listview.setPullDownEnable(false);
+        listview.setPullupEnable(false);
+        listview.setXListViewListener(new XListView.IXListViewListener() {
+            @Override
+            public void onRefresh() {
+                refresh(true);
+            }
+
+            @Override
+            public void onLoadMore() {
+                refresh(false);
+            }
+        });
         listview.setAdapter(adapter);
     }
 
-    public static void start(Context context, String accid) {
-        Intent intent = new Intent(context, ActivityHistory.class);
-        intent.putExtra(KEY_USERNAME, accid);
-        context.startActivity(intent);
-    }
-
-    private void initData() {
-        Intent intent = getIntent();
-        username = intent.getStringExtra(KEY_USERNAME);
-
+    private void refresh(final boolean refresh) {
         Parameters parameters = new Parameters();
-        parameters.add("username", username);
-        parameters.add("skip", 0 + "");
-        parameters.add("take", 50 + "");
+        parameters.add("username", ChineseChat.CurrentUser.Username);
+        parameters.add("skip", refresh ? 0 : list.size());
+        parameters.add("take", take);
 
         HttpUtil.post(NetworkUtil.GetStudentCallLogByUsername, parameters, new RequestCallBack<String>() {
             @Override
@@ -103,19 +121,29 @@ public class ActivityHistory extends Activity {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<CallLog>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<CallLog>>>() {
                 }.getType());
+
+                listview.setPullupEnable(true);//要把可用设在前面,不然状态会不正常
                 if (resp.code == 200) {
-                    list.clear();
+                    if (refresh) {
+                        list.clear();
+                    }
                     List<CallLog> logs = resp.info;
                     for (CallLog callLog : logs) {
                         list.add(callLog);
                     }
-                    adapter.notifyDataSetChanged();
+                    listview.stopLoadMore(logs.size() < take ? XListViewFooter.STATE_NOMORE : XListViewFooter.STATE_NORMAL);
+                } else {
+                    listview.stopLoadMore(XListViewFooter.STATE_ERRORS);
                 }
+                srl.setRefreshing(false);
+                adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "获取记录失败:" + msg);
+                Log.i(TAG, "onFailure: " + msg);
+                listview.setPullupEnable(true);
+                listview.stopLoadMore(XListViewFooter.STATE_ERRORS);
             }
         });
     }
@@ -129,22 +157,38 @@ public class ActivityHistory extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             CallLog item = getItem(position);
-            View inflate = View.inflate(getApplication(), R.layout.listitem_history, null);
-            TextView tv_theme = (TextView) inflate.findViewById(R.id.tv_theme);
-            TextView tv_teacher = (TextView) inflate.findViewById(R.id.tv_teacher);
-            TextView tv_coins = (TextView) inflate.findViewById(R.id.tv_coins);
-            TextView tv_date = (TextView) inflate.findViewById(R.id.tv_date);
-            TextView tv_time = (TextView) inflate.findViewById(R.id.tv_time);
-
-            tv_theme.setText(getString(R.string.ActivityHistory_theme) + "Unselected");
-            if (item.Themes != null && item.Themes.size() > 0) {
-                tv_theme.setText(getString(R.string.ActivityHistory_theme) + item.Themes.get(0).Name);
+            if (convertView == null) {
+                convertView = View.inflate(getApplication(), R.layout.listitem_history, null);
+                new ViewHolder(convertView);
             }
-            tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Nickname);
-            tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
-            tv_date.setText(sdf.format(item.Start));
-            tv_time.setText(getString(R.string.ActivityHistory_duration) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
-            return inflate;
+            ViewHolder holder = (ViewHolder) convertView.getTag();
+
+            holder.tv_theme.setText(getString(R.string.ActivityHistory_theme) + "Unselected");
+            if (item.Themes != null && item.Themes.size() > 0) {
+                holder.tv_theme.setText(getString(R.string.ActivityHistory_theme) + item.Themes.get(0).Name);
+            }
+            holder.tv_teacher.setText(getString(R.string.ActivityHistory_teacher) + item.Teacher.Nickname);
+            holder.tv_coins.setText(getString(R.string.ActivityHistory_coins) + item.Coins);
+            holder.tv_date.setText(sdf.format(item.Start));
+            holder.tv_time.setText(getString(R.string.ActivityHistory_duration) + CommonUtil.millisecondsFormat(item.Finish.getTime() - item.Start.getTime()));
+            return convertView;
+        }
+    }
+
+    private class ViewHolder {
+        public TextView tv_theme;
+        public TextView tv_teacher;
+        public TextView tv_coins;
+        public TextView tv_date;
+        public TextView tv_time;
+
+        public ViewHolder(View convertView) {
+            convertView.setTag(this);
+            this.tv_theme = (TextView) convertView.findViewById(R.id.tv_theme);
+            this.tv_teacher = (TextView) convertView.findViewById(R.id.tv_teacher);
+            this.tv_coins = (TextView) convertView.findViewById(R.id.tv_coins);
+            this.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
+            this.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
         }
     }
 }

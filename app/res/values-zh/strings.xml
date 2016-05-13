@@ -161,7 +161,6 @@
     <string name="ActivityTheme_title">主题</string>
     <string name="FragmentChoose_busy">教师正在忙</string>
     <string name="FragmentChoose_offline">教师不在线</string>
-    <string name="FragmentListen_downloaded">已下载</string>
     <string name="ActivityHistory_title">学习记录</string>
     <string name="ActivityDocsTodo_title">课程</string>
     <string name="ActivityPlay_title">播放</string>
@@ -181,4 +180,6 @@
     <string name="xlistview_header_hint_normal">下拉刷新</string>
     <string name="xlistview_header_hint_ready">松开刷新数据</string>
     <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="ActivityPerson_album">相册</string>
+    <string name="ActivityPerson_camera">相机</string>
 </resources>

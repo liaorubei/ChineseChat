@@ -319,7 +319,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
             tv_main.setText(getString(R.string.ActivityPayment_item) + item.Main);
             tv_amount.setText(getString(R.string.ActivityPayment_amount) + item.Amount + " " + ("USD".equals(item.Currency) ? "USD" : "RMB"));
-            tv_state.setText(Html.fromHtml(getString(R.string.ActivityPayment_status) + "<font " + ("SUCCESS".equals(item.TradeStatus) ? ">" : " color='#ff0000'>") + ("SUCCESS".equals(item.TradeStatus) ? "Completed" : "Failure") + "</font>"));
+            tv_state.setText(Html.fromHtml(getString(R.string.ActivityPayment_status) + "<font " + ("SUCCESS".equals(item.TradeStatus) ? ">" : " color='#ff0000'>") + ("SUCCESS".equals(item.TradeStatus) ? "Completed" : "Failed") + "</font>"));
             tv_time.setText(sdf.format(item.CreateTime));
             return inflate;
         }
