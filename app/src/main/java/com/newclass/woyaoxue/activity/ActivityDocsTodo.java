@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.format.Formatter;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -40,39 +38,36 @@ import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.CircularProgressBar;
 import com.voc.woyaoxue.R;
 
-import java.io.InputStream;
-import java.lang.reflect.Method;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-
-/*
-*
-* 文档列表页
-*
-* */
-public class ActivityDocsTodo extends Activity {
+//文档显示界面,非下载
+public class ActivityDocsTodo extends Activity implements OnClickListener {
     private static final String TAG = "DocsActivity";
     private List<Document> list;
+    private List<ViewHelper> data;
+    private List<Document> down;
     private MyAdapter adapter;
     private ServiceConnection conn;
     private MyBinder myBinder;
     private Database database;
-    private View ib_download;
     private TextView tv_folder;
-    private int pageSize = 25;
+    private int take = 50;
     private Gson gson = new Gson();
-    private SwipeRefreshLayout srl;
     private Folder folder;
     private ListView listview;
+    private ImageView iv_menu;
+    private ImageView iv_delete;
+    private ImageView cb_check_all;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_docstodo);
+
+        down = new ArrayList<>();
 
         // 取得传递过来的数据
         Intent intent = getIntent();
@@ -110,7 +105,7 @@ public class ActivityDocsTodo extends Activity {
 
     private void initData() {
 
-        String url = NetworkUtil.getDocs(folder.Id + "", 0 + "", pageSize + "");
+        String url = NetworkUtil.getDocs(folder.Id + "", 0 + "", take + "");
 
         UrlCache cache = ChineseChat.getDatabase().cacheSelectByUrl(url);
         if (cache == null) {
@@ -130,7 +125,6 @@ public class ActivityDocsTodo extends Activity {
                 @Override
                 public void onFailure(HttpException error, String msg) {
                     CommonUtil.toast(getString(R.string.network_error));
-                    srl.setRefreshing(false);
                 }
             });
         } else {
@@ -151,7 +145,6 @@ public class ActivityDocsTodo extends Activity {
                     @Override
                     public void onFailure(HttpException error, String msg) {
                         CommonUtil.toast(getString(R.string.network_error));
-                        srl.setRefreshing(false);
                     }
                 });
             } else {
@@ -168,9 +161,9 @@ public class ActivityDocsTodo extends Activity {
         list.clear();
         for (Document d : docs) {
             list.add(d);
+            data.add(new ViewHelper());
         }
         adapter.notifyDataSetChanged();
-        srl.setRefreshing(false);
     }
 
     private void initView() {
@@ -181,15 +174,21 @@ public class ActivityDocsTodo extends Activity {
                 finish();
             }
         });
+        iv_menu = (ImageView) findViewById(R.id.iv_menu);
+        iv_menu.setOnClickListener(this);
 
-        //查找
-        srl = (SwipeRefreshLayout) findViewById(R.id.srl);
-        listview = (ListView) findViewById(android.R.id.list);
-        ib_download = findViewById(R.id.ib_download);
+        iv_delete = (ImageView) findViewById(R.id.iv_delete);
+        iv_delete.setOnClickListener(this);
+
         tv_folder = (TextView) findViewById(R.id.tv_folder);
+        cb_check_all = (ImageView) findViewById(R.id.cb_check_all);
+        cb_check_all.setOnClickListener(this);
+
+        listview = (ListView) findViewById(android.R.id.list);
 
         //初始化变量
         list = new ArrayList<>();
+        data = new ArrayList<>();
         adapter = new MyAdapter(list);
 
         //设置监听或其它
@@ -204,36 +203,6 @@ public class ActivityDocsTodo extends Activity {
                 startActivity(intent);
             }
         });
-
-        srl.setColorSchemeResources(R.color.color_app);
-        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                initData();
-            }
-        });
-
-        ib_download.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 添加到下载列表中,添加到数据库中,提示数据适配器更新
-                for (Document i : list) {
-                    if (!database.docsExists(i.Id)) {
-                        download(i);
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        });
-
-        //加载动画
-        try {
-            Method setRefreshing = SwipeRefreshLayout.class.getDeclaredMethod("setRefreshing", boolean.class, boolean.class);
-            setRefreshing.setAccessible(true);
-            setRefreshing.invoke(srl, true, true);
-        } catch (Exception ex) {
-
-        }
     }
 
     @Override
@@ -278,6 +247,62 @@ public class ActivityDocsTodo extends Activity {
         database.docsInsert(doc);
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.iv_menu:
+                if (iv_menu.isSelected()) {
+                    for (ViewHelper helper : data) {
+                        helper.checkBoxShow = false;
+                        helper.isSelected = false;
+                    }
+                    adapter.notifyDataSetChanged();
+
+                    iv_delete.setVisibility(View.INVISIBLE);
+                    iv_delete.setSelected(false);
+
+                    cb_check_all.setVisibility(View.INVISIBLE);
+
+                } else {
+                    for (ViewHelper helper : data) {
+                        helper.checkBoxShow = true;
+                        helper.isSelected = false;
+                    }
+                    adapter.notifyDataSetChanged();
+
+                    iv_delete.setVisibility(View.VISIBLE);
+                    iv_delete.setSelected(false);
+
+                    cb_check_all.setVisibility(View.VISIBLE);
+                }
+                iv_menu.setSelected(!iv_menu.isSelected());
+
+                break;
+            case R.id.cb_check_all:
+                cb_check_all.setSelected(!cb_check_all.isSelected());
+                for (ViewHelper helper : data) {
+                    helper.isSelected = cb_check_all.isSelected();
+                }
+                adapter.notifyDataSetChanged();
+                initState();
+                break;
+            case R.id.iv_delete:
+                if (iv_delete.isSelected()) {
+                    for (Document d : down) {
+                        download(d);
+                    }
+
+                    for (ViewHelper h : data) {
+                        h.isSelected = false;
+                    }
+                    iv_delete.setSelected(false);
+                    cb_check_all.setSelected(false);
+                    adapter.notifyDataSetChanged();
+                }
+                break;
+        }
+    }
+
     private class MyAdapter extends BaseAdapter<Document> implements Observer {
 
         public MyAdapter(List<Document> list) {
@@ -287,18 +312,10 @@ public class ActivityDocsTodo extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final Document item = getItem(position);
+            final ViewHelper dddd = data.get(position);
             if (convertView == null) {
                 convertView = View.inflate(ActivityDocsTodo.this, R.layout.listitem_docs, null);
-                ViewHolder holder = new ViewHolder();
-                convertView.setTag(holder);
-
-                holder.tv_title_one = (TextView) convertView.findViewById(R.id.tv_title_one);
-                holder.tv_title_two = (TextView) convertView.findViewById(R.id.tv_title_two);
-                holder.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
-                holder.tv_size = (TextView) convertView.findViewById(R.id.tv_size);
-                holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
-                holder.iv_down = (ImageView) convertView.findViewById(R.id.iv_down);
-                holder.pb_down = (CircularProgressBar) convertView.findViewById(R.id.pb_down);
+                convertView.setTag(new ViewHolder(convertView));
             }
             final ViewHolder holder = (ViewHolder) convertView.getTag();
             holder.tv_title_one.setText(item.Title);
@@ -308,6 +325,45 @@ public class ActivityDocsTodo extends Activity {
             holder.tv_time.setText(item.LengthString);
 
             DownloadInfo ssss = database.docsSelectById(item.Id);
+            if (ssss != null) {
+                holder.rl_ctrl.setVisibility(View.VISIBLE);
+                if (ssss.IsDownload == 1) {
+                    holder.iv_over.setVisibility(View.VISIBLE);
+                    holder.iv_down.setVisibility(View.INVISIBLE);
+                    holder.pb_down.setVisibility(View.INVISIBLE);
+                } else {
+                    holder.iv_over.setVisibility(View.INVISIBLE);
+                    holder.iv_down.setVisibility(View.INVISIBLE);
+
+                    holder.pb_down.setVisibility(View.VISIBLE);
+                    DownloadInfo info = myBinder.getDownloadManager().get(item.Id);
+                    holder.pb_down.setMax((int) info.Total);
+                    holder.pb_down.setProgress((int) info.Current);
+                }
+            } else {
+                holder.pb_down.setVisibility(View.INVISIBLE);
+                holder.iv_over.setVisibility(View.INVISIBLE);
+                if (dddd.checkBoxShow) {
+                    holder.iv_down.setVisibility(View.VISIBLE);
+                    holder.rl_ctrl.setVisibility(View.VISIBLE);
+                } else {
+                    holder.rl_ctrl.setVisibility(View.GONE);
+                }
+                holder.iv_down.setSelected(dddd.isSelected);
+            }
+
+            holder.iv_down.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    v.setSelected(!v.isSelected());
+                    dddd.isSelected = v.isSelected();
+                    initState();
+                }
+            });
+
+
+
+            /*
             if (ssss != null) {
                 if (ssss.IsDownload == 1) {
                     holder.pb_down.setMax(100);
@@ -330,7 +386,8 @@ public class ActivityDocsTodo extends Activity {
                 holder.iv_down.setImageResource(R.drawable.download_pressed);
             }
 
-            holder.iv_down.setOnClickListener(new OnClickListener() {
+
+           holder.iv_down.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (database.docsExists(item.Id)) {
@@ -343,7 +400,7 @@ public class ActivityDocsTodo extends Activity {
                         holder.iv_down.setVisibility(View.INVISIBLE);
                     }
                 }
-            });
+            });*/
 
             return convertView;
         }
@@ -355,13 +412,54 @@ public class ActivityDocsTodo extends Activity {
         }
     }
 
+    private void initState() {
+        //选中,并且没有下载过的数量
+        int check = 0;
+        down.clear();
+        for (int i = 0; i < list.size(); i++) {
+            Document document = list.get(i);
+            ViewHelper helper = data.get(i);
+            if (database.docsSelectById(document.Id) == null && helper.isSelected) {
+                down.add(document);
+            }
+
+            if (database.docsSelectById(document.Id) == null) {
+                check++;
+            }
+        }
+
+        iv_delete.setSelected(down.size() > 0);
+        cb_check_all.setSelected(down.size() == check);
+    }
+
     private class ViewHolder {
         public TextView tv_title_one;
         public TextView tv_title_two;
         public TextView tv_date;
         public TextView tv_size;
         public TextView tv_time;
-        public ImageView iv_down;
+        public View rl_ctrl;
+        public View iv_over;
+        public View iv_down;
         public CircularProgressBar pb_down;
+
+        public ViewHolder(View convertView) {
+            this.tv_title_one = (TextView) convertView.findViewById(R.id.tv_title_one);
+            this.tv_title_two = (TextView) convertView.findViewById(R.id.tv_title_two);
+            this.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
+            this.tv_size = (TextView) convertView.findViewById(R.id.tv_size);
+            this.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
+
+            this.rl_ctrl = convertView.findViewById(R.id.rl_ctrl);
+            this.iv_over = convertView.findViewById(R.id.iv_over);
+            this.iv_down = convertView.findViewById(R.id.iv_down);
+            this.pb_down = (CircularProgressBar) convertView.findViewById(R.id.pb_down);
+        }
+    }
+
+    private class ViewHelper {
+
+        public boolean checkBoxShow;
+        public boolean isSelected;
     }
 }

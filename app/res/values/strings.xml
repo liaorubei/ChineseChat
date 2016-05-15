@@ -567,7 +567,7 @@
     <string name="ActivityReset_please_retype_you_new_password">Confirm password</string>
     <string name="ActivityReset_confirm">OK</string>
     <string name="ActivityReset_EmailAddressFormatIsNotCorrect">Email address format is not correct</string>
-    <string name="ActivityReset_Please_check_your_email">Please check your email and gain the code</string>
+    <string name="ActivityReset_Please_check_your_email">Please check your email and obtain the verification code</string>
     <string name="ActivityReset_email_and_code_can_not_be_null">Email and verification code cannot be empty</string>
     <string name="ActivityReset_get_code_error">Obtain verification code failure,Please try again!</string>
     <string name="ActivityReset_password_are_not_the_same">The two password are not same</string>
@@ -606,7 +606,7 @@
     <string name="ActivityUsehelp_title">Use Help</string>
 
     <!--ActivityTheme-->
-    <string name="ActivityTheme_title">Theme</string>
+    <string name="ActivityTheme_title">Topic</string>
     <string name="ActivityTheme_confirm">OK</string>
 
     <!--ActivityProfile-->

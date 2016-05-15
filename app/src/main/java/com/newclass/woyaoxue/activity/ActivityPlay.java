@@ -247,6 +247,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     }
 
     private void initData() {
+        //根据mode来判断,如果Mode=Online,则只能访问网络上的资源,只有Mode=Offline时,才会使用本地资源
+
+
+
         // 如果已经下载,那么直接使用下载的数据
         DownloadInfo info = database.docsSelectById(documentId);
         if (info != null && info.IsDownload == 1 && !TextUtils.isEmpty(info.Json)) {
@@ -286,7 +290,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             Document document = new Gson().fromJson(cache.Json, Document.class);
             fillData(document);
         }
-
     }
 
     private void initMediaRecorder(String path) {

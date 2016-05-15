@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F0F0"
@@ -39,6 +39,7 @@
         android:id="@+id/rl_download"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:layout_below="@id/layout_title"
         android:background="#FAFAFA">
 
         <TextView
@@ -52,25 +53,33 @@
             android:textSize="18sp" />
 
         <ImageView
-            android:id="@+id/cb_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/cb_check_all"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/selector_box_check" />
+            android:src="@drawable/selector_box_check"
+            android:visibility="invisible" />
     </RelativeLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/srl"
+    <ListView
+        android:id="@android:id/list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_download"
+        android:scrollbars="none" />
 
-        <ListView
-            android:id="@android:id/list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/rl_download"
-            android:scrollbars="none" />
-    </android.support.v4.widget.SwipeRefreshLayout>
-</LinearLayout>
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/shape_oval_white"
+        android:padding="10dp"
+        android:src="@drawable/selector_icon_dwonload"
+        android:visibility="invisible" />
+</RelativeLayout>

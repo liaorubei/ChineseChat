@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,13 +14,11 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -32,6 +32,7 @@ import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.activity.ActivityCall;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.ActivityProfile;
+import com.newclass.woyaoxue.activity.ActivityTake;
 import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.User;
@@ -39,13 +40,15 @@ import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
+import com.newclass.woyaoxue.view.XListView;
+import com.newclass.woyaoxue.view.XListViewFooter;
 import com.voc.woyaoxue.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 //#DEAE12
-public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FragmentChoose extends Fragment {
     private String TAG = "FragmentChoose";
     private static final int REFRESH_DATA = 1;
     private static Gson gson = new Gson();
@@ -53,56 +56,71 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
     private List<User> list;
     private MyAdapter adapter;
     private SwipeRefreshLayout srl;
-    private TextView tv_time;
     private int time = 0;
-    private int offset = 1;//递归时间，单位秒
+
     private MediaPlayer mediaPlayer;
+    private AlertDialog dialogLogin;
+    private XListView xListView;
+    private int take = 50;
 
     public Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_DATA:
+                    int offset = 1;//递归时间，单位秒
                     time += offset;
                     if (visible && time >= 60) {
-                        refresh();
+                        refresh(true);
                     }
-                    tv_time.setText(time + "");
+                    //Log.i(TAG, "handleMessage: " + time);
                     sendEmptyMessageDelayed(REFRESH_DATA, offset * 1000);
                     break;
             }
         }
     };
-    private AlertDialog dialogLogin;
+    private boolean first = false;
 
-    private void refresh() {
+    /*
+    * params refresh
+     */
+    private void refresh(final boolean refresh) {
         time = 0;
-        srl.setRefreshing(true);
+        if (first) {//只第一次自动刷新的时候出现这个加载图标
+            srl.setRefreshing(true);
+            first = false;
+        }
+
         HttpUtil.Parameters params = new HttpUtil.Parameters();
-        params.add("skip", "0");
-        params.add("take", "50");//每次只取最前面5个
+        params.add("skip", refresh ? 0 : list.size());
+        params.add("take", take);
         HttpUtil.post(NetworkUtil.getTeacher, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<User>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<User>>>() {
                 }.getType());
-
-                list.clear();
-
+                if (refresh) {
+                    list.clear();
+                }
                 List<User> info = resp.info;
                 for (User u : info) {
                     list.add(u);
                 }
                 adapter.notifyDataSetChanged();
-                srl.setVisibility(View.VISIBLE);
                 srl.setRefreshing(false);
+                xListView.setPullupEnable(true);
+                xListView.stopLoadMore(info.size() < take ? XListViewFooter.STATE_NOMORE : XListViewFooter.STATE_NORMAL);
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
                 CommonUtil.toast(R.string.network_error);
+
+                srl.setRefreshing(false);
+                xListView.setPullupEnable(true);
+                xListView.stopLoadMore(XListViewFooter.STATE_ERRORS);
             }
         });
     }
@@ -123,28 +141,37 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
     public void onViewCreated(View view, Bundle savedInstanceState) {
         srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
         srl.setColorSchemeResources(R.color.color_app);
-        srl.setOnRefreshListener(this);
-
-        ListView listview = (ListView) view.findViewById(R.id.listview);
-        TextView emptyView = new TextView(getActivity());
-        emptyView.setText("12305");
-        emptyView.setGravity(Gravity.CENTER);
-        emptyView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        emptyView.setBackgroundResource(R.drawable.chat_background);
-
-        listview.setEmptyView(emptyView);
-        list = new ArrayList<User>();
-        adapter = new MyAdapter(list);
-        listview.setAdapter(adapter);
-        listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "onItemClick: " + list.get(position).Accid);
-                ActivityProfile.start(getActivity(), list.get(position));
+            public void onRefresh() {
+                refresh(true);
             }
         });
 
-        tv_time = (TextView) view.findViewById(R.id.tv_time);
+        list = new ArrayList<User>();
+        adapter = new MyAdapter(list);
+        xListView = (XListView) view.findViewById(R.id.listview);
+        xListView.setAdapter(adapter);
+        xListView.setPullupEnable(false);
+        xListView.setPullDownEnable(false);
+        xListView.setXListViewListener(new XListView.IXListViewListener() {
+            @Override
+            public void onRefresh() {
+                refresh(true);
+            }
+
+            @Override
+            public void onLoadMore() {
+                refresh(false);
+            }
+        });
+        xListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.i(TAG, "onItemClick: " + list.get(position).Nickname);
+                ActivityProfile.start(getActivity(), list.get(position-1));
+            }
+        });
     }
 
     @Override
@@ -152,8 +179,8 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         super.onResume();
         time = 60;
         visible = true;
+        first = true;
         handler.removeCallbacksAndMessages(null);
-
         Message message = handler.obtainMessage();
         message.what = REFRESH_DATA;
         handler.sendMessage(message);
@@ -173,11 +200,6 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
         mediaPlayer = null;
     }
 
-    @Override //srl刷新接口实现
-    public void onRefresh() {
-        refresh();
-    }
-
     public class MyAdapter extends BaseAdapter<User> {
         public MyAdapter(List<User> list) {
             super(list);
@@ -192,17 +214,15 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             }
             ViewHolder holder = (ViewHolder) convertView.getTag();
 
-            //三种状态，在线，忙线，掉线 {绿，红，灰}
-            int status = 0;
+            //三种状态，在线，忙线，掉线 {绿，红，灰}1,2.3
+            int status = 3;
             if (user.IsOnline) {
-                status = (user.IsEnable && position < 5) ? 2 : 1;
+                status = (user.IsEnable && position < 5) ? 1 : 2;
             }
-
 
             holder.tv_nickname.setText(user.Nickname);
             holder.tv_nickname.setTextColor(user.IsEnable ? getResources().getColor(R.color.color_app) : Color.RED);
             holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : getResources().getColor(R.color.color_app_normal));
-
 
             holder.tv_spoken.setText(user.Spoken);
             holder.tv_location.setText(user.Country);
@@ -231,8 +251,7 @@ public class FragmentChoose extends Fragment implements SwipeRefreshLayout.OnRef
             }
 
             //设置点击
-
-            holder.bt_call.setBackgroundResource(R.drawable.selector_choose_callb);
+            holder.bt_call.setBackgroundResource(user.IsOnline ? R.drawable.selector_choose_calla : R.drawable.selector_choose_callb);
             holder.bt_call.setEnabled(user.IsEnable && user.IsOnline && position < 5);
             holder.bt_call.setOnClickListener(new View.OnClickListener() {
 
