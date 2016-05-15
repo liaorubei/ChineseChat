@@ -46,6 +46,7 @@ import com.newclass.woyaoxue.bean.Lyric;
 import com.newclass.woyaoxue.bean.UrlCache;
 import com.newclass.woyaoxue.database.Database;
 import com.newclass.woyaoxue.util.CommonUtil;
+import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.newclass.woyaoxue.view.SpecialLyricView;
@@ -62,6 +63,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     private static final String TAG = "PlayActivity";
     private ArrayList<Integer> subTitleIcons;
     private TextView tv_main;
+    private Gson gson = new Gson();
+    private boolean playSingleLineState;
 
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -96,13 +99,18 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     private Database database;
     private int documentId;
     private int elapsedTime = 0;// 录音/播放已经耗费的时间,毫秒数milliseconds
+    private int titck = 0;
     private Handler handler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case REFRESH_SEEKBAR:
+
+                    if (!iv_rec_pause.isSelected()) {
+                        elapsedTime += 50;
+                    }
+
                     refresh_seekbar();
-                    break;
-                default:
+                    sendEmptyMessageDelayed(REFRESH_SEEKBAR, 50);
                     break;
             }
         }
@@ -158,14 +166,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         tv_aSide.setText("");
         tv_bSide.setText("");
         tv_title.setText("");
-
-        Intent intent = getIntent();
-        documentId = intent.getIntExtra("Id", 429);
-        String mode = intent.getStringExtra("mode");
-        tv_main.setText(mode + " " + tv_main.getText());
-
-        // 显示返回按钮
-        //getActionBar().setDisplayHomeAsUpEnabled(true);
 
         database = new Database(this);
         initData();
@@ -247,48 +247,33 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     }
 
     private void initData() {
+        Intent intent = getIntent();
+        documentId = intent.getIntExtra("Id", 429);
+        String mode = intent.getStringExtra("mode");
+        tv_main.setText(mode + " " + tv_main.getText());
+
         //根据mode来判断,如果Mode=Online,则只能访问网络上的资源,只有Mode=Offline时,才会使用本地资源
-
-
-
-        // 如果已经下载,那么直接使用下载的数据
-        DownloadInfo info = database.docsSelectById(documentId);
-        if (info != null && info.IsDownload == 1 && !TextUtils.isEmpty(info.Json)) {
-            Document document = new Gson().fromJson(info.Json, Document.class);
-            fillData(document);
-            return;
-        }
-
-        String url = NetworkUtil.getDocById(documentId);
-
-        UrlCache cache = database.cacheSelectByUrl(url);
-        if (cache == null || (System.currentTimeMillis() - cache.UpdateAt > 6000000)) // 60分钟
-        {
-            new HttpUtils().send(HttpMethod.GET, url, new RequestCallBack<String>() {
+        if ("Offline".equals(mode)) {
+            DownloadInfo info = database.docsSelectById(documentId);
+            if (info != null && info.IsDownload == 1 && !TextUtils.isEmpty(info.Json)) {
+                Document document = gson.fromJson(info.Json, Document.class);
+                fillData(document);
+            }
+        } else {
+            HttpUtil.post(NetworkUtil.getDocById(documentId), null, new RequestCallBack<String>() {
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + responseInfo);
+                    Document document = gson.fromJson(responseInfo.result, Document.class);
+                    fillData(document);
+                }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
-
+                    Log.i(TAG, "onFailure: " + msg);
+                    CommonUtil.toast(R.string.network_error);
                 }
-
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Document document = new Gson().fromJson(responseInfo.result, Document.class);
-                    fillData(document);
-
-                    UrlCache urlCache = new UrlCache();
-                    urlCache.Url = this.getRequestUrl();
-                    urlCache.Json = responseInfo.result;
-                    urlCache.UpdateAt = System.currentTimeMillis();
-                    if (database != null) {
-                        database.cacheInsertOrUpdate(urlCache);
-                    }
-                }
-
             });
-        } else {
-            Document document = new Gson().fromJson(cache.Json, Document.class);
-            fillData(document);
         }
     }
 
@@ -440,7 +425,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 iv_menu.setImageResource(subTitleIcons.get(state));
                 break;
 
-
+            //控制按钮事件
             case R.id.iv_line:
                 iv_line.setSelected(!iv_line.isSelected());
                 isOneLineLoop = iv_line.isSelected();
@@ -454,9 +439,11 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             case R.id.iv_play:
                 if (playerOrigin.isPlaying()) {
                     playerOrigin.pause();
+                    iv_play.setSelected(true);
                     iv_play.setImageResource(R.drawable.play_btn_play_checked);
                 } else {
                     playerOrigin.start();
+                    iv_play.setSelected(false);
                     iv_play.setImageResource(R.drawable.play_btn_pause_checked);
                 }
                 break;
@@ -464,6 +451,9 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 seekToNextLine();
                 break;
             case R.id.iv_tape:
+                //播放状态下的单句循环模式保存
+                playSingleLineState = isOneLineLoop;
+
                 // 控制栏左移动,切换到录音模式
                 toLAnimator.start();
                 isOneLineLoop = true;// 自动进入单句循环
@@ -483,6 +473,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
                 // 播放当前的原音单句,并把录音栏的暂停按钮重置为"可以暂停"
                 elapsedTime = 0;
+                if (!playerOrigin.isPlaying()) {
+                    iv_rec_pause.setSelected(true);
+                }
+                tv_play_record_time.setText(currentState + ":" + millisecondsFormat(elapsedTime));
                 seekToCurrentLine();
                 break;
 
@@ -636,11 +630,36 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 }
                 break;
             case R.id.iv_rec_back:
+                //播放状态下的单句循环状态复原,包括单句循环按钮
+                isOneLineLoop = playSingleLineState;
+                iv_line.setSelected(playSingleLineState);
+
+                //暂停录音，暂停播放录音，并根据原音播放状态调整暂停按钮图片
+                switch (currentState) {
+                    case 播放录音:
+                        playerRecord.stop();
+                        break;
+                    case 正在录音:
+                        recorder.stop();
+                        break;
+                }
+                iv_play.setSelected(!playerOrigin.isPlaying());
+                iv_play.setImageResource(playerOrigin.isPlaying() ? R.drawable.play_btn_pause_checked : R.drawable.play_btn_play_checked);
+
                 // 控制栏右移动,切换到正常模式,同时把录音播放和录音的对象停止
                 toRAnimator.start();
                 tv_play_record_time.setVisibility(View.INVISIBLE);
-                playerOrigin.start();
-                currentState = MediaState.播放原音;
+
+/*                if (playerOrigin.isPlaying()) {
+                    playerOrigin.pause();
+                    iv_play.setSelected(true);
+                    iv_play.setImageResource(R.drawable.play_btn_play_checked);
+                } else {
+                    playerOrigin.start();
+                    iv_play.setSelected(false);
+                    iv_play.setImageResource(R.drawable.play_btn_pause_checked);
+                }*/
+
                 break;
 
             default:
@@ -775,24 +794,12 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         }
 
         // 定时更新歌词及SeekBar,找出当前播放的那一句
-        new Timer().schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-
-                if (playerOrigin != null) // && mediaPlayer.isPlaying())
-                {
-                    handler.sendEmptyMessage(REFRESH_SEEKBAR);
-                }
-
-                elapsedTime += 100;// milliseconds
-
-            }
-        }, 0, 100);
+        handler.sendEmptyMessageDelayed(REFRESH_SEEKBAR, 100);
     }
 
     protected void refresh_seekbar() {
-        setTipsTextView();
+        Log.i(TAG, "refresh_seekbar: " + elapsedTime);
+        tv_play_record_time.setText(currentState + ":" + millisecondsFormat(elapsedTime));
 
         long currentLineTime = 0;
         long nextLineTime = 0;
@@ -892,9 +899,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     }
 
     private void setTipsTextView() {
-        if (!iv_rec_pause.isSelected()) {
-            tv_play_record_time.setText(currentState + ":" + millisecondsFormat(elapsedTime));
-        }
+
+
     }
 
     private void showOrHideSubtitle(int state) {
