@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,12 +21,12 @@ import com.newclass.woyaoxue.base.BaseAdapter;
 import com.newclass.woyaoxue.bean.HsLevel;
 import com.newclass.woyaoxue.bean.Theme;
 import com.newclass.woyaoxue.util.CommonUtil;
+import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.view.RotateAnimation;
 import com.voc.woyaoxue.R;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class FragmentThemes extends Fragment {
     private static final String TAG = "FragmentThemes";
@@ -37,22 +36,29 @@ public class FragmentThemes extends Fragment {
     private GridView gridView;
     private List<ViewModel> list;
     private HsLevel hsLevel;
+    private ViewModel model;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
+        int levelId = getArguments().getInt("levelId", 0);
         hsLevel = gson.fromJson(getArguments().getString("HsLevel"), new TypeToken<HsLevel>() {
         }.getType());
 
         View inflate = inflater.inflate(R.layout.fragment_themes, container, false);
         gridView = (GridView) inflate.findViewById(R.id.gridView);
         list = new ArrayList<>();
-        for (Theme o : hsLevel.Theme) {
-            list.add(new ViewModel(o));
+        int position = 0;
+        for (int i = 0; i < hsLevel.Theme.size(); i++) {
+            model = new ViewModel(hsLevel.Theme.get(i), levelId);
+            list.add(model);
+            position = model.isChecked ? i : 0;
         }
+        Log.i(TAG, "onCreateView: " + position);
+
         adapter = new MyAdapter(list);
         gridView.setAdapter(adapter);
+        //gridView.setSelection(position);
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View item, int position, long id) {
@@ -107,7 +113,6 @@ public class FragmentThemes extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        // super.onCreateOptionsMenu(menu, inflater);
         menu.add(Menu.NONE, 1, 1, "选择").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }
 
@@ -135,12 +140,13 @@ public class FragmentThemes extends Fragment {
         return true;
     }
 
-    public class ViewModel extends Theme {
+    public static class ViewModel extends Theme {
         public boolean isChecked;
 
-        public ViewModel(Theme theme) {
+        public ViewModel(Theme theme, int selectLevelId) {
             this.Id = theme.Id;
             this.Name = theme.Name;
+            this.isChecked = this.Id == selectLevelId;
         }
     }
 

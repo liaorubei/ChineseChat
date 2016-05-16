@@ -21,6 +21,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.newclass.woyaoxue.bean.HsLevel;
 import com.newclass.woyaoxue.bean.Response;
+import com.newclass.woyaoxue.bean.Theme;
 import com.newclass.woyaoxue.fragment.FragmentThemes;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
@@ -41,7 +42,9 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
     private int[] colors = new int[]{Color.parseColor("#BCE0AF"), Color.parseColor("#A1C9D6"), Color.parseColor("#E0AFE0"), Color.parseColor("#E0CBAF")};
 
     private FragmentThemes.ViewModel currentTheme = null;
+    private FragmentThemes.ViewModel lastTheme = null;
     private View iv_menu;
+    private int levelId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,9 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
     }
 
     private void initData() {
+        levelId = getIntent().getIntExtra("levelId", 90);
+        //iv_menu.setVisibility(levelId > 0 ? View.VISIBLE : View.INVISIBLE);
+
         HttpUtil.post(NetworkUtil.hsLevelAndTheme, null, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -60,10 +66,19 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
                 }.getType());
 
                 if (resp.code == 200) {
+                    int currentItem = 0;
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
                     for (int i = 0; i < resp.info.size(); i++) {
                         final int post = i;
                         HsLevel h = resp.info.get(i);
+                        for (Theme t : h.Theme) {
+                            if (t.Id == levelId) {
+                                lastTheme = new FragmentThemes.ViewModel(t, levelId);
+                                Log.i(TAG, "onSuccess: " + lastTheme.Name);
+                                currentItem = i;
+                            }
+                        }
+
                         h.Color = colors[i];
                         TextView textView = new TextView(ActivityTheme.this);
                         textView.setGravity(Gravity.CENTER);
@@ -80,11 +95,13 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
 
                         FragmentThemes fragmentThemes = new FragmentThemes();
                         Bundle bundle = new Bundle();
+                        bundle.putInt("levelId", levelId);
                         bundle.putString("HsLevel", gson.toJson(h));
                         fragmentThemes.setArguments(bundle);
                         fragments.add(fragmentThemes);
                     }
                     adapter.notifyDataSetChanged();
+                    viewPager.setCurrentItem(currentItem);
                 }
             }
 
@@ -99,7 +116,6 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
         //标题
         ImageView iv_home = (ImageView) findViewById(R.id.iv_home);
         iv_menu = findViewById(R.id.iv_menu);
-        iv_menu.setVisibility(View.INVISIBLE);
         iv_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,8 +126,10 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
         iv_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i(TAG, "onClick: " + lastTheme.Name);
                 if (currentTheme == null) {
-                    CommonUtil.toast("还没有选择主题");
+                    Log.i(TAG, "onClick: " + lastTheme.Name);
+                    CommonUtil.toast(R.string.ActivityTheme_no_topic);
                 } else {
                     Intent data = new Intent();
                     data.putExtra("theme", gson.toJson(currentTheme));
