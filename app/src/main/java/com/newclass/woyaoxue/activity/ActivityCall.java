@@ -132,7 +132,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                 }.getType());
                 if (resp.code != 200) {
                     AVChatManager.getInstance().hangUp(callback_hangup);
-                    CommonUtil.toast("学币不足");
+                    CommonUtil.toast(R.string.ActivityCall_coins_error);
                 }
             }
 
@@ -160,7 +160,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                         IS_CALL_ESTABLISHED = true;
                         chatId = event.getChatId();
 
-                        CommonUtil.toast("设备正常,开始通话");
+                        CommonUtil.toast(R.string.ActivityCall_device_ready);
                         Log.i(TAG, "被叫方同意接听: ackEvent.getChatId():" + event.getChatId());
 
                         //添加对话记录
@@ -193,17 +193,17 @@ public class ActivityCall extends Activity implements OnClickListener {
                             }
                         });
                     } else {
-                        CommonUtil.toast("设备异常,无法通话");
+                        CommonUtil.toast(R.string.ActivityCall_device_error);
                         finish();
                     }
                     break;
                 case CALLEE_ACK_REJECT:
-                    CommonUtil.toast("对方拒绝接听");
+                    CommonUtil.toast(R.string.ActivityCall_device_reject);
                     finish();
                     break;
 
                 case CALLEE_ACK_BUSY:
-                    CommonUtil.toast("对方忙");
+                    CommonUtil.toast(R.string.ActivityCall_device_busy);
                     finish();
                     break;
                 default:
@@ -240,12 +240,12 @@ public class ActivityCall extends Activity implements OnClickListener {
 
         @Override
         public void onException(Throwable arg0) {
-            CommonUtil.toast("拨打异常");
+            CommonUtil.toast(R.string.ActivityCall_call_error);
         }
 
         @Override
         public void onFailed(int arg0) {
-            CommonUtil.toast("拨打错误");
+            CommonUtil.toast(R.string.ActivityCall_call_failed);
         }
 
         @Override
@@ -383,7 +383,7 @@ public class ActivityCall extends Activity implements OnClickListener {
 
             case R.id.rl_card:
                 if (!IS_CALL_ESTABLISHED) {
-                    CommonUtil.toast("通话还没建立,无法翻牌");
+                    CommonUtil.toast(R.string.ActivityCall_you_need_talk_first);
                     return;
                 }
                 startActivityForResult(new Intent(this, ActivityTheme.class), REQUEST_CODE_THEME);
@@ -453,7 +453,7 @@ public class ActivityCall extends Activity implements OnClickListener {
                     break;
 
                 default:
-                    CommonUtil.toast("没有正确选择");
+                    CommonUtil.toast(R.string.ActivityCall_topic_choose_failed);
                     break;
             }
         }
