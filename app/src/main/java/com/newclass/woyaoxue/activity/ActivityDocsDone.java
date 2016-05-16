@@ -90,7 +90,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-
         loadMore();
     }
 
@@ -209,7 +208,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                     if (file.isFile() && file.exists()) {
                         file.delete();
                     }
-                    Log.i("" + viewHelper.document.Title + " " + file.getAbsolutePath() + " 被移除了");
                 }
 
                 adapter.notifyDataSetChanged();
@@ -218,6 +216,10 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 deleteMode = false;
                 cb_delete.setVisibility(View.INVISIBLE);
                 iv_delete.setVisibility(View.INVISIBLE);
+
+                if (list.size() == 0) {
+                    finish();//如果当前的文件夹中的文件已经没有了,那么直接退出该界面
+                }
                 break;
 
         }
