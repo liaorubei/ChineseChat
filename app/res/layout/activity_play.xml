@@ -282,10 +282,12 @@
         android:id="@+id/tv_play_record_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="75dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
         android:background="@drawable/shape_rounded_rectangle"
         android:padding="15dp"
         android:text="播放原音 00:00"
         android:textColor="#FFFFFF"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 </RelativeLayout>

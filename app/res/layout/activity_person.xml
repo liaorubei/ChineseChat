@@ -27,15 +27,13 @@
             android:textColor="#FFFFFF"
             android:textSize="20sp" />
 
-        <TextView
+        <ImageView
             android:id="@+id/tv_save"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
             android:layout_alignParentRight="true"
-            android:gravity="center"
             android:padding="10dp"
-            android:text="@string/ActivityPerson_save"
-            android:textColor="#FFFFFF" />
+            android:src="@drawable/icon_menu_save" />
 
     </RelativeLayout>
 

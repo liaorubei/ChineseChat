@@ -102,7 +102,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
         ll_album.setOnClickListener(ActivityProfile.this);
 
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("正在加载中");
+        progressDialog.setMessage(getString(R.string.ActivityProfile_loading));
         progressDialog.show();
 
         HttpUtil.Parameters params = new HttpUtil.Parameters();

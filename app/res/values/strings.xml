@@ -400,7 +400,15 @@
     <string name="ActivityCall_hangup">Are you sure you want to hang up?</string>
     <string name="ActivityCall_cancel">Cancel</string>
     <string name="ActivityCall_confirm">OK</string>
-
+    <string name="ActivityCall_coins_error">Coins is empty,please recharge</string>
+    <string name="ActivityCall_device_ready">Device is ready,you can talk now</string>
+    <string name="ActivityCall_device_error">Device error</string>
+    <string name="ActivityCall_device_busy">The teacher is busy</string>
+    <string name="ActivityCall_device_reject">The teacher busy</string>
+    <string name="ActivityCall_call_error">Call error</string>
+    <string name="ActivityCall_call_failed">Call failed</string>
+    <string name="ActivityCall_you_need_talk_first">You need talk first</string>
+    <string name="ActivityCall_topic_choose_failed">Topic choose failed</string>
     <!--ActivityTake-->
     <string name="ActivityTake_can_not_back">Return key invalid</string>
     <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
@@ -607,7 +615,7 @@
 
     <!--ActivityTheme-->
     <string name="ActivityTheme_title">Topic</string>
-    <string name="ActivityTheme_confirm">OK</string>
+    <string name="ActivityTheme_no_topic">Please choose a topic</string>
 
     <!--ActivityProfile-->
     <string name="ActivityProfile_title">Tutor profile</string>
@@ -616,7 +624,7 @@
     <string name="ActivityProfile_languages">Spoken Languages</string>
     <string name="ActivityProfile_hobbies">Hobbies</string>
     <string name="ActivityProfile_album">Album</string>
-    <string name="title_activity_activity_album">ActivityAlbum</string>
+    <string name="ActivityProfile_loading">Loading</string>
 
     <!--FragmentLineUp-->
     <string name="FragmentLineUp_dequeue_success">我已下线</string>

@@ -649,20 +649,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 // 控制栏右移动,切换到正常模式,同时把录音播放和录音的对象停止
                 toRAnimator.start();
                 tv_play_record_time.setVisibility(View.INVISIBLE);
-
-/*                if (playerOrigin.isPlaying()) {
-                    playerOrigin.pause();
-                    iv_play.setSelected(true);
-                    iv_play.setImageResource(R.drawable.play_btn_play_checked);
-                } else {
-                    playerOrigin.start();
-                    iv_play.setSelected(false);
-                    iv_play.setImageResource(R.drawable.play_btn_pause_checked);
-                }*/
-
-                break;
-
-            default:
                 break;
         }
     }
