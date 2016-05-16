@@ -20,6 +20,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -27,12 +29,17 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.MainActivity;
+import com.newclass.woyaoxue.bean.Folder;
+import com.newclass.woyaoxue.bean.Level;
+import com.newclass.woyaoxue.bean.Response;
 import com.newclass.woyaoxue.bean.UrlCache;
 import com.newclass.woyaoxue.util.CommonUtil;
 import com.newclass.woyaoxue.util.HttpUtil;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
+
+import java.util.List;
 
 public class ActivitySplash extends Activity implements View.OnClickListener {
 
@@ -62,10 +69,22 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
         HttpUtil.post(NetworkUtil.levelAndFolders, null, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 //保存到数据库
                 UrlCache urlCache = new UrlCache(this.getRequestUrl(), responseInfo.result, System.currentTimeMillis());
                 ChineseChat.getDatabase().cacheInsertOrUpdate(urlCache);
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
+
+                //再保存文件夹信息
+                Response<List<Level>> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Level>>>() {
+                }.getType());
+
+                for (Level l : o.info) {
+                    for (Folder f : l.Folders) {
+                        if (!ChineseChat.getDatabase().folderExists(f.Id)) {
+                            ChineseChat.getDatabase().folderInsert(f);
+                        }
+                    }
+                }
             }
 
             @Override

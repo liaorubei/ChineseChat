@@ -6,7 +6,7 @@
     <color name="color_one">#3498db</color>
     <color name="color_two">#95a5a6</color>
     <color name="download_green">#5AB400</color>
-
+    <color name="teacher_busy">#DEAE12</color>
 
     <!-- Multi-sim sim colors -->
     <color name="main_dark">#bb000000</color>

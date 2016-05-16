@@ -169,7 +169,7 @@ public class FragmentChoose extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i(TAG, "onItemClick: " + list.get(position).Nickname);
-                ActivityProfile.start(getActivity(), list.get(position-1));
+                ActivityProfile.start(getActivity(), list.get(position - 1));
             }
         });
     }
@@ -229,8 +229,12 @@ public class FragmentChoose extends Fragment {
 
             CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
             holder.iv_status.setImageResource(user.IsEnable ? R.drawable.teacher_online : R.drawable.teacher_busy);
+            holder.iv_status.setBackgroundResource(user.IsEnable ? R.color.color_app : R.color.teacher_busy);
+            holder.tv_status.setText(user.IsEnable ? R.string.FragmentChoose_tips_online : R.string.FragmentChoose_tips_busy);
             if (!user.IsOnline) {
                 holder.iv_status.setImageResource(R.drawable.teacher_offline);
+                holder.iv_status.setBackgroundResource(R.color.color_app_normal);
+                holder.tv_status.setText(R.string.FragmentChoose_tips_offline);
             }
 
             //设置音频
@@ -283,14 +287,23 @@ public class FragmentChoose extends Fragment {
                             }.getType());
                             if (resp.code == 200) {
                                 ActivityCall.start(getActivity(), user.Id, user.Accid, user.Avatar, user.Nickname, ActivityCall.CALL_TYPE_AUDIO);
+                            } else if (resp.code == 201) {
+                                CommonUtil.toast(R.string.FragmentChoose_The_tutor_is_busy_now);
+                            } else if (resp.code == 202) {
+                                CommonUtil.toast(R.string.FragmentChoose_invalid_tutor);
+                            } else if (resp.code == 203) {
+                                CommonUtil.toast(R.string.FragmentChoose_Balance_is_not_enough);
+                            } else if (resp.code == 204) {
+                                CommonUtil.toast(R.string.FragmentChoose_invalid_user);
                             } else {
-                                CommonUtil.toast(resp.desc);
+                                CommonUtil.toast(R.string.network_error);
                             }
                         }
 
                         @Override
                         public void onFailure(HttpException error, String msg) {
                             Log.i(TAG, "onFailure: " + msg);
+                            CommonUtil.toast(R.string.network_error);
                         }
                     });
                 }
@@ -300,6 +313,7 @@ public class FragmentChoose extends Fragment {
     }
 
     private class ViewHolder {
+        public TextView tv_status;
         public TextView tv_nickname, tv_location;
         public ImageView iv_avatar, iv_status;
         public TextView tv_spoken;
@@ -313,6 +327,7 @@ public class FragmentChoose extends Fragment {
             this.tv_spoken = (TextView) convertView.findViewById(R.id.tv_spoken);
             this.bt_call = (ImageView) convertView.findViewById(R.id.bt_call);
             this.tv_location = (TextView) convertView.findViewById(R.id.tv_location);
+            this.tv_status = (TextView) convertView.findViewById(R.id.tv_status);
         }
     }
 

@@ -50,10 +50,20 @@
 
             <ImageView
                 android:id="@+id/iv_status"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:padding="3dp"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:background="@color/color_app"
                 android:src="@drawable/teacher_online" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="busy" />
         </LinearLayout>
 
 
