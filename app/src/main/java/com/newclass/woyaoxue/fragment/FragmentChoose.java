@@ -168,7 +168,6 @@ public class FragmentChoose extends Fragment {
         xListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.i(TAG, "onItemClick: " + list.get(position).Nickname);
                 ActivityProfile.start(getActivity(), list.get(position - 1));
             }
         });
@@ -214,44 +213,36 @@ public class FragmentChoose extends Fragment {
             }
             ViewHolder holder = (ViewHolder) convertView.getTag();
 
-            //三种状态，在线，忙线，掉线 {绿，红，灰}1,2.3
-            int status = 3;
-            if (user.IsOnline) {
-                status = (user.IsEnable && position < 5) ? 1 : 2;
+            //头像和昵称,语言
+            if (!TextUtils.isEmpty(user.Avatar)) {
+                CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
+            } else {
+                holder.iv_avatar.setImageResource(R.drawable.ic_launcher_student);
             }
-
             holder.tv_nickname.setText(user.Nickname);
-            holder.tv_nickname.setTextColor(user.IsEnable ? getResources().getColor(R.color.color_app) : Color.RED);
-            holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : getResources().getColor(R.color.color_app_normal));
-
             holder.tv_spoken.setText(user.Spoken);
-            holder.tv_location.setText(user.Country);
 
-            CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
-            holder.iv_status.setImageResource(user.IsEnable ? R.drawable.teacher_online : R.drawable.teacher_busy);
-            holder.iv_status.setBackgroundResource(user.IsEnable ? R.color.color_app : R.color.teacher_busy);
-            holder.tv_status.setText(user.IsEnable ? R.string.FragmentChoose_tips_online : R.string.FragmentChoose_tips_busy);
-            if (!user.IsOnline) {
-                holder.iv_status.setImageResource(R.drawable.teacher_offline);
-                holder.iv_status.setBackgroundResource(R.color.color_app_normal);
+            //颜色
+            if (user.IsOnline) {
+                if (user.IsEnable && position < 5) {
+                    int color = getResources().getColor(R.color.color_app);
+                    holder.tv_nickname.setTextColor(color);
+                    holder.tv_status.setTextColor(color);
+                    holder.iv_status.setBackgroundColor(color);
+                    holder.tv_status.setText(R.string.FragmentChoose_tips_online);
+                } else {
+                    int color = getResources().getColor(R.color.teacher_busy);
+                    holder.tv_nickname.setTextColor(color);
+                    holder.tv_status.setTextColor(color);
+                    holder.iv_status.setBackgroundColor(color);
+                    holder.tv_status.setText(R.string.FragmentChoose_tips_busy);
+                }
+            } else {
+                int color = getResources().getColor(R.color.color_app_normal);
+                holder.tv_nickname.setTextColor(color);
+                holder.tv_status.setTextColor(color);
+                holder.iv_status.setBackgroundColor(color);
                 holder.tv_status.setText(R.string.FragmentChoose_tips_offline);
-            }
-
-            //设置音频
-            if (!TextUtils.isEmpty(user.Voice)) {
-                holder.iv_voice.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-                            mediaPlayer.reset();
-                            mediaPlayer.setDataSource(NetworkUtil.getFullPath(user.Voice));
-                            mediaPlayer.prepare(); // might take long! (for buffering, etc)
-                            mediaPlayer.start();
-                        } catch (Exception ex) {
-                            CommonUtil.toast("音频播放失败");
-                        }
-                    }
-                });
             }
 
             //设置点击
@@ -314,11 +305,10 @@ public class FragmentChoose extends Fragment {
 
     private class ViewHolder {
         public TextView tv_status;
-        public TextView tv_nickname, tv_location;
+        public TextView tv_nickname;
         public ImageView iv_avatar, iv_status;
         public TextView tv_spoken;
         public ImageView bt_call;
-        public ImageView iv_voice;
 
         public ViewHolder(View convertView) {
             this.iv_avatar = (ImageView) convertView.findViewById(R.id.iv_avatar);
@@ -326,7 +316,6 @@ public class FragmentChoose extends Fragment {
             this.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
             this.tv_spoken = (TextView) convertView.findViewById(R.id.tv_spoken);
             this.bt_call = (ImageView) convertView.findViewById(R.id.bt_call);
-            this.tv_location = (TextView) convertView.findViewById(R.id.tv_location);
             this.tv_status = (TextView) convertView.findViewById(R.id.tv_status);
         }
     }
