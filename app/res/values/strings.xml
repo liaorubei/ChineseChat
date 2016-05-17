@@ -352,8 +352,6 @@
         <item>Қазақстан (Русский)</item>
         <item>Россия (Pусский)</item>
         <item>Україна (Українська)</item>
-        <item>ישראל - עברית</item>
-        <item>الشرق الأوسط - العربية</item>
         <item>한국 (한국어)</item>
         <item>中国 (简体中文)</item>
         <item>台灣 (繁體中文)</item>
@@ -374,8 +372,8 @@
     <string name="title_activity_records">a</string>/
 
     <!-- - -   - - - - -->
-    <string name="network_error">Network error</string>
-    <string name="network_error_try">Network error,Please try again</string>
+    <string name="network_error">Network unavailable</string>
+    <string name="network_error_try">Network unavailable,Please try again</string>
 
 
     <!---->

@@ -56,9 +56,12 @@ public class AdapterTeacher extends BaseAdapter<User> {
         holder.tv_nickname.setTextColor(user.IsEnable ? this.mContext.getResources().getColor(R.color.color_app) : Color.RED);
         holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : this.mContext.getResources().getColor(R.color.color_app_normal));
         holder.tv_spoken.setText(user.Spoken);
-        holder.tv_location.setText(user.Country);
 
-        CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
+        if (!TextUtils.isEmpty(user.Avatar)) {
+            CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
+        } else {
+            holder.iv_avatar.setImageResource(R.drawable.ic_launcher_student);
+        }
         holder.iv_status.setImageResource(user.IsEnable ? R.drawable.teacher_online : R.drawable.teacher_busy);
         if (!user.IsOnline) {
             holder.iv_status.setImageResource(R.drawable.teacher_offline);
@@ -114,7 +117,7 @@ public class AdapterTeacher extends BaseAdapter<User> {
     }
 
     private class ViewHolder {
-        public TextView tv_nickname, tv_location;
+        public TextView tv_nickname;
         public ImageView iv_avatar, iv_status;
         public TextView tv_spoken;
         public ImageView bt_call;
@@ -125,7 +128,6 @@ public class AdapterTeacher extends BaseAdapter<User> {
             this.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
             this.tv_spoken = (TextView) convertView.findViewById(R.id.tv_spoken);
             this.bt_call = (ImageView) convertView.findViewById(R.id.bt_call);
-            this.tv_location = (TextView) convertView.findViewById(R.id.tv_location);
         }
     }
 }

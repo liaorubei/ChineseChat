@@ -137,7 +137,6 @@ public class FragmentListen extends Fragment {
                                 ChineseChat.getDatabase().folderInsert(f);
                             }
                         }
-
                     }
                 }
 

@@ -92,8 +92,15 @@ public class ActivityCall extends Activity implements OnClickListener {
     private Gson gson = new Gson();
     private ImageView iv_icon;
 
+    // 监听网络通话被叫方的响应（接听、拒绝、忙）
+    private Observer<AVChatCalleeAckEvent> observerCallAck;
+    private Observer<AVChatCommonEvent> observerHangUp;
+    private Observer<AVChatTimeOutEvent> observerTimeOut;
     private TextView tv_nickname, bt_card;
-
+    private AVChatStateObserver observerChatState;
+    private int soundId;
+    private SoundPool soundPool;
+    private Theme theme = null;
     private String callId;
     private User target;
     private boolean IS_CALL_ESTABLISHED = false;
@@ -117,9 +124,7 @@ public class ActivityCall extends Activity implements OnClickListener {
             }
         }
     };
-    private AVChatStateObserver observerChatState;
-    private int soundId;
-    private SoundPool soundPool;
+
 
     private void refresh(String callId) {
         Parameters params = new Parameters();
@@ -146,88 +151,16 @@ public class ActivityCall extends Activity implements OnClickListener {
     }
 
 
-    // 监听网络通话被叫方的响应（接听、拒绝、忙）
-    private Observer<AVChatCalleeAckEvent> observerCallAck = new Observer<AVChatCalleeAckEvent>() {
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        public void onEvent(AVChatCalleeAckEvent event) {
-            soundPool.release();
-            switch (event.getEvent()) {
-                case CALLEE_ACK_AGREE:// 被叫方同意接听
-                    if (event.isDeviceReady()) {
-                        //保存通话状态和通话chatId
-                        IS_CALL_ESTABLISHED = true;
-                        chatId = event.getChatId();
-
-                        CommonUtil.toast(R.string.ActivityCall_device_ready);
-                        Log.i(TAG, "被叫方同意接听: ackEvent.getChatId():" + event.getChatId());
-
-                        //添加对话记录
-                        Parameters parameters = new Parameters();
-                        parameters.add("chatId", event.getChatId());
-                        parameters.add("chatType", event.getChatType().getValue());
-                        parameters.add("target", target.Id);
-                        parameters.add("source", ChineseChat.CurrentUser.Id);
-                        HttpUtil.post(NetworkUtil.callstart, parameters, new RequestCallBack<String>() {
-
-                            @Override
-                            public void onSuccess(ResponseInfo<String> responseInfo) {
-                                Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
-                                }.getType());
-
-                                if (resp.code == 200) {
-                                    callId = resp.info.Id;
-                                }
-                                Log.i(TAG, "记录Id:" + resp.info.Id);
-
-                                Message message = handler.obtainMessage();
-                                message.what = REFRESH_DATA;
-                                message.obj = callId;
-                                handler.sendMessageDelayed(message, delayMillis);
-                            }
-
-                            @Override
-                            public void onFailure(HttpException error, String msg) {
-                                Log.i(TAG, "添加记录失败:" + msg);
-                            }
-                        });
-                    } else {
-                        CommonUtil.toast(R.string.ActivityCall_device_error);
-                        finish();
-                    }
-                    break;
-                case CALLEE_ACK_REJECT:
-                    CommonUtil.toast(R.string.ActivityCall_device_reject);
-                    finish();
-                    break;
-
-                case CALLEE_ACK_BUSY:
-                    CommonUtil.toast(R.string.ActivityCall_device_busy);
-                    finish();
-                    break;
-                default:
-                    break;
-            }
-        }
-    };
-
-    private Observer<AVChatCommonEvent> observerHangUp;
-    private Observer<AVChatTimeOutEvent> observerTimeOut;
-
-
     private AVChatCallback<Void> callback_hangup = new AVChatCallback<Void>() {
 
         @Override
         public void onException(Throwable arg0) {
-            Log.i("logi", "callactivity hangUp onException:" + arg0.getMessage());
             soundPool.release();
             finish();
         }
 
         @Override
         public void onFailed(int arg0) {
-            Log.i("logi", "callactivity hangUp onFailed:" + arg0);
             finish();
         }
 
@@ -255,7 +188,6 @@ public class ActivityCall extends Activity implements OnClickListener {
             Log.i(TAG, "onSuccess: " + "拨打成功");
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -311,7 +243,6 @@ public class ActivityCall extends Activity implements OnClickListener {
         AVChatManager.getInstance().call(target.Accid, AVChatType.AUDIO, null, false, false, notifyOption, callback_call);
         registerObserver(true);
     }
-
 
     private void initView() {
         //头像
@@ -386,7 +317,9 @@ public class ActivityCall extends Activity implements OnClickListener {
                     CommonUtil.toast(R.string.ActivityCall_you_need_talk_first);
                     return;
                 }
-                startActivityForResult(new Intent(this, ActivityTheme.class), REQUEST_CODE_THEME);
+                Intent intent = new Intent(this, ActivityTheme.class);
+                intent.putExtra("levelId", theme == null ? 0 : theme.Id);
+                startActivityForResult(intent, REQUEST_CODE_THEME);
                 break;
             case R.id.bt_text:
                 // 创建文本消息
@@ -434,27 +367,22 @@ public class ActivityCall extends Activity implements OnClickListener {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_THEME) {
-            switch (resultCode) {
-                case FragmentThemes.RESULTCODE_CHOOSE:
-                    bt_card.setText(R.string.ActivityCall_switch_theme);
-                    Theme theme = gson.fromJson(data.getStringExtra("theme"), new TypeToken<Theme>() {
-                    }.getType());
-                    // 构造自定义通知，指定接收者
-                    CustomNotification notification = new CustomNotification();
-                    notification.setSessionId(target.Accid);
-                    notification.setSessionType(SessionTypeEnum.P2P);
+            if (resultCode == FragmentThemes.RESULTCODE_CHOOSE) {
+                bt_card.setText(R.string.ActivityCall_switch_theme);
+                theme = gson.fromJson(data.getStringExtra("theme"), new TypeToken<Theme>() {
+                }.getType());
+                // 构造自定义通知，指定接收者
+                CustomNotification notification = new CustomNotification();
+                notification.setSessionId(target.Accid);
+                notification.setSessionType(SessionTypeEnum.P2P);
 
-                    NimSysNotice<Theme> i = new NimSysNotice<Theme>();
-                    i.info = theme;
-                    notification.setContent(gson.toJson(i));
-                    // 发送自定义通知
-                    NIMClient.getService(MsgService.class).sendCustomNotification(notification);
-
-                    break;
-
-                default:
-                    CommonUtil.toast(R.string.ActivityCall_topic_choose_failed);
-                    break;
+                NimSysNotice<Theme> i = new NimSysNotice<Theme>();
+                i.info = theme;
+                notification.setContent(gson.toJson(i));
+                // 发送自定义通知
+                NIMClient.getService(MsgService.class).sendCustomNotification(notification);
+            } else {
+                CommonUtil.toast(R.string.ActivityCall_topic_choose_failed);
             }
         }
 
@@ -509,6 +437,9 @@ public class ActivityCall extends Activity implements OnClickListener {
         }
         if (observerTimeOut == null) {
             observerTimeOut = new ObserverTimeOut(this);
+        }
+        if (observerCallAck == null) {
+            observerCallAck = new Observer_CalleeAck();
         }
 
         // 监听网络通话被叫方的响应（接听、拒绝、忙）
@@ -579,11 +510,66 @@ public class ActivityCall extends Activity implements OnClickListener {
         }
     }
 
-
     private class Observer_CalleeAck implements Observer<AVChatCalleeAckEvent> {
         @Override
-        public void onEvent(AVChatCalleeAckEvent avChatCalleeAckEvent) {
+        public void onEvent(AVChatCalleeAckEvent event) {
+            soundPool.release();
+            switch (event.getEvent()) {
+                case CALLEE_ACK_AGREE:// 被叫方同意接听
+                    if (event.isDeviceReady()) {
+                        //保存通话状态和通话chatId
+                        IS_CALL_ESTABLISHED = true;
+                        chatId = event.getChatId();
 
+                        CommonUtil.toast(R.string.ActivityCall_device_ready);
+                        Log.i(TAG, "被叫方同意接听: ackEvent.getChatId():" + event.getChatId());
+
+                        //添加对话记录
+                        Parameters parameters = new Parameters();
+                        parameters.add("chatId", event.getChatId());
+                        parameters.add("chatType", event.getChatType().getValue());
+                        parameters.add("target", target.Id);
+                        parameters.add("source", ChineseChat.CurrentUser.Id);
+                        HttpUtil.post(NetworkUtil.callstart, parameters, new RequestCallBack<String>() {
+
+                            @Override
+                            public void onSuccess(ResponseInfo<String> responseInfo) {
+                                Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
+                                }.getType());
+
+                                if (resp.code == 200) {
+                                    callId = resp.info.Id;
+                                }
+                                Log.i(TAG, "记录Id:" + resp.info.Id);
+
+                                Message message = handler.obtainMessage();
+                                message.what = REFRESH_DATA;
+                                message.obj = callId;
+                                handler.sendMessageDelayed(message, delayMillis);
+                            }
+
+                            @Override
+                            public void onFailure(HttpException error, String msg) {
+                                Log.i(TAG, "添加记录失败:" + msg);
+                            }
+                        });
+                    } else {
+                        CommonUtil.toast(R.string.ActivityCall_device_error);
+                        finish();
+                    }
+                    break;
+                case CALLEE_ACK_REJECT:
+                    CommonUtil.toast(R.string.ActivityCall_device_reject);
+                    finish();
+                    break;
+
+                case CALLEE_ACK_BUSY:
+                    CommonUtil.toast(R.string.ActivityCall_device_busy);
+                    finish();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
