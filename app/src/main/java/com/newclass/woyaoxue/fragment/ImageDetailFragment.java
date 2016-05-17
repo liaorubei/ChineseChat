@@ -75,7 +75,6 @@ public class ImageDetailFragment extends Fragment {
             public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
                 progressBar.setVisibility(View.GONE);
                 mAttacher.update();
-                container.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 container.setImageBitmap(bitmap);
                 Log.i(TAG, "onLoadCompleted: " + uri);
             }
