@@ -1,6 +1,7 @@
 package com.newclass.woyaoxue.activity;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -56,7 +57,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
     }
 
     private void initData() {
-        levelId = getIntent().getIntExtra("levelId", 90);
+        levelId = getIntent().getIntExtra("levelId", 0);
         //iv_menu.setVisibility(levelId > 0 ? View.VISIBLE : View.INVISIBLE);
 
         HttpUtil.post(NetworkUtil.hsLevelAndTheme, null, new RequestCallBack<String>() {
@@ -68,6 +69,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
                 if (resp.code == 200) {
                     int currentItem = 0;
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1);
+                    //ColorStateList color=new ColorStateList();
                     for (int i = 0; i < resp.info.size(); i++) {
                         final int post = i;
                         HsLevel h = resp.info.get(i);
@@ -83,8 +85,9 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
                         TextView textView = new TextView(ActivityTheme.this);
                         textView.setGravity(Gravity.CENTER);
                         textView.setText(h.Name);
-                        textView.setBackgroundResource(R.drawable.selector_levels);
                         textView.setSelected(i == 0);
+                        textView.setTextColor(getResources().getColorStateList(R.color.selector_text_normal));
+                        textView.setBackgroundResource(R.drawable.selector_levels);
                         textView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -126,9 +129,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
         iv_menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(TAG, "onClick: " + lastTheme.Name);
                 if (currentTheme == null) {
-                    Log.i(TAG, "onClick: " + lastTheme.Name);
                     CommonUtil.toast(R.string.ActivityTheme_no_topic);
                 } else {
                     Intent data = new Intent();
