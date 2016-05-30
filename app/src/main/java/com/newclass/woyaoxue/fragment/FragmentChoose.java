@@ -229,12 +229,14 @@ public class FragmentChoose extends Fragment {
                     holder.tv_nickname.setTextColor(color);
                     holder.tv_status.setTextColor(color);
                     holder.iv_status.setBackgroundColor(color);
+                    holder.iv_status.setImageResource(R.drawable.teacher_online);
                     holder.tv_status.setText(R.string.FragmentChoose_tips_online);
                 } else {
                     int color = getResources().getColor(R.color.teacher_busy);
                     holder.tv_nickname.setTextColor(color);
                     holder.tv_status.setTextColor(color);
                     holder.iv_status.setBackgroundColor(color);
+                    holder.iv_status.setImageResource(R.drawable.teacher_busy);
                     holder.tv_status.setText(R.string.FragmentChoose_tips_busy);
                 }
             } else {
@@ -242,6 +244,7 @@ public class FragmentChoose extends Fragment {
                 holder.tv_nickname.setTextColor(color);
                 holder.tv_status.setTextColor(color);
                 holder.iv_status.setBackgroundColor(color);
+                holder.iv_status.setImageResource(R.drawable.teacher_offline);
                 holder.tv_status.setText(R.string.FragmentChoose_tips_offline);
             }
 

@@ -82,17 +82,16 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="com.voc.woyaoxue.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
-                <action android:name="com.voc.woyaoxue.teacher.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
-                <action android:name="com.voc.woyaoxue.student.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
+                <action android:name="com.henwen.chinesechat.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
             </intent-filter>
         </receiver>
 
         <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时音视频模块时，如果需要网络通话与本地电话互斥，请加上此接收器 -->
-        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
+        <!--        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
+                    <intent-filter>
+                        <action android:name="android.intent.action.PHONE_STATE" />
+                    </intent-filter>
+                </receiver>-->
 
         <meta-data
             android:name="com.netease.cosine.target.receiver"
@@ -151,7 +150,6 @@
         <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityTheme" />
-        <activity android:name="com.newclass.woyaoxue.activity.RecordsActivity" />
         <activity android:name="com.newclass.woyaoxue.activity.ActivityFeedback" />
 
         <!-- 更新下载服务 -->
@@ -175,7 +173,15 @@
         <activity
             android:name="com.newclass.woyaoxue.activity.ActivityAlbum"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityLessons" />
+
+        <receiver
+            android:name="com.newclass.woyaoxue.receiver.MyReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

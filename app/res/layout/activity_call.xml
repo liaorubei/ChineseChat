@@ -28,7 +28,6 @@
             android:textColor="@color/color_app" />
     </LinearLayout>
 
-
     <LinearLayout
         android:id="@+id/ll_call"
         android:layout_width="match_parent"
@@ -92,64 +91,25 @@
         android:orientation="horizontal"
         android:visibility="visible">
 
-
-        <RelativeLayout
-            android:id="@+id/bt_face"
+        <TextView
+            android:id="@+id/tv_face"
             android:layout_width="115dp"
             android:layout_height="36dp"
-            android:layout_marginRight="50dp"
-            android:visibility="invisible">
+            android:background="@drawable/shape_rounded_rectangle_18dp"
+            android:gravity="center"
+            android:text="发表情"
+            android:textColor="#fff"
+            android:visibility="gone" />
 
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/shape_oval_green" />
-
-
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/shape_oval_green" />
-
-
-            <TextView
-                android:layout_width="79dp"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:background="#00A478"
-                android:gravity="center"
-                android:text="发表情"
-                android:textColor="#fff" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rl_card"
+        <TextView
+            android:id="@+id/tv_card"
             android:layout_width="115dp"
-            android:layout_height="36dp">
-
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="@drawable/shape_oval_green" />
-
-            <ImageView
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/shape_oval_green" />
-
-            <TextView
-                android:id="@+id/bt_card"
-                android:layout_width="79dp"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:background="#00A478"
-                android:gravity="center"
-                android:text="@string/ActivityCall_pick_theme"
-                android:textColor="#fff" />
-        </RelativeLayout>
+            android:layout_height="36dp"
+            android:background="@drawable/shape_rounded_rectangle_18dp"
+            android:gravity="center"
+            android:text="@string/ActivityCall_pick_theme"
+            android:textColor="#fff"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

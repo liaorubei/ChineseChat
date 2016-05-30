@@ -54,8 +54,34 @@ public class AdapterTeacher extends BaseAdapter<User> {
         //三种状态，在线，忙线，掉线 {绿，红，灰}
         holder.tv_nickname.setText(user.Nickname + (TextUtils.equals(user.Nickname, ChineseChat.CurrentUser.Nickname) ? " [本人]" : ""));
         holder.tv_nickname.setTextColor(user.IsEnable ? this.mContext.getResources().getColor(R.color.color_app) : Color.RED);
-        holder.tv_nickname.setTextColor(user.IsOnline ? holder.tv_nickname.getCurrentTextColor() : this.mContext.getResources().getColor(R.color.color_app_normal));
+
         holder.tv_spoken.setText(user.Spoken);
+
+        if (user.IsOnline) {
+            if (user.IsEnable && position < 5) {
+                holder.tv_nickname.setTextColor(this.mContext.getResources().getColor(R.color.color_app));
+                holder.tv_status.setText(R.string.FragmentLineUp_in_the_pool);
+                holder.tv_status.setTextColor(this.mContext.getResources().getColor(R.color.color_app));
+                holder.iv_status.setBackgroundResource(R.color.color_app);
+                holder.iv_status.setImageResource(R.drawable.teacher_online);
+                holder.tv_nickname.setTextColor(this.mContext.getResources().getColor(R.color.color_app));
+            } else {
+                holder.tv_nickname.setTextColor(this.mContext.getResources().getColor(R.color.teacher_busy));
+                holder.tv_status.setText(R.string.FragmentLineUp_in_the_line);
+                holder.tv_status.setTextColor(this.mContext.getResources().getColor(R.color.teacher_busy));
+                holder.iv_status.setBackgroundResource(R.color.teacher_busy);
+                holder.iv_status.setImageResource(R.drawable.teacher_busy);
+                holder.tv_nickname.setTextColor(this.mContext.getResources().getColor(R.color.teacher_busy));
+            }
+        } else {
+            holder.tv_nickname.setTextColor(this.mContext.getResources().getColor(R.color.color_app_normal));
+            holder.tv_status.setText(R.string.FragmentChoose_tips_offline);
+            holder.tv_status.setTextColor(this.mContext.getResources().getColor(R.color.color_app_normal));
+            holder.iv_status.setBackgroundResource(R.color.color_app_normal);
+            holder.iv_status.setImageResource(R.drawable.teacher_offline);
+            holder.tv_nickname.setTextColor(this.mContext.getResources().getColor(R.color.color_app_normal));
+        }
+
 
         if (!TextUtils.isEmpty(user.Avatar)) {
             CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
@@ -63,9 +89,6 @@ public class AdapterTeacher extends BaseAdapter<User> {
             holder.iv_avatar.setImageResource(R.drawable.ic_launcher_student);
         }
         holder.iv_status.setImageResource(user.IsEnable ? R.drawable.teacher_online : R.drawable.teacher_busy);
-        if (!user.IsOnline) {
-            holder.iv_status.setImageResource(R.drawable.teacher_offline);
-        }
 
         //设置点击,可见,可用
         holder.bt_call.setVisibility(ChineseChat.isStudent() ? View.VISIBLE : View.GONE);
@@ -117,7 +140,9 @@ public class AdapterTeacher extends BaseAdapter<User> {
     }
 
     private class ViewHolder {
+        public TextView tv_status;
         public TextView tv_nickname;
+
         public ImageView iv_avatar, iv_status;
         public TextView tv_spoken;
         public ImageView bt_call;
@@ -128,6 +153,7 @@ public class AdapterTeacher extends BaseAdapter<User> {
             this.tv_nickname = (TextView) convertView.findViewById(R.id.tv_nickname);
             this.tv_spoken = (TextView) convertView.findViewById(R.id.tv_spoken);
             this.bt_call = (ImageView) convertView.findViewById(R.id.bt_call);
+            this.tv_status = (TextView) convertView.findViewById(R.id.tv_status);
         }
     }
 }

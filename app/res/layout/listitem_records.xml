@@ -6,28 +6,36 @@
     android:paddingLeft="30dp">
 
     <TextView
-        android:id="@+id/tv_amount"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:gravity="center_vertical"
-        android:text="金额:10.00 USD" />
-
-    <TextView
         android:id="@+id/tv_main"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:gravity="center_vertical"
-        android:text="项目:ChineseChat充值10000学币" />
+        android:text="@string/ActivityPayment_item" />
 
     <TextView
-        android:id="@+id/tv_state"
+        android:id="@+id/tv_number"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:gravity="center_vertical"
-        android:text="状态:充值成功" />
+        android:text="@string/ActivityPayment_number" />
 
     <TextView
-        android:id="@+id/tv_createtime"
+        android:id="@+id/tv_amount"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center_vertical"
+        android:text="@string/ActivityPayment_amount" />
+
+
+    <TextView
+        android:id="@+id/tv_status"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:gravity="center_vertical"
+        android:text="@string/ActivityPayment_status" />
+
+    <TextView
+        android:id="@+id/tv_create"
         android:layout_width="match_parent"
         android:layout_height="35dp"
         android:gravity="center_vertical"

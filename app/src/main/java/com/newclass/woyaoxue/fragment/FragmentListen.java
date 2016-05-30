@@ -51,27 +51,7 @@ public class FragmentListen extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        Log.i(TAG, "onAttach: " + getActivity());
-        super.onAttach(activity);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate: " + getActivity());
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        Log.i(TAG, "onResume: ");
-        super.onResume();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView: this=" + this);
-        Log.i(TAG, "onCreateView: Activity=" + getActivity());
         return inflater.inflate(R.layout.fragment_listen, container, false);
     }
 
@@ -212,32 +192,6 @@ public class FragmentListen extends Fragment {
                 }
             });
         }
-    }
-
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        Log.i(TAG, "onViewStateRestored: savedInstanceState=" + savedInstanceState);
-        Log.i(TAG, "onViewStateRestored: CurrentItem=" + viewPager.getCurrentItem());
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.i(TAG, "onDestroy: ");
-        super.onDestroy();
-    }
-
-    @Override
-    public void onDetach() {
-        Log.i(TAG, "onDetach: ");
-        super.onDetach();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.i(TAG, "onDestroyView: ");
-        super.onDestroyView();
     }
 
     private class MyAdapter extends FragmentPagerAdapter {

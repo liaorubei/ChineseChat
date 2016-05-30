@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.newclass.woyaoxue.ChineseChat;
-import com.newclass.woyaoxue.activity.ActivityLessons;
 import com.newclass.woyaoxue.activity.ActivitySignIn;
 import com.newclass.woyaoxue.activity.ActivityHistory;
 import com.newclass.woyaoxue.activity.ActivityPayment;
@@ -32,9 +31,10 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private TextView tv_nickname;
     private ImageView iv_gender;
     private TextView tv_coins;
-    private View rl_payment, rl_setting, rl_history, rl_lessons;
+    private View rl_payment, rl_setting, rl_history;
     private View rl_coins;
     private AlertDialog dialogLogin;
+    private TextView tv_history;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -55,14 +55,13 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         rl_payment = view.findViewById(R.id.rl_payment);
         rl_setting = view.findViewById(R.id.rl_setting);
         rl_history = view.findViewById(R.id.rl_history);
-        rl_lessons = view.findViewById(R.id.rl_lessons);
+        tv_history = (TextView) view.findViewById(R.id.tv_history);
 
         //点击事件
         view.findViewById(R.id.ll_person).setOnClickListener(this);
         rl_payment.setOnClickListener(this);
         rl_setting.setOnClickListener(this);
         rl_history.setOnClickListener(this);
-        rl_lessons.setOnClickListener(this);
     }
 
     @Override
@@ -90,12 +89,10 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         }
 
         //如果是教师端，则不显示我的学币，充值和学习记录
-        rl_lessons.setVisibility(ChineseChat.isStudent() ? View.INVISIBLE : View.VISIBLE);
         boolean isStudent = ChineseChat.isStudent();
         rl_coins.setVisibility(isStudent ? View.VISIBLE : View.INVISIBLE);
         rl_payment.setVisibility(isStudent ? View.VISIBLE : View.GONE);
-        rl_history.setVisibility(isStudent ? View.VISIBLE : View.GONE);
-        rl_lessons.setVisibility(isStudent ? View.INVISIBLE : View.VISIBLE);
+        tv_history.setText(isStudent ? R.string.ActivityHistory_title_student : R.string.ActivityHistory_title_teacher);
 
         //如果没有登录,那么不显示余额
         rl_coins.setVisibility(NIMClient.getStatus() == StatusCode.LOGINED ? View.VISIBLE : View.INVISIBLE);
@@ -127,13 +124,6 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                     return;
                 }
                 startActivity(new Intent(getActivity(), ActivityHistory.class));
-                break;
-            case R.id.rl_lessons:
-                if (NIMClient.getStatus() != StatusCode.LOGINED) {
-                    showLoginDialog();
-                    return;
-                }
-                startActivity(new Intent(getActivity(), ActivityLessons.class));
                 break;
         }
     }

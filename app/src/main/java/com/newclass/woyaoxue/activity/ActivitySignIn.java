@@ -51,8 +51,6 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     private boolean enter_main = false;
 
     private Observer<List<IMMessage>> observerReceiveMessage = new Observer<List<IMMessage>>() {
-        private static final long serialVersionUID = 1L;
-
         @Override
         public void onEvent(List<IMMessage> list) {
             for (IMMessage imMessage : list) {

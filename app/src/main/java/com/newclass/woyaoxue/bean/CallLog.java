@@ -13,4 +13,5 @@ public class CallLog {
     public List<Theme> Themes;
     public int Score;
     public int Coins;
+    public String Duration;
 }

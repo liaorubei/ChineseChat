@@ -1,7 +1,6 @@
 package com.newclass.woyaoxue.activity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,8 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.os.SystemClock;
+import android.telephony.TelephonyManager;
+import android.text.TextUtils;
+import android.util.JsonReader;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,18 +30,24 @@ import com.google.gson.reflect.TypeToken;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.avchat.AVChatCallback;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.AVChatStateObserver;
 import com.netease.nimlib.sdk.avchat.constant.AVChatTimeOutEvent;
+import com.netease.nimlib.sdk.avchat.model.AVChatCalleeAckEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatCommonEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
+import com.netease.nimlib.sdk.msg.MsgService;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
+import com.newclass.woyaoxue.ChineseChat;
 import com.newclass.woyaoxue.Observer.ObserverHangup;
 import com.newclass.woyaoxue.Observer.ObserverTimeOut;
 import com.newclass.woyaoxue.base.BaseAdapter;
+import com.newclass.woyaoxue.bean.CallLog;
 import com.newclass.woyaoxue.bean.NimSysNotice;
 import com.newclass.woyaoxue.bean.Question;
 import com.newclass.woyaoxue.bean.Response;
@@ -52,6 +59,9 @@ import com.newclass.woyaoxue.util.HttpUtil.Parameters;
 import com.newclass.woyaoxue.util.Log;
 import com.newclass.woyaoxue.util.NetworkUtil;
 import com.voc.woyaoxue.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,27 +89,30 @@ public class ActivityTake extends Activity implements OnClickListener {
     private List<String> list;
     private MyAdapter adapter;
 
-    private Observer_ChatState observerChatState;
-    private Observer<AVChatCommonEvent> observerHangup;
-    private Observer<AVChatTimeOutEvent> observerTimeout;
-    private AVChatCallback<Void> callbackAccept;
-    private AVChatCallback<Void> callbackHangup;
 
     // 自定义系统通知的广播接收者
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private BroadcastReceiver CustomNotificationReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             // 从 intent 中取出自定义通知， intent 中只包含了一个 CustomNotification 对象
             CustomNotification notification = (CustomNotification) intent.getSerializableExtra(NimIntent.EXTRA_BROADCAST_MSG);
-            NimSysNotice<Theme> notice = gson.fromJson(notification.getContent(), new TypeToken<NimSysNotice<Theme>>() {
-            }.getType());
-
-            if (notice.NoticeType == NimSysNotice.NoticeType_Card) {
-                CommonUtil.toast("对方点击了:" + notice.info.Name);
+            Log.i(TAG, "收到自定义通知: " + notification.getContent());
+            int type = -1;
+            String info = null;
+            try {
+                JSONObject jsonObject = new JSONObject(notification.getContent());
+                type = jsonObject.getInt("type");
+                info = jsonObject.getString("info");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            if (type == NimSysNotice.NoticeType_Card) {
+                Theme theme = gson.fromJson(info, Theme.class);
+                CommonUtil.toast("对方点击了:" + theme.Name);
                 Parameters params = new Parameters();
                 params.add("chatId", avChatData.getChatId());
-                params.add("themeId", notice.info.Id);
+                params.add("themeId", theme.Id);
                 HttpUtil.post(NetworkUtil.chatAddTheme, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -111,72 +124,52 @@ public class ActivityTake extends Activity implements OnClickListener {
                         Log.i(TAG, "onFailure: " + msg);
                     }
                 });
-            }
 
-            showThemeQuestion(notice.info);
+                showThemeQuestion(theme);
+            } else if (type == NimSysNotice.NoticeType_Call) {
+                CommonUtil.toast("Very sorry!I have a phone call,Please wait a moment.");
+            } else if (type == NimSysNotice.NoticeType_Chat) {
+                CALL_ID_RECEIVE = true;
+                callId = info;
+            }
         }
     };
+
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i(TAG, "onReceive: " + intent.getAction());
+            if ("android.intent.action.PHONE_STATE".equals(intent.getAction())) {
+                String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+                if (IS_CALL_ESTABLISHED) {
+                    if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
+                        AVChatManager.getInstance().setMute(true);
+
+                        //发送自定义通知,通知对方目前本机有外呼电话进来
+                        NimSysNotice<String> notice = new NimSysNotice<String>();
+                        notice.type = NimSysNotice.NoticeType_Call;
+
+                        CustomNotification notification = new CustomNotification();
+                        notification.setSessionId(avChatData.getAccount());
+                        notification.setSessionType(SessionTypeEnum.P2P);
+                        notification.setContent(gson.toJson(notice));
+                        NIMClient.getService(MsgService.class).sendCustomNotification(notification);
+                    } else if (TelephonyManager.EXTRA_STATE_IDLE.equals(state)) {
+                        AVChatManager.getInstance().setMute(false);
+                    }
+                }
+            }
+        }
+    };
+    private User student;
+    private String callId;
+    private boolean CALL_ID_RECEIVE = false;
 
     public static void start(Context context, AVChatData avChatData) {
         Intent intent = new Intent(context, ActivityTake.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(KEY_CHAT_DATA, avChatData);
         context.startActivity(intent);
-    }
-
-    private void initData() {
-        Intent intent = getIntent();
-        avChatData = (AVChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
-
-        //如果拨打方云信SDK版本过低,不支持avChatData.getExtra(),那就不显示头像吧
-        try {
-            User source = gson.fromJson(avChatData.getExtra(), new TypeToken<User>() {
-            }.getType());
-
-            tv_nickname.setText(source.Nickname);
-            CommonUtil.showIcon(getApplicationContext(), iv_icon, source.Avatar);
-        } catch (Exception ex) {
-            Log.i(TAG, "initData: 对方云信SDK版本过低");
-        }
-
-        cm_time.start();
-    }
-
-    private void initView() {
-        //头像
-        iv_icon = (ImageView) findViewById(R.id.iv_icon);
-        tv_nickname = (TextView) findViewById(R.id.tv_nickname);
-        tv_time = (TextView) findViewById(R.id.tv_time);
-        cm_time = (Chronometer) findViewById(R.id.cm_time);
-
-        //控制按钮,布局
-        bt_mute = findViewById(R.id.bt_mute);
-        bt_hangup = findViewById(R.id.bt_hangup);
-        bt_free = findViewById(R.id.bt_free);
-
-        bt_reject = findViewById(R.id.bt_reject);
-        bt_accept = findViewById(R.id.bt_accept);
-
-        ll_call = findViewById(R.id.ll_call);
-        ll_hang = findViewById(R.id.ll_hang);
-
-        //主题,布局
-        ll_theme = (LinearLayout) findViewById(R.id.ll_theme);
-        tv_theme = (TextView) findViewById(R.id.tv_theme);
-        listview = (ListView) findViewById(R.id.listview);
-
-        bt_mute.setOnClickListener(this);
-        bt_hangup.setOnClickListener(this);
-        bt_free.setOnClickListener(this);
-        bt_reject.setOnClickListener(this);
-        bt_accept.setOnClickListener(this);
-
-        ll_call.setVisibility(View.INVISIBLE);
-        ll_hang.setVisibility(View.VISIBLE);
-
-        list = new ArrayList<>();
-        adapter = new MyAdapter(list);
-        listview.setAdapter(adapter);
     }
 
     @Override
@@ -303,15 +296,70 @@ public class ActivityTake extends Activity implements OnClickListener {
 
         initView();
         initData();
-
-        callbackHangup = new MyAVChatCallback(true);
-        callbackAccept = new MyAVChatCallback(false);
-
         registerObserver(true);
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(this.getPackageName() + NimIntent.ACTION_RECEIVE_CUSTOM_NOTIFICATION);
-        registerReceiver(receiver, filter);
+        registerReceiver(CustomNotificationReceiver, filter);
+
+        IntentFilter filter1 = new IntentFilter();
+        filter1.addAction("android.intent.action.PHONE_STATE");
+        registerReceiver(broadcastReceiver, filter1);
+    }
+
+    private void initView() {
+        //头像
+        iv_icon = (ImageView) findViewById(R.id.iv_icon);
+        tv_nickname = (TextView) findViewById(R.id.tv_nickname);
+        tv_time = (TextView) findViewById(R.id.tv_time);
+        cm_time = (Chronometer) findViewById(R.id.cm_time);
+
+        //控制按钮,布局
+        bt_mute = findViewById(R.id.bt_mute);
+        bt_hangup = findViewById(R.id.bt_hangup);
+        bt_free = findViewById(R.id.bt_free);
+
+        bt_reject = findViewById(R.id.bt_reject);
+        bt_accept = findViewById(R.id.bt_accept);
+
+        ll_call = findViewById(R.id.ll_call);
+        ll_hang = findViewById(R.id.ll_hang);
+
+        //主题,布局
+        ll_theme = (LinearLayout) findViewById(R.id.ll_theme);
+        tv_theme = (TextView) findViewById(R.id.tv_theme);
+        listview = (ListView) findViewById(R.id.listview);
+
+        bt_mute.setOnClickListener(this);
+        bt_hangup.setOnClickListener(this);
+        bt_free.setOnClickListener(this);
+        bt_reject.setOnClickListener(this);
+        bt_accept.setOnClickListener(this);
+
+        ll_call.setVisibility(View.INVISIBLE);
+        ll_hang.setVisibility(View.VISIBLE);
+
+        list = new ArrayList<>();
+        adapter = new MyAdapter(list);
+        listview.setAdapter(adapter);
+    }
+
+    private void initData() {
+        Intent intent = getIntent();
+        avChatData = (AVChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
+
+        //如果拨打方云信SDK版本过低,不支持avChatData.getExtra(),那就不显示头像吧
+        try {
+            student = gson.fromJson(avChatData.getExtra(), new TypeToken<User>() {
+            }.getType());
+
+            tv_nickname.setText(student.Nickname);
+            CommonUtil.showIcon(getApplicationContext(), iv_icon, student.Avatar);
+        } catch (Exception ex) {
+            Log.i(TAG, "initData: 对方云信SDK版本过低");
+        }
+
+        cm_time.start();
     }
 
     @Override
@@ -327,23 +375,12 @@ public class ActivityTake extends Activity implements OnClickListener {
     protected void onDestroy() {
         Log.i(TAG, "onDestroy: ");
         super.onDestroy();
-        recordChatFinish();
         registerObserver(false);
-        unregisterReceiver(receiver);
+        unregisterReceiver(CustomNotificationReceiver);
+        unregisterReceiver(broadcastReceiver);
     }
 
     private void registerObserver(boolean register) {
-        if (observerChatState == null) {
-            observerChatState = new Observer_ChatState();
-        }
-        if (observerHangup == null) {
-            observerHangup = new ObserverHangup(this);
-        }
-        if (observerTimeout == null) {
-            observerTimeout = new ObserverTimeOut(this);
-        }
-
-
         //监听通话过程中状态变化
         AVChatManager.getInstance().observeAVChatState(observerChatState, register);
 
@@ -355,103 +392,6 @@ public class ActivityTake extends Activity implements OnClickListener {
         // 被叫方超过 45 秒未接听来听，也会自动挂断
         // 在通话过程中网络超时 30 秒自动挂断。
         AVChatManager.getInstance().observeTimeoutNotification(observerTimeout, register);
-    }
-
-    private class Observer_ChatState implements AVChatStateObserver {
-        @Override
-        public void onConnectedServer(int i, String s, String s1) {
-
-        }
-
-        @Override
-        public void onUserJoin(String s) {
-            Log.i(TAG, "onUserJoin: " + s);
-        }
-
-        @Override
-        public void onUserLeave(String s, int i) {
-            Log.i(TAG, "onUserLeave: " + s + " i=" + i);
-        }
-
-        @Override
-        public void onProtocolIncompatible(int i) {
-            Log.i(TAG, "onProtocolIncompatible: ");
-        }
-
-        @Override
-        public void onDisconnectServer() {
-            Log.i(TAG, "onDisconnectServer: ");
-        }
-
-        @Override
-        public void onNetworkStatusChange(int i) {
-            Log.i(TAG, "onNetworkStatusChange: ");
-        }
-
-        @Override
-        public void onCallEstablished() {
-            Log.i(TAG, "onCallEstablished: ");
-            cm_time.setBase(SystemClock.elapsedRealtime());
-            IS_CALL_ESTABLISHED = true;
-            AVChatManager.getInstance().setSpeaker(true);
-            bt_mute.setSelected(AVChatManager.getInstance().isMute());
-            bt_free.setSelected(!AVChatManager.getInstance().speakerEnabled());
-        }
-
-        @Override
-        public void onOpenDeviceError(int i) {
-            Log.i(TAG, "onOpenDeviceError: ");
-        }
-
-        @Override
-        public void onRecordEnd(String[] strings, int i) {
-
-        }
-    }
-
-    private class MyAVChatCallback implements AVChatCallback<Void> {
-        private boolean mIsHangup;
-
-        public MyAVChatCallback(boolean isHangup) {
-            this.mIsHangup = isHangup;
-        }
-
-        @Override
-        public void onSuccess(Void aVoid) {
-            Log.i(TAG, "mIsHangup=" + mIsHangup);
-            if (mIsHangup) {
-                finish();
-            }
-        }
-
-        @Override
-        public void onFailed(int i) {
-
-        }
-
-        @Override
-        public void onException(Throwable throwable) {
-
-        }
-    }
-
-    //记录通话结束情况,如果通话成功后己方挂断,对方挂断,通话后网络超时挂断,都要记录
-    private void recordChatFinish() {
-        if (IS_CALL_ESTABLISHED) {
-            Parameters params = new Parameters();
-            params.add("chatId", avChatData.getChatId());
-            HttpUtil.post(NetworkUtil.callFinish, params, new RequestCallBack<String>() {
-                @Override
-                public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Log.i(TAG, "recordChatFinish_Success: " + responseInfo.result);
-                }
-
-                @Override
-                public void onFailure(HttpException error, String msg) {
-                    Log.i(TAG, "recordChatFinish_Failure: " + msg);
-                }
-            });
-        }
     }
 
     private class MyAdapter extends BaseAdapter<String> {
@@ -469,5 +409,195 @@ public class ActivityTake extends Activity implements OnClickListener {
             textview.setText(item);
             return inflate;
         }
+    }
+
+    //接听回调
+    private AVChatCallback<Void> callbackAccept = new AVChatCallback<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+            Log.i(TAG, "回应成功: ");
+
+            Log.i(TAG, "CALL_ID_RECEIVE: " + CALL_ID_RECEIVE);
+            //创建记录
+            chatHistoryCreate();
+
+            //定时挂断
+        }
+
+        @Override
+        public void onFailed(int i) {
+            Log.i(TAG, "回应失败: " + i);
+        }
+
+        @Override
+        public void onException(Throwable throwable) {
+            Log.i(TAG, "回应异常: " + throwable.getMessage());
+        }
+    };
+
+    private AVChatCallback<Void> callbackHangup = new AVChatCallback<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+            Log.i(TAG, "挂断成功回调: ");
+            if (!TextUtils.isEmpty(callId)) {
+                chatHistoryFinish();
+            }
+            finish();
+        }
+
+        @Override
+        public void onFailed(int i) {
+            Log.i(TAG, "挂断失败回调: " + i);
+            if (!TextUtils.isEmpty(callId)) {
+                chatHistoryFinish();
+            }
+            finish();
+        }
+
+        @Override
+        public void onException(Throwable throwable) {
+            Log.i(TAG, "挂断异常回调: " + throwable.getMessage());
+            if (!TextUtils.isEmpty(callId)) {
+                chatHistoryFinish();
+            }
+            finish();
+        }
+    };
+
+    private AVChatStateObserver observerChatState = new AVChatStateObserver() {
+        @Override
+        public void onConnectedServer(int i, String s, String s1) {
+
+        }
+
+        @Override
+        public void onUserJoin(String s) {
+            Log.i(TAG, "onUserJoin: " + s);
+        }
+
+        @Override
+        public void onUserLeave(String s, int i) {
+            Log.i(TAG, "onUserLeave: " + s);
+        }
+
+        @Override
+        public void onProtocolIncompatible(int i) {
+
+        }
+
+        @Override
+        public void onDisconnectServer() {
+
+        }
+
+        @Override
+        public void onNetworkStatusChange(int i) {
+
+        }
+
+        @Override
+        public void onCallEstablished() {
+            Log.i(TAG, "onCallEstablished: ");
+            cm_time.setBase(SystemClock.elapsedRealtime());
+            IS_CALL_ESTABLISHED = true;
+            AVChatManager.getInstance().setSpeaker(true);
+        }
+
+        @Override
+        public void onOpenDeviceError(int i) {
+
+        }
+
+        @Override
+        public void onRecordEnd(String[] strings, int i) {
+
+        }
+    };
+
+    private Observer<AVChatCommonEvent> observerHangup = new Observer<AVChatCommonEvent>() {
+        @Override
+        public void onEvent(AVChatCommonEvent event) {
+            Log.i(TAG, "对方挂断监听: ChatId=" + event.getChatId());
+            if (!TextUtils.isEmpty(callId)) {
+                chatHistoryFinish();
+            }
+            finish();
+        }
+    };
+
+    private Observer<AVChatTimeOutEvent> observerTimeout = new Observer<AVChatTimeOutEvent>() {
+        @Override
+        public void onEvent(AVChatTimeOutEvent avChatTimeOutEvent) {
+            Log.i(TAG, "超时监听=" + avChatTimeOutEvent.name());
+            finish();
+        }
+    };
+
+    private void chatHistoryCreate() {
+
+        Parameters parameters = new Parameters();
+        parameters.add("chatId", avChatData.getChatId());
+        parameters.add("chatType", avChatData.getChatType().getValue());
+        parameters.add("target", ChineseChat.CurrentUser.Id);
+        parameters.add("source", student.Id);
+        HttpUtil.post(NetworkUtil.callCreate, parameters, new RequestCallBack<String>() {
+
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "记录创建成功:" + responseInfo.result);
+                Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
+                }.getType());
+
+                //记录callId
+                if (resp.code == 200) {
+                    callId = resp.info.Id;
+                }
+
+                //发送callId
+                Log.i(TAG, "发送CallId: " + !CALL_ID_RECEIVE);
+                if (!CALL_ID_RECEIVE) {
+                    NimSysNotice<String> notice = new NimSysNotice<String>();
+                    notice.type = NimSysNotice.NoticeType_Chat;
+                    notice.info = callId;
+
+                    CustomNotification notification = new CustomNotification();
+                    notification.setSessionId(avChatData.getAccount());
+                    notification.setSessionType(SessionTypeEnum.P2P);
+                    notification.setContent(gson.toJson(notice));
+                    NIMClient.getService(MsgService.class).sendCustomNotification(notification);
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                Log.i(TAG, "记录创建失败: " + msg);
+            }
+        });
+    }
+
+    private void chatHistoryFinish() {
+        Parameters parameters = new Parameters();
+        parameters.add("callId", callId);
+        HttpUtil.post(NetworkUtil.callFinish, parameters, new RequestCallBack<String>() {
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "记录结束成功:" + responseInfo.result);
+
+                //如果是学生端,保存学币信息
+                if (ChineseChat.isStudent()) {
+                    Response<CallLog> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
+                    }.getType());
+                    if (resp.code == 200) {
+                        ChineseChat.CurrentUser.Coins = resp.info.Student.Coins;
+                        CommonUtil.saveUserToSP(ChineseChat.getContext(), ChineseChat.CurrentUser, false);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                Log.i(TAG, "记录结束失败:" + msg);
+            }
+        });
     }
 }

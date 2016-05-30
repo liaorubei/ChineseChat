@@ -87,7 +87,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
                         textView.setText(h.Name);
                         textView.setSelected(i == 0);
                         textView.setTextColor(getResources().getColorStateList(R.color.selector_text_normal));
-                        textView.setBackgroundResource(R.drawable.selector_levels);
+                        textView.setBackgroundResource(R.drawable.selector_hslevels);
                         textView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {

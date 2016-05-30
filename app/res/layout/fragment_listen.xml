@@ -1,27 +1,20 @@
-<LinearLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@android:id/content"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FAFAFA"
+    android:background="#f0f0f0"
     android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_ctrl"
         android:layout_width="match_parent"
         android:layout_height="38dp"
-        android:orientation="horizontal">
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1px"
-        android:background="#fff"/>
+        android:background="#FAFAFA"
+        android:orientation="horizontal" />
 
     <android.support.v4.view.ViewPager
         android:id="@id/viewpager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#f0f0f0"/>
+        android:layout_height="match_parent" />
 </LinearLayout>
 

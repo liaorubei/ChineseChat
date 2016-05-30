@@ -9,7 +9,7 @@
     <string name="negative_text">"取消"</string>
     <string name="positive_text">"确定"</string>
     <string name="new_versions_message">"发现了最新版本,是否下载?"</string>
-    <string name="has_download_message">"更新包下载完毕,是否安装?"</string>
+    <string name="has_download_message">"Update package download is completed, whether the installation?"</string>
 
     <!-- 下拉刷新与上拉加载 -->
 
@@ -388,8 +388,8 @@
     <string name="FragmentListen_downloaded">DOWNLD</string>
 
     <!--FragmentChoose-->
-    <string name="FragmentChoose_busy">The teacher is busy</string>
-    <string name="FragmentChoose_offline">The teacher is offline</string>
+    <string name="FragmentChoose_busy">The tutor is busy now</string>
+    <string name="FragmentChoose_offline">The tutor is busy now</string>
     <string name="FragmentChoose_tips_online">online</string>
     <string name="FragmentChoose_tips_offline">offline</string>
     <string name="FragmentChoose_tips_busy">busy</string>
@@ -401,21 +401,21 @@
     <string name="FragmentChoose_The_tutor_is_busy_now">The tutor is busy now </string>
 
     <!--ActivityCall-->
-    <string name="ActivityCall_pick_theme">Topic Bank</string>
+    <string name="ActivityCall_pick_theme">Topic bank</string>
     <string name="ActivityCall_switch_theme">Change</string>
     <string name="ActivityCall_can_not_back">Return key invalid</string>
     <string name="ActivityCall_hangup">Are you sure you want to hang up?</string>
     <string name="ActivityCall_cancel">Cancel</string>
     <string name="ActivityCall_confirm">OK</string>
     <string name="ActivityCall_coins_error">Balance is not enough,please recharge</string>
-    <string name="ActivityCall_device_ready">Device is ready,you can talk now</string>
-    <string name="ActivityCall_device_error">Device error</string>
+    <string name="ActivityCall_device_ready">Normal equipment, call normal</string>
+    <string name="ActivityCall_device_error">Abnormal equipment</string>
     <string name="ActivityCall_device_busy">The tutor is busy now</string>
-    <string name="ActivityCall_device_reject">The teacher busy</string>
-    <string name="ActivityCall_call_error">Call error</string>
+    <string name="ActivityCall_device_reject">The tutor is busy now</string>
+    <string name="ActivityCall_call_error">Call invaild</string>
     <string name="ActivityCall_call_failed">Call failed</string>
-    <string name="ActivityCall_you_need_talk_first">You need talk first</string>
-    <string name="ActivityCall_topic_choose_failed">Topic choose failed</string>
+    <string name="ActivityCall_you_need_talk_first">Call is not established, cannot select the topic</string>
+    <string name="ActivityCall_topic_choose_failed">Topic selection failure</string>
     <!--ActivityTake-->
     <string name="ActivityTake_can_not_back">Return key invalid</string>
     <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
@@ -440,22 +440,20 @@
     <string name="ActivityPayment_title">Recharge</string>
     <string name="ActivityPayment_select_recharge_mode">Please select payment method</string>
     <string name="ActivityPayment_recharge_records">Payment history</string>
-    <string name="ActivityPayment_recharge_success">Recharge success</string>
+    <string name="ActivityPayment_recharge_success">Recharge completed</string>
     <string name="ActivityPayment_recharge_failure">Recharge failed</string>
-    <string name="ActivityPayment_pricelist_failure">Price list failure</string>
+    <string name="ActivityPayment_pricelist_failure">Failed to load the price list</string>
     <string name="ActivityPayment_select_topup_money">Please select payment amount</string>
-    <string name="ActivityPayment_creating_order">Creating order</string>
-    <string name="ActivityPayment_order_failure">Creating order failure</string>
+    <string name="ActivityPayment_creating_order">Creating order...</string>
+    <string name="ActivityPayment_order_failure">Creating order failed</string>
     <string name="ActivityPayment_check_order">Checking order</string>
 
-    <!--价格条-->
+    <!--价格条,充值记录-->
     <string name="ActivityPayment_confirm">Confirm</string>
-    <!--充值记录-->
-    <string name="ActivityPayment_item">"Item："</string>
-    <string name="ActivityPayment_amount">"Amount："</string>
-    <string name="ActivityPayment_status">"Status："</string>
-    <string name="ActivityPayment_date">"Date："</string>
-
+    <string name="ActivityPayment_item">Item：ChineseChat coin</string>
+    <string name="ActivityPayment_number">Quantity：%1$d</string>
+    <string name="ActivityPayment_amount">Amount：%1$s</string>
+    <string name="ActivityPayment_status">Status：</string>
 
     <!--ActivitySetting-->
     <string name="ActivitySetting_title">Settings</string>
@@ -466,8 +464,8 @@
     <string name="ActivitySetting_关于汉问">About ChineseChat</string>
     <string name="ActivitySetting_登出">Logout</string>
     <string name="ActivitySetting_登录">Login</string>
-    <string name="ActivitySetting_Toast_logout_success">Logout completed</string>
-    <string name="ActivitySetting_Toast_清理完毕">Clean Finish</string>
+    <string name="ActivitySetting_Toast_logout_success">Log out completed</string>
+    <string name="ActivitySetting_Toast_清理完毕">Finished</string>
 
     <string name="ActivitySetting_dialog_title">Clean Cache</string>
     <string name="ActivitySetting_dialog_message">Will clean you downloaded document and Login data,do you want to continue?</string>
@@ -480,65 +478,66 @@
     <string name="ActivitySecurity_new_password">New password</string>
     <string name="ActivitySecurity_re_password">Confirm new password</string>
 
-    <string name="ActivitySecurity_confirm">OK</string>
-    <string name="ActivitySecurity_can_not_null">old and new password can not null</string>
-    <string name="ActivitySecurity_at_least">The old password or new password At least 8</string>
-    <string name="ActivitySecurity_old_password_wrong">The old password is wrong</string>
-    <string name="ActivitySecurity_old_password_new_password_the_same">The old password and the new password are the same</string>
-    <string name="ActivitySecurity_new_password_not_same">new password and repassword are not same</string>
-    <string name="ActivitySecurity_modify_success">Success! you now can use the new password to login ChineseChat</string>
-    <string name="ActivitySecurity_modify_failure">Failure! Please try again</string>
+    <string name="ActivitySecurity_confirm">Confirm</string>
+    <string name="ActivitySecurity_can_not_null">Password cannot be empty</string>
+    <string name="ActivitySecurity_at_least">Password no less than 8 digits</string>
+    <string name="ActivitySecurity_old_password_wrong">The old password error</string>
+    <string name="ActivitySecurity_old_password_new_password_the_same">Old and new passwords cannot be the same</string>
+    <string name="ActivitySecurity_new_password_not_same">Two new passwords are not consistent</string>
+    <string name="ActivitySecurity_modify_success">Revision completed</string>
+    <string name="ActivitySecurity_modify_failure">Revision failed</string>
 
     <!--ActivityPerson-->
     <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityPerson_save">Save</string>
     <string name="ActivityPerson_nickname">Nickname:</string>
-    <string name="ActivityPerson_email">Email:</string>
+    <string name="ActivityPerson_email">E-mail:</string>
     <string name="ActivityPerson_mobile">Mobile:</string>
     <string name="ActivityPerson_gender">Gender:</string>
     <string name="ActivityPerson_birth">Birth:</string>
-    <string name="ActivityPerson_country">Country:</string>
-    <string name="ActivityPerson_language">Language:</string>
+    <string name="ActivityPerson_country">Nationality:</string>
+    <string name="ActivityPerson_language">Native language:</string>
     <string name="ActivityPerson_job">Career:</string>
-    <string name="ActivityPerson_school">School:</string>
+    <string name="ActivityPerson_school">Education:</string>
     <string name="ActivityPerson_hobbies">hobbies:</string>
     <string name="ActivityPerson_location">Location:</string>
     <string name="ActivityPerson_spoken">Spoken Languages</string>
-    <string name="ActivityPerson_about">Self description</string>
+    <string name="ActivityPerson_about">Description</string>
     <string name="ActivityPerson_female">Female</string>
     <string name="ActivityPerson_male">Male</string>
-    <string name="ActivityPerson_success">Update Success</string>
-    <string name="ActivityPerson_failure">Update Failure</string>
+    <string name="ActivityPerson_success">Revision completed</string>
+    <string name="ActivityPerson_failure">Revision failed</string>
     <string name="ActivityPerson_confirm">OK</string>
 
     <string name="ActivityPerson_album">Album</string>
     <string name="ActivityPerson_camera">Camera</string>
 
-    <string name="ActivityPerson_photo">Photo</string>
-    <string name="ActivityPerson_hint_nickname">Nickname please</string>
-    <string name="ActivityPerson_hint_email">Email can not change</string>
+    <string name="ActivityPerson_photo">Album</string>
+    <string name="ActivityPerson_hint_nickname">Nickname</string>
+    <string name="ActivityPerson_hint_email">E-mail cannot be changed</string>
     <string name="ActivityPerson_hint_mobile">Enter mobile number</string>
     <string name="ActivityPerson_hint_birth">Select birth date</string>
-    <string name="ActivityPerson_hint_job">you job</string>
-    <string name="ActivityPerson_hint_school">School</string>
+    <string name="ActivityPerson_hint_job">Career</string>
+    <string name="ActivityPerson_hint_school">Graduate school</string>
     <string name="ActivityPerson_hint_hobbies">Hobbies</string>
-    <string name="ActivityPerson_hint_spoken">Spoken Languages</string>
+    <string name="ActivityPerson_hint_spoken">Spoken languages</string>
     <string name="ActivityPerson_hint_location">Location</string>
-    <string name="ActivityPerson_hint_about">Self description or something else can generalize yourself</string>
-
+    <string name="ActivityPerson_hint_about">Introduction</string>
 
     <!--ActivityHistory-->
-    <string name="ActivityHistory_title">Study history</string>
-    <string name="ActivityHistory_theme">"Topic："</string>
-    <string name="ActivityHistory_teacher">"Tutor："</string>
-    <string name="ActivityHistory_student">"Student："</string>
-    <string name="ActivityHistory_coins">"ChineseChat Coin："</string>
+    <string name="ActivityHistory_title_student">Study history</string>
+    <string name="ActivityHistory_title_teacher">Lessons history</string>
+    <string name="ActivityHistory_theme_unselected">Unselected</string>
+    <string name="ActivityHistory_theme">Topic：%1$s</string>
+    <string name="ActivityHistory_teacher">Tutor：%1$s</string>
+    <string name="ActivityHistory_student">Student：%1$s</string>
+    <string name="ActivityHistory_coins">Cost：%1$d coins</string>
+    <string name="ActivityHistory_time">Duration：%1$s</string>
     <string name="ActivityHistory_date">Date:</string>
-    <string name="ActivityHistory_duration">"Duration："</string>
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_download">Download</string>
-    <string name="ActivityDocsTodo_alreadyDownload">The course has been downloaded</string>
+    <string name="ActivityDocsTodo_alreadyDownload">In the download task list</string>
 
     <!--ActivityDocsDone-->
     <string name="ActivityDocsDone_Delete">Delete</string>
@@ -547,11 +546,11 @@
     <!--ActivityFeedback-->
     <string name="ActivityFeedback_title">Complaints</string>
     <string name="ActivityFeedback_please_type_something">Enter your complaints</string>
-    <string name="ActivityFeedback_please_email">Enter your e-mail address</string>
+    <string name="ActivityFeedback_please_email">Enter your E-mail address</string>
     <string name="ActivityFeedback_Content_submit">Submit</string>
-    <string name="ActivityFeedback_Content_IsBeingSubmitted">Is being submitted</string>
-    <string name="ActivityFeedback_Content_CanNotNull">Content can not be null</string>
-    <string name="ActivityFeedback_Content_submit_success">Submit success</string>
+    <string name="ActivityFeedback_Content_IsBeingSubmitted">Submiting</string>
+    <string name="ActivityFeedback_Content_CanNotNull">Cannot be empty</string>
+    <string name="ActivityFeedback_Content_submit_success">Submit completed</string>
 
     <!--ActivityAbout-->
     <string name="ActivityAbout_title">About ChineseChat</string>
@@ -559,34 +558,33 @@
     <string name="ActivityAbout_use_help">How to use</string>
     <string name="ActivityAbout_user_agreement">Users Agreement</string>
 
-    <string name="ActivityAbout_dialog_title">Update tip</string>
+    <string name="ActivityAbout_dialog_title">Update</string>
     <string name="ActivityAbout_dialog_positive">OK</string>
     <string name="ActivityAbout_dialog_negative">Cancel</string>
 
-    <string name="ActivityAbout_app_update">Update package is being downloaded</string>
-    <string name="ActivityAbout_download_failure">Update package download failure</string>
-    <string name="ActivityAbout_download_start">Download begin</string>
-    <string name="ActivityAbout_already_up_to_date">ChineseChat is already up to date</string>
+    <string name="ActivityAbout_app_update">Downloading the installing package</string>
+    <string name="ActivityAbout_download_failure">Update package download failed</string>
+    <string name="ActivityAbout_download_start">Downloading...</string>
 
-    <string name="ActivityAbout_check_sdcard">SD card not work properly</string>
+    <string name="ActivityAbout_check_sdcard">SD card access exception</string>
     <string name="ActivityAbout_already_latest">This is the latest version</string>
-    <string name="ActivityAbout_have_new_version">Have new version,update now!</string>
+    <string name="ActivityAbout_have_new_version">Check for a new version</string>
 
     <!--ActivityReset-->
-    <string name="ActivityReset_reset_password">Reset Password</string>
-    <string name="ActivityReset_please_input_email">Enter e-mail address</string>
-    <string name="ActivityReset_please_type_code">Code</string>
+    <string name="ActivityReset_reset_password">Reset password</string>
+    <string name="ActivityReset_please_input_email">Enter E-mail address</string>
+    <string name="ActivityReset_please_type_code">Verification code</string>
     <string name="ActivityReset_get_code">Obtain verification code</string>
     <string name="ActivityReset_next">Next</string>
-    <string name="ActivityReset_please_type_you_new_password">Enter password</string>
+    <string name="ActivityReset_please_type_you_new_password">Enter new password</string>
     <string name="ActivityReset_please_retype_you_new_password">Confirm password</string>
-    <string name="ActivityReset_confirm">OK</string>
-    <string name="ActivityReset_EmailAddressFormatIsNotCorrect">Email address format is not correct</string>
-    <string name="ActivityReset_Please_check_your_email">Please check your email and obtain the verification code</string>
+    <string name="ActivityReset_confirm">Confirm</string>
+    <string name="ActivityReset_EmailAddressFormatIsNotCorrect">E-mail address invaild</string>
+    <string name="ActivityReset_Please_check_your_email">Please check your E-mail and obtain the verification code</string>
     <string name="ActivityReset_email_and_code_can_not_be_null">Email and verification code cannot be empty</string>
     <string name="ActivityReset_get_code_error">Obtain verification code failure,Please try again!</string>
-    <string name="ActivityReset_password_are_not_the_same">The two password are not same</string>
-    <string name="ActivityReset_password_change_success">Reset password success,please use the new password to login</string>
+    <string name="ActivityReset_password_are_not_the_same">Two passwords are not consistent</string>
+    <string name="ActivityReset_password_change_success">Reset password completed</string>
 
     <!--ActivitySignIn-->
     <string name="ActivitySignIn_title">Login</string>
@@ -596,8 +594,8 @@
     <string name="ActivitySignIn_forgot_password">Forgot password?</string>
     <string name="ActivitySignIn_user_register">Registration</string>
     <string name="ActivitySignIn_login_failure">Login failed</string>
-    <string name="ActivitySignIn_email_or_password_not_null">Sorry,Email or the password can not be null!</string>
-    <string name="ActivitySignIn_network_error_login_failure">Network error,Login failure</string>
+    <string name="ActivitySignIn_email_or_password_not_null">E-mail or password cannot be empty</string>
+    <string name="ActivitySignIn_network_error_login_failure">Network unavailable</string>
 
     <!--ActivitySignUp-->
     <string name="ActivitySignUp_title">Registration</string>
@@ -605,24 +603,25 @@
     <string name="ActivitySignUp_password">Password no less than 8 digits</string>
     <string name="ActivitySignUp_re_password">Confirm password</string>
     <string name="ActivitySignUp_read_and_agreed">I have read and accept</string>
-    <string name="ActivitySignUp_registered_users">"Registered users please "</string>
+    <string name="ActivitySignUp_registered_users">"Registered users, please "</string>
     <string name="ActivitySignUp_login">Login</string>
-    <string name="ActivitySignUp_user_registration_agreement">《User Agreement》</string>
+    <string name="ActivitySignUp_user_registration_agreement">《Users Agreement》</string>
     <string name="ActivitySignUp_next">Register</string>
 
     <string name="ActivitySignUp_email_password_can_not_null">Please fill out all the information required</string>
     <string name="ActivitySignUp_email_format_wrong">Please enter the correct e-mail address</string>
     <string name="ActivitySignUp_password_less_than">Password no less than 8 characters</string>
-    <string name="ActivitySignUp_password_are_not_same">Please enter the same password</string>
-    <string name="ActivitySignUp_register_success">Register success</string>
-    <string name="ActivitySignUp_register_failure">Register failure</string>
+    <string name="ActivitySignUp_password_are_not_same">Confirm password</string>
+    <string name="ActivitySignUp_register_success">Register completed</string>
+    <string name="ActivitySignUp_register_failure">Register failed</string>
 
 
-    <string name="ActivityUsehelp_title">Use Help</string>
+    <string name="ActivityUsehelp_title">Use help</string>
+    <string name="ActivityUseterm_title">Users Agreement</string>
 
     <!--ActivityTheme-->
-    <string name="ActivityTheme_title">Topic</string>
-    <string name="ActivityTheme_no_topic">Please choose a topic</string>
+    <string name="ActivityTheme_title">Topic bank</string>
+    <string name="ActivityTheme_no_topic">Select a topic</string>
 
     <!--ActivityProfile-->
     <string name="ActivityProfile_title">Tutor profile</string>
@@ -631,17 +630,18 @@
     <string name="ActivityProfile_languages">Spoken Languages</string>
     <string name="ActivityProfile_hobbies">Hobbies</string>
     <string name="ActivityProfile_album">Album</string>
-    <string name="ActivityProfile_loading">Loading</string>
+    <string name="ActivityProfile_loading">Loading...</string>
 
     <!--FragmentLineUp-->
     <string name="FragmentLineUp_dequeue_success">我已下线</string>
     <string name="FragmentLineUp_dequeue_failure">下线失败</string>
     <string name="FragmentLineUp_enqueue_success">入队成功</string>
     <string name="FragmentLineUp_enqueue_failure">入队失败</string>
-
+    <string name="FragmentLineUp_position">Current position %1$s</string>
+    <string name="FragmentLineUp_in_the_pool">已进入被叫池</string>
+    <string name="FragmentLineUp_in_the_line">排队中</string>
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_title">Course list</string>
-
 
     <!--ActivityPlay-->
     <string name="ActivityPlay_title">Play</string>
@@ -649,13 +649,15 @@
     <string name="ActivityPlay_play_record">Play recording</string>
     <string name="ActivityPlay_play_origin">Play original sound</string>
 
-    <string name="title_activity_activity_lessons">ActivityLessons</string>
-    <string name="xlistview_footer_hint_errors">Load error</string>
-    <string name="xlistview_footer_hint_nomore">End</string>
-    <string name="xlistview_footer_hint_normal">Load more</string>
-    <string name="xlistview_footer_hint_ready">Release load more</string>
-    <string name="xlistview_header_hint_loading">Loading&#8230;</string>
-    <string name="xlistview_header_hint_normal">Pull down to refresh</string>
-    <string name="xlistview_header_hint_ready">Release to refersh</string>
-    <string name="xlistview_header_last_time">Last refresh time</string>
+
+    <string name="xlistview_footer_hint_errors">Failed to load</string>
+    <string name="xlistview_footer_hint_nomore">The end</string>
+    <string name="xlistview_footer_hint_normal">View more...</string>
+    <string name="xlistview_footer_hint_ready">Release load more...</string>
+    <string name="xlistview_header_hint_loading">Loading...</string>
+    <string name="xlistview_header_hint_normal">Pull down refresh</string>
+    <string name="xlistview_header_hint_ready">Release refersh</string>
+    <string name="xlistview_header_last_time">Last update time</string>
+    <string name="ActivityAbout_already_up_to_date">This is the latest version</string>
+    <string name="ActivityPayment_order_create"></string>
 </resources>

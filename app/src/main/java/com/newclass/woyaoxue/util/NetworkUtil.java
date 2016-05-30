@@ -26,8 +26,8 @@ public class NetworkUtil {
     public static final String userVerify = domain + "/Api/NimUser/Verify";
     public static final String ThemeSelect = domain + "/Api/Theme/Select";
     public static final String hsLevelAndTheme = domain + "/Api/Theme/HsLevelAndTheme";
-    public static final String callstart = domain + "/Api/CallLog/Start";
-    public static final String callFinish = domain + "/Api/Calllog/finish";
+    public static final String callCreate = domain + "/Api/CallLog/Start";
+    public static final String callFinish = domain + "/Api/CallLog/finish";
     public static final String userGetByAccId = domain + "/Api/NimUser/GetByAccId";
     public static final String GetStudentCalllogByAccId = domain + "/Api/CallLog/GetStudentCalllogByAccId";
     public static final String themeGetById = domain + "/Api/Theme/GetById";
@@ -57,6 +57,7 @@ public class NetworkUtil {
     public static String nimUserModifyPassword = domain + "/Api/NimUser/ModifyPassword";
     public static String nimUserUpdateTeacher = domain + "/Api/NimUser/UpdateTeacher";
     public static String nimUserUpdateStudent = domain + "/Api/NimUser/UpdateStudent";
+    public static String CallLogGetByUsername = domain + "/Api/CallLog/GetByUsername";
 
 
     public static String format(String text, Object... para) {

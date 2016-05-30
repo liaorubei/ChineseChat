@@ -178,7 +178,6 @@ public class ChineseChat extends Application {
         mContext = context;
     }
 
-
     public static boolean isStudent() {
         return "student".equals(release);
     }
