@@ -117,7 +117,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.newclass.woyaoxue.view.XListView
+        <com.hanwen.chinesechat.view.XListView
             android:id="@id/listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

@@ -28,17 +28,40 @@
 
     </RelativeLayout>
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/srl"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.newclass.woyaoxue.view.XListView
-            android:id="@id/listview"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="#F0F0F0"
-            android:dividerHeight="10dp" />
+            android:orientation="vertical"
+            android:id="@+id/ll_teacher">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <LinearLayout
+                android:id="@+id/ll_month"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:orientation="horizontal" />
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/viewpager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/srl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.hanwen.chinesechat.view.XListView
+                android:id="@id/listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#F0F0F0"
+                android:dividerHeight="10dp" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </FrameLayout>
 </LinearLayout>

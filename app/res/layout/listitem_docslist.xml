@@ -12,7 +12,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true">
 
-        <com.newclass.woyaoxue.view.CircularProgressBar
+        <com.hanwen.chinesechat.view.CircularProgressBar
             android:id="@+id/cpb"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

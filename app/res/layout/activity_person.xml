@@ -68,10 +68,36 @@
                     android:id="@+id/tv_username"
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
+                    android:layout_gravity="center" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_email"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_marginBottom="1dp"
+                android:background="#FFFFFF"
+                android:orientation="horizontal"
+                android:visibility="visible">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center"
-                    android:paddingLeft="5dp"
-                    android:text="13512345678" />
+                    android:layout_margin="10dp"
+                    android:text="@string/ActivityPerson_username"
+                    android:textSize="15sp" />
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@null"
+                    android:enabled="false"
+                    android:hint="@string/ActivityPerson_hint_username"
+                    android:inputType="textEmailAddress"
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -97,36 +123,6 @@
                     android:layout_gravity="center_vertical"
                     android:background="@null"
                     android:hint="@string/ActivityPerson_hint_nickname"
-                    android:textSize="15sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ll_email"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:layout_marginBottom="1dp"
-                android:background="#FFFFFF"
-                android:orientation="horizontal"
-                android:visibility="gone">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:text="@string/ActivityPerson_email"
-                    android:textSize="15sp" />
-
-                <EditText
-                    android:id="@+id/et_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-
-                    android:background="@null"
-                    android:enabled="false"
-                    android:hint="Email can not change"
-                    android:inputType="textEmailAddress"
                     android:textSize="15sp" />
             </LinearLayout>
 
@@ -216,7 +212,6 @@
                         android:layout_height="25dp"
                         android:layout_marginRight="15dp"
                         android:button="@drawable/selector_box_radio"
-                        android:checked="true"
                         android:text="@string/ActivityPerson_female"
                         android:textSize="15sp" />
 

@@ -90,4 +90,5 @@
     <!-- map -->
     <dimen name="friend_map_btn_height">42dp</dimen>
     <dimen name="friend_map_bound_padding">80dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

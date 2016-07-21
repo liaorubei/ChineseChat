@@ -1,55 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.voc.woyaoxue">
+<manifest
+    package="com.hanwen.chinesechat"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <!-- 访问网络状态 -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
 
     <!-- 控制呼吸灯，振动器等，用于新消息提醒 -->
-    <uses-permission android:name="android.permission.FLASHLIGHT" />
-    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <!-- 外置存储存取权限 -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <!-- 多媒体相关 -->
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.RECORD_AUDIO" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <!-- 如果需要实时音视频通话模块，下面的权限也是必须的。否则，可以不加 -->
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
 
-    <!-- SDK 权限申明, 第三方 APP 接入时，请将 com.voc.woyaoxue 替换为自己的包名 -->
+    <!-- SDK 权限申明, 第三方 APP 接入时，请将 com.hanwen.chinesechat 替换为自己的包名 -->
     <!-- 和下面的 uses-permission 一起加入到你的 AndroidManifest 文件中。 -->
     <permission
-        android:name="com.voc.woyaoxue.permission.RECEIVE_MSG"
-        android:protectionLevel="signature" />
+        android:name="com.hanwen.chinesechat.permission.RECEIVE_MSG"
+        android:protectionLevel="signature"/>
 
-    <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.voc.woyaoxue 替换为自己的包名 -->
-    <uses-permission android:name="com.voc.woyaoxue.permission.RECEIVE_MSG" />
+    <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.hanwen.chinesechat 替换为自己的包名 -->
+    <uses-permission android:name="com.hanwen.chinesechat.permission.RECEIVE_MSG"/>
 
     <application
-        android:name="com.newclass.woyaoxue.ChineseChat"
+        android:name=".ChineseChat"
+        android:allowBackup="false"
         android:icon="${APPLICATION_ICON}"
-        android:label="ChineseChat"
+        android:label="${APPLICATION_LABEL}"
         android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+        <activity
+            android:name=".activity.ActivitySplash"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+
+        <!-- 申明白板会话的广播接收器，第三方APP集成时，action中的com.netease.nim.demo请替换为自己的包名 -->
+        <receiver
+            android:name="com.netease.nimlib.receiver.RTSBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <!--<action android:name="com.netease.nim.demo.ACTION.RECEIVE_RTS_NOTIFICATION"/>-->
+                <action android:name="com.hanwen.chinesechat.ACTION.RECEIVE_RTS_NOTIFICATION"/>
+            </intent-filter>
+        </receiver>
 
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
-            android:process=":core" />
+            android:process=":core"/>
         <service
             android:name="com.netease.nimlib.service.NimService$Aux"
-            android:process=":core" />
+            android:process=":core"/>
 
         <!-- 云信SDK的监视系统启动和网络变化的广播接收器，用户开机自启动以及网络变化时候重新登录， 保持和 NimService 同一进程 -->
         <receiver
@@ -57,131 +80,106 @@
             android:exported="false"
             android:process=":core">
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
             </intent-filter>
         </receiver>
 
         <!-- 云信进程间通信 Receiver -->
-        <receiver android:name="com.netease.nimlib.service.ResponseReceiver" />
+        <receiver android:name="com.netease.nimlib.service.ResponseReceiver"/>
 
         <!-- 安卓保活配置 -->
         <service
             android:name="com.netease.cosine.core.CosineService"
-            android:process=":cosine" />
+            android:process=":cosine"/>
 
         <receiver
             android:name="com.netease.cosine.target.CosineReceiver"
             android:exported="true"
-            android:process=":cosine" />
-
-        <!-- 申明实时音视频来电通知的广播接收器，第三方APP集成时，action中的com.netease.nim.demo请替换为自己的包名 -->
-        <receiver
-            android:name="com.netease.nimlib.receiver.AVChatBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.voc.woyaoxue.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
-                <action android:name="com.henwen.chinesechat.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
-            </intent-filter>
-        </receiver>
-
-        <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时音视频模块时，如果需要网络通话与本地电话互斥，请加上此接收器 -->
-        <!--        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
-                    <intent-filter>
-                        <action android:name="android.intent.action.PHONE_STATE" />
-                    </intent-filter>
-                </receiver>-->
+            android:process=":cosine"/>
 
         <meta-data
             android:name="com.netease.cosine.target.receiver"
-            android:value="com.netease.nimlib.service.NimReceiver" />
+            android:value="com.netease.nimlib.service.NimReceiver"/>
 
-        <activity android:name="com.newclass.woyaoxue.activity.ActivitySplash">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
         <!-- 说明本应该是学生端还是老师端 -->
         <meta-data
             android:name="release"
-            android:value="${release_value}" />
+            android:value="${release_value}"/>
+
+        <!-- 更新下载服务 -->
+        <service android:name=".service.AutoUpdateService"/>
+        <!-- 批量下载服务 -->
+        <service android:name=".service.DownloadService"/>
+        <!-- 教师自动刷新服务 -->
+        <service android:name=".service.TeacherAutoRefreshService"/>
 
         <!-- 文件夹界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityDocsDone" />
+        <activity android:name=".activity.ActivityDocsDone"/>
         <!-- 文件夹界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityDocsTodo" />
+        <activity android:name=".activity.ActivityDocsTodo"/>
 
         <!-- 播放界面 -->
         <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityPlay"
-            android:screenOrientation="portrait" />
+            android:name=".activity.ActivityPlay"
+            android:screenOrientation="portrait"/>
         <!-- 更多界面 -->
-        <activity android:name="com.newclass.woyaoxue.activity.MoreActivity" />
+        <activity android:name=".activity.MoreActivity"/>
         <activity
-            android:name="com.newclass.woyaoxue.activity.ActivitySignIn"
+            android:name=".activity.ActivitySignIn"
             android:label="用户登录"
-            android:launchMode="singleTask" />
+            android:launchMode="singleTask"/>
         <activity
-            android:name="com.newclass.woyaoxue.activity.ActivitySignUp"
-            android:label="注册帐号" />
-        <activity android:name="com.newclass.woyaoxue.activity.ContactActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.GroupCreate" />
+            android:name=".activity.ActivitySignUp"
+            android:label="注册帐号"/>
+        <activity android:name=".activity.ContactActivity"/>
+        <activity android:name=".activity.GroupCreate"/>
         <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityCall"
+            android:name=".activity.ActivityCall"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"/>
         <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityTake"
+            android:name=".activity.ActivityTake"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen" />
-        <activity android:name="com.newclass.woyaoxue.activity.ChooseActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.FriendActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.FriendAddActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.FriendSearchActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.RandomActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityHistory" />
-        <activity android:name="com.newclass.woyaoxue.activity.QuestionActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityPayment" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivitySetting" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityPerson" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityTheme" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityFeedback" />
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
+        <activity android:name=".activity.ChooseActivity"/>
+        <activity android:name=".activity.FriendActivity"/>
+        <activity android:name=".activity.FriendAddActivity"/>
+        <activity android:name=".activity.FriendSearchActivity"/>
+        <activity android:name=".activity.RandomActivity"/>
+        <activity android:name=".activity.ActivityHistory"/>
+        <activity android:name=".activity.QuestionActivity"/>
+        <activity android:name=".activity.ActivityPayment"/>
+        <activity android:name=".activity.ActivitySetting"/>
+        <activity android:name=".activity.ActivityPerson"/>
+        <activity android:name=".activity.ActivityTheme"/>
+        <activity android:name=".activity.ActivityFeedback"/>
+        <activity android:name=".activity.ActivityAbout"/>
+        <activity android:name=".activity.ActivityUsehelp"/>
+        <activity android:name=".activity.ActivityUseterm"/>
+        <activity android:name=".activity.ActivityReset"/>
+        <activity android:name=".activity.ActivityMain"/>
+        <activity android:name=".activity.ActivityDetail"/>
+        <activity android:name=".activity.ActivityProfile"/>
+        <activity android:name=".activity.ActivitySecurity"/>
+        <activity android:name=".activity.ActivityBlank"/>
+        <activity
+            android:name=".activity.ActivityAlbum"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
 
-        <!-- 更新下载服务 -->
-        <service android:name="com.newclass.woyaoxue.service.AutoUpdateService" />
-
-        <!-- 批量下载服务 -->
-        <service android:name="com.newclass.woyaoxue.service.DownloadService" />
         <service
-            android:name="com.newclass.woyaoxue.service.TeacherAutoRefreshService"
+            android:name=".service.ServiceChat"
             android:enabled="true"
-            android:exported="true" />
+            android:exported="true"/>
 
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityAbout" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityUsehelp" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityUseterm" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityReset" />
-        <activity android:name="com.newclass.woyaoxue.MainActivity" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityDetail" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivityProfile" />
-        <activity android:name="com.newclass.woyaoxue.activity.ActivitySecurity" />
-        <activity
-            android:name="com.newclass.woyaoxue.activity.ActivityAlbum"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
-
-        <receiver
-            android:name="com.newclass.woyaoxue.receiver.MyReceiver"
+        <service
+            android:name=".service.ServiceQueue"
             android:enabled="true"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
-            </intent-filter>
-        </receiver>
+        </service>
     </application>
 
 </manifest>

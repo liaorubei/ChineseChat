@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">中文之音</string>
-    <string name="action_settings">Settings</string>
+    <!--AutoUpdateService-->
+    <string name="AutoUpdateService_download_success">Download success</string>
+    <string name="AutoUpdateService_download_failed">Download failed</string>
+    <string name="AutoUpdateService_download_start">Download start</string>
+    <string name="AutoUpdateService_app_update">Update</string>
 
     <!-- MainActivity更新对话框 -->
-    <string name="upgrade_tips">"更新提示"</string>
-    <string name="negative_text">"取消"</string>
-    <string name="positive_text">"确定"</string>
-    <string name="new_versions_message">"发现了最新版本,是否下载?"</string>
-    <string name="has_download_message">"Update package download is completed, whether the installation?"</string>
+    <string name="ActivityMain_has_download_message">Update package is downloaded,update it now?</string>
+    <string name="ActivityMain_negative_text">Cancel</string>
+    <string name="ActivityMain_positive_text">OK</string>
+    <string name="ActivityMain_new_versions_message">Have a latest version,would you like to update?</string>
+    <string name="ActivityMain_upgrade_tips">Update</string>
 
     <!-- 下拉刷新与上拉加载 -->
 
     <!-- 菜单项 -->
-    <string name="batch_remove">批量删除</string>
 
 
     <string name="title_activity_main">MainActivity</string>
@@ -293,69 +295,17 @@
         <item>Zimbabwe</item>
     </string-array>
     <string-array name="languages">
-        <item>Argentina (Español)</item>
-        <item>Australia (English)</item>
-        <item>België (Nederlands)</item>
-        <item>Belgique (Français)</item>
-        <item>Bolivia (Español)</item>
-        <item>Brasil (Português)</item>
-        <item>Canada (English)</item>
-        <item>Canada (Français)</item>
-        <item>Česká republika (Česky)</item>
-        <item>Chile (Español)</item>
-        <item>Colombia (Español)</item>
-        <item>Costa Rica (Español)</item>
-        <item>Danmark (Dansk)</item>
-        <item>Deutschland (Deutsch)</item>
-        <item>Ecuador (Español)</item>
-        <item>El Salvador (Español)</item>
-        <item>España (Español)</item>
-        <item>France (Français)</item>
-        <item>Guatemala (Español)</item>
-        <item>Honduras (Español)</item>
-        <item>India (English)</item>
-        <item>Indonesia (Bahasa Indonesia)</item>
-        <item>Ireland (English)</item>
-        <item>Italia (Italiano)</item>
-        <item>Jamaica (English)</item>
-        <item>Magyarország (Magyar)</item>
-        <item>Malaysia (English)</item>
-        <item>México (Español)</item>
-        <item>Nederland (Nederlands)</item>
-        <item>New Zealand (English)</item>
-        <item>Nicaragua (Español)</item>
-        <item>Norge (Norsk)</item>
-        <item>Österreich (Deutsch)</item>
-        <item>Panamá (Español)</item>
-        <item>Paraguay (Español)</item>
-        <item>Perú (Español)</item>
-        <item>Polska (Polski)</item>
-        <item>Portugal (Português)</item>
-        <item>Puerto Rico (Español)</item>
-        <item>República Dominicana (Español)</item>
-        <item>România (Română)</item>
-        <item>Schweiz (Deutsch)</item>
-        <item>Singapore (English)</item>
-        <item>Slovensko (Slovensky)</item>
-        <item>South Africa (English)</item>
-        <item>Suisse (Français)</item>
-        <item>Suomi (Suomi)</item>
-        <item>Sverige (Svenska)</item>
-        <item>Trinidad &#38; Tobago (English)</item>
-        <item>Turkiye (Türkçe)</item>
-        <item>United Kingdom (English)</item>
-        <item>United States (English)</item>
-        <item>Uruguay (Español)</item>
-        <item>Venezuela (Español)</item>
-        <item>Ελλάδα (Ελληνικά)</item>
-        <item>България (Български)</item>
-        <item>Қазақстан (Русский)</item>
-        <item>Россия (Pусский)</item>
-        <item>Україна (Українська)</item>
-        <item>한국 (한국어)</item>
-        <item>中国 (简体中文)</item>
-        <item>台灣 (繁體中文)</item>
-        <item>日本 (日本語)</item>
+        <item>English</item>
+        <item>Fran?ais</item>
+        <item>русский</item>
+        <item>Espa?ol</item>
+        <item>العربية</item>
+        <item>Deutsch</item>
+        <item>日本語</item>
+        <item>Português</item>
+        <item>Italiano</item>
+        <item>ไทย</item>
+        <item>한국어</item>
     </string-array>
 
     <string name="pref_title_system_sync_settings">System sync settings</string>
@@ -379,7 +329,7 @@
     <!---->
     <string name="ActivitySplash_enter">Enter App</string>
 
-    <!--MainActivity-->
+    <!--ActivityMain-->
     <string name="MainActivity_Refresh">Refresh</string>
     <string name="MainActivity_Delete">Delete</string>
     <string name="MainActivity_one_more_time_quit">Click one more time to quit</string>
@@ -387,18 +337,6 @@
     <!--FragmentListen-->
     <string name="FragmentListen_downloaded">DOWNLD</string>
 
-    <!--FragmentChoose-->
-    <string name="FragmentChoose_busy">The tutor is busy now</string>
-    <string name="FragmentChoose_offline">The tutor is busy now</string>
-    <string name="FragmentChoose_tips_online">online</string>
-    <string name="FragmentChoose_tips_offline">offline</string>
-    <string name="FragmentChoose_tips_busy">busy</string>
-
-    <!--拨打老师时出现的各种提示-->
-    <string name="FragmentChoose_invalid_user">Invalid user</string>
-    <string name="FragmentChoose_invalid_tutor">Invalid tutor</string>
-    <string name="FragmentChoose_Balance_is_not_enough">Balance is not enough</string>
-    <string name="FragmentChoose_The_tutor_is_busy_now">The tutor is busy now </string>
 
     <!--ActivityCall-->
     <string name="ActivityCall_pick_theme">Topic bank</string>
@@ -423,9 +361,13 @@
     <string name="ActivityTake_confirm">OK</string>
 
 
+    <!--FragmentThemes-->
+
+
     <!--FragmentPerson-->
-    <string name="fragment_person_unlogin">Unlogin</string>
-    <string name="fragment_person_my_coins">Balance：</string>
+    <string name="FragmentPerson_unlogin">Login</string>
+    <string name="FragmentPerson_balance">Balance:%1$d coins</string>
+    <string name="FragmentPerson_hours">当月授课情况：%1$d 分钟(%2$d次)</string>
     <string name="fragment_person_recharge">Recharge</string>
     <string name="fragment_person_setting">Settings</string>
     <string name="fragment_person_history">Study history</string>
@@ -490,6 +432,7 @@
     <!--ActivityPerson-->
     <string name="ActivityPerson_title">User profile</string>
     <string name="ActivityPerson_save">Save</string>
+    <string name="ActivityPerson_username">Username:</string>
     <string name="ActivityPerson_nickname">Nickname:</string>
     <string name="ActivityPerson_email">E-mail:</string>
     <string name="ActivityPerson_mobile">Mobile:</string>
@@ -513,6 +456,7 @@
     <string name="ActivityPerson_camera">Camera</string>
 
     <string name="ActivityPerson_photo">Album</string>
+    <string name="ActivityPerson_hint_username">Username cannot be changed</string>
     <string name="ActivityPerson_hint_nickname">Nickname</string>
     <string name="ActivityPerson_hint_email">E-mail cannot be changed</string>
     <string name="ActivityPerson_hint_mobile">Enter mobile number</string>
@@ -521,7 +465,6 @@
     <string name="ActivityPerson_hint_school">Graduate school</string>
     <string name="ActivityPerson_hint_hobbies">Hobbies</string>
     <string name="ActivityPerson_hint_spoken">Spoken languages</string>
-    <string name="ActivityPerson_hint_location">Location</string>
     <string name="ActivityPerson_hint_about">Introduction</string>
 
     <!--ActivityHistory-->
@@ -531,17 +474,19 @@
     <string name="ActivityHistory_theme">Topic：%1$s</string>
     <string name="ActivityHistory_teacher">Tutor：%1$s</string>
     <string name="ActivityHistory_student">Student：%1$s</string>
+    <string name="ActivityHistory_coin">Cost：%1$d coin</string>
     <string name="ActivityHistory_coins">Cost：%1$d coins</string>
-    <string name="ActivityHistory_time">Duration：%1$s</string>
+    <string name="ActivityHistory_duration">Duration：%1$s min</string>
+    <string name="ActivityHistory_durations">Duration：%1$s mins</string>
     <string name="ActivityHistory_date">Date:</string>
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_download">Download</string>
     <string name="ActivityDocsTodo_alreadyDownload">In the download task list</string>
+    <string name="ActivityDocsTodo_soundPath_error">The course does not contain audio files</string>
 
     <!--ActivityDocsDone-->
     <string name="ActivityDocsDone_Delete">Delete</string>
-
 
     <!--ActivityFeedback-->
     <string name="ActivityFeedback_title">Complaints</string>
@@ -555,7 +500,7 @@
     <!--ActivityAbout-->
     <string name="ActivityAbout_title">About ChineseChat</string>
     <string name="ActivityAbout_update_version">Check for update</string>
-    <string name="ActivityAbout_use_help">How to use</string>
+    <string name="ActivityAbout_use_help">Users Help</string>
     <string name="ActivityAbout_user_agreement">Users Agreement</string>
 
     <string name="ActivityAbout_dialog_title">Update</string>
@@ -596,6 +541,7 @@
     <string name="ActivitySignIn_login_failure">Login failed</string>
     <string name="ActivitySignIn_email_or_password_not_null">E-mail or password cannot be empty</string>
     <string name="ActivitySignIn_network_error_login_failure">Network unavailable</string>
+    <string name="ActivitySignIn_is_logging">The app is logging in,Please wait</string>
 
     <!--ActivitySignUp-->
     <string name="ActivitySignUp_title">Registration</string>
@@ -605,7 +551,7 @@
     <string name="ActivitySignUp_read_and_agreed">I have read and accept</string>
     <string name="ActivitySignUp_registered_users">"Registered users, please "</string>
     <string name="ActivitySignUp_login">Login</string>
-    <string name="ActivitySignUp_user_registration_agreement">《Users Agreement》</string>
+    <string name="ActivitySignUp_user_registration_agreement">Users Agreement</string>
     <string name="ActivitySignUp_next">Register</string>
 
     <string name="ActivitySignUp_email_password_can_not_null">Please fill out all the information required</string>
@@ -616,7 +562,7 @@
     <string name="ActivitySignUp_register_failure">Register failed</string>
 
 
-    <string name="ActivityUsehelp_title">Use help</string>
+    <string name="ActivityUsehelp_title">Users help</string>
     <string name="ActivityUseterm_title">Users Agreement</string>
 
     <!--ActivityTheme-->
@@ -632,14 +578,29 @@
     <string name="ActivityProfile_album">Album</string>
     <string name="ActivityProfile_loading">Loading...</string>
 
+    <!--FragmentChoose-->
+    <string name="FragmentChoose_busy">The tutor is busy now</string>
+    <string name="FragmentChoose_offline">The tutor is busy now</string>
+    <string name="FragmentChoose_tips_online">online</string>
+    <string name="FragmentChoose_tips_offline">offline</string>
+    <string name="FragmentChoose_tips_busy">busy</string>
+
+    <!--拨打老师时出现的各种提示-->
+    <string name="FragmentChoose_invalid_user">Invalid user</string>
+    <string name="FragmentChoose_invalid_tutor">Invalid tutor</string>
+    <string name="FragmentChoose_Balance_is_not_enough">Balance is not enough</string>
+    <string name="FragmentChoose_The_tutor_is_busy_now">The tutor is busy now </string>
+
     <!--FragmentLineUp-->
-    <string name="FragmentLineUp_dequeue_success">我已下线</string>
-    <string name="FragmentLineUp_dequeue_failure">下线失败</string>
+    <string name="FragmentLineUp_dequeue_success">已退出排队</string>
+    <string name="FragmentLineUp_dequeue_failure">退出失败</string>
     <string name="FragmentLineUp_enqueue_success">入队成功</string>
     <string name="FragmentLineUp_enqueue_failure">入队失败</string>
-    <string name="FragmentLineUp_position">Current position %1$s</string>
-    <string name="FragmentLineUp_in_the_pool">已进入被叫池</string>
+    <string name="FragmentLineUp_nickname">排队中</string>
     <string name="FragmentLineUp_in_the_line">排队中</string>
+    <string name="FragmentLineUp_i_need_enqueue">我要入队</string>
+    <string name="FragmentLineUp_i_need_dequeue">我要出队</string>
+
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_title">Course list</string>
 
@@ -653,11 +614,14 @@
     <string name="xlistview_footer_hint_errors">Failed to load</string>
     <string name="xlistview_footer_hint_nomore">The end</string>
     <string name="xlistview_footer_hint_normal">View more...</string>
+    <string name="xlistview_footer_hint_empty">No tutors are available now, please wait!</string>
     <string name="xlistview_footer_hint_ready">Release load more...</string>
     <string name="xlistview_header_hint_loading">Loading...</string>
     <string name="xlistview_header_hint_normal">Pull down refresh</string>
     <string name="xlistview_header_hint_ready">Release refersh</string>
     <string name="xlistview_header_last_time">Last update time</string>
     <string name="ActivityAbout_already_up_to_date">This is the latest version</string>
-    <string name="ActivityPayment_order_create"></string>
+    <string name="title_activity_activity_chat">ActivityChat</string>
+    <string name="title_activity_activity_blank">ActivityBlank</string>
+    <string name="ActivityPerson_hint_location">Region</string>
 </resources>

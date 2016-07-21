@@ -1,20 +1,30 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@android:id/content"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f0f0f0"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/ll_ctrl"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:background="#FAFAFA"
-        android:orientation="horizontal" />
+        android:layout_height="match_parent"
+        android:background="#f0f0f0"
+        android:orientation="vertical">
 
-    <android.support.v4.view.ViewPager
-        android:id="@id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/ll_ctrl"
+            android:layout_width="match_parent"
+            android:layout_height="38dp"
+            android:background="#FAFAFA"
+            android:orientation="horizontal" />
 
+        <android.support.v4.view.ViewPager
+            android:id="@id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerInParent="true" />
+</RelativeLayout>

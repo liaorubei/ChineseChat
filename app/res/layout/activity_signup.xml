@@ -39,34 +39,77 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <EditText
-            android:id="@+id/et_email"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/shape_text_signinup"
-            android:hint="@string/ActivitySignUp_email"
-            android:textSize="12sp" />
+            android:layout_marginBottom="10dp">
 
-        <EditText
-            android:id="@+id/et_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:background="@drawable/shape_text_signinup"
-            android:hint="@string/ActivitySignUp_password"
-            android:inputType="textPassword"
-            android:textSize="12sp" />
+            <EditText
+                android:id="@+id/et_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_text_signinup"
+                android:hint="@string/ActivitySignUp_email"
+                android:paddingLeft="30dp"
+                android:textSize="12sp"
+                android:typeface="monospace" />
 
-        <EditText
-            android:id="@+id/et_repassword"
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/icon_username" />
+        </RelativeLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:background="@drawable/shape_text_signinup"
-            android:hint="@string/ActivitySignUp_re_password"
-            android:inputType="textPassword"
-            android:textSize="12sp" />
+            android:layout_marginBottom="10dp">
+
+            <EditText
+                android:id="@+id/et_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_text_signinup"
+                android:hint="@string/ActivitySignUp_password"
+                android:inputType="textPassword"
+                android:paddingLeft="30dp"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/icon_password" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="25dp">
+
+            <EditText
+                android:id="@+id/et_repassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_text_signinup"
+                android:hint="@string/ActivitySignUp_re_password"
+                android:inputType="textPassword"
+                android:paddingLeft="30dp"
+                android:textSize="12sp"
+                android:typeface="monospace" />
+
+            <ImageView
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:src="@drawable/icon_password" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -75,34 +118,34 @@
             android:gravity="center_horizontal"
             android:orientation="vertical">
 
-            <CheckBox
-                android:id="@+id/cb_is_read"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:button="@drawable/selector_box_check"
-                android:paddingLeft="5dp"
-                android:text="@string/ActivitySignUp_read_and_agreed"
-                android:textColor="@color/color_app_normal" />
-
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/iv_read"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/selector_box_check" />
 
                 <TextView
-                    android:id="@+id/tv_protocol"
+                    android:id="@+id/tv_read"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/ActivitySignUp_user_registration_agreement"
-                    android:textColor="@color/color_app" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="#000" />
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/ActivitySignUp_read_and_agreed"
+                    android:textColor="@color/color_app_normal"
+                    android:textSize="20sp" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_protocol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/ActivitySignUp_user_registration_agreement"
+                android:textColor="@color/color_app" />
         </LinearLayout>
 
         <Button
@@ -112,10 +155,10 @@
             android:layout_centerInParent="true"
             android:layout_marginBottom="30dp"
             android:background="@drawable/selector_button_signniup"
-            android:enabled="false"
             android:text="@string/ActivitySignUp_next"
             android:textColor="#fff"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:enabled="false" />
 
         <LinearLayout
             android:layout_width="wrap_content"
