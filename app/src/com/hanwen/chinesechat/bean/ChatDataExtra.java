@@ -11,4 +11,5 @@ public class ChatDataExtra {
     public UserLite Teacher;
     public String Username;
     public int Id;
+    public String Nickname;
 }

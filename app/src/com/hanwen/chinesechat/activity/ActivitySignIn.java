@@ -17,28 +17,24 @@ import android.widget.EditText;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hanwen.chinesechat.ChineseChat;
+import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.bean.Response;
+import com.hanwen.chinesechat.bean.User;
+import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
+import com.hanwen.chinesechat.util.Log;
+import com.hanwen.chinesechat.util.NetworkUtil;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
-import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nimlib.sdk.msg.MsgServiceObserve;
-import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.hanwen.chinesechat.ChineseChat;
-import com.hanwen.chinesechat.bean.Response;
-import com.hanwen.chinesechat.bean.User;
-import com.hanwen.chinesechat.util.CommonUtil;
-import com.hanwen.chinesechat.util.Log;
-import com.hanwen.chinesechat.util.NetworkUtil;
-import com.hanwen.chinesechat.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * 用户登录界面
@@ -56,14 +52,6 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     private View iv_password_clear;
     private ProgressDialog progressDialog;
 
-    private Observer<List<IMMessage>> observerReceiveMessage = new Observer<List<IMMessage>>() {
-        @Override
-        public void onEvent(List<IMMessage> list) {
-            for (IMMessage imMessage : list) {
-                Log.i(TAG, "收到消息MsgType:" + imMessage.getMsgType() + " Content:" + imMessage.getContent() + " FromAccount:" + imMessage.getFromAccount() + " SessionId:" + imMessage.getSessionId());
-            }
-        }
-    };
 
     private void initView() {
         findViewById(R.id.iv_home).setOnClickListener(this);
@@ -254,8 +242,6 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 editor.putString("token", info.getToken());
                 editor.apply();
 
-                initAVChatManager();
-
                 if (enter_main) {
                     //进入到MainActivity主界面
                     startActivity(new Intent(ActivitySignIn.this, ActivityMain.class));
@@ -263,11 +249,6 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 finish();
             }
         });
-    }
-
-    protected void initAVChatManager() {
-        // 消息监听注册
-        NIMClient.getService(MsgServiceObserve.class).observeReceiveMessage(observerReceiveMessage, true);
     }
 
     public static void startFromKickout(Context context) {

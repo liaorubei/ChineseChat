@@ -323,12 +323,14 @@ public class FragmentChoose extends Fragment {
                     json.addProperty("Id", resp.info.Teacher.Id);
                     json.addProperty("Avatar", resp.info.Teacher.Avatar);
                     json.addProperty("Nickname", resp.info.Teacher.Nickname);
+                    json.addProperty("Country", resp.info.Teacher.Country);
 
                     //新版本要求显示教师及学生明细1.1.8版本
                     JsonObject student = new JsonObject();
                     student.addProperty("Id", resp.info.Student.Id);
                     student.addProperty("Avatar", resp.info.Student.Avatar);
                     student.addProperty("Nickname", resp.info.Student.Nickname);
+                    student.addProperty("Country", resp.info.Student.Country);
 
                     JsonObject studentSummary = new JsonObject();
                     student.add("Summary", studentSummary);
@@ -338,6 +340,7 @@ public class FragmentChoose extends Fragment {
                     teacher.addProperty("Id", resp.info.Teacher.Id);
                     teacher.addProperty("Avatar", resp.info.Teacher.Avatar);
                     teacher.addProperty("Nickname", resp.info.Teacher.Nickname);
+                    teacher.addProperty("Country", resp.info.Teacher.Country);
 
                     JsonObject teacherSummary = new JsonObject();
                     teacherSummary.addProperty("month", resp.info.Teacher.Summary.month);

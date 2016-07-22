@@ -61,6 +61,7 @@ public class NetworkUtil {
     public static String CallLogGetByUsername = domain + "/Api/CallLog/GetByUsername";
     public static String CallLogGetByUserId = domain + "/Api/CallLog/GetByUserId";//id,skip,take,from,to
     public static String getTeacherOnline = domain + "/Api/NimUser/GetTeacherOnline";//skip,take
+    public static String nimUserGetUserChatDataByAccid = domain + "/Api/NimUser/GetUserChatDataByAccid";//accid
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {

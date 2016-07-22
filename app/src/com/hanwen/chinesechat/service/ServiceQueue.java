@@ -39,8 +39,8 @@ public class ServiceQueue extends Service {
             Log.i(TAG, "handleMessage: " + (NIMClient.getStatus()));
 
             HttpUtil.Parameters params = new HttpUtil.Parameters();
-            params.add("Id", 205);
-            HttpUtil.post(NetworkUtil.teacherEnqueue, params, new RequestCallBack<String>() {
+            params.add("Id", ChineseChat.CurrentUser.Id);
+            HttpUtil.post(NetworkUtil.teacherRefresh, params, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
                     Log.i(TAG, "onSuccess: " + responseInfo.result);
@@ -76,8 +76,9 @@ public class ServiceQueue extends Service {
         builder.setSmallIcon(R.drawable.ic_launcher_student);
         Notification notification = builder.build();
         notification.flags = Notification.FLAG_FOREGROUND_SERVICE;
-        startForeground(1, notification);
+        //startForeground(1, notification);
 
+        handler.removeCallbacksAndMessages(null);
         handler.sendEmptyMessageDelayed(1, 60 * 1000);
 
         return super.onStartCommand(intent, flags, startId);

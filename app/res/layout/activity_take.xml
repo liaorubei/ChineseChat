@@ -11,7 +11,7 @@
         android:layout_marginTop="75dp"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:visibility="invisible">
+        android:visibility="visible">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_icon"
@@ -35,7 +35,7 @@
             android:layout_marginBottom="10dp"
             android:text="总时长:125小时  次数:250次"
             android:textColor="@color/color_app"
-            android:visibility="visible"/>
+            android:visibility="invisible"/>
     </LinearLayout>
 
     <LinearLayout
@@ -44,7 +44,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/fl_content"
         android:orientation="vertical"
-        android:visibility="visible">
+        android:visibility="invisible">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -53,8 +53,8 @@
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/iv_avatar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
@@ -136,7 +136,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility="visible">
+            android:visibility="invisible">
 
             <TextView
                 android:id="@+id/tv_theme"
@@ -190,7 +190,8 @@
             android:id="@+id/rl_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            android:background="#ffffff">
 
 
             <ImageView
@@ -200,22 +201,22 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/ic_launcher_student"/>
+                />
 
-            <ImageView
-                android:id="@+id/iv_close"
+            <Button
+                android:id="@+id/iv_image_send"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/icon_close"/>
+                android:src="@drawable/selector_play_btn_back"
+                android:text="pick"/>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/rl_texts"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff"
             android:visibility="invisible">
 
             <ListView
@@ -230,7 +231,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:hint="请输入"
-                android:text="12305"/>
+                />
 
             <Button
                 android:id="@+id/bt_msg"

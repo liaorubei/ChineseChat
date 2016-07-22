@@ -2,6 +2,7 @@ package com.hanwen.chinesechat;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Environment;
@@ -12,6 +13,7 @@ import com.hanwen.chinesechat.activity.ActivityTake;
 import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.database.Database;
+import com.hanwen.chinesechat.service.ServiceQueue;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.SystemUtil;
 import com.netease.nimlib.sdk.NIMClient;
@@ -51,8 +53,7 @@ public class ChineseChat extends Application {
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
                 public void onEvent(AVChatData chatData) {
-
-                    Log.i(TAG, "来电监听: " + chatData.getExtra());
+                    Log.i(TAG, "来电监听: " + chatData);
                     ChatData chat = new ChatData();
                     chat.setChatId(chatData.getChatId());
                     chat.setAccid(chatData.getAccount());
@@ -74,6 +75,13 @@ public class ChineseChat extends Application {
             NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(new Observer<StatusCode>() {
                 @Override
                 public void onEvent(StatusCode statusCode) {
+
+                    if (!isStudent()) {
+                        Intent service = new Intent(ChineseChat.this, ServiceQueue.class);
+                        //service.addFlags(Intent.ACTION_GTALK_SERVICE_CONNECTED)
+                        startService(service);
+                    }
+
                     Log.i(TAG, "云信状态: " + statusCode);
                     switch (statusCode) {
 
