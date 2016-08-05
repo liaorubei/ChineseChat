@@ -81,7 +81,7 @@
                 android:layout_width="75dp"
                 android:layout_height="25dp"
                 android:layout_marginRight="25dp"
-                android:background="@drawable/shape_rounded_rectangle_15dp"
+                android:background="@drawable/selector_rounded_rectangle_15dp"
                 android:gravity="center"
                 android:text="白板"/>
 
@@ -89,7 +89,7 @@
                 android:id="@+id/tv_text"
                 android:layout_width="75dp"
                 android:layout_height="25dp"
-                android:background="@drawable/shape_rounded_rectangle_15dp"
+                android:background="@drawable/selector_rounded_rectangle_15dp"
                 android:gravity="center"
                 android:text="文字"/>
 
@@ -98,7 +98,7 @@
                 android:layout_width="75dp"
                 android:layout_height="25dp"
                 android:layout_marginLeft="25dp"
-                android:background="@drawable/shape_rounded_rectangle_15dp"
+                android:background="@drawable/selector_rounded_rectangle_15dp"
                 android:gravity="center"
                 android:text="图片"/>
         </LinearLayout>

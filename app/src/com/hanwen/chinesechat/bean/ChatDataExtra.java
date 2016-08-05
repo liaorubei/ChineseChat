@@ -5,11 +5,12 @@ package com.hanwen.chinesechat.bean;
  */
 public class ChatDataExtra {
     //兼容属性
-
+    public int Id;
+    public String Accid;
+    public String Avatar;
+    public String Username;
+    public String Nickname;
 
     public UserLite Student;
     public UserLite Teacher;
-    public String Username;
-    public int Id;
-    public String Nickname;
 }

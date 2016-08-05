@@ -318,12 +318,12 @@ public class FragmentChoose extends Fragment {
                 }.getType());
                 if (resp.code == 200) {
 
-                    //兼容老版本写法1.1.7及之前
+                    //兼容老版本写法1.1.7及之前,当教师是1.1.7之前的版本,要把学生的信息传递给教师
                     JsonObject json = new JsonObject();
-                    json.addProperty("Id", resp.info.Teacher.Id);
-                    json.addProperty("Avatar", resp.info.Teacher.Avatar);
-                    json.addProperty("Nickname", resp.info.Teacher.Nickname);
-                    json.addProperty("Country", resp.info.Teacher.Country);
+                    json.addProperty("Id", resp.info.Student.Id);
+                    json.addProperty("Avatar", resp.info.Student.Avatar);
+                    json.addProperty("Nickname", resp.info.Student.Nickname);
+                    json.addProperty("Country", resp.info.Student.Country);
 
                     //新版本要求显示教师及学生明细1.1.8版本
                     JsonObject student = new JsonObject();
@@ -333,6 +333,9 @@ public class FragmentChoose extends Fragment {
                     student.addProperty("Country", resp.info.Student.Country);
 
                     JsonObject studentSummary = new JsonObject();
+                    studentSummary.addProperty("month", resp.info.Student.Summary.month);
+                    studentSummary.addProperty("count", resp.info.Student.Summary.count);
+                    studentSummary.addProperty("duration", resp.info.Student.Summary.duration);
                     student.add("Summary", studentSummary);
                     json.add("Student", student);
 

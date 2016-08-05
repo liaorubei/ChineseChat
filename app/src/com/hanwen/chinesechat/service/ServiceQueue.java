@@ -3,6 +3,7 @@ package com.hanwen.chinesechat.service;
 import android.app.Notification;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
@@ -40,6 +41,8 @@ public class ServiceQueue extends Service {
 
             HttpUtil.Parameters params = new HttpUtil.Parameters();
             params.add("Id", ChineseChat.CurrentUser.Id);
+            params.add("system", 1);//刷新参数,表明是那个系统的客户端,安卓为1,苹果为2,其他为0
+            params.add("device", Build.DEVICE);
             HttpUtil.post(NetworkUtil.teacherRefresh, params, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {

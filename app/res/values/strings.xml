@@ -354,13 +354,27 @@
     <string name="ActivityCall_call_failed">Call failed</string>
     <string name="ActivityCall_you_need_talk_first">Call is not established, cannot select the topic</string>
     <string name="ActivityCall_topic_choose_failed">Topic selection failure</string>
+
     <!--ActivityTake-->
     <string name="ActivityTake_can_not_back">Return key invalid</string>
     <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
     <string name="ActivityTake_cancel">Cancel</string>
     <string name="ActivityTake_confirm">OK</string>
 
+    <string name="ActivityTake_send_texts">Send</string>
+    <string name="ActivityTake_pick_image">Pick</string>
 
+    <string name="ActivityTake_hint_type_something">Enter text</string>
+    <string name="ActivityTake_show_student_nickname">Nickname：%1$s Country：%2$s</string>
+    <string name="ActivityTake_show_teacher_nickname">%1$s</string>
+    <string name="ActivityTake_show_student_summary">Summary：%1$dmins（%2$dtimes）</string>
+    <string name="ActivityTake_show_teacher_summary">Summary：%1$d分钟（%2$d次/%3$d月份）</string>
+
+    <string name="ActivityTake_tab_topic_pick">Topic bank</string>
+    <string name="ActivityTake_tab_topic_switch">Change</string>
+    <string name="ActivityTake_tab_board">Board</string>
+    <string name="ActivityTake_tab_texts">Text</string>
+    <string name="ActivityTake_tab_image">Image</string>
     <!--FragmentThemes-->
 
 
@@ -624,4 +638,7 @@
     <string name="title_activity_activity_chat">ActivityChat</string>
     <string name="title_activity_activity_blank">ActivityBlank</string>
     <string name="ActivityPerson_hint_location">Region</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

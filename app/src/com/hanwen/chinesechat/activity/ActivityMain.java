@@ -1,6 +1,10 @@
 package com.hanwen.chinesechat.activity;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Typeface;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -18,6 +22,8 @@ import com.hanwen.chinesechat.fragment.FragmentChoose;
 import com.hanwen.chinesechat.fragment.FragmentLineUp;
 import com.hanwen.chinesechat.fragment.FragmentListen;
 import com.hanwen.chinesechat.fragment.FragmentPerson;
+import com.hanwen.chinesechat.fragment.FragmentTextBook;
+import com.hanwen.chinesechat.receiver.NetworkReceiver;
 import com.hanwen.chinesechat.service.DownloadService;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -36,6 +42,7 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
     private RelativeLayout rl_main;
     private long lastTime = 0;
     private View tv_refresh;
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +67,12 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
         // 下载任务服务
         Intent sIntent = new Intent(this, DownloadService.class);
         startService(sIntent);
+
+        if (!ChineseChat.isStudent()) {
+            receiver = new NetworkReceiver();
+            IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(receiver, filter);
+        }
     }
 
     @Override
@@ -77,6 +90,8 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
     }
 
     private void initView() {
+        TextView tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_title.setTypeface(Typeface.createFromAsset(getAssets(), "font/MATURASC.TTF"));
         tv_refresh = findViewById(R.id.tv_refresh);
         tv_delete = (TextView) findViewById(R.id.tv_delete);
         tv_refresh.setOnClickListener(this);
@@ -85,7 +100,7 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(ActivityMain.this, getSupportFragmentManager(), R.id.ff_content);
         tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), ChineseChat.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
-        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentListen.class, null);
+        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentTextBook.class, null);
         tabHost.addTab(tabHost.newTabSpec("me").setIndicator(initIndicator("Me")), FragmentPerson.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
@@ -139,6 +154,14 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
             case R.id.delete:
 
                 break;
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (receiver != null) {
+            unregisterReceiver(receiver);
         }
     }
 }

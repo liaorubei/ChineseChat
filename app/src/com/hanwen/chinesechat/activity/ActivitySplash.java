@@ -3,6 +3,7 @@ package com.hanwen.chinesechat.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -137,6 +138,8 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
         params.addBodyParameter("username", username);
         params.addBodyParameter("password", password);
         params.addBodyParameter("category", (ChineseChat.isStudent() ? 0 : 1) + "");
+        params.addBodyParameter("system", 1 + "");
+        params.addBodyParameter("device", Build.DEVICE);
 
         new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userSignIn, params, new RequestCallBack<String>() {
             @Override

@@ -61,7 +61,8 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <!--<action android:name="com.netease.nim.demo.ACTION.RECEIVE_RTS_NOTIFICATION"/>-->
+
+                <!-- <action android:name="com.netease.nim.demo.ACTION.RECEIVE_RTS_NOTIFICATION"/> -->
                 <action android:name="com.hanwen.chinesechat.ACTION.RECEIVE_RTS_NOTIFICATION"/>
             </intent-filter>
         </receiver>
@@ -144,7 +145,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
-            android:windowSoftInputMode="adjustPan|stateHidden"/>
+            android:windowSoftInputMode="adjustPan"/>
         <activity android:name=".activity.ChooseActivity"/>
         <activity android:name=".activity.FriendActivity"/>
         <activity android:name=".activity.FriendAddActivity"/>
@@ -174,7 +175,6 @@
             android:name=".service.ServiceChat"
             android:enabled="true"
             android:exported="true"/>
-
         <service
             android:name=".service.ServiceQueue"
             android:enabled="true"

@@ -23,7 +23,7 @@ public class NetworkUtil {
     public static final String userCreate = domain + "/Api/NimUser/create";
     public static final String userLogout = domain + "/Api/NimUser/logout";
     public static final String userSelect = domain + "/Api/NimUser/Select";//keyword,skip,take
-    public static final String userSignIn = domain + "/Api/NimUser/Signin";
+    public static final String userSignIn = domain + "/Api/NimUser/Signin";//username,password,category,system,device
     public static final String userVerify = domain + "/Api/NimUser/Verify";
     public static final String ThemeSelect = domain + "/Api/Theme/Select";
     public static final String hsLevelAndTheme = domain + "/Api/Theme/HsLevelAndTheme";

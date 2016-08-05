@@ -50,16 +50,16 @@
         <TextView
             android:id="@+id/bt_enter"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:layout_above="@+id/ll_indicator"
             android:layout_centerHorizontal="true"
-            android:background="@drawable/shape_button_signinup_enabled"
+            android:background="@drawable/selector_rounded_rectangle_15dp"
             android:paddingBottom="5dp"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="5dp"
             android:text="@string/ActivitySplash_enter"
-            android:textColor="#fff"
+            android:textColor="#8000"
             android:visibility="invisible"/>
 
     </RelativeLayout>

@@ -9,14 +9,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -24,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -40,12 +39,14 @@ import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.CallLog;
 import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.ChatDataExtra;
+import com.hanwen.chinesechat.bean.MessageText;
 import com.hanwen.chinesechat.bean.NimAttachment;
 import com.hanwen.chinesechat.bean.NimSysNotice;
 import com.hanwen.chinesechat.bean.Question;
 import com.hanwen.chinesechat.bean.Response;
 import com.hanwen.chinesechat.bean.Theme;
 import com.hanwen.chinesechat.bean.User;
+import com.hanwen.chinesechat.bean.UserLite;
 import com.hanwen.chinesechat.fragment.FragmentThemes;
 import com.hanwen.chinesechat.rts.ActionTypeEnum;
 import com.hanwen.chinesechat.rts.doodle.DoodleView;
@@ -150,7 +151,7 @@ public class ActivityTake extends Activity implements OnClickListener {
     private boolean boardEstablished = false;
     private ListView lv_msg;
     private EditText et_msg;
-    private List<String> listMessage;
+    private List<MessageText> listMessage;
     private AdapterMessage adapterMessage;
     private View rl_texts;
     private View tv_board;
@@ -159,9 +160,6 @@ public class ActivityTake extends Activity implements OnClickListener {
     private int chatMode;
     private TextView tv_topic;
     private Theme currentTheme;
-
-    private int sourceId = -1;
-    private int targetId = -1;
 
     private Handler handler = new Handler() {
         @Override
@@ -221,21 +219,23 @@ public class ActivityTake extends Activity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_topic:
+                //region sdfadfdsafdas
+                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(et_msg.getWindowToken(), 0);
+
                 if (chatMode == CHAT_MODE_OUTGOING) {
                     ActivityTheme.start(ActivityTake.this, gson.toJson(currentTheme));
                 }
-                //如果是老师端,则可以切换主题显示
-                else if (chatMode == CHAT_MODE_INCOMING) {
-                    tv_topic.setSelected(!tv_topic.isSelected());
-                    // tv_board.setSelected(false);
-                    tv_texts.setSelected(false);
-                    tv_image.setSelected(false);
 
-                    ll_theme.setVisibility(tv_topic.isSelected() ? View.VISIBLE : View.INVISIBLE);
-                    rl_board.setVisibility(View.INVISIBLE);
-                    rl_texts.setVisibility(View.INVISIBLE);
-                    rl_image.setVisibility(View.INVISIBLE);
-                }
+                tv_topic.setSelected(!tv_topic.isSelected());
+                // tv_board.setSelected(false);
+                tv_texts.setSelected(false);
+                tv_image.setSelected(false);
+
+                ll_theme.setVisibility(tv_topic.isSelected() ? View.VISIBLE : View.INVISIBLE);
+                rl_board.setVisibility(View.INVISIBLE);
+                rl_texts.setVisibility(View.INVISIBLE);
+                rl_image.setVisibility(View.INVISIBLE);
+                //endregion
                 break;
             case R.id.tv_board:
                 //region 白板选项
@@ -301,6 +301,10 @@ public class ActivityTake extends Activity implements OnClickListener {
                 rl_image.setVisibility(View.INVISIBLE);
                 break;
             case R.id.tv_image:
+                //region image
+                InputMethodManager systemService1 = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                systemService1.hideSoftInputFromWindow(et_msg.getWindowToken(), 0);
+
                 tv_image.setSelected(!tv_image.isSelected());
                 //  tv_board.setSelected(false);
                 tv_texts.setSelected(false);
@@ -310,16 +314,21 @@ public class ActivityTake extends Activity implements OnClickListener {
                 rl_board.setVisibility(View.INVISIBLE);
                 rl_texts.setVisibility(View.INVISIBLE);
                 ll_theme.setVisibility(View.INVISIBLE);
+                //endregion
                 break;
             case R.id.bt_msg:
                 //region 文本消息发送按钮
-                String textMessage = et_msg.getText().toString().trim();
-                if (!TextUtils.isEmpty(textMessage)) {
+                String text = et_msg.getText().toString().trim();
+                if (!TextUtils.isEmpty(text)) {
 
-                    listMessage.add(String.format("%1$s:%2$s", ChineseChat.CurrentUser.Nickname, textMessage));
+                    MessageText messageText = new MessageText();
+                    messageText.FromNickname = ChineseChat.CurrentUser.Nickname;
+                    messageText.Content = text;
+                    listMessage.add(messageText);
                     adapterMessage.notifyDataSetChanged();
                     et_msg.setText("");
                     lv_msg.smoothScrollToPosition(listMessage.size() - 1);
+
 
                     /**
                      * 创建文本消息
@@ -327,7 +336,7 @@ public class ActivityTake extends Activity implements OnClickListener {
                      * @param chatType
                      * @param message
                      */
-                    IMMessage message = MessageBuilder.createTextMessage(chatData.getAccount(), SessionTypeEnum.P2P, textMessage);
+                    IMMessage message = MessageBuilder.createTextMessage(chatData.getAccount(), SessionTypeEnum.P2P, text);
                     // 发送消息。如果需要关心发送结果，可设置回调函数。发送完成时，会收到回调。如果失败，会有具体的错误码。
                     NIMClient.getService(MsgService.class).sendMessage(message, false);
                 }
@@ -355,8 +364,6 @@ public class ActivityTake extends Activity implements OnClickListener {
                 startActivityForResult(intent, REQUEST_CODE_IMAGE);
                 //endregion
                 break;
-
-
             case R.id.bt_reject:
                 //region拒绝接听
             {
@@ -443,7 +450,6 @@ public class ActivityTake extends Activity implements OnClickListener {
                 }
                 //endregion
                 break;
-
             case R.id.tv_clear:
                 Log.i(TAG, "onClick: clear");
                 break;
@@ -584,24 +590,9 @@ public class ActivityTake extends Activity implements OnClickListener {
 
     private void initData() {
         Intent intent = getIntent();
-        chatData = (ChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
-        Log.i(TAG, "initData: " + chatData);
-        chatDataExtra = gson.fromJson(chatData.getExtra(), ChatDataExtra.class);
         chatMode = intent.getIntExtra(KEY_CHAT_MODE, -1);
-
-        //region兼容处理
-        if (chatDataExtra == null) {
-            return;
-        }
-        if (chatDataExtra.Student != null && chatDataExtra.Teacher != null) {
-            sourceId = chatDataExtra.Student.Id;
-            targetId = chatDataExtra.Teacher.Id;
-        }
-        if (sourceId < 0) {
-            sourceId = chatDataExtra.Id;
-            targetId = ChineseChat.CurrentUser.Id;
-        }
-        //endregion
+        chatData = (ChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
+        chatDataExtra = gson.fromJson(chatData.getExtra(), ChatDataExtra.class);
 
         //如果是去电
         if (chatMode == CHAT_MODE_OUTGOING) {
@@ -612,18 +603,14 @@ public class ActivityTake extends Activity implements OnClickListener {
 
             //隐藏没有必要的界面
             tv_topic.setVisibility(View.VISIBLE);
+            tv_image.setVisibility(View.VISIBLE);
+            tv_texts.setVisibility(View.VISIBLE);
             tv_board.setVisibility(View.GONE);
-            tv_texts.setVisibility(View.GONE);
-            tv_image.setVisibility(View.GONE);
+            tv_case.setVisibility(View.GONE);
 
-            //学生不给发送图片
-            iv_image_send.setVisibility(View.GONE);
-
-            String name = String.format("昵称：%1$s 国家：%2$s", TextUtils.isEmpty(chatDataExtra.Teacher.Nickname) ? chatDataExtra.Teacher.Username : chatDataExtra.Teacher.Nickname, TextUtils.isEmpty(chatDataExtra.Teacher.Country) ? "未知" : chatDataExtra.Teacher.Country);
-            String time = String.format("授课情况：%1$d分钟（%2$d次/%3$d月份）", chatDataExtra.Teacher.Summary.duration, chatDataExtra.Teacher.Summary.count, chatDataExtra.Teacher.Summary.month);
-            tv_nickname.setText(TextUtils.isEmpty(chatDataExtra.Teacher.Nickname) ? chatDataExtra.Teacher.Username : chatDataExtra.Teacher.Nickname);
-            tv_name.setText(name);
-            tv_case.setText(time);
+            tv_name.setText(getString(R.string.ActivityTake_show_teacher_nickname, chatDataExtra.Teacher.Nickname));
+            tv_nickname.setText(chatDataExtra.Teacher.Nickname);
+            tv_case.setText(getString(R.string.ActivityTake_show_teacher_summary, chatDataExtra.Teacher.Summary.duration, chatDataExtra.Teacher.Summary.count, chatDataExtra.Teacher.Summary.month));
 
             CommonUtil.showBitmap(iv_icon, NetworkUtil.getFullPath(chatDataExtra.Teacher.Avatar));
             CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(chatDataExtra.Teacher.Avatar));
@@ -634,16 +621,16 @@ public class ActivityTake extends Activity implements OnClickListener {
             student.addProperty("Avatar", ChineseChat.CurrentUser.Avatar);
             student.addProperty("Nickname", ChineseChat.CurrentUser.Nickname);
             JsonObject summary = new JsonObject();
-            summary.addProperty("month", 1);
-            summary.addProperty("count", 2);
-            summary.addProperty("duration", 3);
+            summary.addProperty("month", 0);
+            summary.addProperty("count", 0);
+            summary.addProperty("duration", 0);
             student.add("Summary", summary);
 
             AVChatNotifyOption option = new AVChatNotifyOption();
             option.apnsBadge = false;
             option.apnsInuse = true;
             option.pushSound = "pushRing.aac";//Push
-            option.extendMessage = student.toString();//把呼叫者的用户名,头像发送过去
+            option.extendMessage = chatData.getExtra();// student.toString();//把呼叫者的用户名,头像发送过去
 
             AVChatOptionalParam params = new AVChatOptionalParam();
             params.enableCallProximity(false);
@@ -652,30 +639,30 @@ public class ActivityTake extends Activity implements OnClickListener {
         //如果是来电
         else if (chatMode == CHAT_MODE_INCOMING) {
             SoundPlayer.instance(ChineseChat.getContext()).play(SoundPlayer.RingerTypeEnum.RING);
+
             //界面
             ll_hang.setVisibility(View.VISIBLE);
             ll_call.setVisibility(View.INVISIBLE);
 
             //隐藏没有必要的界面
-            tv_topic.setVisibility(View.GONE);
+            tv_topic.setVisibility(View.VISIBLE);
             tv_board.setVisibility(View.GONE);
             tv_texts.setVisibility(View.VISIBLE);
             tv_image.setVisibility(View.VISIBLE);
 
+            //2016-07-21 如果没有对方数据,那么请求网络
+            if (chatDataExtra.Student == null || chatDataExtra.Teacher == null) {
+                Log.i(TAG, "请求网络更新数据");
 
-            tv_nickname.setText(chatDataExtra.Username);
+                //来电数据兼容处理
+                if (chatDataExtra.Student == null) {
+                    chatDataExtra.Student = new UserLite();
+                    chatDataExtra.Student.Id = chatDataExtra.Id;
 
-            if (chatDataExtra.Student != null) {
-                String name = String.format("昵称：%1$s 国家：%2$s", TextUtils.isEmpty(chatDataExtra.Student.Nickname) ? chatDataExtra.Student.Username : chatDataExtra.Student.Nickname, TextUtils.isEmpty(chatDataExtra.Student.Country) ? "未知" : chatDataExtra.Student.Country);
-                String time = String.format("学习情况：%1$d分钟（%2$d次）", chatDataExtra.Student.Summary.duration, chatDataExtra.Student.Summary.count);
-                tv_nickname.setText(TextUtils.isEmpty(chatDataExtra.Student.Nickname) ? chatDataExtra.Student.Username : chatDataExtra.Student.Nickname);
-                tv_name.setText(name);
-                tv_case.setText(time);
+                    chatDataExtra.Teacher = new UserLite();
+                    chatDataExtra.Teacher.Id = ChineseChat.CurrentUser.Id;
+                }
 
-                CommonUtil.showBitmap(iv_icon, NetworkUtil.getFullPath(chatDataExtra.Student.Avatar));
-                CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(chatDataExtra.Student.Avatar));
-            } else {
-                // TODO: 2016-07-21 如果没有对方数据,那么请求网络
                 Parameters params = new Parameters();
                 params.add("accid", chatData.getAccount());
                 HttpUtil.post(NetworkUtil.nimUserGetUserChatDataByAccid, params, new RequestCallBack<String>() {
@@ -684,11 +671,10 @@ public class ActivityTake extends Activity implements OnClickListener {
                         Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {}.getType());
                         if (resp.code == 200) {
                             User user = resp.info;
-                            String name = String.format("昵称：%1$s 国家：%2$s", TextUtils.isEmpty(user.Nickname) ? user.Username : user.Nickname, TextUtils.isEmpty(user.Country) ? "未知" : user.Country);
-                            String time = String.format("学习情况：%1$d分钟（%2$d次）", user.Summary.duration, user.Summary.count);
+
                             tv_nickname.setText(TextUtils.isEmpty(user.Nickname) ? user.Username : user.Nickname);
-                            tv_name.setText(name);
-                            tv_case.setText(time);
+                            tv_name.setText(getString(R.string.ActivityTake_show_student_nickname, user.Nickname, user.Country));
+                            tv_case.setText(getString(R.string.ActivityTake_show_student_summary, user.Summary.duration, user.Summary.count));
                         }
                     }
 
@@ -697,6 +683,15 @@ public class ActivityTake extends Activity implements OnClickListener {
 
                     }
                 });
+            }
+            //如果是新版本的呼叫,携带了数据,那么直接显示
+            else {
+                tv_nickname.setText(TextUtils.isEmpty(chatDataExtra.Student.Nickname) ? chatDataExtra.Student.Username : chatDataExtra.Student.Nickname);
+                tv_name.setText(getString(R.string.ActivityTake_show_student_nickname, chatDataExtra.Student.Nickname, TextUtils.isEmpty(chatDataExtra.Student.Country) ? "未知" : chatDataExtra.Student.Country));
+                tv_case.setText(getString(R.string.ActivityTake_show_student_summary, chatDataExtra.Student.Summary.duration, chatDataExtra.Student.Summary.count));
+
+                CommonUtil.showBitmap(iv_icon, NetworkUtil.getFullPath(chatDataExtra.Student.Avatar));
+                CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(chatDataExtra.Student.Avatar));
             }
 
         } else {
@@ -743,7 +738,7 @@ public class ActivityTake extends Activity implements OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_THEME) {
             if (resultCode == FragmentThemes.RESULTCODE_CHOOSE) {
-                tv_topic.setText(R.string.ActivityCall_switch_theme);
+                tv_topic.setText(R.string.ActivityTake_tab_topic_switch);
                 currentTheme = gson.fromJson(data.getStringExtra("theme"), new TypeToken<Theme>() {
                 }.getType());
 
@@ -773,8 +768,7 @@ public class ActivityTake extends Activity implements OnClickListener {
                  * @param file 图片文件对象
                  *  @param display 文件显示名字，如果第三方 APP 不关注，可以为 null
                  */
-                IMMessage message = MessageBuilder.createImageMessage(chatData.getAccount(), SessionTypeEnum.P2P,
-                        photoPick, null);
+                IMMessage message = MessageBuilder.createImageMessage(chatData.getAccount(), SessionTypeEnum.P2P, photoPick, null);
                 /**
                  *@param msg - 带发送的消息体，由MessageBuilder构造
                  *@param resend - 如果是发送失败后重发，标记为true，否则填false
@@ -814,9 +808,7 @@ public class ActivityTake extends Activity implements OnClickListener {
         NIMClient.getService(MsgServiceObserve.class).observeMsgStatus(observerBaseMessageStatus, register);
 
         // 如果发送的多媒体文件消息，还需要监听文件的上传进度。
-
-        NIMClient.getService(MsgServiceObserve.class).observeAttachmentProgress(
-                observerAttachmentProgress, true);
+        NIMClient.getService(MsgServiceObserve.class).observeAttachmentProgress(observerAttachmentProgress, true);
     }
 
     //region拨打回调
@@ -1105,17 +1097,24 @@ public class ActivityTake extends Activity implements OnClickListener {
         @Override
         public void onEvent(List<IMMessage> messages) {
             for (IMMessage m : messages) {
+                Log.i(TAG, "收到基础消息: " + m.getFromNick() + " from: " + m.getFromAccount());
                 MsgTypeEnum msgType = m.getMsgType();
-                Log.i(TAG, "收到基础消息: MsgTypeEnum=" + msgType);
+
                 //文本消息
                 if (msgType == MsgTypeEnum.text) {
-                    Log.i(TAG, "Nickname: " + chatDataExtra.Nickname);
-                    listMessage.add(String.format("%1$s:%2$s", chatDataExtra.Nickname, m.getContent()));
+                    MessageText messageText = new MessageText();
+                    messageText.FromNickname = chatMode == CHAT_MODE_INCOMING ? chatDataExtra.Student.Nickname : chatDataExtra.Teacher.Nickname;
+                    messageText.Content = m.getContent();
+                    listMessage.add(messageText);
 
                     adapterMessage.notifyDataSetChanged();
                     lv_msg.smoothScrollToPosition(listMessage.size() - 1);
-                    tv_texts.setVisibility(View.VISIBLE);
+
                     tv_texts.setSelected(true);
+                    tv_image.setSelected(false);
+                    tv_topic.setSelected(false);
+                    tv_board.setSelected(false);
+                    tv_texts.setVisibility(View.VISIBLE);
 
                     rl_texts.setVisibility(View.VISIBLE);
                     ll_theme.setVisibility(View.INVISIBLE);
@@ -1124,8 +1123,16 @@ public class ActivityTake extends Activity implements OnClickListener {
                 }
                 //图片消息
                 else if (m.getMsgType() == MsgTypeEnum.image) {
+                    tv_image.setSelected(true);
+                    tv_topic.setSelected(false);
+                    tv_texts.setSelected(false);
+                    tv_board.setSelected(false);
                     tv_image.setVisibility(View.VISIBLE);
 
+                    rl_image.setVisibility(View.VISIBLE);
+                    rl_texts.setVisibility(View.INVISIBLE);
+                    ll_theme.setVisibility(View.INVISIBLE);
+                    rl_board.setVisibility(View.INVISIBLE);
                 }
             }
         }
@@ -1138,9 +1145,12 @@ public class ActivityTake extends Activity implements OnClickListener {
         public void onEvent(IMMessage msg) {
             // 1、根据sessionId判断是否是自己的消息
             if (TextUtils.equals(chatData.getAccount(), msg.getSessionId())) {
+
                 if (msg.getMsgType() == MsgTypeEnum.image) {
                     NimAttachment nimAttachment = gson.fromJson(msg.getAttachment().toJson(true), NimAttachment.class);
                     CommonUtil.showBitmap(iv_image, nimAttachment.url);
+
+                    Log.i(TAG, "图片地址: " + msg.getAttachment().toJson(true));
                 }
             }
 
@@ -1303,8 +1313,8 @@ public class ActivityTake extends Activity implements OnClickListener {
 
     private void chatHistoryCreate() {
         Parameters parameters = new Parameters();
-        parameters.add("source", sourceId);
-        parameters.add("target", targetId);
+        parameters.add("source", chatDataExtra.Student.Id);
+        parameters.add("target", chatDataExtra.Teacher.Id);
         parameters.add("chatId", chatData.getChatId());
         parameters.add("chatType", chatData.getChatType().getValue());
         HttpUtil.post(NetworkUtil.callCreate, parameters, new RequestCallBack<String>() {
@@ -1390,18 +1400,19 @@ public class ActivityTake extends Activity implements OnClickListener {
         }
     }
 
-    private class AdapterMessage extends BaseAdapter<String> {
-        public AdapterMessage(List<String> list) {
+    private class AdapterMessage extends BaseAdapter<MessageText> {
+        public AdapterMessage(List<MessageText> list) {
             super(list);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            String item = getItem(position);
-            View inflate = View.inflate(getApplication(), R.layout.listitem_call, null);
-            TextView textview = (TextView) inflate.findViewById(R.id.textview);
-            textview.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15);
-            textview.setText(item);
+            MessageText item = getItem(position);
+            View inflate = View.inflate(getApplication(), R.layout.listitem_text_message, null);
+            TextView nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
+            TextView message = (TextView) inflate.findViewById(R.id.tv_message);
+            nickname.setText(item.FromNickname);
+            message.setText(item.Content);
             return inflate;
         }
     }

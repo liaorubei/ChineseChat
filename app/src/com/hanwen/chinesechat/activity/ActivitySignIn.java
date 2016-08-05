@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -182,6 +183,8 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         params.add("username", username);
         params.add("password", password);
         params.add("category", ChineseChat.isStudent() ? 0 : 1);
+        params.add("system", 1);
+        params.add("device", Build.DEVICE);
 
         HttpUtil.post(NetworkUtil.userSignIn, params, new RequestCallBack<String>() {
             @Override

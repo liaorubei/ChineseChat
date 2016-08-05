@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 
@@ -40,6 +41,7 @@ public class ChineseChat extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        //Log.i(TAG, "onCreate: BRAND=" + Build.BRAND + " MODEL=" + Build.MODEL + " MANUFACTURER=" + Build.MANUFACTURER + " PRODUCT=" + Build.PRODUCT + " DEVICE=" + Build.DEVICE + " HARDWARE=" + Build.HARDWARE + " SERIAL=" + Build.SERIAL);
         mContext = this;
         mDatabase = new Database(this);
 
@@ -53,7 +55,7 @@ public class ChineseChat extends Application {
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
                 public void onEvent(AVChatData chatData) {
-                    Log.i(TAG, "来电监听: " + chatData);
+                    Log.i(TAG, "来电监听: " + chatData + " a=" + chatData.getAccount() + " c=" + chatData.getChatId() + " e=" + chatData.getExtra());
                     ChatData chat = new ChatData();
                     chat.setChatId(chatData.getChatId());
                     chat.setAccid(chatData.getAccount());

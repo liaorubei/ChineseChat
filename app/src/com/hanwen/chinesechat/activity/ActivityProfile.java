@@ -12,6 +12,8 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hanwen.chinesechat.bean.ChatData;
+import com.hanwen.chinesechat.bean.ChatDataExtra;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -25,6 +27,7 @@ import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.R;
+import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 
 import java.util.Set;
 
@@ -163,7 +166,6 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
         });
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -193,10 +195,20 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                 HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                        Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
+                        Response<ChatDataExtra> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<ChatDataExtra>>() {
                         }.getType());
                         if (resp.code == 200) {
-                            ActivityCall.start(ActivityProfile.this, user.Id, user.Accid, user.Avatar, user.Nickname,user.Username, ActivityCall.CALL_TYPE_AUDIO);
+                            ChatDataExtra extra = resp.info;
+                            extra.Id = extra.Teacher.Id;
+                            extra.Avatar = extra.Teacher.Avatar;
+                            extra.Nickname = extra.Teacher.Nickname;
+                            extra.Username = extra.Teacher.Username;
+
+                            ChatData chatData = new ChatData();
+                            chatData.setAccid(resp.info.Accid);
+                            chatData.setExtra(gson.toJson(extra));
+                            chatData.setChatType(AVChatType.AUDIO);
+                            ActivityTake.start(ActivityProfile.this, ActivityTake.CHAT_MODE_OUTGOING, chatData);
                         } else {
                             CommonUtil.toast(resp.desc);
                         }

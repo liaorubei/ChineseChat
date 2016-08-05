@@ -174,12 +174,12 @@ public class FragmentListen extends Fragment {
         }
 
         //添加已下载项
-        TextView child = new TextView(getActivity());
+ /*TextView child = new TextView(getActivity());
         child.setGravity(Gravity.CENTER);
         child.setText(R.string.FragmentListen_downloaded);
         child.setTextColor(colors);
         ll_ctrl.addView(child, params);
-        fragments.add(new FragmentFolderDone());
+        fragments.add(new FragmentFolderDone());*/
         adapter.notifyDataSetChanged();
 
         Log.i(TAG, "initTabs: fragments.size()=" + fragments.size());

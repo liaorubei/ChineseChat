@@ -133,7 +133,6 @@ public class DoodleView extends SurfaceView implements SurfaceHolder.Callback, T
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-        Log.i(TAG, "surfaceView created, width = " + width + ", height = " + height);
         zoom = width;
     }
 

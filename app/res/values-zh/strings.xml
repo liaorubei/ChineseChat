@@ -219,4 +219,16 @@
     <string name="ActivityMain_upgrade_tips">更新提示</string>
     <string name="ActivityHistory_coin">扣费：%1$d 学币</string>
     <string name="ActivityHistory_durations">时长：%1$s 分钟</string>
+    <string name="ActivityTake_show_teacher_summary">授课情况：%1$d分钟（%2$d次/%3$d月份）</string>
+    <string name="ActivityTake_show_student_summary">学习情况：%1$d分钟（%2$d次）</string>
+    <string name="ActivityTake_show_student_nickname">昵称：%1$s 国家：%2$s</string>
+    <string name="ActivityTake_hint_type_something">请输入</string>
+    <string name="ActivityTake_pick_image">选择</string>
+    <string name="ActivityTake_send_texts">发送</string>
+    <string name="ActivityTake_show_teacher_nickname">%1$s</string>
+    <string name="ActivityTake_tab_board">白板</string>
+    <string name="ActivityTake_tab_image">图片</string>
+    <string name="ActivityTake_tab_texts">文字</string>
+    <string name="ActivityTake_tab_topic_pick">话题</string>
+    <string name="ActivityTake_tab_topic_switch">换话题</string>
 </resources>
