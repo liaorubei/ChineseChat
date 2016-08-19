@@ -2,11 +2,10 @@ package com.hanwen.chinesechat.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -14,12 +13,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hanwen.chinesechat.util.CommonUtil;
-import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.util.Log;
+import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ActivityAlbum extends FragmentActivity {
 
@@ -50,6 +55,7 @@ public class ActivityAlbum extends FragmentActivity {
         }
         //左下角角标
         tv_count.setText((index + 1) + "/" + paths.length);
+        tv_count.setVisibility(paths.length > 1 ? View.VISIBLE : View.INVISIBLE);
 
         adapter = new MyAdapter();// new ImagePagerAdapter(getSupportFragmentManager(), paths);
         viewpager.setAdapter(adapter);
@@ -77,16 +83,23 @@ public class ActivityAlbum extends FragmentActivity {
         tv_count = (TextView) findViewById(R.id.tv_count);
     }
 
-    public static void start(Context context, String[] photos1, int index) {
+    /**
+     * 打开相册界面
+     *
+     * @param context       上下文
+     * @param absolutePaths 照片绝对路径数组
+     * @param index         指定相片的索引
+     */
+    public static void start(Context context, String[] absolutePaths, int index) {
         Intent intent = new Intent(context, ActivityAlbum.class);
-        intent.putExtra("photos", photos1);
+        intent.putExtra("photos", absolutePaths);
         intent.putExtra(KEY_INDEX, index);
         context.startActivity(intent);
     }
 
-    private class MyAdapter extends PagerAdapter {
-        private ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    private static final String TAG = "ActivityAlbum";
 
+    private class MyAdapter extends PagerAdapter {
         @Override
         public int getCount() {
             return photos.size();
@@ -99,10 +112,33 @@ public class ActivityAlbum extends FragmentActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
+            final View inflate = getLayoutInflater().inflate(R.layout.zoom_image_view, null);
+            final PhotoView zoom = (PhotoView) inflate.findViewById(R.id.imageView);
+            final View pb_loading = inflate.findViewById(R.id.pb_loading);
+
+            zoom.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+                @Override
+                public void onViewTap(View view, float x, float y) {
+                    finish();
+                }
+            });
+
             ImageView imageView = photos.get(position);
-            CommonUtil.showBitmap(imageView, NetworkUtil.getFullPath((String) imageView.getTag()));
-            container.addView(imageView, params);
-            return imageView;
+            new BitmapUtils(ActivityAlbum.this).display(imageView, (String) imageView.getTag(), new BitmapLoadCallBack<ImageView>() {
+                @Override
+                public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+                    zoom.setImageBitmap(bitmap);
+                    pb_loading.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
+                    Log.i(TAG, "onLoadFailed: ");
+                }
+            });
+
+            container.addView(inflate);
+            return inflate;
         }
 
         @Override
@@ -110,6 +146,4 @@ public class ActivityAlbum extends FragmentActivity {
             container.removeView((View) object);
         }
     }
-
-
 }

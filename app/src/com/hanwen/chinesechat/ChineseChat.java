@@ -42,8 +42,6 @@ public class ChineseChat extends Application {
     public void onCreate() {
         super.onCreate();
         //Log.i(TAG, "onCreate: BRAND=" + Build.BRAND + " MODEL=" + Build.MODEL + " MANUFACTURER=" + Build.MANUFACTURER + " PRODUCT=" + Build.PRODUCT + " DEVICE=" + Build.DEVICE + " HARDWARE=" + Build.HARDWARE + " SERIAL=" + Build.SERIAL);
-        mContext = this;
-        mDatabase = new Database(this);
 
         // 注意：除了 NIMClient.init 接口外，其他 SDK 暴露的接口都只能在 UI 进程调用。
         // 如果 APP 包含远程 service，该 APP 的 Application 的 onCreate 会多次调用。
@@ -51,6 +49,9 @@ public class ChineseChat extends Application {
         NIMClient.init(this, getLoginInfo(), getOptions());
 
         if (SystemUtil.inMainProcess(this)) {
+            mContext = this;
+            mDatabase = new Database(this);
+
             //region 注册来电监听
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
@@ -154,7 +155,20 @@ public class ChineseChat extends Application {
         return "student".equals(release);
     }
 
-    public static Database getDatabase() {
+    public static Database database() {
         return mDatabase;
     }
+
+    public static Database database(Context context) {
+        if (mDatabase == null) {
+            synchronized (ChineseChat.class) {
+                if (mDatabase == null) {
+                    mDatabase = new Database(context);
+                }
+            }
+        }
+        return mDatabase;
+    }
+
+
 }

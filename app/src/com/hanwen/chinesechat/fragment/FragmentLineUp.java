@@ -90,29 +90,30 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
         params.add("skip", refresh ? 0 : dataSet.size());
         params.add("take", take);
         HttpUtil.post(NetworkUtil.getTeacherOnline, params, new RequestCallBack<String>() {
+
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
 
-                Response<TeacherQueue> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<TeacherQueue>>() {
-                }.getType());
+                Response<TeacherQueue> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<TeacherQueue>>() {}.getType());
                 if (refresh) {
                     dataSet.clear();
                 }
 
                 listview.setPullupEnable(true);
                 if (resp.code == 200) {
+                    //处理教师列表
                     List<User> users = resp.info.Teacher;
                     for (User user : users) {
                         dataSet.add(user);
                     }
                     listview.stopLoadMore(users.size() < take ? XListViewFooter.STATE_NOMORE : XListViewFooter.STATE_NORMAL);
 
-                    if (resp.info.Current != null) {
-                        boolean b = resp.info.Current.IsOnline == 1 && resp.info.Current.IsEnable == 1;
-                        tv_line.setText(b ? R.string.FragmentLineUp_i_need_dequeue : R.string.FragmentLineUp_i_need_enqueue);
-                        tv_line.setSelected(b);
-                    }
+                    //处理教师的入队情况
+                    TeacherQueue.NewUser current = resp.info.Current;
+                    boolean a = current != null && current.IsOnline == 1 && current.IsEnable == 1 && current.IsQueue == 1;
+                    tv_line.setText(a ? R.string.FragmentLineUp_i_need_dequeue : R.string.FragmentLineUp_i_need_enqueue);
+                    tv_line.setSelected(a);
                 } else {
                     listview.stopLoadMore(XListViewFooter.STATE_ERRORS);
                 }
@@ -120,8 +121,6 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
 
                 adapter.notifyDataSetChanged();
                 srl.setRefreshing(false);
-
-
             }
 
             @Override

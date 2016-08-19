@@ -8,7 +8,7 @@ import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.hanwen.chinesechat.fragment.FragmentHistory;
+import com.hanwen.chinesechat.fragment.FragmentRecord;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -123,7 +123,7 @@ public class ActivityHistory extends FragmentActivity {
         viewpager.setAdapter(new FragmentStatePagerAdapter(getSupportFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
-                return FragmentHistory.newInstance(listCalendar.get(position));
+                return FragmentRecord.newInstance(listCalendar.get(position));
             }
 
             @Override

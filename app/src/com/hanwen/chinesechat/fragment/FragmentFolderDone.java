@@ -17,6 +17,7 @@ import com.hanwen.chinesechat.activity.ActivityDocsDone;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.Folder;
+import com.hanwen.chinesechat.bean.Level;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.R;
 
@@ -39,14 +40,13 @@ public class FragmentFolderDone extends Fragment {
         super.onResume();
         Log.i(TAG, "onResume: " + list.size() + " list=" + list);
 
-        List<Folder> folders = ChineseChat.getDatabase().folderSelectListWithDocsCount();
+        List<Folder> folders = ChineseChat.database().folderSelectListWithDocsCount();
         list.clear();
         for (Folder folder : folders) {
             if (folder.DocsCount > 0) {
                 list.add(folder);
             }
         }
-        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -57,6 +57,15 @@ public class FragmentFolderDone extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Level level = getArguments().getParcelable("level");
+        if (level.Id > 0) {
+            Log.i(TAG, "onViewCreated: " + level.Folders);
+            for (Folder f : level.Folders) {
+                list.add(f);
+            }
+            adapter.notifyDataSetChanged();
+        }
+
         listview = (ListView) view.findViewById(android.R.id.list);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -101,9 +110,9 @@ public class FragmentFolderDone extends Fragment {
                     dialog.findViewById(R.id.bt_positive).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            List<Document> documents = ChineseChat.getDatabase().docsSelectListByFolderId(item.Id);
+                            List<Document> documents = ChineseChat.database().docsSelectListByFolderId(item.Id);
                             for (Document d : documents) {
-                                ChineseChat.getDatabase().docsDeleteById(d.Id);
+                                ChineseChat.database().docsDeleteById(d.Id);
                                 File file = new File(getActivity().getFilesDir(), d.SoundPath);
                                 if (file.exists()) {
                                     file.delete();

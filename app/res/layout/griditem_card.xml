@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/tv_theme"
@@ -9,14 +9,15 @@
         android:layout_height="match_parent"
         android:background="#F0F0F0"
         android:gravity="center"
-        android:text="话题标题" />
+        android:text="话题标题"/>
 
     <ImageView
         android:id="@+id/iv_card"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="150dp"
+
         android:background="#B2E4D6"
-        android:src="@drawable/icon_theme_tree" />
+        android:src="@drawable/icon_theme_tree"/>
 
     <TextView
         android:id="@+id/tv_number"
@@ -26,5 +27,5 @@
         android:gravity="center"
         android:text="1"
         android:textSize="20sp"
-        android:visibility="gone" />
+        android:visibility="gone"/>
 </FrameLayout>

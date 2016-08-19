@@ -53,7 +53,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     private MyAdapter adapter;
     private ServiceConnection conn;
     private MyBinder myBinder;
-    private Database database;
+
     private TextView tv_folder;
     private int take = 50;
     private Gson gson = new Gson();
@@ -85,8 +85,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
 
         tv_folder.setText(folder.Name);
 
-        database = new Database(this);
-
         conn = new ServiceConnection() {
 
             @Override
@@ -107,8 +105,9 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     private void initData() {
 
         String url = NetworkUtil.getDocs(folder.Id + "", 0 + "", take + "");
+        Log.i(TAG, "initData: " + url);
 
-        UrlCache cache = ChineseChat.getDatabase().cacheSelectByUrl(url);
+        UrlCache cache = ChineseChat.database().cacheSelectByUrl(url);
         if (cache == null) {
 
             HttpUtil.post(url, null, new RequestCallBack<String>() {
@@ -120,11 +119,12 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
                     urlCache.Url = this.getRequestUrl();
                     urlCache.Json = responseInfo.result;
                     urlCache.UpdateAt = System.currentTimeMillis();
-                    ChineseChat.getDatabase().cacheInsertOrUpdate(urlCache);
+                    ChineseChat.database().cacheInsertOrUpdate(urlCache);
                 }
 
                 @Override
                 public void onFailure(HttpException error, String msg) {
+                    Log.i(TAG, "onFailure: error=" + error.getMessage() + " msg=" + msg);
                     CommonUtil.toast(getString(R.string.network_error));
                 }
             });
@@ -140,7 +140,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
                         urlCache.Url = this.getRequestUrl();
                         urlCache.Json = responseInfo.result;
                         urlCache.UpdateAt = System.currentTimeMillis();
-                        ChineseChat.getDatabase().cacheInsertOrUpdate(urlCache);
+                        ChineseChat.database().cacheInsertOrUpdate(urlCache);
                     }
 
                     @Override
@@ -223,12 +223,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     protected void onDestroy() {
         super.onDestroy();
 
-        if (database != null) {
-            database.closeConnection();
-            database = null;
-        }
-        Log.i("database=" + database);
-
         // 移除观察者,让下载服务后台自行下载
         myBinder.getDownloadManager().deleteObserver(adapter);
 
@@ -249,7 +243,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
 
         // doc.LevelId = levelId;
         doc.FolderId = folder.Id;
-        database.docsInsert(doc);
+        ChineseChat.database().docsInsert(doc);
     }
 
     @Override
@@ -329,7 +323,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
             holder.tv_size.setText(Formatter.formatFileSize(ActivityDocsTodo.this, item.Length));
             holder.tv_time.setText(item.LengthString);
 
-            DownloadInfo ssss = database.docsSelectById(item.Id);
+            DownloadInfo ssss = ChineseChat.database().docsSelectById(item.Id);
             if (ssss != null) {
                 holder.rl_ctrl.setVisibility(View.VISIBLE);
                 if (ssss.IsDownload == 1) {
@@ -424,11 +418,11 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         for (int i = 0; i < list.size(); i++) {
             Document document = list.get(i);
             ViewHelper helper = data.get(i);
-            if (database.docsSelectById(document.Id) == null && helper.isSelected) {
+            if (ChineseChat.database().docsSelectById(document.Id) == null && helper.isSelected) {
                 down.add(document);
             }
 
-            if (database.docsSelectById(document.Id) == null) {
+            if (ChineseChat.database().docsSelectById(document.Id) == null) {
                 check++;
             }
         }

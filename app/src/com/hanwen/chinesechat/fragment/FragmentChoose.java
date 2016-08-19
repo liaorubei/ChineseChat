@@ -23,6 +23,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.activity.ActivityAlbum;
 import com.hanwen.chinesechat.activity.ActivityProfile;
 import com.hanwen.chinesechat.activity.ActivitySignIn;
 import com.hanwen.chinesechat.activity.ActivityTake;
@@ -221,8 +222,15 @@ public class FragmentChoose extends Fragment {
             } else {
                 holder.iv_avatar.setImageResource(R.drawable.ic_launcher_student);
             }
+            holder.iv_avatar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ActivityAlbum.start(getActivity(), new String[]{NetworkUtil.getFullPath(user.Avatar)}, 0);
+                }
+            });
             holder.tv_nickname.setText(user.Nickname);
             holder.tv_spoken.setText(user.Spoken);
+
 
             //颜色
             if (user.IsOnline) {

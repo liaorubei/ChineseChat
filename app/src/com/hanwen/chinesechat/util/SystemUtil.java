@@ -2,6 +2,7 @@ package com.hanwen.chinesechat.util;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 
 /**
@@ -47,5 +48,14 @@ public class SystemUtil {
         String packageName = context.getPackageName();
         String processName = SystemUtil.getProcessName(context);
         return packageName.equals(processName);
+    }
+
+    /**
+     * 取得手机的设备信息,长度不要超过128个字符
+     * @return
+     */
+    public static String getDeviceName() {
+
+        return Build.MANUFACTURER + " " + Build.BRAND + " " + Build.PRODUCT;
     }
 }

@@ -16,10 +16,10 @@ public class NetworkUtil {
     public static final String studentCall = domain + "/Api/student/call";
     public static final String teacherEnqueue = domain + "/Api/NimUser/TeacherEnqueue";
     public static final String teacherDequeue = domain + "/Api/NimUser/TeacherDequeue";//Id
-    public static final String teacherRefresh = domain + "/Api/NimUser/TeacherRefresh";
-    public static final String teacherGroup = domain + "/Api/teacher/group";
+    public static final String teacherRefresh = domain + "/Api/NimUser/TeacherRefresh";//id,isOnline
+/*    public static final String teacherGroup = domain + "/Api/teacher/group";
     public static final String teacherInQueue = domain + "/Api/NimUser/TeacherInqueue";
-    public static final String userCaptcha = domain + "/Api/NimUser/Captcha";
+    public static final String userCaptcha = domain + "/Api/NimUser/Captcha";*/
     public static final String userCreate = domain + "/Api/NimUser/create";
     public static final String userLogout = domain + "/Api/NimUser/logout";
     public static final String userSelect = domain + "/Api/NimUser/Select";//keyword,skip,take

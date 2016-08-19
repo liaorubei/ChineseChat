@@ -3,7 +3,6 @@ package com.hanwen.chinesechat.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -31,6 +30,7 @@ import com.hanwen.chinesechat.service.AutoUpdateService;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
+import com.hanwen.chinesechat.util.SystemUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -52,7 +52,7 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
     private View bt_skip;
     private View bt_enter;
     private LinearLayout ll_indicator;
-    private int[] splashImages = new int[]{R.drawable.splash_1, R.drawable.splash_2, R.drawable.splash_3, R.drawable.splash_4};
+    private int[] splashImages = new int[]{R.drawable.splash_1, R.drawable.splash_2, R.drawable.splash_3, R.drawable.splash_4,R.drawable.splash_5};
     private static int WHAT_SPLASH = 1;
     private long first;
     private Handler handler = new Handler() {
@@ -101,7 +101,7 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
                 //保存到数据库
                 UrlCache urlCache = new UrlCache(this.getRequestUrl(), responseInfo.result, System.currentTimeMillis());
-                ChineseChat.getDatabase().cacheInsertOrUpdate(urlCache);
+                ChineseChat.database().cacheInsertOrUpdate(urlCache);
 
                 //再保存文件夹信息
                 Response<List<Level>> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Level>>>() {
@@ -109,8 +109,8 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
 
                 for (Level l : o.info) {
                     for (Folder f : l.Folders) {
-                        if (!ChineseChat.getDatabase().folderExists(f.Id)) {
-                            ChineseChat.getDatabase().folderInsert(f);
+                        if (!ChineseChat.database().folderExists(f.Id)) {
+                            ChineseChat.database().folderInsert(f);
                         }
                     }
                 }
@@ -139,7 +139,7 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
         params.addBodyParameter("password", password);
         params.addBodyParameter("category", (ChineseChat.isStudent() ? 0 : 1) + "");
         params.addBodyParameter("system", 1 + "");
-        params.addBodyParameter("device", Build.DEVICE);
+        params.addBodyParameter("device", SystemUtil.getDeviceName());
 
         new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userSignIn, params, new RequestCallBack<String>() {
             @Override

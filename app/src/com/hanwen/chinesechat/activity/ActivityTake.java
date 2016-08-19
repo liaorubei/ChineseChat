@@ -114,12 +114,12 @@ public class ActivityTake extends Activity implements OnClickListener {
     public static final String KEY_CHAT_DATA = "KEY_CHAT_DATA";
     public static final int CHAT_MODE_OUTGOING = 0;
     public static final int CHAT_MODE_INCOMING = 1;
-    private static final int WHAT_PLAY_SOUND = 1;
-    private static final int WHAT_PEER_BUSY = 2;
-    private static final int WHAT_HANG_UP = 3;
-    private static final int WHAT_REFRESH = 4;
-    private static final int REQUEST_CODE_THEME = 1;
-    private static final int REQUEST_CODE_IMAGE = 2;
+    public static final int WHAT_PLAY_SOUND = 1;
+    public static final int WHAT_PEER_BUSY = 2;
+    public static final int WHAT_HANG_UP = 3;
+    public static final int WHAT_REFRESH = 4;
+    public static final int REQUEST_CODE_THEME = 1;
+    public static final int REQUEST_CODE_IMAGE = 2;
 
     private View bt_hangup, bt_reject, bt_accept, bt_mute, bt_free;
     private Gson gson = new Gson();
@@ -164,8 +164,8 @@ public class ActivityTake extends Activity implements OnClickListener {
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-
+            if (msg.what == WHAT_PLAY_SOUND) {
+                SoundPlayer.instance(ChineseChat.getContext()).play(SoundPlayer.RingerTypeEnum.RING);
             }
         }
     };
@@ -199,6 +199,7 @@ public class ActivityTake extends Activity implements OnClickListener {
     };
     private ImageView iv_image;
     private View iv_image_send;
+    private String currentImagePath = null;
 
     //endregion
 
@@ -219,7 +220,7 @@ public class ActivityTake extends Activity implements OnClickListener {
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_topic:
-                //region sdfadfdsafdas
+                //region 主题选项
                 ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(et_msg.getWindowToken(), 0);
 
                 if (chatMode == CHAT_MODE_OUTGOING) {
@@ -290,6 +291,7 @@ public class ActivityTake extends Activity implements OnClickListener {
                 //endregion
                 break;
             case R.id.tv_text:
+                //region 文字选项
                 tv_texts.setSelected(!tv_texts.isSelected());
                 // tv_board.setSelected(false);
                 tv_image.setSelected(false);
@@ -299,9 +301,10 @@ public class ActivityTake extends Activity implements OnClickListener {
                 ll_theme.setVisibility(View.INVISIBLE);
                 rl_board.setVisibility(View.INVISIBLE);
                 rl_image.setVisibility(View.INVISIBLE);
+                //endregion
                 break;
             case R.id.tv_image:
-                //region image
+                //region 图片选项
                 InputMethodManager systemService1 = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
                 systemService1.hideSoftInputFromWindow(et_msg.getWindowToken(), 0);
 
@@ -328,7 +331,6 @@ public class ActivityTake extends Activity implements OnClickListener {
                     adapterMessage.notifyDataSetChanged();
                     et_msg.setText("");
                     lv_msg.smoothScrollToPosition(listMessage.size() - 1);
-
 
                     /**
                      * 创建文本消息
@@ -453,6 +455,14 @@ public class ActivityTake extends Activity implements OnClickListener {
             case R.id.tv_clear:
                 Log.i(TAG, "onClick: clear");
                 break;
+            case R.id.iv_image:
+                //region 点击图片放大
+                if (!TextUtils.isEmpty(currentImagePath)) {
+                    ActivityAlbum.start(this, new String[]{currentImagePath}, 0);
+                }
+                //endregion
+                break;
+
         }
     }
 
@@ -560,9 +570,9 @@ public class ActivityTake extends Activity implements OnClickListener {
         //图片
         rl_image = findViewById(R.id.rl_image);
         iv_image = (ImageView) findViewById(R.id.iv_image);
+        iv_image.setOnClickListener(this);
         iv_image_send = findViewById(R.id.iv_image_send);
         iv_image_send.setOnClickListener(this);
-
 
         //控制按钮,布局
         ll_call = findViewById(R.id.ll_call);
@@ -723,6 +733,7 @@ public class ActivityTake extends Activity implements OnClickListener {
         super.onDestroy();
         registerObserver(false);
         unregisterReceiver(broadcastReceiver);
+        handler.removeCallbacksAndMessages(null);//避免出现拨出又马上挂断的情况,回铃声会在5秒之后响起
     }
 
     @Override
@@ -760,13 +771,14 @@ public class ActivityTake extends Activity implements OnClickListener {
         else if (requestCode == REQUEST_CODE_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 File photoPick = new File(FileUtil.getPath(this, data.getData()));
-                Log.i(TAG, "选择图片: " + photoPick.getAbsolutePath());
+
+                currentImagePath = photoPick.getAbsolutePath();
 
                 /**创建图片消息
                  *@param accid 聊天对象的 ID，如果是单聊，为用户帐号，如果是群聊，为群组 ID
                  *@param ChatType 聊天类型，单聊或群组
-                 * @param file 图片文件对象
-                 *  @param display 文件显示名字，如果第三方 APP 不关注，可以为 null
+                 *@param file 图片文件对象
+                 *@param display 文件显示名字，如果第三方 APP 不关注，可以为 null
                  */
                 IMMessage message = MessageBuilder.createImageMessage(chatData.getAccount(), SessionTypeEnum.P2P, photoPick, null);
                 /**
@@ -859,7 +871,7 @@ public class ActivityTake extends Activity implements OnClickListener {
 
             //记录下ChatId,如果对方还没有接听就直接挂断,帮对方上线并入队,如果拨打失败则暂时不上线
             //chatId = avChatData.getChatId();
-            // handler.sendEmptyMessageDelayed(WHAT_PLAY_SOUND, 5000);
+            handler.sendEmptyMessageDelayed(WHAT_PLAY_SOUND, 5000);
         }
     };
     //endregion
@@ -1149,15 +1161,9 @@ public class ActivityTake extends Activity implements OnClickListener {
                 if (msg.getMsgType() == MsgTypeEnum.image) {
                     NimAttachment nimAttachment = gson.fromJson(msg.getAttachment().toJson(true), NimAttachment.class);
                     CommonUtil.showBitmap(iv_image, nimAttachment.url);
-
-                    Log.i(TAG, "图片地址: " + msg.getAttachment().toJson(true));
+                    currentImagePath = nimAttachment.url;
                 }
             }
-
-            Log.i(TAG, "消息下载状态: " + msg.getSessionId());
-            Log.i(TAG, "getUuid: " + msg.getUuid());
-            // 2、更改内存中消息的状态
-            // 3、刷新界面
         }
     };
     //endregion
@@ -1166,9 +1172,6 @@ public class ActivityTake extends Activity implements OnClickListener {
     private Observer<AttachmentProgress> observerAttachmentProgress = new Observer<AttachmentProgress>() {
         @Override
         public void onEvent(AttachmentProgress attachmentProgress) {
-            Log.i(TAG, "附件进度监听: getUuid=" + attachmentProgress.getUuid());
-            Log.i(TAG, "附件进度监听: getTotal=" + attachmentProgress.getTotal());
-            Log.i(TAG, "附件进度监听: getTransferred=" + attachmentProgress.getTransferred());
         }
     };
     //endregion

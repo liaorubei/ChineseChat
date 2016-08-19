@@ -26,6 +26,7 @@ public class User {
     public String Job;
     public boolean IsEnable;
     public boolean IsOnline;
+    public int IsQueue;
     public Set<String> Photos;
     public String School;
     public String Spoken;

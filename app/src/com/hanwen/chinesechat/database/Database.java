@@ -77,17 +77,6 @@ public class Database {
         mWritable.delete("document", "Id=?", new String[]{id + ""});
     }
 
-    /**
-     * @param id
-     * @return 数据库是否有这条记录的判断, 如果有则true, 反之false
-     */
-    public boolean docsExists(int id) {
-        Cursor cursor = mReadable.rawQuery("select Id from document where Id=?", new String[]{id + ""});
-        int count = cursor.getCount();
-        cursor.close();
-        return count > 0;
-    }
-
     public void docsInsert(Document item) {
         ContentValues values = new ContentValues();
 
@@ -136,63 +125,51 @@ public class Database {
         mWritable.execSQL("update document set Json=? where Id=?", new String[]{result, docId + ""});
     }
 
-    public boolean folderExists(int id) {
-        Cursor cursor = mReadable.rawQuery("select Id from folder where Id=?", new String[]{id + ""});
-        int count = cursor.getCount();
-        cursor.close();
-        return count > 0;
-    }
-
-    public void folderInsert(Folder folder) {
-        ContentValues values = new ContentValues();
-        values.put("Id", folder.Id);
-        values.put("Name", folder.Name);
-        mWritable.insert("folder", null, values);
-    }
-
     public List<Folder> folderSelectList() {
-        Cursor cursor = mReadable.rawQuery("select Id,Name from folder", null);
+        Cursor cursor = mReadable.rawQuery("select Id,Name,LevelId,Cover from folder;", null);
         List<Folder> list = new ArrayList<Folder>();
         while (cursor.moveToNext()) {
             Folder folder = new Folder();
             folder.Id = cursor.getInt(0);
             folder.Name = cursor.getString(1);
+            folder.LevelId = cursor.getInt(2);
+            folder.Cover = cursor.getString(3);
             list.add(folder);
         }
+        cursor.close();
         return list;
     }
 
     /**
+     * 查询已下载的文件的文件夹数,按Level排序,然后Folder排序
+     *
      * @return select Id,Name,(select count(FolderId) from document where FolderId=folder.Id) as DocsCount from folder order by folder.Id
      */
     public List<Folder> folderSelectListWithDocsCount() {
-        Cursor cursor = mReadable.rawQuery("select Id,Name,(select count(FolderId) from document where FolderId=folder.Id) as DocsCount from folder order by folder.Id", null);
+        Cursor cursor = mReadable.rawQuery("select F.Id,F.Name,(select count(FolderId) from document where FolderId=F.Id) as DocsCount,F.Sort,F.Cover,F.LevelId from folder as F inner join Level as L on F.LevelId=L.Id order by L.Sort,F.Sort", null);
         List<Folder> list = new ArrayList<Folder>();
         while (cursor.moveToNext()) {
             Folder folder = new Folder();
             folder.Id = cursor.getInt(0);
             folder.Name = cursor.getString(1);
             folder.DocsCount = cursor.getInt(2);
+            folder.Sort = cursor.getInt(3);
+            folder.Cover = cursor.getString(4);
+            folder.LevelId = cursor.getInt(5);
             list.add(folder);
         }
+        cursor.close();
         return list;
     }
 
-    public void levelClear() {
-    }
 
-    public boolean levelExists(int id) {
-        Cursor cursor = mReadable.rawQuery("select Id from level where Id=?", new String[]{id + ""});
-        int count = cursor.getCount();
-        cursor.close();
-        return count > 0;
-    }
-
-    public void levelInsert(Level level) {
+    public void levelInsertOrReplace(Level level) {
         ContentValues values = new ContentValues();
         values.put("Id", level.Id);
         values.put("Name", level.Name);
-        mWritable.insert("level", null, values);
+        values.put("Sort", level.Sort);
+        values.put("ShowCover", level.ShowCover);
+        mWritable.insertWithOnConflict("level", null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public DownloadInfo docsSelectById(int id) {
@@ -211,6 +188,20 @@ public class Database {
 
     public void deleteTable(String table) {
         Log.i(TAG, "deleteTable: " + mWritable.delete(table, null, null));
-        ;
+    }
+
+    /**
+     * 新添或者更新文件夹数据
+     *
+     * @param folder 实体
+     */
+    public void folderInsertOrReplace(Folder folder) {
+        ContentValues value = new ContentValues();
+        value.put("Id", folder.Id);
+        value.put("Name", folder.Name);
+        value.put("Sort", folder.Sort);
+        value.put("LevelId", folder.LevelId);
+        value.put("Cover", folder.Cover);
+        mWritable.insertWithOnConflict("folder", "", value, SQLiteDatabase.CONFLICT_REPLACE);
     }
 }

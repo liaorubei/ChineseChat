@@ -10,8 +10,11 @@ public class TeacherQueue {
     public NewUser Current;
 
     public class NewUser {
+        public int Id;
+        public String Username;
         public int IsOnline;
         public int IsEnable;
         public int IsActive;
+        public int IsQueue;
     }
 }

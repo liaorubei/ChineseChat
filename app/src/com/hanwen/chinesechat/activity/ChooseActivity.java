@@ -83,7 +83,7 @@ public class ChooseActivity extends Activity
 		Parameters parameters = new Parameters();
 		parameters.add("skip", 0 + "");
 		parameters.add("take", 5 + "");
-		HttpUtil.post(NetworkUtil.teacherInQueue, parameters, new RequestCallBack<String>()
+		HttpUtil.post(NetworkUtil.teacherEnqueue, parameters, new RequestCallBack<String>()
 		{
 
 			@Override

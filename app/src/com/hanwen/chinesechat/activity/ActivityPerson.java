@@ -370,8 +370,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 break;
 
             case R.id.tv_lookat: {
-                Log.i(TAG, "onClick: " + viewOperation.getTag());
-                ActivityAlbum.start(this, new String[]{(String) viewOperation.getTag()}, 0);
+                ActivityAlbum.start(this, new String[]{NetworkUtil.getFullPath((String) viewOperation.getTag())}, 0);
                 dialogAlbum.dismiss();
             }
             break;

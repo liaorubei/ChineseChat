@@ -2,18 +2,20 @@ package com.hanwen.chinesechat.util;
 
 import android.content.ContentUris;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.webkit.MimeTypeMap;
 
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.database.Database;
 
 import java.io.File;
+import java.util.Locale;
 
 /**
  * Created by 儒北 on 2016-03-31.
@@ -128,11 +130,10 @@ public class FileUtil {
     }
 
     public static void cleanMyDatabase() {
-        Database database = ChineseChat.getDatabase();
+        Database database = ChineseChat.database();
         database.deleteTable("document");
         database.deleteTable("UrlCache");
     }
-
 
     public static String getPath(final Context context, final Uri uri) {
 
@@ -224,7 +225,6 @@ public class FileUtil {
         return null;
     }
 
-
     /**
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
@@ -255,5 +255,119 @@ public class FileUtil {
      */
     public static boolean isGooglePhotosUri(Uri uri) {
         return "com.google.android.apps.photos.content".equals(uri.getAuthority());
+    }
+
+    public static boolean hasExtentsion(String filename) {
+        int dot = filename.lastIndexOf('.');
+        if ((dot > -1) && (dot < (filename.length() - 1))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // 获取文件扩展名
+    public static String getExtensionName(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length() - 1))) {
+                return filename.substring(dot + 1);
+            }
+        }
+        return "";
+    }
+
+    // 获取文件名
+    public static String getFileNameFromPath(String filepath) {
+        if ((filepath != null) && (filepath.length() > 0)) {
+            int sep = filepath.lastIndexOf('/');
+            if ((sep > -1) && (sep < filepath.length() - 1)) {
+                return filepath.substring(sep + 1);
+            }
+        }
+        return filepath;
+    }
+
+    // 获取不带扩展名的文件名
+    public static String getFileNameNoEx(String filename) {
+        if ((filename != null) && (filename.length() > 0)) {
+            int dot = filename.lastIndexOf('.');
+            if ((dot > -1) && (dot < (filename.length()))) {
+                return filename.substring(0, dot);
+            }
+        }
+        return filename;
+    }
+
+    public static String getMimeType(String filePath) {
+        if (TextUtils.isEmpty(filePath)) {
+            return "";
+        }
+        String type = null;
+        String extension = getExtensionName(filePath.toLowerCase());
+        if (!TextUtils.isEmpty(extension)) {
+            MimeTypeMap mime = MimeTypeMap.getSingleton();
+            type = mime.getMimeTypeFromExtension(extension);
+        }
+        android.util.Log.i(TAG, "url:" + filePath + " " + "type:" + type);
+
+        // FIXME
+        if (TextUtils.isEmpty(type) && filePath.endsWith("aac")) {
+            type = "audio/aac";
+        }
+
+        return type;
+    }
+
+    public enum SizeUnit {
+        Byte,
+        KB,
+        MB,
+        GB,
+        TB,
+        Auto,
+    }
+
+    public static String formatFileSize(long size) {
+        return formatFileSize(size, SizeUnit.Auto);
+    }
+
+    public static String formatFileSize(long size, SizeUnit unit) {
+        if (size < 0) {
+            return "未知";
+        }
+
+        final double KB = 1024;
+        final double MB = KB * 1024;
+        final double GB = MB * 1024;
+        final double TB = GB * 1024;
+        if (unit == SizeUnit.Auto) {
+            if (size < KB) {
+                unit = SizeUnit.Byte;
+            } else if (size < MB) {
+                unit = SizeUnit.KB;
+            } else if (size < GB) {
+                unit = SizeUnit.MB;
+            } else if (size < TB) {
+                unit = SizeUnit.GB;
+            } else {
+                unit = SizeUnit.TB;
+            }
+        }
+
+        switch (unit) {
+            case Byte:
+                return size + "B";
+            case KB:
+                return String.format(Locale.US, "%.2fKB", size / KB);
+            case MB:
+                return String.format(Locale.US, "%.2fMB", size / MB);
+            case GB:
+                return String.format(Locale.US, "%.2fGB", size / GB);
+            case TB:
+                return String.format(Locale.US, "%.2fPB", size / TB);
+            default:
+                return size + "B";
+        }
     }
 }

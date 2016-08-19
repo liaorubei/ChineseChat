@@ -25,13 +25,14 @@ import com.hanwen.chinesechat.fragment.FragmentPerson;
 import com.hanwen.chinesechat.fragment.FragmentTextBook;
 import com.hanwen.chinesechat.receiver.NetworkReceiver;
 import com.hanwen.chinesechat.service.DownloadService;
+import com.hanwen.chinesechat.service.TeacherAutoRefreshService;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.Log;
 
 public class ActivityMain extends FragmentActivity implements View.OnClickListener {
-    // Monkey测试代码
-    // adb shell monkey -p com.hanwen.chinesechat -s 500 --ignore-crashes --ignore-timeouts --monitor-native-crashes -v -v 20000 > E:\log.txt
-    // gradlew assemblerelease
+    //Monkey测试代码
+    //adb shell monkey -p com.hanwen.chinesechat -s 500 --ignore-crashes --ignore-timeouts --monitor-native-crashes -v -v 50000 > E:\log.txt
+    //gradlew assemblerelease
     //代码折叠/展开[ctrl shift -+]
 
     //云信相关
@@ -73,6 +74,8 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
             IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(receiver, filter);
         }
+        Intent i = new Intent(this, TeacherAutoRefreshService.class);
+        startService(i);
     }
 
     @Override
@@ -100,7 +103,7 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(ActivityMain.this, getSupportFragmentManager(), R.id.ff_content);
         tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), ChineseChat.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
-        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentTextBook.class, null);
+        tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentListen.class, null);
         tabHost.addTab(tabHost.newTabSpec("me").setIndicator(initIndicator("Me")), FragmentPerson.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override

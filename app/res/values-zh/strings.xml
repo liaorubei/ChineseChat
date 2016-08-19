@@ -78,7 +78,7 @@
     <string name="ActivityCall_can_not_back">返回无效</string>
     <string name="ActivityCall_cancel">取消</string>
     <string name="ActivityCall_confirm">确定</string>
-    <string name="ActivityCall_hangup">你确定退出吗？</string>
+    <string name="ActivityCall_hangup">你确定挂机吗？</string>
     <string name="ActivityCall_pick_theme">选话题</string>
     <string name="ActivityCall_switch_theme">换话题</string>
     <string name="MainActivity_one_more_time_quit">再按一次退出</string>
@@ -153,7 +153,7 @@
     <string name="ActivityTake_can_not_back">返回无效</string>
     <string name="ActivityTake_cancel">取消</string>
     <string name="ActivityTake_confirm">确定</string>
-    <string name="ActivityTake_hangup">确定退出吗?</string>
+    <string name="ActivityTake_hangup">确定挂机吗?</string>
     <string name="ActivityTheme_no_topic">选择话题</string>
     <string name="ActivityTheme_title">话题</string>
     <string name="FragmentChoose_busy">教师通话中…</string>

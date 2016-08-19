@@ -1,30 +1,40 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ll_content"
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#f0f0f0"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:id="@+id/ll_ctrl"
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:background="#FAFAFA"
-            android:orientation="horizontal" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@id/viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+        android:visibility="invisible"/>
 
     <ProgressBar
         android:id="@+id/pb_loading"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_centerInParent="true" />
-</RelativeLayout>
+        android:layout_gravity="center"
+        android:visibility="visible"/>
+
+    <LinearLayout
+        android:id="@+id/ll_indicator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="#2000"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/selector_oval_indicator"/>
+
+        <ImageView
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/selector_oval_indicator"/>
+    </LinearLayout>
+</FrameLayout>

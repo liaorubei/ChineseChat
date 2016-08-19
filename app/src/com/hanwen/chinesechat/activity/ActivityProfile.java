@@ -29,6 +29,8 @@ import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.R;
 import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public class ActivityProfile extends Activity implements View.OnClickListener {
@@ -43,7 +45,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
     private ImageView iv_call;
     private User user;
     private Gson gson = new Gson();
-    private Set<String> photos1;
+    private List<String> photos1;
     private ProgressDialog progressDialog;
     private int padding = 0;
     private int size = 0;
@@ -129,8 +131,9 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                         ll_album.removeAllViews();
                     }
 
-                    photos1 = info.Photos;
-                    for (String s : photos1) {
+                    photos1 = new ArrayList<String>();// info.Photos;
+                    for (String s : info.Photos) {
+                        photos1.add(NetworkUtil.getFullPath(s));
                         LinearLayout.LayoutParams layout = new LinearLayout.LayoutParams(size, size);
                         ImageView imageView = new ImageView(getApplicationContext());
                         imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);

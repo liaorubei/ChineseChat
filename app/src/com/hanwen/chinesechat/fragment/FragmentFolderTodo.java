@@ -27,6 +27,7 @@ import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -39,6 +40,7 @@ public class FragmentFolderTodo extends Fragment {
     private ListView listview;
     private Gson gson = new Gson();
     private SwipeRefreshLayout srl;
+    private Level level;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle) {
@@ -48,8 +50,12 @@ public class FragmentFolderTodo extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        final Level level = gson.fromJson(getArguments().getString("level"), new TypeToken<Level>() {
-        }.getType());
+/*        level = gson.fromJson(getArguments().getString("level"), new TypeToken<Level>() {
+        }.getType());*/
+
+        level = getArguments().getParcelable("level");
+        Log.i(TAG, "onViewCreated: " + level);
+
         srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
         srl.setColorSchemeResources(R.color.color_app);
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -88,6 +94,9 @@ public class FragmentFolderTodo extends Fragment {
 
         listview = (ListView) view.findViewById(android.R.id.list);
         list = level.Folders;
+        if (list == null) {
+            list = new ArrayList<>();
+        }
         adapter = new MyAdapter(list);
         listview.setAdapter(adapter);
         listview.setOnItemClickListener(new OnItemClickListener() {
@@ -100,6 +109,13 @@ public class FragmentFolderTodo extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        Log.i(TAG, "onResume: ");
+        super.onResume();
+
     }
 
     private class MyAdapter extends BaseAdapter<Folder> {

@@ -1,6 +1,7 @@
 package com.hanwen.chinesechat.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.Build;
@@ -8,10 +9,12 @@ import android.os.Bundle;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,12 +50,25 @@ public class ActivitySignUp extends Activity implements OnClickListener {
     private View tv_read;
     private View iv_read;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
         initView();
+        advertise();
+    }
+
+    private void advertise() {
+        final Dialog dialog = new Dialog(this, android.R.style.Theme_DeviceDefault_Light_Dialog_NoActionBar_MinWidth);//去标题
+        dialog.setContentView(R.layout.dialog_advertise);
+        dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);//背景透明
+        dialog.findViewById(R.id.iv_close).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private void initView() {

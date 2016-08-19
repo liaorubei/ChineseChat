@@ -26,6 +26,7 @@ import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
+import com.hanwen.chinesechat.util.SystemUtil;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -184,7 +185,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         params.add("password", password);
         params.add("category", ChineseChat.isStudent() ? 0 : 1);
         params.add("system", 1);
-        params.add("device", Build.DEVICE);
+        params.add("device", SystemUtil.getDeviceName());
 
         HttpUtil.post(NetworkUtil.userSignIn, params, new RequestCallBack<String>() {
             @Override
