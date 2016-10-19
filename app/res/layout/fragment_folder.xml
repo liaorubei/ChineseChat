@@ -1,13 +1,22 @@
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/srl"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.aspsine.swipetoloadlayout.SwipeToLoadLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f0f0f0">
+    android:layout_height="match_parent">
 
-    <ListView
-        android:id="@android:id/list"
+    <com.hanwen.chinesechat.view.RefreshHeaderView
+        android:id="@id/swipe_refresh_header"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"/>
-</android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="50dp"
+        android:gravity="center" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@id/swipe_target"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.hanwen.chinesechat.view.LoadMoreFooterView
+        android:id="@id/swipe_load_more_footer"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:gravity="center" />
+</com.aspsine.swipetoloadlayout.SwipeToLoadLayout>

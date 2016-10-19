@@ -3,7 +3,6 @@
 
     <item
         android:id="@+id/menu_refresh_teacher"
-        android:icon="@drawable/ic_launcher"
         android:showAsAction="always"
         android:title="刷新教师"/>
 

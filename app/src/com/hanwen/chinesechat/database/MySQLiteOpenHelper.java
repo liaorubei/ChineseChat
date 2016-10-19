@@ -11,7 +11,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
     private static String name = "woyaoxue.db";
     private static CursorFactory factory = null;
-    private static int version = 4;
+    private static int version = 5;
 
     public MySQLiteOpenHelper(Context context) {
         super(context, name, factory, version);
@@ -31,6 +31,9 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE Level( Id int PRIMARY KEY,Name varchar,Sort int,ShowCover int)");
         db.execSQL("CREATE TABLE Folder(Id int PRIMARY KEY,Name varchar,Sort int,Cover varchar,LevelId int)");
         db.execSQL("create table UrlCache(Url varchar primary key,Json text,UpdateAt long);--请求缓存地址");
+
+        //版本5，添加一个本地用户登录的记录
+        db.execSQL("CREATE TABLE User(Username VARCHAR PRIMARY KEY,password VARCHAR)");
     }
 
     @Override
@@ -40,6 +43,9 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE Level  (Id int PRIMARY KEY,Name VARCHAR,Sort int,ShowCover int)");
         db.execSQL("CREATE TABLE Folder (Id int PRIMARY KEY,Name VARCHAR,Sort int,Cover varchar,LevelId int)");
+
+        //版本5，添加一个本地用户登录的记录
+        db.execSQL("CREATE TABLE User(Username VARCHAR PRIMARY KEY,password VARCHAR)");
     }
 
 }

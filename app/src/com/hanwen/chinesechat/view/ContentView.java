@@ -67,7 +67,7 @@ public abstract class ContentView extends FrameLayout {
         }
     }
 
-    public static enum ViewState {
+    public enum ViewState {
         EMPTY, FAILURE, LOADING, SUCCESS
 
         // LOADING,SUCCESS,FAILURE,VACANCY

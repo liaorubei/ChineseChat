@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
     package="com.hanwen.chinesechat"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
@@ -28,10 +29,15 @@
     <uses-permission android:name="android.permission.BLUETOOTH"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.READ_LOGS"/>
+    <!-- 获取日志，网易云捕会用到 -->
+
 
     <!-- SDK 权限申明, 第三方 APP 接入时，请将 com.hanwen.chinesechat 替换为自己的包名 -->
     <!-- 和下面的 uses-permission 一起加入到你的 AndroidManifest 文件中。 -->
-    <permission android:name="com.hanwen.chinesechat.permission.RECEIVE_MSG" android:protectionLevel="signature"/>
+    <permission
+        android:name="com.hanwen.chinesechat.permission.RECEIVE_MSG"
+        android:protectionLevel="signature"/>
 
     <!-- 接收 SDK 消息广播权限， 第三方 APP 接入时，请将 com.hanwen.chinesechat 替换为自己的包名 -->
     <uses-permission android:name="com.hanwen.chinesechat.permission.RECEIVE_MSG"/>
@@ -41,7 +47,14 @@
         android:allowBackup="false"
         android:icon="${APPLICATION_ICON}"
         android:label="${APPLICATION_LABEL}"
-        android:theme="@android:style/Theme.Holo.Light.NoActionBar">
+        android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+        tools:replace="android:label,android:allowBackup">
+
+        <!-- 网易云捕 -->
+        <meta-data
+            android:name="BUGRPT_APPID"
+            android:value="A009724961"/>
+
         <activity
             android:name=".activity.ActivitySplash"
             android:screenOrientation="portrait"
@@ -131,25 +144,13 @@
         <activity
             android:name=".activity.ActivitySignUp"
             android:label="注册帐号"/>
-        <activity android:name=".activity.ContactActivity"/>
-        <activity android:name=".activity.GroupCreate"/>
         <activity
-            android:name=".activity.ActivityCall"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"/>
-        <activity
-            android:name=".activity.ActivityTake"
+            android:name=".activity.ActivityChat"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
             android:windowSoftInputMode="adjustPan"/>
-        <activity android:name=".activity.ChooseActivity"/>
-        <activity android:name=".activity.FriendActivity"/>
-        <activity android:name=".activity.FriendAddActivity"/>
-        <activity android:name=".activity.FriendSearchActivity"/>
-        <activity android:name=".activity.RandomActivity"/>
-        <activity android:name=".activity.ActivityHistory"/>
+        <activity android:name=".activity.ActivityRecord"/>
         <activity android:name=".activity.QuestionActivity"/>
         <activity android:name=".activity.ActivityPayment"/>
         <activity android:name=".activity.ActivitySetting"/>
@@ -165,6 +166,7 @@
         <activity android:name=".activity.ActivityProfile"/>
         <activity android:name=".activity.ActivitySecurity"/>
         <activity android:name=".activity.ActivityBlank"/>
+        <activity android:name=".activity.ActivityTextbook"/>
         <activity
             android:name=".activity.ActivityAlbum"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
@@ -176,8 +178,9 @@
         <service
             android:name=".service.ServiceQueue"
             android:enabled="true"
-            android:exported="true">
-        </service>
+            android:exported="true"/>
+
+        <activity android:name=".activity.ActivityFolder"/>
     </application>
 
 </manifest>

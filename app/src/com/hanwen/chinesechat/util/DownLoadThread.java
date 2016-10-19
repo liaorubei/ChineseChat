@@ -127,7 +127,7 @@ public class DownLoadThread extends Thread {
     }
 
     private String progress(float downSize, float totalReadSize) {
-        float size = (float) downSize * 100 / (float) totalReadSize;
+        float size = downSize * 100 / totalReadSize;
         return format.format(size);
     }
 

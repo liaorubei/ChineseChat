@@ -79,6 +79,7 @@ public class SoundPlayer {
     }
 
     public void stop() {
+     //   Log.i(TAG, "stop: ");
         if (soundPool != null) {
             if (streamId != 0) {
                 soundPool.stop(streamId);

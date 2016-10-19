@@ -1,165 +1,154 @@
 package com.hanwen.chinesechat.fragment;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.aspsine.swipetoloadlayout.OnRefreshListener;
+import com.aspsine.swipetoloadlayout.SwipeToLoadLayout;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.activity.ActivityDocsDone;
 import com.hanwen.chinesechat.activity.ActivityDocsTodo;
+import com.hanwen.chinesechat.activity.ActivityFolder;
+import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.Folder;
+import com.hanwen.chinesechat.bean.FolderDoc;
 import com.hanwen.chinesechat.bean.Level;
 import com.hanwen.chinesechat.bean.Response;
-import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.util.CommonUtil;
-import com.hanwen.chinesechat.util.GsonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.netease.cosine.core.Params;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * <p/>
- * create an instance of this fragment.
+ * 课本列表
  */
-public class FragmentFolder extends Fragment {
-
+public class FragmentFolder extends Fragment implements OnRefreshListener {
+    public static final String TAG = "FragmentFolder";
     public static final String KEY_LEVEL = "KEY_LEVEL";
-    private static final String ARG_PARAM2 = "param2";
-    private static final String TAG = "FragmentFolder";
+    public static final int TAKE = 25;
+    private Dialog dialogPermission;
+    private Dialog dialogProgress;
     private Level level;
-    private String mParam2;
-    private RecyclerView.LayoutManager layout;
-    private RecyclerView listView;
-    private RecyclerView.Adapter adapter;
-    private List<Folder> dataSet;
-    private android.support.v7.widget.RecyclerView.ItemDecoration decora;
-    private SwipeRefreshLayout srl;
-    private DisplayMetrics displayMetrics;
+    private List<FolderDoc> data = new ArrayList<>();
+    private RecyclerView.Adapter adapter = new MyAdapter();
+    private SwipeToLoadLayout swipe;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            level = getArguments().getParcelable(KEY_LEVEL);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        } else {
-            level = new Level();
+        level = getArguments() == null ? new Level() : (Level) getArguments().getParcelable(KEY_LEVEL);
+        dialogProgress = new Dialog(getActivity(), R.style.NoTitle);
+        dialogProgress.setContentView(R.layout.dialog_loading);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(R.string.FragmentFolder_authorized_users);
+        builder.setPositiveButton(R.string.FragmentFolder_dialog_positive, null);
+        dialogPermission = builder.create();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_folder, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        swipe = (SwipeToLoadLayout) view.findViewById(R.id.swipe);
+        if (level.ShowCover == 1) {
+            swipe.setBackgroundColor(Color.parseColor("#BEEDD5"));
         }
-        displayMetrics = getActivity().getResources().getDisplayMetrics();
+        swipe.setOnRefreshListener(this);
+        swipe.setRefreshing(level.Id > 0);//如果Id大于0，那么说明该数据来源于网络，会进行异步请求
+        swipe.setLoadMoreEnabled(false);
+
+        RecyclerView listView = (RecyclerView) view.findViewById(R.id.swipe_target);
+        listView.setLayoutManager(level.ShowCover == 1 ? new GridLayoutManager(view.getContext(), 3) : new LinearLayoutManager(view.getContext()));
+        listView.addItemDecoration(level.ShowCover == 1 ? new DividerGridItemDecoration(view.getContext()) : new MyDecora(view.getContext(), LinearLayoutManager.VERTICAL));
+
+        data.clear();
+        adapter.notifyDataSetChanged();
+        listView.setAdapter(adapter);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        Log.i(TAG, "onResume: level=" + level);
-
         if (level.Id < 0) {
             List<Folder> folders = ChineseChat.database().folderSelectListWithDocsCount();
-            dataSet.clear();
+            Log.i(TAG, "onResume: " + folders);
+            data.clear();
             for (Folder folder : folders) {
                 if (folder.DocsCount > 0) {
-                    dataSet.add(folder);
+                    FolderDoc fd = new FolderDoc(folder);
+                    fd.Name1 = folder.Name;
+                    fd.Name2 = "课程：" + folder.DocsCount;
+                    data.add(fd);
                 }
             }
             adapter.notifyDataSetChanged();
+            swipe.setRefreshEnabled(false);
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_folder1, container, false);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        Log.i(TAG, "onViewCreated: " + level);
-        srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
-        srl.setColorSchemeResources(R.color.color_app);
-        srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    public void onRefresh() {
+        Log.i(TAG, "onRefresh: ");
+        HttpUtil.Parameters params = new HttpUtil.Parameters();
+        params.add("levelId", level.Id);
+        HttpUtil.post(NetworkUtil.folderGetListByLevelId, params, new RequestCallBack<String>() {
             @Override
-            public void onRefresh() {
-                if (level.Id > 0) {
-                    HttpUtil.Parameters params = new HttpUtil.Parameters();
-                    params.add("levelId", level.Id);
-                    params.add("skip", 0);
-                    params.add("take", 25);
-                    HttpUtil.post(NetworkUtil.folderGetByLevelId, params, new RequestCallBack<String>() {
-                        @Override
-                        public void onSuccess(ResponseInfo<String> responseInfo) {
-                            Response<List<Folder>> resp = GsonUtil.Instance().fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {}.getType());
-                            if (resp.code == 200 && resp.info != null) {
-                                dataSet.clear();
-                                for (Folder f : resp.info) {
-                                    ChineseChat.database().folderInsertOrReplace(f);
-                                    dataSet.add(f);
-                                }
-                                adapter.notifyDataSetChanged();
-                            }
-                            srl.setRefreshing(false);
-                        }
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                //Log.i(TAG, "onSuccess: " + responseInfo.result + " \r\n" + this.getRequestUrl());
 
-                        @Override
-                        public void onFailure(HttpException error, String msg) {
-                            srl.setRefreshing(false);
-                        }
-                    });
-                } else if (level.Id < 0) {
-                    onResume();
-                    srl.setRefreshing(false);
+                Response<List<Folder>> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {}.getType());
+                if (200 == resp.code) {
+                    data.clear();
+                    for (Folder f : resp.info) {
+                        FolderDoc object = new FolderDoc(f);
+                        object.Name2 = String.format("课程：%1$d", f.DocsCount);
+                        data.add(object);
+                    }
+                    adapter.notifyDataSetChanged();
                 }
+                swipe.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(HttpException error, String msg) {
+                swipe.setRefreshing(false);
             }
         });
-
-        listView = (RecyclerView) view.findViewById(R.id.list);
-        if (level.ShowCover == 1) {
-            decora = new DividerGridItemDecoration(getActivity());
-            layout = new GridLayoutManager(getActivity(), 3);
-        } else {
-            decora = new MyDecora(getActivity(), LinearLayoutManager.VERTICAL);
-            layout = new LinearLayoutManager(getActivity());
-        }
-        listView.setLayoutManager(layout);
-        listView.addItemDecoration(decora);
-
-        if (level.Folders == null) {
-            level.Folders = new ArrayList<>();
-        }
-
-        dataSet = level.Folders;
-        adapter = new MyAdapter();
-        listView.setAdapter(adapter);
     }
 
     private class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
@@ -169,39 +158,162 @@ public class FragmentFolder extends Fragment {
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, final int position) {
-            final Folder folder = dataSet.get(position);
-            holder.tv_folder.setText(folder.Name);
-            holder.tv_counts.setText(String.format("课程：%1$d", folder.DocsCount));
-
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            FolderDoc folderDoc = data.get(position);
+            holder.tv_folder.setText(folderDoc.Name1);
+            holder.tv_counts.setText(folderDoc.Name2);
             if (level.ShowCover == 1) {
-                if (!TextUtils.isEmpty(folder.Cover)) {
-                    CommonUtil.showBitmap(holder.iv_covers, NetworkUtil.getFullPath(folder.Cover));
+                if (!TextUtils.isEmpty(folderDoc.Cover)) {
+                    CommonUtil.showBitmap(holder.iv_covers, NetworkUtil.getFullPath(folderDoc.Cover));
                 } else {
-                    holder.iv_covers.setImageBitmap(null);
+                    holder.iv_covers.setImageResource(R.drawable.ic_launcher_student);
                 }
-                holder.ll_title.setVisibility(View.INVISIBLE);
             } else {
                 holder.iv_covers.setVisibility(View.GONE);
             }
 
-            holder.rootView.setOnClickListener(new View.OnClickListener() {
+            holder.rootView.setOnClickListener(new MyOnClickListener(folderDoc) {
                 @Override
                 public void onClick(View v) {
+                    //打开未下载
                     if (level.Id > 0) {
-                        Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
-                        intent.putExtra("folder", new Gson().toJson(folder));
-                        startActivity(intent);
-                    } else {
+                        if (this.Data.HasChildren) {
+                            openKids(this.Data);
+                        } else {
+                            checkPermission(this.Data);
+                        }
+                    }
+                    //打开已下载
+                    else {
+                        Folder folder = new Folder();
+                        folder.Id = this.Data.Id;
+                        folder.Name = this.Data.Name1;
                         ActivityDocsDone.start(getActivity(), folder);
                     }
                 }
             });
+
+            /*
+            holder.rootView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (level.Id > 0) {
+                        if (folder.Permission) {
+                            if (dialogProgress == null) {
+                                dialogProgress = new Dialog(getActivity(), R.style.NoTitle);
+                                dialogProgress.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+                                dialogProgress.setContentView(R.layout.dialog_loading);
+                            }
+                            dialogProgress.show();
+                            HttpUtil.Parameters params = new HttpUtil.Parameters();
+                            params.add("folderId", folder.Id);
+                            params.add("userId", ChineseChat.CurrentUser.Id);
+                            HttpUtil.post(NetworkUtil.folderCheckPermission, params, new RequestCallBack<String>() {
+
+                                @Override
+                                public void onSuccess(ResponseInfo<String> responseInfo) {
+                                    Log.i(TAG, "onSuccess: " + responseInfo.result);
+                                    Response<List<Document>> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Document>>>() {
+                                    }.getType());
+                                    dialogProgress.dismiss();
+                                    if (200 == response.code) {
+                                        Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
+                                        intent.putExtra("folder", new Gson().toJson(folder));
+                                        intent.putExtra(ActivityDocsTodo.KEY_SHOW_DATE, level.ShowCover != 1);
+                                        startActivity(intent);
+                                    } else {
+                                        if (dialogPermission == null) {
+                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                                            builder.setMessage(R.string.FragmentFolder_authorized_users);
+                                            builder.setPositiveButton(R.string.FragmentFolder_dialog_positive, null);
+                                            dialogPermission = builder.create();
+                                        }
+                                        dialogPermission.show();
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(HttpException error, String msg) {
+                                    Log.i(TAG, "onFailure: error" + error.getMessage() + " msg:" + msg);
+                                    dialogProgress.dismiss();
+                                }
+                            });
+                        } else {
+                            Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
+                            intent.putExtra("folder", new Gson().toJson(folder));
+                            intent.putExtra(ActivityDocsTodo.KEY_SHOW_DATE, level.ShowCover != 1);
+                            startActivity(intent);
+                        }
+                    } else {
+                        ActivityDocsDone.start(getActivity(), folder);
+                    }
+                }
+            });*/
         }
 
         @Override
         public int getItemCount() {
-            return dataSet.size();
+            return data.size();
+        }
+    }
+
+    private void checkPermission(final FolderDoc data) {
+
+        if (data.Permission) {
+            HttpUtil.Parameters params = new HttpUtil.Parameters();
+            params.add("folderId", data.Id);
+            params.add("userId", ChineseChat.CurrentUser.Id);
+            HttpUtil.post(NetworkUtil.folderCheckPermission, params, new RequestCallBack<String>() {
+
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    //Log.i(TAG, "onSuccess: " + responseInfo.result + " \r\n" + this.getRequestUrl());
+                    Response<List<Document>> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Document>>>() {}.getType());
+                    dialogProgress.dismiss();
+                    if (200 == response.code) {
+                        openDocs(data);
+                    } else {
+                        dialogPermission.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    Log.i(TAG, "onFailure: error" + error.getMessage() + " msg:" + msg);
+                    dialogProgress.dismiss();
+                }
+            });
+
+        } else {
+            openDocs(data);
+        }
+    }
+
+    private void openDocs(FolderDoc data) {
+        Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
+        Folder folder = new Folder();
+        folder.Id = data.Id;
+        folder.Name = data.Name1;
+        intent.putExtra("folder", folder);
+        intent.putExtra("showDate", level.ShowCover == 1);
+        startActivity(intent);
+    }
+
+    private void openKids(FolderDoc data) {
+        Intent intent = new Intent(getActivity(), ActivityFolder.class);
+        Folder folder = new Folder();
+        folder.Id = data.Id;
+        folder.Name = data.Name1;
+        intent.putExtra("folder", folder);
+        intent.putExtra("showDate", level.ShowCover != 1);
+        startActivity(intent);
+    }
+
+    private abstract class MyOnClickListener implements View.OnClickListener {
+        protected FolderDoc Data;
+
+        public MyOnClickListener(FolderDoc folderDoc) {
+            this.Data = folderDoc;
         }
     }
 

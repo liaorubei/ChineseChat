@@ -2,21 +2,26 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "com.hanwen.chinesechat"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 9
-        versionName "V 1.1.9"// gradlew assemblerelease
+        versionCode 16
+        versionName "V 1.2.2"// gradlew assemblerelease
+        ndk {
+            //设置支持的SO库架构
+            abiFilters "armeabi", "armeabi-v7a"
+            //,"arm64-v8a","x86","x86_64"  //去掉64位版本，因为云信会出so文件异常，x86架构不用支持
+        }
     }
 
     productFlavors {
-/*        student {
+        student {
             //applicationId "com.hanwen.chinesechat.student"
             manifestPlaceholders = [release_value: "student", APPLICATION_ICON: "@drawable/ic_launcher_student", APPLICATION_LABEL: "ChineseChat"]
-        }*/
+        }
         teacher {
             applicationId "com.hanwen.chinesechat.teacher"
             manifestPlaceholders = [release_value: "teacher", APPLICATION_ICON: "@drawable/ic_launcher_teacher", APPLICATION_LABEL: "汉问教师端"]
@@ -61,42 +66,49 @@ android {
         abortOnError false
     }
 
-    packagingOptions {
-        //1）目前 Android 系统存在 armeabi armeabi-v7a x86 mips arm64-v8a x86_64 mips64 等多种Native库支持。
-        //2）云信 SDK 提供了其中常用了的 armeabi-v7a armeabi x86 三种 32 位库文件, 能够通过兼容模式运行在 64 位设备上。
-        //3）当云信 SDK 运行在 64 位设备上时，应确保没有 arm64-v8a x86_64 库存在, 否则 Android 系统将使用 64 位模式启动程序, 而云信 IM SDK 目前不支持此种模式。
-        //4）mips 架构由于设备少, 云信IM SDK 暂不做支持。
-        //exclude:vt. 排除；排斥；拒绝接纳；逐出
-        exclude 'lib/arm64-v8a/libcardioDecider.so'
-        exclude 'lib/arm64-v8a/libcardioRecognizer.so'
-        exclude 'lib/arm64-v8a/libcardioRecognizer_tegra2.so'
-        exclude 'lib/arm64-v8a/libopencv_core.so'
-        exclude 'lib/arm64-v8a/libopencv_imgproc.so'
+    /* packagingOptions {
+         //1）目前 Android 系统存在 armeabi armeabi-v7a x86 mips arm64-v8a x86_64 mips64 等多种Native库支持。
+         //2）云信 SDK 提供了其中常用了的 armeabi-v7a armeabi x86 三种 32 位库文件, 能够通过兼容模式运行在 64 位设备上。
+         //3）当云信 SDK 运行在 64 位设备上时，应确保没有 arm64-v8a x86_64 库存在, 否则 Android 系统将使用 64 位模式启动程序, 而云信 IM SDK 目前不支持此种模式。
+         //4）mips 架构由于设备少, 云信IM SDK 暂不做支持。
+         //exclude:vt. 排除；排斥；拒绝接纳；逐出
+         exclude 'lib/arm64-v8a/libcardioDecider.so'
+         exclude 'lib/arm64-v8a/libcardioRecognizer.so'
+         exclude 'lib/arm64-v8a/libcardioRecognizer_tegra2.so'
+         exclude 'lib/arm64-v8a/libopencv_core.so'
+         exclude 'lib/arm64-v8a/libopencv_imgproc.so'
 
-        //exclude 'lib/armeabi/libcardioDecider.so'
-        //exclude 'lib/armeabi-v7a/libcardioDecider.so'
-        //exclude 'lib/armeabi-v7a/libcardioRecognizer.so'
-        //exclude 'lib/armeabi-v7a/libcardioRecognizer_tegra2.so'
-        //exclude 'lib/armeabi-v7a/libopencv_core.so'
-        //exclude 'lib/armeabi-v7a/libopencv_imgproc.so'
+         //exclude 'lib/armeabi/libcardioDecider.so'
+         //exclude 'lib/armeabi-v7a/libcardioDecider.so'
+         //exclude 'lib/armeabi-v7a/libcardioRecognizer.so'
+         //exclude 'lib/armeabi-v7a/libcardioRecognizer_tegra2.so'
+         //exclude 'lib/armeabi-v7a/libopencv_core.so'
+         //exclude 'lib/armeabi-v7a/libopencv_imgproc.so'
 
-        exclude 'lib/mips/libcardioDecider.so'
-        exclude 'lib/x86/libcardioDecider.so'
-        exclude 'lib/x86/libcardioRecognizer.so'
-        exclude 'lib/x86/libcardioRecognizer_tegra2.so'
-        exclude 'lib/x86/libopencv_core.so'
-        exclude 'lib/x86/libopencv_imgproc.so'
-        exclude 'lib/x86_64/libcardioDecider.so'
-        exclude 'lib/x86_64/libcardioRecognizer.so'
-        exclude 'lib/x86_64/libcardioRecognizer_tegra2.so'
-        exclude 'lib/x86_64/libopencv_core.so'
-        exclude 'lib/x86_64/libopencv_imgproc.so'
+         exclude 'lib/mips/libcardioDecider.so'
+         exclude 'lib/x86/libcardioDecider.so'
+         exclude 'lib/x86/libcardioRecognizer.so'
+         exclude 'lib/x86/libcardioRecognizer_tegra2.so'
+         exclude 'lib/x86/libopencv_core.so'
+         exclude 'lib/x86/libopencv_imgproc.so'
+         exclude 'lib/x86_64/libcardioDecider.so'
+         exclude 'lib/x86_64/libcardioRecognizer.so'
+         exclude 'lib/x86_64/libcardioRecognizer_tegra2.so'
+         exclude 'lib/x86_64/libopencv_core.so'
+         exclude 'lib/x86_64/libopencv_imgproc.so'
 
-        exclude'lib/x86/libcosine.so'
-        exclude'lib/x86/libne_audio.so'
-        exclude'lib/x86/libnrtc_engine.so'
-        exclude'lib/x86/libnrtc_network.so'
-        exclude'lib/x86/librts_network.so'
+         exclude 'lib/x86/libcosine.so'
+         exclude 'lib/x86/libne_audio.so'
+         exclude 'lib/x86/libnrtc_engine.so'
+         exclude 'lib/x86/libnrtc_network.so'
+         exclude 'lib/x86/librts_network.so'
+     }*/
+
+    android.applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def file = output.outputFile
+            output.outputFile = new File(file.parent, defaultConfig.versionName.replace(" ", "_") + "_" + file.name)
+        }
     }
 
     useLibrary 'org.apache.http.legacy'
@@ -110,13 +122,17 @@ dependencies {
     compile files('lib/alipaySdk-20160120.jar')
 
     //compile 'org.greenrobot:eventbus:3.0.0'
+    //compile 'com.android.support:support-v7:23.4.0'
+    //compile 'com.android.support:support-v13:23.4.0'
+
+    //集成最新版本，也可以指定版本号，比如3.6.16，网易云捕
     compile 'com.android.support:recyclerview-v7:23.4.0'
     compile 'com.google.code.gson:gson:2.4'
     compile 'com.jiechic.library:xUtils:2.6.14'
     compile 'com.paypal.sdk:paypal-android-sdk:2.13.0'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.android.support:support-v4:23.4.0'
-    //compile 'com.android.support:support-v7:23.4.0'
-    //compile 'com.android.support:support-v13:23.4.0'
     compile 'com.github.chrisbanes:PhotoView:1.3.0'
+    compile 'com.github.Aspsine:SwipeToLoadLayout:1.0.3'
+    compile 'com.netease.nis.plugin:bugrpt:latest.release'
 }

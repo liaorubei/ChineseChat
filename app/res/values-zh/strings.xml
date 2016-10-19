@@ -75,6 +75,8 @@
     <string name="ActivityPayment_recharge_failure">充值失败</string>
     <string name="ActivityPayment_recharge_success">充值成功</string>
     <string name="ActivityPayment_select_topup_money">请选择充值金额</string>
+    <string name="ActivityPayment_topup_title">计费及充值</string>
+    <string name="ActivityPayment_topup_message">1、ChinesChat APP Chat采用每分钟计费的方式实时计费，计费标准是10 coins/min（注：coins即指ChineseChat coin）。\r\n2、充值基本价格为0.27 USD/10 coins；共分四挡，\r\n第一档 基本价格，\r\n第二档 95折，\r\n第三档 92折，\r\n第四档 88折，\r\n详见弹出的充值价格表，当您选定其中一档后即可进入充值操作。</string>
     <string name="ActivityCall_can_not_back">返回无效</string>
     <string name="ActivityCall_cancel">取消</string>
     <string name="ActivityCall_confirm">确定</string>
@@ -222,7 +224,7 @@
     <string name="ActivityTake_show_teacher_summary">授课情况：%1$d分钟（%2$d次/%3$d月份）</string>
     <string name="ActivityTake_show_student_summary">学习情况：%1$d分钟（%2$d次）</string>
     <string name="ActivityTake_show_student_nickname">昵称：%1$s 国家：%2$s</string>
-    <string name="ActivityTake_hint_type_something">请输入</string>
+    <string name="ActivityTake_text_hint_send_text">请输入</string>
     <string name="ActivityTake_pick_image">选择</string>
     <string name="ActivityTake_send_texts">发送</string>
     <string name="ActivityTake_show_teacher_nickname">%1$s</string>
@@ -231,4 +233,12 @@
     <string name="ActivityTake_tab_texts">文字</string>
     <string name="ActivityTake_tab_topic_pick">话题</string>
     <string name="ActivityTake_tab_topic_switch">换话题</string>
+    <string name="FragmentFolder_authorized_users">本内容仅对授权用户开放</string>
+    <string name="FragmentFolder_dialog_positive">确定</string>
+    <string name="ActivityPlay_call_for_help">是否呼叫在线教师一对一辅导本课程?</string>
+    <string name="ActivityPlay_call_for_help_negative">稍后</string>
+    <string name="ActivityPlay_call_for_help_positive">现在</string>
+    <string name="ActivityTake_tab_lyric">课程</string>
+    <string name="ActivityPayment_topup_confirm">知道了</string>
+    <string name="ActivitySignIn_is_logging">正在登录，请稍候</string>
 </resources>

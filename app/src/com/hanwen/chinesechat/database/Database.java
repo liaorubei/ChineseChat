@@ -10,12 +10,16 @@ import android.database.sqlite.SQLiteDatabase;
 
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.DownloadInfo;
 import com.hanwen.chinesechat.bean.Folder;
 import com.hanwen.chinesechat.bean.Level;
 import com.hanwen.chinesechat.bean.UrlCache;
+import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.Log;
+
+import org.apache.commons.logging.impl.LogFactoryImpl;
 
 public class Database {
 
@@ -93,7 +97,7 @@ public class Database {
     public List<Document> docsSelectListByFolderId(Integer folderId) {
         Cursor cursor = mReadable.rawQuery("select Json from document where IsDownload=1 and FolderId=?", new String[]{folderId + ""});
         List<Document> list = new ArrayList<Document>();
-        Gson gson = new Gson();
+        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         while (cursor.moveToNext()) {
             Document document = gson.fromJson(cursor.getString(0), Document.class);
             list.add(document);
@@ -162,7 +166,6 @@ public class Database {
         return list;
     }
 
-
     public void levelInsertOrReplace(Level level) {
         ContentValues values = new ContentValues();
         values.put("Id", level.Id);
@@ -203,5 +206,69 @@ public class Database {
         value.put("LevelId", folder.LevelId);
         value.put("Cover", folder.Cover);
         mWritable.insertWithOnConflict("folder", "", value, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public void userInsertOrReplace(String username, String password) {
+        ContentValues values = new ContentValues();
+        values.put("Username", username);
+        //values.put("Password", password);
+        mWritable.insertWithOnConflict("User", "", values, SQLiteDatabase.CONFLICT_REPLACE);
+    }
+
+    public List<User> userList() {
+        Cursor cursor = mReadable.query("User", new String[]{"Username", "Password"}, null, null, null, null, null);
+        List<User> users = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            User user = new User();
+            user.Username = cursor.getString(0);
+            user.PassWord = cursor.getString(1);
+            users.add(user);
+        }
+        cursor.close();
+        return users;
+    }
+
+    public Document documentGetById(int documentId) {
+
+
+        return null;
+    }
+
+    public Level levelGetByName(String name) {
+        Cursor cursor = mReadable.query("Level", new String[]{"Id", "Name", "Sort"}, "Name=?", new String[]{name}, null, null, null);
+        Level level = null;
+        if (cursor.moveToNext()) {
+            level = new Level();
+            level.Id = cursor.getInt(0);
+            level.Name = cursor.getString(1);
+            level.Sort = cursor.getInt(2);
+        }
+        cursor.close();
+        return level;
+    }
+
+    /**
+     * 通过等级Id查询文件夹列表，查询课本列表
+     *
+     * @param levelId 课本等级
+     * @return null, 或者0长度及以上的集合
+     */
+    public ArrayList<Folder> FolderListGetByLevelId(int levelId) {
+        Cursor cursor = mReadable.query("Folder", new String[]{"Id", "Name", "Sort", "Cover"}, "LevelId=?", new String[]{levelId + ""}, null, null, "Sort");
+        ArrayList<Folder> list = null;
+        if (cursor.getCount() > 0) {
+            list = new ArrayList<Folder>();
+            while (cursor.moveToNext()) {
+                Folder folder = new Folder();
+                folder.Id = cursor.getInt(0);
+                folder.Name = cursor.getString(1);
+                folder.Sort = cursor.getInt(2);
+                folder.Cover = cursor.getString(3);
+                folder.LevelId = levelId;
+                list.add(folder);
+            }
+        }
+        cursor.close();
+        return list;
     }
 }

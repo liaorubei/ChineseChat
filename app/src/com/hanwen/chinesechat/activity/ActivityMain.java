@@ -22,7 +22,6 @@ import com.hanwen.chinesechat.fragment.FragmentChoose;
 import com.hanwen.chinesechat.fragment.FragmentLineUp;
 import com.hanwen.chinesechat.fragment.FragmentListen;
 import com.hanwen.chinesechat.fragment.FragmentPerson;
-import com.hanwen.chinesechat.fragment.FragmentTextBook;
 import com.hanwen.chinesechat.receiver.NetworkReceiver;
 import com.hanwen.chinesechat.service.DownloadService;
 import com.hanwen.chinesechat.service.TeacherAutoRefreshService;
@@ -38,17 +37,25 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
     //云信相关
     //App Key: 599551c5de7282b9a1d686ee40abf74c
     //App Secret: 64e52bd091da
-    protected static final String TAG = "ActivityMain";
-    private TextView tv_delete;
+    public static final String TAG = "ActivityMain";
+    public static final String KEY_TAB_INDEX = "KEY_TAB_INDEX";
+    public static final String KEY_DOCUMENT_ID = "KEY_DOCUMENT_ID";
     private RelativeLayout rl_main;
     private long lastTime = 0;
     private View tv_refresh;
     private BroadcastReceiver receiver;
+    private int tabIndex = 1;
+    private int documentId = -1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        tabIndex = intent.getIntExtra(KEY_TAB_INDEX, 1);
+        documentId = intent.getIntExtra(KEY_DOCUMENT_ID, -1);
 
         initView();
 
@@ -65,6 +72,7 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
             }
         }*/
 
+
         // 下载任务服务
         Intent sIntent = new Intent(this, DownloadService.class);
         startService(sIntent);
@@ -80,14 +88,16 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - lastTime) > 2000) {
-                CommonUtil.toast(R.string.MainActivity_one_more_time_quit);
-                lastTime = System.currentTimeMillis();
-            } else {
-                finish();
+        if (documentId < 0) {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                if ((System.currentTimeMillis() - lastTime) > 2000) {
+                    CommonUtil.toast(R.string.MainActivity_one_more_time_quit);
+                    lastTime = System.currentTimeMillis();
+                } else {
+                    finish();
+                }
+                return true;
             }
-            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -96,13 +106,15 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
         TextView tv_title = (TextView) findViewById(R.id.tv_title);
         tv_title.setTypeface(Typeface.createFromAsset(getAssets(), "font/MATURASC.TTF"));
         tv_refresh = findViewById(R.id.tv_refresh);
-        tv_delete = (TextView) findViewById(R.id.tv_delete);
         tv_refresh.setOnClickListener(this);
         rl_main = (RelativeLayout) findViewById(R.id.rl_main);
 
         FragmentTabHost tabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         tabHost.setup(ActivityMain.this, getSupportFragmentManager(), R.id.ff_content);
-        tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), ChineseChat.isStudent() ? FragmentChoose.class : FragmentLineUp.class, null);
+
+        Bundle argsChat = new Bundle();
+        argsChat.putInt("documentId", documentId);
+        tabHost.addTab(tabHost.newTabSpec("chat").setIndicator(initIndicator("Chat")), FragmentLineUp.class, argsChat);
         tabHost.addTab(tabHost.newTabSpec("listen").setIndicator(initIndicator("Listen")), FragmentListen.class, null);
         tabHost.addTab(tabHost.newTabSpec("me").setIndicator(initIndicator("Me")), FragmentPerson.class, null);
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
@@ -112,20 +124,17 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
                 switch (tabId) {
                     case "chat":
                         tv_refresh.setVisibility(View.VISIBLE);
-                        tv_delete.setVisibility(View.INVISIBLE);
                         break;
                     case "listen":
                         tv_refresh.setVisibility(View.INVISIBLE);
-                        tv_delete.setVisibility(View.INVISIBLE);
                         break;
                     case "me":
                         tv_refresh.setVisibility(View.INVISIBLE);
-                        tv_delete.setVisibility(View.INVISIBLE);
                         break;
                 }
             }
         });
-        tabHost.setCurrentTabByTag("listen");
+        tabHost.setCurrentTab(tabIndex);
     }
 
     private View initIndicator(String person) {

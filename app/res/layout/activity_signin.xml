@@ -1,10 +1,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F0F0F0">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#F0F0F0">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
         android:id="@id/layout_title"
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:background="#00a478">
@@ -15,7 +16,7 @@
             android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/home_back" />
+            android:src="@drawable/home_back"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -23,7 +24,7 @@
             android:layout_centerInParent="true"
             android:text="@string/ActivitySignIn_title"
             android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
     </RelativeLayout>
 
     <ScrollView
@@ -47,24 +48,25 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp">
 
-                <EditText
+                <AutoCompleteTextView
                     android:id="@+id/et_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_text_signinup"
+                    android:completionThreshold="1"
                     android:hint="@string/ActivitySignIn_type_email"
                     android:inputType="textEmailAddress"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
                     android:textSize="12sp"
-                    android:typeface="monospace" />
+                    android:typeface="monospace"/>
 
                 <ImageView
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/icon_username" />
+                    android:src="@drawable/icon_username"/>
 
                 <ImageView
                     android:id="@+id/iv_username_clear"
@@ -74,7 +76,7 @@
                     android:layout_centerVertical="true"
                     android:padding="10dp"
                     android:src="@drawable/icon_delete"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"/>
 
             </RelativeLayout>
 
@@ -93,14 +95,14 @@
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
                     android:textSize="12sp"
-                    android:typeface="monospace" />
+                    android:typeface="monospace"/>
 
                 <ImageView
                     android:layout_width="15dp"
                     android:layout_height="15dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="10dp"
-                    android:src="@drawable/icon_password" />
+                    android:src="@drawable/icon_password"/>
 
                 <ImageView
                     android:id="@+id/iv_password_clear"
@@ -110,7 +112,7 @@
                     android:layout_centerVertical="true"
                     android:padding="10dp"
                     android:src="@drawable/icon_delete"
-                    android:visibility="invisible" />
+                    android:visibility="invisible"/>
             </RelativeLayout>
 
             <Button
@@ -123,7 +125,7 @@
                 android:enabled="true"
                 android:text="@string/ActivitySignIn_login"
                 android:textColor="#FFFFFF"
-                android:textSize="15sp" />
+                android:textSize="15sp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -138,7 +140,7 @@
                     android:layout_weight="1"
                     android:gravity="left"
                     android:text="@string/ActivitySignIn_forgot_password"
-                    android:textColor="@color/color_app" />
+                    android:textColor="@color/color_app"/>
 
                 <TextView
                     android:id="@+id/tv_signup"
@@ -147,7 +149,7 @@
                     android:layout_weight="1"
                     android:gravity="right"
                     android:text="@string/ActivitySignIn_user_register"
-                    android:textColor="@color/color_app" />
+                    android:textColor="@color/color_app"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

@@ -9,15 +9,18 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * 歌词显示行，显示中文和英文 liaorubei
+ */
 public class SpecialLyricView extends LinearLayout implements Comparable<SpecialLyricView> {
     public static final int SHOW_CN = 1;
     public static final int SHOW_EN = 2;
     public static final int SHOW_ENCN = 3;
     public static final int SHOW_NONE = 0;
 
-    private Lyric mLyric;
-    private TextView originalTextView;
-    private TextView translateTextView;
+    private Lyric mLyric;//当前歌词对象
+    private TextView originalTextView;//歌词原文
+    private TextView translateTextView;//歌词英文部分
 
     public SpecialLyricView(Context context, Lyric lyric) {
         super(context);
@@ -49,6 +52,9 @@ public class SpecialLyricView extends LinearLayout implements Comparable<Special
         return this.mLyric.TimeLabel;
     }
 
+    /**
+     * 高亮当前行歌词
+     */
     public void highlight() {
         this.originalTextView.setTextColor(Color.parseColor("#00A478"));
     }
@@ -80,5 +86,4 @@ public class SpecialLyricView extends LinearLayout implements Comparable<Special
                 break;
         }
     }
-
 }

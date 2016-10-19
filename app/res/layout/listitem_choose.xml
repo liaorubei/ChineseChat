@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:descendantFocusability="blocksDescendants">
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_avatar"
@@ -9,7 +9,7 @@
         android:layout_height="55dp"
         android:layout_centerVertical="true"
         android:layout_margin="10dp"
-        android:src="@drawable/ic_launcher_student" />
+        android:src="@drawable/ic_launcher_student"/>
 
     <ImageView
         android:id="@+id/bt_call"
@@ -22,7 +22,7 @@
         android:background="@drawable/selector_choose_calla"
         android:padding="15dp"
         android:src="@drawable/icon_choose_call"
-        android:visibility="visible" />
+        android:visibility="visible"/>
 
     <LinearLayout
         android:id="@+id/ll_spoken"
@@ -39,7 +39,8 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:singleLine="true"
-            android:text="全职教师ABCDEFGHIJKLMNOPQRSTUVWXYZ" />
+            android:text="全职教师ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            android:textColor="@color/color_app"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -55,14 +56,15 @@
                 android:layout_marginLeft="3dp"
                 android:layout_marginRight="5dp"
                 android:background="@color/color_app"
-                android:src="@drawable/teacher_online" />
+                android:src="@drawable/teacher_online"/>
 
             <TextView
                 android:id="@+id/tv_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="busy" />
+                android:text="@string/FragmentChoose_tips_online"
+                android:textColor="@color/color_app"/>
         </LinearLayout>
 
         <LinearLayout
@@ -74,7 +76,7 @@
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:layout_marginRight="3dp"
-                android:src="@drawable/icon_spoken" />
+                android:src="@drawable/icon_spoken"/>
 
             <TextView
                 android:id="@+id/tv_spoken"
@@ -82,7 +84,7 @@
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
                 android:text="Chinese English Japanese Korean"
-                android:textColor="@color/color_app_normal" />
+                android:textColor="@color/color_app_normal"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

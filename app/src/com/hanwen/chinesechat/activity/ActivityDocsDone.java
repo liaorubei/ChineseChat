@@ -221,7 +221,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                     finish();//如果当前的文件夹中的文件已经没有了,那么直接退出该界面
                 }
                 break;
-
         }
     }
 

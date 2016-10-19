@@ -11,6 +11,6 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven { url "https://jitpack.io" }//PhotoView要求支持
+        maven { url "https://jitpack.io" }//PhotoView，SwipeToLoadLayout要求支持
     }
 }

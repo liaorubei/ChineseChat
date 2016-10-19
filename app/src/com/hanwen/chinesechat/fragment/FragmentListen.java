@@ -41,6 +41,7 @@ public class FragmentListen extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "onCreate: " + viewPager);
         super.onCreate(savedInstanceState);
         urlCache = ChineseChat.database().cacheSelectByUrl(NetworkUtil.levelAndFolders);
         adapter = new FragmentPagerAdapter(getChildFragmentManager()) {
@@ -76,35 +77,37 @@ public class FragmentListen extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.i(TAG, "onCreateView: ");
+        Log.i(TAG, "onCreateView: " + viewPager);
         return inflater.inflate(R.layout.fragment_listen, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
+        pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
         ll_indicator = (LinearLayout) view.findViewById(R.id.ll_indicator);
         ll_indicator.getChildAt(0).setSelected(true);
         ll_indicator.setVisibility(View.INVISIBLE);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(listener);
 
+
         //如果数据是空数据,加载新数据
         if (urlCache == null) {
-            Log.i(TAG, "onViewCreated: 缓存是空的");
+            //Log.i(TAG, "onViewCreated: 缓存是空的");
             requestLatestData();
         }
         //如果数据是10分钟之前的,也加载新数据
         else if (urlCache.UpdateAt < (System.currentTimeMillis() - 10 * 60 * 1000)) {
-            Log.i(TAG, "onViewCreated: 缓存是旧的");
+            //Log.i(TAG, "onViewCreated: 缓存是旧的");
             requestLatestData();
         }
         //如果数据不为空,而且最近才请求过网络的,那么使用缓存数据
         else {
-            Log.i(TAG, "onViewCreated: 缓存是新的");
+            //Log.i(TAG, "onViewCreated: 缓存是新的");
             parseJsonData(urlCache.Json);
         }
+        Log.i(TAG, "onViewCreated: " + viewPager);
     }
 
     private void parseJsonData(String json) {
@@ -121,7 +124,6 @@ public class FragmentListen extends Fragment {
             FragmentLevels fragmentLevelsRemote = new FragmentLevels();
             Bundle argsRemote = new Bundle();
             argsRemote.putParcelableArrayList("levels", resp.info);
-            argsRemote.putString("Le", gson.toJson(resp.info));
             fragmentLevelsRemote.setArguments(argsRemote);
             fragments.add(fragmentLevelsRemote);
 
@@ -180,4 +182,5 @@ public class FragmentListen extends Fragment {
             }
         });
     }
+
 }

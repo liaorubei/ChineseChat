@@ -16,4 +16,9 @@ public class Log {
         }
     }
 
+    public static void e(String tag, String s) {
+        if (logOn) {
+            android.util.Log.e(tag, s);
+        }
+    }
 }

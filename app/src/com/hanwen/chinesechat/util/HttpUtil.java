@@ -11,7 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class HttpUtil {
-
     public static class Parameters {
 
         private Map<String, String> map;

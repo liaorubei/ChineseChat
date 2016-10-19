@@ -1,6 +1,7 @@
 package com.hanwen.chinesechat.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -15,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.google.gson.Gson;
@@ -49,8 +51,7 @@ import java.util.List;
 
 //充值界面
 public class ActivityPayment extends Activity implements View.OnClickListener {
-
-    private static final String TAG = "MoneyActivity";
+    private static final String TAG = "ActivityPayment";
     private LinearLayout ll_paypal, ll_alipay;
     private RadioButton rb_paypal, rb_alipay;
     private XListView orderListView;
@@ -87,6 +88,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
     private void initView() {
         findViewById(R.id.iv_home).setOnClickListener(this);
+        findViewById(R.id.iv_help).setOnClickListener(this);
 
         srl = (SwipeRefreshLayout) findViewById(R.id.srl);
         srl.setColorSchemeResources(R.color.color_app);
@@ -229,6 +231,13 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         switch (v.getId()) {
             case R.id.iv_home:
                 finish();
+                break;
+            case R.id.iv_help:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle(R.string.ActivityPayment_topup_title);
+                builder.setMessage(R.string.ActivityPayment_topup_message);
+                builder.setPositiveButton(R.string.ActivityPayment_topup_confirm, null);
+                builder.show();
                 break;
             case R.id.ll_paypal:
                 rb_paypal.setChecked(true);

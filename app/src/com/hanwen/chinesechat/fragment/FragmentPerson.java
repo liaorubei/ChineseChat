@@ -4,8 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.v4.app.Fragment;
 
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -18,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hanwen.chinesechat.ChineseChat;
+import com.hanwen.chinesechat.activity.ActivityRecord;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -25,7 +24,6 @@ import com.hanwen.chinesechat.util.NetworkUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.hanwen.chinesechat.activity.ActivitySignIn;
-import com.hanwen.chinesechat.activity.ActivityHistory;
 import com.hanwen.chinesechat.activity.ActivityPayment;
 import com.hanwen.chinesechat.activity.ActivityPerson;
 import com.hanwen.chinesechat.activity.ActivitySetting;
@@ -35,14 +33,18 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentPerson";
     private ImageView iv_avatar;
     private ImageView iv_gender;
-
     private AlertDialog dialogLogin;
-
     private TextView tv_nickname;
     private TextView tv_balance;
     private TextView tv_history;
     private View rl_payment;
     private SwipeRefreshLayout srl;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+   Log.i(TAG, "onCreate: ");
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,7 +120,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
                     showLoginDialog();
                     return;
                 }
-                startActivity(new Intent(getActivity(), ActivityHistory.class));
+                startActivity(new Intent(getActivity(), ActivityRecord.class));
                 break;
         }
     }

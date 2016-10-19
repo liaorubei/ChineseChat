@@ -52,7 +52,7 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
     private View bt_skip;
     private View bt_enter;
     private LinearLayout ll_indicator;
-    private int[] splashImages = new int[]{R.drawable.splash_1, R.drawable.splash_2, R.drawable.splash_3, R.drawable.splash_4,R.drawable.splash_5};
+    private int[] splashImages = new int[]{R.drawable.splash_1, R.drawable.splash_2, R.drawable.splash_3, R.drawable.splash_4, R.drawable.splash_5};
     private static int WHAT_SPLASH = 1;
     private long first;
     private Handler handler = new Handler() {
@@ -285,6 +285,7 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, ActivityMain.class);
+            intent.putExtra(ActivityMain.KEY_TAB_INDEX, 1);
             startActivity(intent);
         }
         finish();

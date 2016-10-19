@@ -3,6 +3,8 @@ package com.hanwen.chinesechat.activity;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -23,7 +25,6 @@ import android.view.View.OnClickListener;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -34,122 +35,60 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest.HttpMethod;
+import com.google.gson.GsonBuilder;
 import com.hanwen.chinesechat.ChineseChat;
+import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.DownloadInfo;
 import com.hanwen.chinesechat.bean.Lyric;
-import com.hanwen.chinesechat.bean.UrlCache;
 import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.view.SpecialLyricView;
-import com.hanwen.chinesechat.R;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class ActivityPlay extends Activity implements OnClickListener, OnPreparedListener, OnErrorListener, OnInfoListener, OnCompletionListener {
     private static final String TAG = "PlayActivity";
     private ArrayList<Integer> subTitleIcons;
-    private TextView tv_main;
-    private Gson gson = new Gson();
+    private boolean isOneLineLoop = false; // 是否单句循环
     private boolean playSingleLineState;
-
-    @Override
-    public void onCompletion(MediaPlayer mp) {
-        Log.i(TAG, "onCompletion: 播放完毕");
-        if (currentState == MediaState.播放录音) {
-            //时间归零
-            elapsedTime = 0;
-            seekToCurrentLine();
-            playerOrigin.start();
-            currentState = MediaState.播放原音;
-        }
-    }
-
-    private enum MediaState {
-        正在录音, 播放录音, 播放原音;
-
-        @Override
-        public String toString() {
-            switch (this) {
-                case 正在录音:
-                    return ChineseChat.getContext().getString(R.string.ActivityPlay_Recording);
-                case 播放录音:
-                    return ChineseChat.getContext().getString(R.string.ActivityPlay_play_record);
-                case 播放原音:
-                    return ChineseChat.getContext().getString(R.string.ActivityPlay_play_origin);
-            }
-            return "";
-        }
-    }
-
-    protected static final int REFRESH_SEEKBAR = 0;
     private Database database;
+    private DisplayMetrics outMetrics = new DisplayMetrics();
+    private File recordFile;// 录音文件对象
+    private FrameLayout.LayoutParams playParams, recordParams;// 控制按钮布局的布局参数
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+    private ImageView iv_cover;
+    private ImageView iv_line, iv_prev, iv_play, iv_next, iv_tape; //播放栏按钮
+    private ImageView iv_menu;
+    private ImageView iv_rec_pause, iv_rec_origin, iv_rec_prev, iv_rec_button, iv_rec_record, iv_rec_next, iv_rec_back; //录音栏按钮
     private int documentId;
     private int elapsedTime = 0;// 录音/播放已经耗费的时间,毫秒数milliseconds
-    private int titck = 0;
-    private Handler handler = new Handler() {
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case REFRESH_SEEKBAR:
-
-                    if (!iv_rec_pause.isSelected()) {
-                        elapsedTime += 50;
-                    }
-
-                    refresh_seekbar();
-                    sendEmptyMessageDelayed(REFRESH_SEEKBAR, 50);
-                    break;
-            }
-        }
-    };
-    // 是否单句循环
-    private boolean isOneLineLoop = false;
-
-    private RelativeLayout rl_buffering;
-    private ImageView iv_cover;
-
-    //状态栏按钮
-    private View iv_home;
-    private ImageView iv_menu;
-
-    //播放栏按钮
-    private ImageView iv_line, iv_prev, iv_play, iv_next, iv_tape;
-
-    //录音栏按钮
-    private ImageView iv_rec_pause, iv_rec_origin, iv_rec_prev, iv_rec_button, iv_rec_record, iv_rec_next, iv_rec_back;
-
-    private LinearLayout ll_lyrics, ll_play, ll_tape;
-
-    private MediaRecorder recorder;// 音频录音对象
-    private MediaPlayer playerOrigin, playerRecord;// 原音,录音播放对象
-
-    private DisplayMetrics outMetrics = new DisplayMetrics();
-
-    private FrameLayout.LayoutParams playParams, recordParams;// 控制按钮布局的布局参数
-    private File recordFile;// 录音文件对象
-
-    private SeekBar seekBar;
     private int sideA = 0, sideB = 0;
-    private List<SpecialLyricView> specialLyricViews;
+    private int titck = 0;
     private Integer subTitleState = 0;
-    private ScrollView sv_lyrics;
-    private ValueAnimator toRAnimator, toLAnimator;// 控制按钮布局的向右向左属性动画
-    private TextView tv_bSide, tv_aSide, tv_title;
-    private TextView tv_play_record_time;
+    private LinearLayout ll_lyrics, ll_play, ll_tape;
+    private List<SpecialLyricView> specialLyricViews;
+    private MediaPlayer playerOrigin, playerRecord;// 原音,录音播放对象
+    private MediaRecorder recorder;// 音频录音对象
     private MediaState currentState = MediaState.播放原音;
+    private RelativeLayout rl_buffering;
+    private ScrollView sv_lyrics;
+    private SeekBar seekBar;
+    private TextView tv_bSide, tv_aSide, tv_title;
+    private TextView tv_main;
+    private TextView tv_play_record_time;
+    private ValueAnimator toRAnimator, toLAnimator;// 控制按钮布局的向右向左属性动画
+    private View iv_home; //状态栏按钮
+    protected static final int REFRESH_SEEKBAR = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +146,88 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (playerOrigin != null && playerOrigin.isPlaying()) {
+            playerOrigin.pause();
+            iv_play.setSelected(false);
+        }
+        if (playerRecord != null && playerRecord.isPlaying()) {
+            playerRecord.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.i(TAG, "onDestroy: ");
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+        if (playerOrigin != null) {
+            playerOrigin.release();
+            playerOrigin = null;
+        }
+
+        if (playerRecord != null) {
+            playerRecord.release();
+            playerRecord = null;
+        }
+
+        if (recorder != null) {
+            recorder.release();
+            recorder = null;
+        }
+        if (database != null) {
+            database.closeConnection();
+            database = null;
+        }
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        Log.i(TAG, "onCompletion: 播放完毕");
+        if (currentState == MediaState.播放录音) {
+            //时间归零
+            elapsedTime = 0;
+            seekToCurrentLine();
+            playerOrigin.start();
+            currentState = MediaState.播放原音;
+        }
+    }
+
+    private enum MediaState {
+        正在录音, 播放录音, 播放原音;
+
+        @Override
+        public String toString() {
+            switch (this) {
+                case 正在录音:
+                    return ChineseChat.getContext().getString(R.string.ActivityPlay_Recording);
+                case 播放录音:
+                    return ChineseChat.getContext().getString(R.string.ActivityPlay_play_record);
+                case 播放原音:
+                    return ChineseChat.getContext().getString(R.string.ActivityPlay_play_origin);
+            }
+            return "";
+        }
+    }
+
+    private Handler handler = new Handler() {
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case REFRESH_SEEKBAR:
+
+                    if (!iv_rec_pause.isSelected()) {
+                        elapsedTime += 50;
+                    }
+
+                    refresh_seekbar();
+                    sendEmptyMessageDelayed(REFRESH_SEEKBAR, 50);
+                    break;
+            }
+        }
+    };
+
     private void fillData(Document document) {
         tv_aSide.setText("00:00");
         tv_bSide.setText(document.LengthString);
@@ -263,7 +284,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             HttpUtil.post(NetworkUtil.getDocById(documentId), null, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
-                    Log.i(TAG, "onSuccess: " + responseInfo);
+                    Log.i(TAG, "onSuccess: " + responseInfo.result);
                     Document document = gson.fromJson(responseInfo.result, Document.class);
                     fillData(document);
                 }
@@ -336,6 +357,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         iv_home.setOnClickListener(this);
         iv_menu.setOnClickListener(this);
         tv_main = (TextView) findViewById(R.id.tv_main);
+        View iv_call = findViewById(R.id.iv_call);
+        iv_call.setOnClickListener(this);
+        iv_call.setVisibility(ChineseChat.isStudent() ? View.VISIBLE : View.INVISIBLE);
+
 
         // 播放栏按钮
         iv_line = (ImageView) findViewById(R.id.iv_line);
@@ -424,7 +449,27 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 showOrHideSubtitle(state);
                 iv_menu.setImageResource(subTitleIcons.get(state));
                 break;
-
+            case R.id.iv_call:
+                //region 跳转到ActivityMain
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+/*                builder.setTitle("提示");
+                builder.setMessage("是否呼叫在线教师一对一辅导本课程？");*/
+                builder.setMessage(R.string.ActivityPlay_call_for_help);
+                builder.setPositiveButton(R.string.ActivityPlay_call_for_help_positive, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(ActivityPlay.this, ActivityMain.class);
+                        intent.putExtra(ActivityMain.KEY_TAB_INDEX, 0);
+                        intent.putExtra(ActivityMain.KEY_DOCUMENT_ID, documentId);
+                        startActivity(intent);
+                    }
+                });
+                builder.setNegativeButton(R.string.ActivityPlay_call_for_help_negative, null);
+                builder.show();
+            }
+            //endregion
+            break;
             //控制按钮事件
             case R.id.iv_line:
                 iv_line.setSelected(!iv_line.isSelected());
@@ -661,31 +706,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     }
 
     @Override
-    protected void onDestroy() {
-        Log.i(TAG, "onDestroy: ");
-        super.onDestroy();
-        handler.removeCallbacksAndMessages(null);
-        if (playerOrigin != null) {
-            playerOrigin.release();
-            playerOrigin = null;
-        }
-
-        if (playerRecord != null) {
-            playerRecord.release();
-            playerRecord = null;
-        }
-
-        if (recorder != null) {
-            recorder.release();
-            recorder = null;
-        }
-        if (database != null) {
-            database.closeConnection();
-            database = null;
-        }
-    }
-
-    @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
         Log.i(TAG, "onError:" + " what=" + what + " extra=" + extra);
         return false;
@@ -884,11 +904,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         }
     }
 
-    private void setTipsTextView() {
-
-
-    }
-
     private void showOrHideSubtitle(int state) {
 
         Integer integer = subTitleIcons.get(state);
@@ -914,5 +929,4 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         }
 
     }
-
 }

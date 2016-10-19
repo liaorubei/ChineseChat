@@ -1,6 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@id/layout_title"
@@ -14,7 +14,7 @@
             android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:src="@drawable/home_back" />
+            android:src="@drawable/home_back"/>
 
         <TextView
             android:id="@+id/tv_main"
@@ -23,7 +23,23 @@
             android:layout_centerInParent="true"
             android:text="@string/ActivityPlay_title"
             android:textColor="#FFFFFF"
-            android:textSize="20sp" />
+            android:textSize="20sp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_toLeftOf="@+id/iv_menu"
+            android:layout_toRightOf="@+id/tv_main">
+
+            <ImageView
+                android:id="@+id/iv_call"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_centerInParent="true"
+                android:padding="10dp"
+                android:src="@drawable/icon_call"/>
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/iv_menu"
@@ -32,8 +48,7 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:padding="10dp"
-            android:src="@drawable/switch_none" />
-
+            android:src="@drawable/switch_none"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -50,7 +65,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="15dp"
-            android:text="00:00" />
+            android:text="00:00"/>
 
         <TextView
             android:id="@+id/tv_bSide"
@@ -59,7 +74,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="15dp"
-            android:text="00:00" />
+            android:text="00:00"/>
 
         <SeekBar
             android:id="@+id/seekBar"
@@ -74,7 +89,7 @@
             android:minHeight="3dp"
             android:progressDrawable="@drawable/layer_seekbar"
             android:thumb="@drawable/shape_ring_thumb"
-            android:thumbOffset="0dp" />
+            android:thumbOffset="0dp"/>
     </RelativeLayout>
 
     <FrameLayout
@@ -98,7 +113,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_rec_pause" />
+                android:src="@drawable/selector_play_rec_pause"/>
 
             <ImageView
                 android:id="@+id/iv_rec_origin"
@@ -106,7 +121,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_origin" />
+                android:src="@drawable/selector_play_btn_origin"/>
 
             <ImageView
                 android:id="@+id/iv_rec_prev"
@@ -114,7 +129,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_prev" />
+                android:src="@drawable/selector_play_btn_prev"/>
 
             <ImageView
                 android:id="@+id/iv_rec_button"
@@ -123,7 +138,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:button="@null"
-                android:src="@drawable/selector_play_btn_recording" />
+                android:src="@drawable/selector_play_btn_recording"/>
 
             <ImageView
                 android:id="@+id/iv_rec_next"
@@ -131,7 +146,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_next" />
+                android:src="@drawable/selector_play_btn_next"/>
 
             <ImageView
                 android:id="@+id/iv_rec_record"
@@ -139,7 +154,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_record" />
+                android:src="@drawable/selector_play_btn_record"/>
 
             <ImageView
                 android:id="@+id/iv_rec_back"
@@ -147,7 +162,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_back" />
+                android:src="@drawable/selector_play_btn_back"/>
         </LinearLayout>
 
         <LinearLayout
@@ -164,7 +179,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_line" />
+                android:src="@drawable/selector_play_btn_line"/>
 
             <ImageView
                 android:id="@+id/iv_prev"
@@ -172,7 +187,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_prev" />
+                android:src="@drawable/selector_play_btn_prev"/>
 
             <ImageView
                 android:id="@+id/iv_play"
@@ -182,7 +197,7 @@
                 android:layout_weight="1"
                 android:button="@null"
                 android:checked="true"
-                android:src="@drawable/play_btn_pause_checked" />
+                android:src="@drawable/play_btn_pause_checked"/>
 
             <ImageView
                 android:id="@+id/iv_next"
@@ -190,7 +205,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_next" />
+                android:src="@drawable/selector_play_btn_next"/>
 
             <ImageView
                 android:id="@+id/iv_tape"
@@ -198,7 +213,7 @@
                 android:layout_height="25dp"
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
-                android:src="@drawable/selector_play_btn_tape" />
+                android:src="@drawable/selector_play_btn_tape"/>
         </LinearLayout>
     </FrameLayout>
 
@@ -228,13 +243,13 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="我就是那标准无比的大标题"
-                    android:textSize="18sp" />
+                    android:textSize="18sp"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
                     android:layout_below="@id/tv_title"
-                    android:background="@color/gray7" />
+                    android:background="@color/gray7"/>
 
                 <LinearLayout
                     android:id="@+id/ll_lyrics"
@@ -265,7 +280,7 @@
                 android:maxHeight="150dp"
                 android:maxWidth="150dp"
                 android:minHeight="150dp"
-                android:minWidth="150dp" />
+                android:minWidth="150dp"/>
         </RelativeLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -275,7 +290,7 @@
             android:layout_gravity="center"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_student"
-            android:visibility="invisible" />
+            android:visibility="invisible"/>
     </FrameLayout>
 
     <Button
@@ -289,5 +304,5 @@
         android:padding="15dp"
         android:text="播放原音 00:00"
         android:textColor="#FFFFFF"
-        android:visibility="invisible" />
+        android:visibility="invisible"/>
 </RelativeLayout>

@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@id/layout_title"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="45dp"
     android:background="#00a478">
 
     <ImageView
+        android:id="@+id/iv_home"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_centerVertical="true"
         android:padding="10dp"
-        android:src="@drawable/home_back"/>
+        android:src="@drawable/home_back" />
 
     <TextView
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:text="ChineseChat"
         android:textColor="#FFFFFF"
-        android:textSize="20sp"/>
+        android:textSize="20sp" />
 
 </RelativeLayout>

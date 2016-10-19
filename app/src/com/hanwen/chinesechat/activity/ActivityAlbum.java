@@ -28,7 +28,7 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class ActivityAlbum extends FragmentActivity {
 
-    private static final String KEY_INDEX = "KEY_INDEX";
+    private static final String KEY_INDEX = "KEY_TAB_INDEX";
     private ViewPager viewpager;
     private PagerAdapter adapter;
     private TextView tv_count;

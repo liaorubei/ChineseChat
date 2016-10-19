@@ -19,7 +19,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.hanwen.chinesechat.bean.Response;
+import com.hanwen.chinesechat.util.FileUtil;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -39,14 +42,17 @@ import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.view.CircularProgressBar;
 import com.hanwen.chinesechat.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Observable;
 import java.util.Observer;
 
 //文档显示界面,非下载
 public class ActivityDocsTodo extends Activity implements OnClickListener {
-    private static final String TAG = "DocsActivity";
+    public static final String TAG = "ActivityDocsTodo";
+    public static final String KEY_SHOW_DATE = "KEY_SHOW_DATE";
     private List<Document> list;
     private List<ViewHelper> data;
     private List<Document> down;
@@ -56,12 +62,14 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
 
     private TextView tv_folder;
     private int take = 50;
-    private Gson gson = new Gson();
+    private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
     private Folder folder;
     private ListView listview;
     private ImageView iv_menu;
     private ImageView iv_delete;
     private ImageView cb_check_all;
+    private boolean showDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +80,8 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
 
         // 取得传递过来的数据
         Intent intent = getIntent();
-        folder = gson.fromJson(intent.getStringExtra("folder"), new TypeToken<Folder>() {
-        }.getType());
-        if (folder == null) {
-            folder = new Folder();
-            folder.Id = 50;
-        }
+        folder = intent.getParcelableExtra("folder");
+        showDate = intent.getBooleanExtra("showDate", true);
 
         initView();
 
@@ -103,16 +107,16 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     }
 
     private void initData() {
-
-        String url = NetworkUtil.getDocs(folder.Id + "", 0 + "", take + "");
+        String url = NetworkUtil.documentGetListByFolderId + String.format("?folderId=%1$d&userId=%2$d", folder.Id, ChineseChat.CurrentUser.Id);
         Log.i(TAG, "initData: " + url);
 
         UrlCache cache = ChineseChat.database().cacheSelectByUrl(url);
         if (cache == null) {
-
             HttpUtil.post(url, null, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "onSuccess: " + this.getRequestUrl());
+
                     lastPost(responseInfo.result);
 
                     UrlCache urlCache = new UrlCache();
@@ -130,7 +134,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
             });
         } else {
             if (cache.UpdateAt < (System.currentTimeMillis() - 10 * 60 * 1000)) {
-
                 HttpUtil.post(url, null, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -151,20 +154,19 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
             } else {
                 lastPost(cache.Json);
             }
-
         }
     }
 
     private void lastPost(String json) {
-        List<Document> docs = gson.fromJson(json, new TypeToken<List<Document>>() {
-        }.getType());
-
-        list.clear();
-        for (Document d : docs) {
-            list.add(d);
-            data.add(new ViewHelper());
+        Response<List<Document>> docs = gson.fromJson(json, new TypeToken<Response<List<Document>>>() {}.getType());
+        if (docs.code == 200) {
+            list.clear();
+            for (Document d : docs.info) {
+                list.add(d);
+                data.add(new ViewHelper());
+            }
+            adapter.notifyDataSetChanged();
         }
-        adapter.notifyDataSetChanged();
     }
 
     private void initView() {
@@ -204,19 +206,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
                 startActivity(intent);
             }
         });
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
-
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -317,10 +306,14 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
                 convertView.setTag(new ViewHolder(convertView));
             }
             final ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.tv_title_one.setText(item.Title);
-            holder.tv_title_two.setText(item.TitleTwo);
-            holder.tv_date.setText(item.DateString);
-            holder.tv_size.setText(Formatter.formatFileSize(ActivityDocsTodo.this, item.Length));
+            holder.tv_title_one.setText(item.TitleCn);
+            holder.tv_title_two.setText(item.TitleEn);
+            holder.tv_title_two.setVisibility(TextUtils.isEmpty(item.TitleEn) ? View.GONE : View.VISIBLE);
+            holder.tv_title_sub_cn.setText(item.TitleSubCn);
+            holder.tv_title_sub_cn.setVisibility(item.Category == 1 ? View.VISIBLE : View.GONE);
+            holder.tv_date.setText(sdf.format(item.Date));
+            holder.tv_date.setVisibility(item.Category == 1 ? View.GONE : View.VISIBLE);
+            holder.tv_size.setText(FileUtil.formatFileSize(item.Length, FileUtil.SizeUnit.MB));
             holder.tv_time.setText(item.LengthString);
 
             DownloadInfo ssss = ChineseChat.database().docsSelectById(item.Id);
@@ -434,6 +427,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     private class ViewHolder {
         public TextView tv_title_one;
         public TextView tv_title_two;
+        public TextView tv_title_sub_cn;
         public TextView tv_date;
         public TextView tv_size;
         public TextView tv_time;
@@ -453,6 +447,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
             this.iv_over = convertView.findViewById(R.id.iv_over);
             this.iv_down = convertView.findViewById(R.id.iv_down);
             this.pb_down = (CircularProgressBar) convertView.findViewById(R.id.pb_down);
+            this.tv_title_sub_cn = (TextView) convertView.findViewById(R.id.tv_title_sub_cn);
         }
     }
 

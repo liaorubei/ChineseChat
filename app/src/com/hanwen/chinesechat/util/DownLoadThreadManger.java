@@ -146,7 +146,7 @@ public class DownLoadThreadManger implements OnDownloadListener {
             return 0;
         }
         DecimalFormat format = new DecimalFormat("0.00");
-        float size = (float) downSize * 100 / (float) totalReadSize;
+        float size = downSize * 100 / totalReadSize;
         return Double.parseDouble(format.format(size));
     }
 }

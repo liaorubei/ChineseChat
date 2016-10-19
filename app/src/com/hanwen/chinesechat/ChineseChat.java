@@ -5,12 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Environment;
 import android.text.TextUtils;
 
+import com.hanwen.chinesechat.activity.ActivityChat;
 import com.hanwen.chinesechat.activity.ActivitySignIn;
-import com.hanwen.chinesechat.activity.ActivityTake;
 import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.database.Database;
@@ -26,6 +25,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.auth.OnlineClient;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
+import com.netease.nis.bugrpt.CrashHandler;
 
 import java.io.File;
 import java.util.List;
@@ -52,6 +52,9 @@ public class ChineseChat extends Application {
             mContext = this;
             mDatabase = new Database(this);
 
+            //网易云捕
+            //CrashHandler.init(getApplicationContext());
+
             //region 注册来电监听
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
@@ -62,7 +65,7 @@ public class ChineseChat extends Application {
                     chat.setAccid(chatData.getAccount());
                     chat.setChatType(chatData.getChatType());
                     chat.setExtra(chatData.getExtra());
-                    ActivityTake.start(getApplicationContext(), ActivityTake.CHAT_MODE_INCOMING, chat);
+                    ActivityChat.start(getApplicationContext(), ActivityChat.CHAT_MODE_INCOMING, chat);
                 }
             }, true);
 
@@ -118,6 +121,7 @@ public class ChineseChat extends Application {
         SDKOptions options = new SDKOptions();
         options.appKey = "599551c5de7282b9a1d686ee40abf74c";
         options.sdkStorageRootPath = new File(Environment.getExternalStorageDirectory(), getPackageName() + "/nim").getAbsolutePath();
+        options.preloadAttach = true;//后台自动下载附件：如果是语音消息，直接下载文件，如果是图片或视频消息，下载缩略图文件。
         return options;
     }
 

@@ -10,6 +10,7 @@ public class ChatDataExtra {
     public String Avatar;
     public String Username;
     public String Nickname;
+    public int DocumentId;
 
     public UserLite Student;
     public UserLite Teacher;

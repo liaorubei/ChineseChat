@@ -160,7 +160,7 @@ public class DownLoadManger {
 		boolean isPresence = false;// 是否安装需要打开的软件
 
 		for (int i = 0; i < packageInfoList.size(); i++) {
-			PackageInfo pak = (PackageInfo) packageInfoList.get(i);
+			PackageInfo pak = packageInfoList.get(i);
 			if (pak.applicationInfo.packageName.equals(pkg)) {
 				isPresence = true;
 				break;

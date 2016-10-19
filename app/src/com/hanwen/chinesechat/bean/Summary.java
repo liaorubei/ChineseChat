@@ -1,5 +1,8 @@
 package com.hanwen.chinesechat.bean;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * Created by 儒北 on 2016-06-13.
  */
@@ -7,13 +10,7 @@ public class Summary {
     public int month;
     public int count;
     public int duration;
-
-    @Override
-    public String toString() {
-        return "Summary{" +
-                "month=" + month +
-                ", count=" + count +
-                ", duration=" + duration +
-                '}';
-    }
+    public Date from;
+    public Date to;
+    public List<Chat> list;
 }

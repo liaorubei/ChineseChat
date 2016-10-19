@@ -1,28 +1,42 @@
 package com.hanwen.chinesechat.bean;
 
+import java.util.Date;
 import java.util.List;
 
-public class Document
-{
-	public int Id;
-	public int LevelId;
-	public int FolderId;
-	public String Title;
-	public String TitleTwo;
-	public List<Lyric> Lyrics;
-	public String SoundPath;
-	public double Duration;
-	public long Length;
-	/**
-	 * 播放时长
-	 */
-	public String LengthString;
-	public String DateString;
+public class Document {
+    public int Id;
+    public int LevelId;
+    public int FolderId;
+    public String Title;
+    public String TitleTwo;
+    public String TitleCn;
+    public String TitleEn;
+    public String TitlePy;
+    public String TitleSubCn;
+    public String TitleSubEn;
+    public String TitleSubPy;
+    public int Category;
+    public List<Lyric> Lyrics;
+    public String SoundPath;
+    public double Duration;
+    public long Length;
+    public Date Date;
+    public long Size;
+    /**
+     * 播放时长
+     */
+    public String LengthString;
+    public String DateString;
 
-	@Override
-	public String toString()
-	{
-		return "Document [Id=" + Id + ", LevelId=" + LevelId + ", FolderId=" + FolderId + ", Title=" + Title + ", TitleTwo=" + TitleTwo + ", Lyrics=" + Lyrics + ", SoundPath=" + SoundPath + ", Duration=" + Duration + ", Length=" + Length + ", LengthString=" + LengthString + ", DateString=" + DateString + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "Document{" +
+                "Id=" + Id +
+                ", TitleCn='" + TitleCn + '\'' +
+                ", TitleSubCn='" + TitleSubCn + '\'' +
+                ", Duration=" + Duration +
+                ", SoundPath='" + SoundPath + '\'' +
+                ", Lyrics=" + Lyrics +
+                '}';
+    }
 }

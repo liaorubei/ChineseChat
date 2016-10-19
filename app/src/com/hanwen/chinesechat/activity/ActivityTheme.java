@@ -60,7 +60,7 @@ public class ActivityTheme extends FragmentActivity implements FragmentThemes.On
     public static void start(Activity context, String themeJson) {
         Intent intent = new Intent(context, ActivityTheme.class);
         intent.putExtra(key_current_theme, themeJson);
-        context.startActivityForResult(intent, ActivityCall.REQUEST_CODE_THEME);
+        context.startActivityForResult(intent, ActivityChat.REQUEST_CODE_THEME);
     }
 
     private void initData() {

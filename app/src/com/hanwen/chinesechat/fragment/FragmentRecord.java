@@ -1,5 +1,6 @@
 package com.hanwen.chinesechat.fragment;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,9 +15,11 @@ import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.base.BaseAdapter;
-import com.hanwen.chinesechat.bean.CallLog;
+import com.hanwen.chinesechat.bean.Chat;
 import com.hanwen.chinesechat.bean.Response;
+import com.hanwen.chinesechat.bean.Summary;
 import com.hanwen.chinesechat.bean.Theme;
+import com.hanwen.chinesechat.util.CalendarMy;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
@@ -30,29 +33,32 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 教师月份授课记录,要求有开始时间和结束时间
  */
 public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRefreshListener, XListView.IXListViewListener {
 
-    private static final String ARG_CALENDAR = "ARG_CALENDAR";
     private static final String TAG = "FragmentRecord";
-    private List<CallLog> list;
+    private static final String KEY_FROM = "KEY_FROM";
+    private static final String KEY_TO = "KEY_TO";
+    private List<Chat> list;
     private MyAdapter adapter;
-    private int take = 50;
+    private int take = 25;
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
     private XListView listview;
+    private SimpleDateFormat sdfE = new SimpleDateFormat("HH:mm:ss   E,dd/MM/yyyy", Locale.getDefault());
+    private TextView tv_summary;
+    private String to;
+    private String from;
     private SwipeRefreshLayout srl;
-    private Calendar calendarFrom;
-    private SimpleDateFormat sdfE = new SimpleDateFormat("HH:mm:ss   E,dd/MM/yyyy");
-    private SimpleDateFormat sdfM = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private Calendar calendarTo;
 
-    public static FragmentRecord newInstance(Calendar calendar) {
+    public static FragmentRecord newInstance(String from, String to) {
         FragmentRecord fragment = new FragmentRecord();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_CALENDAR, calendar);
+        args.putString(KEY_FROM, from);
+        args.putString(KEY_TO, to);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,14 +66,14 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            calendarFrom = (Calendar) getArguments().getSerializable(ARG_CALENDAR);
-            calendarTo = Calendar.getInstance();
-            calendarTo.set(calendarFrom.get(Calendar.YEAR), calendarFrom.get(Calendar.MONTH), 1, 0, 0, 0);
-            calendarTo.add(Calendar.MONTH, 1);
-        }
-        Log.i(TAG, "onCreate: " + sdfE.format(calendarFrom.getTime()));
-        Log.i(TAG, "onCreate: " + sdfE.format(calendarTo.getTime()));
+        Bundle arguments = getArguments();
+        CalendarMy instance = new CalendarMy();
+        to = arguments.getString(KEY_TO, instance.toString("yyyy-MM-dd HH:ss:mm"));
+        from = arguments.getString(KEY_FROM, instance.add(Calendar.YEAR, 2015).toString("yyyy-MM-dd HH:ss:mm"));
+        Log.i(TAG, "onCreate: from:" + from + " to:" + to);
+
+        list = new ArrayList<>();
+        adapter = new MyAdapter(list);
     }
 
     @Override
@@ -77,18 +83,18 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        tv_summary = (TextView) view.findViewById(R.id.tv_summary);
+        tv_summary.setVisibility(ChineseChat.isStudent() ? View.GONE : View.VISIBLE);//学生端不用显示这个统计数据信息,但是教师端要求显示
+
         srl = (SwipeRefreshLayout) view.findViewById(R.id.srl);
-        srl.setColorSchemeResources(R.color.color_app);
+        srl.setColorSchemeColors(Color.parseColor("#00a478"));
         srl.setOnRefreshListener(this);
 
         listview = (XListView) view.findViewById(R.id.listView);
+        listview.setAdapter(adapter);
         listview.setPullupEnable(false);
         listview.setPullDownEnable(false);
         listview.setXListViewListener(this);
-
-        list = new ArrayList<>();
-        adapter = new MyAdapter(list);
-        listview.setAdapter(adapter);
     }
 
     @Override
@@ -100,41 +106,42 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
 
     private void refresh(final boolean refresh) {
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
-        parameters.add("Id", ChineseChat.CurrentUser.Id);
+        parameters.add("userId", ChineseChat.CurrentUser.Id);
         parameters.add("skip", refresh ? 0 : list.size());
         parameters.add("take", take);
-        parameters.add("from", sdfM.format(calendarFrom.getTime()));
-        parameters.add("to", sdfM.format(calendarTo.getTime()));
+        parameters.add("from", from);
+        parameters.add("to", to);
 
-        HttpUtil.post(NetworkUtil.CallLogGetByUserId, parameters, new RequestCallBack<String>() {
+        HttpUtil.post(NetworkUtil.CallLogGetListByUserId, parameters, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<List<CallLog>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<CallLog>>>() {
-                }.getType());
+                Response<Summary> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Summary>>() {}.getType());
 
                 listview.setPullupEnable(true);//要把可用设在前面,不然状态会不正常
                 if (resp.code == 200) {
                     if (refresh) {
                         list.clear();
                     }
-                    List<CallLog> logs = resp.info;
-                    for (CallLog callLog : logs) {
+                    tv_summary.setText(String.format("当月授课情况:%1$d分钟（%2$d次）", resp.info.duration, resp.info.count));
+                    List<Chat> logs = resp.info.list;
+                    for (Chat callLog : logs) {
                         list.add(callLog);
                     }
                     listview.stopLoadMore(logs.size() < take ? XListViewFooter.STATE_NOMORE : XListViewFooter.STATE_NORMAL);
                 } else {
                     listview.stopLoadMore(XListViewFooter.STATE_ERRORS);
                 }
-                srl.setRefreshing(false);
                 adapter.notifyDataSetChanged();
+                srl.setRefreshing(false);
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
-                listview.setPullupEnable(true);
+                listview.setPullupEnable(false);
                 listview.stopLoadMore(XListViewFooter.STATE_ERRORS);
+                srl.setRefreshing(false);
             }
         });
     }
@@ -149,19 +156,21 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
         refresh(false);
     }
 
-    private class MyAdapter extends BaseAdapter<CallLog> {
-        public MyAdapter(List<CallLog> list) {
+    private class MyAdapter extends BaseAdapter<Chat> {
+        public MyAdapter(List<Chat> list) {
             super(list);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            CallLog item = getItem(position);
+            Chat item = getItem(position);
             if (convertView == null) {
-                convertView = View.inflate(getActivity(), R.layout.listitem_history_teacher, null);
+                convertView = View.inflate(getActivity(), R.layout.listitem_record, null);
                 new ViewHolder(convertView);
             }
             ViewHolder holder = (ViewHolder) convertView.getTag();
+
+            //region 主题
             holder.tv_theme.setText(getString(R.string.ActivityHistory_theme, getString(R.string.ActivityHistory_theme_unselected)));
             if (item.Themes.size() > 0) {
                 boolean first = true;
@@ -176,29 +185,54 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
                 }
                 holder.tv_theme.setText(getString(R.string.ActivityHistory_theme, sb.toString()));
             }
-            holder.tv_other.setText(ChineseChat.isStudent() ? getString(R.string.ActivityHistory_teacher, item.Teacher.Nickname) : getString(R.string.ActivityHistory_student, item.Student.Nickname));
-            //holder.tv_coins.setText(getString(R.string.ActivityHistory_coins, item.Coins));
-            //holder.tv_coins.setVisibility(View.GONE);
-            holder.tv_date.setText(sdfE.format(item.Start));
+            //endregion
+            holder.ll_teacher.setVisibility(ChineseChat.isStudent() ? View.GONE : View.VISIBLE);
+            holder.tv_student.setText(getString(R.string.ActivityHistory_student, item.Student));
+            holder.tv_duration.setText(getString(item.Duration > 1 ? R.string.ActivityHistory_durations : R.string.ActivityHistory_duration, item.Duration));
+            holder.tv_teacher.setVisibility(ChineseChat.isStudent() ? View.VISIBLE : View.GONE);
+            holder.tv_teacher.setText(getString(R.string.ActivityHistory_teacher, item.Teacher));
+            holder.ll_student.setVisibility(ChineseChat.isStudent() ? View.VISIBLE : View.GONE);
+            holder.tv_cost.setText(getString(item.Coins > 1 ? R.string.ActivityHistory_coins : R.string.ActivityHistory_coin, item.Coins));
             holder.tv_time.setText(getString(item.Duration > 1 ? R.string.ActivityHistory_durations : R.string.ActivityHistory_duration, item.Duration));
+
+            holder.tv_date.setText(sdfE.format(item.Start));
+
             return convertView;
         }
     }
 
     private class ViewHolder {
         public TextView tv_theme;
-        public TextView tv_other;
-        //public TextView tv_coins;
-        public TextView tv_date;
+
+        public View ll_teacher;
+        public TextView tv_student;
+        public TextView tv_duration;
+
+        public TextView tv_teacher;
+
+        public View ll_student;
+        public TextView tv_cost;
         public TextView tv_time;
+
+        public TextView tv_date;
 
         public ViewHolder(View convertView) {
             convertView.setTag(this);
             this.tv_theme = (TextView) convertView.findViewById(R.id.tv_theme);
-            this.tv_other = (TextView) convertView.findViewById(R.id.tv_other);
-            //this.tv_coins = (TextView) convertView.findViewById(R.id.tv_coins);
-            this.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
+            this.ll_teacher = convertView.findViewById(R.id.ll_teacher);
+            this.tv_student = (TextView) convertView.findViewById(R.id.tv_student);
+            this.tv_duration = (TextView) convertView.findViewById(R.id.tv_duration);
+            this.tv_teacher = (TextView) convertView.findViewById(R.id.tv_teacher);
+            this.ll_student = convertView.findViewById(R.id.ll_student);
+            this.tv_cost = (TextView) convertView.findViewById(R.id.tv_cost);
             this.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
+            this.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
         }
+    }
+
+    public static class ParamsPage {
+        public String from;
+        public String to;
+        public String text;
     }
 }

@@ -7,19 +7,27 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences.Editor;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Filter;
+import android.widget.Filterable;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Response;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.CommonUtil;
@@ -36,7 +44,9 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * 用户登录界面
@@ -48,16 +58,21 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     public static final int SignUp = 0;
     private static final int FROM_KICK_OUT = 1;
     private static final String KEY_SOURCE = "KEY_SOURCE";
-    private EditText et_username, et_password;
+    private AutoCompleteTextView et_username;
+    private EditText et_password;
     private boolean enter_main = false;
     private View iv_username_clear;
     private View iv_password_clear;
     private ProgressDialog progressDialog;
+    private List<User> users;
 
 
     private void initView() {
-        findViewById(R.id.iv_home).setOnClickListener(this);
-        et_username = (EditText) findViewById(R.id.et_username);
+        View iv_home = findViewById(R.id.iv_home);
+        iv_home.setOnClickListener(this);
+        iv_home.setVisibility(enter_main ? View.INVISIBLE : View.VISIBLE);
+
+        et_username = (AutoCompleteTextView) findViewById(R.id.et_username);
         et_password = (EditText) findViewById(R.id.et_password);
 
         iv_username_clear = findViewById(R.id.iv_username_clear);
@@ -101,6 +116,10 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         findViewById(R.id.bt_login).setOnClickListener(this);
         findViewById(R.id.tv_signup).setOnClickListener(this);
         findViewById(R.id.tv_password).setOnClickListener(this);
+
+        MyAdapter myAdapter = new MyAdapter(new ArrayList<String>());
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{"12315", "12316"});
+        et_username.setAdapter(myAdapter);
     }
 
     @Override
@@ -159,10 +178,12 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-
-        initView();
         enter_main = getIntent().getBooleanExtra("enter_main", false);
         int source = getIntent().getIntExtra(KEY_SOURCE, -1);
+
+        users = ChineseChat.database().userList();
+
+        initView();
         switch (source) {
             case FROM_KICK_OUT:
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -216,12 +237,16 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                     //CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);
                     CommonUtil.toast(response.desc);
                 }
+
+                ChineseChat.database().userInsertOrReplace(username, password);
+
+
             }
         });
     }
 
     @SuppressWarnings("unchecked")
-    private void signInNim(String accid, String token) {
+    public void signInNim(String accid, String token) {
         NIMClient.getService(AuthService.class).login(new LoginInfo(accid, token)).setCallback(new RequestCallback<LoginInfo>() {
             @Override
             public void onException(Throwable arg0) {
@@ -260,5 +285,46 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         intent.putExtra(KEY_SOURCE, FROM_KICK_OUT);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
+    }
+
+    private class MyAdapter extends BaseAdapter<String> implements Filterable {
+        private final List<String> list;
+        int padding = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
+
+        public MyAdapter(List<String> list) {
+            super(list);
+            this.list = list;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView textView = new TextView(ActivitySignIn.this);
+            textView.setText(this.list.get(position));
+            textView.setPadding(padding, padding, padding, padding);
+            AbsListView.LayoutParams layoutParams = new AbsListView.LayoutParams(-1, -2);
+            textView.setLayoutParams(layoutParams);
+            return textView;
+        }
+
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    list.clear();
+                    for (User u : users) {
+                        if (u.Username.contains(constraint)) {
+                            list.add(u.Username);
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    notifyDataSetChanged();
+                }
+            };
+        }
     }
 }

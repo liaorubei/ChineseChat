@@ -31,7 +31,6 @@ import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class ActivityProfile extends Activity implements View.OnClickListener {
 
@@ -211,7 +210,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                             chatData.setAccid(resp.info.Accid);
                             chatData.setExtra(gson.toJson(extra));
                             chatData.setChatType(AVChatType.AUDIO);
-                            ActivityTake.start(ActivityProfile.this, ActivityTake.CHAT_MODE_OUTGOING, chatData);
+                            ActivityChat.start(ActivityProfile.this, ActivityChat.CHAT_MODE_OUTGOING, chatData);
                         } else {
                             CommonUtil.toast(resp.desc);
                         }

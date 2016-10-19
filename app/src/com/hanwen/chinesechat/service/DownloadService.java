@@ -18,6 +18,7 @@ import android.support.v4.app.NotificationCompat.Builder;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
+import com.hanwen.chinesechat.ChineseChat;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -199,7 +200,7 @@ public class DownloadService extends Service {
 
         public void onStart() {
             builder = new NotificationCompat.Builder(DownloadService.this);
-            builder.setSmallIcon(R.drawable.ic_launcher);
+            builder.setSmallIcon(ChineseChat.isStudent()?R.drawable.ic_launcher_student:R.drawable.ic_launcher_teacher);
             builder.setContentTitle(manager.downloading.get(this.mDocId).Title);
             builder.setContentText("开始下载");
             builder.setProgress(100, 0, false);

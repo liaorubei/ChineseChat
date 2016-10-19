@@ -65,7 +65,7 @@ public class FragmentFolderTodo extends Fragment {
                 params.add("levelId", level.Id);
                 params.add("ship", 0);
                 params.add("take", 25);
-                HttpUtil.post(NetworkUtil.folderGetByLevelId, params, new RequestCallBack<String>() {
+                HttpUtil.post(NetworkUtil.folderGetListByLevelId, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
                         Response<List<Folder>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {
@@ -115,7 +115,6 @@ public class FragmentFolderTodo extends Fragment {
     public void onResume() {
         Log.i(TAG, "onResume: ");
         super.onResume();
-
     }
 
     private class MyAdapter extends BaseAdapter<Folder> {

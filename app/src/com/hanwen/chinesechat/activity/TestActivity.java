@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.fragment.FragmentCourse;
+import com.hanwen.chinesechat.fragment.FragmentCourseNest;
 import com.hanwen.chinesechat.util.Log;
 
 public class TestActivity extends FragmentActivity {
@@ -19,17 +21,7 @@ public class TestActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-
-        findViewById(R.id.btn_wx).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.i(TAG, "onClick: RECORD_AUDIO GRANTED=" + (checkPermission(Manifest.permission.RECORD_AUDIO, android.os.Process.myPid(), Process.myUid()) == PackageManager.PERMISSION_GRANTED));
-                grantUriPermission(null,null,0);
-
-            }
-        });
-
-
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentCourse.newInstance(FragmentCourse.OPEN_MODE_SHOW, 1180)).commit();
     }
 
 }

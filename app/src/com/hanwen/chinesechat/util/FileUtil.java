@@ -259,11 +259,7 @@ public class FileUtil {
 
     public static boolean hasExtentsion(String filename) {
         int dot = filename.lastIndexOf('.');
-        if ((dot > -1) && (dot < (filename.length() - 1))) {
-            return true;
-        } else {
-            return false;
-        }
+        return (dot > -1) && (dot < (filename.length() - 1));
     }
 
     // 获取文件扩展名
@@ -332,6 +328,13 @@ public class FileUtil {
         return formatFileSize(size, SizeUnit.Auto);
     }
 
+    /**
+     * 格式化文件大小
+     *
+     * @param size
+     * @param unit
+     * @return 格式化好的字符串
+     */
     public static String formatFileSize(long size, SizeUnit unit) {
         if (size < 0) {
             return "未知";

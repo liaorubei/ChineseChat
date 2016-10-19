@@ -355,7 +355,7 @@
     <string name="ActivityCall_you_need_talk_first">Call is not established, cannot select the topic</string>
     <string name="ActivityCall_topic_choose_failed">Topic selection failure</string>
 
-    <!--ActivityTake-->
+    <!--ActivityChat-->
     <string name="ActivityTake_can_not_back">Return key invalid</string>
     <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
     <string name="ActivityTake_cancel">Cancel</string>
@@ -364,7 +364,7 @@
     <string name="ActivityTake_send_texts">Send</string>
     <string name="ActivityTake_pick_image">Pick</string>
 
-    <string name="ActivityTake_hint_type_something">Enter text</string>
+    <string name="ActivityTake_text_hint_send_text">enter</string>
     <string name="ActivityTake_show_student_nickname">Nickname：%1$s Country：%2$s</string>
     <string name="ActivityTake_show_teacher_nickname">%1$s</string>
     <string name="ActivityTake_show_student_summary">Summary：%1$dmins（%2$dtimes）</string>
@@ -372,9 +372,11 @@
 
     <string name="ActivityTake_tab_topic_pick">Topic bank</string>
     <string name="ActivityTake_tab_topic_switch">Change</string>
+    <string name="ActivityTake_tab_lyric">Course</string>
     <string name="ActivityTake_tab_board">Board</string>
     <string name="ActivityTake_tab_texts">Text</string>
     <string name="ActivityTake_tab_image">Image</string>
+    <string name="ActivityTake_tab_hskk">HSKK</string>
     <!--FragmentThemes-->
 
 
@@ -410,6 +412,10 @@
     <string name="ActivityPayment_number">Quantity：%1$d</string>
     <string name="ActivityPayment_amount">Amount：%1$s</string>
     <string name="ActivityPayment_status">Status：</string>
+
+    <string name="ActivityPayment_topup_title">Charge and top-ups</string>
+    <string name="ActivityPayment_topup_message" formatted="false">1.ChineseChat APP Chat charges at 10 coins/min. (“Coins” = ChineseChat coin)\r\n2.Top-ups has the four following price categories: \r\nCategory 1: 0.27 USD/10 coins as the original price;\r\nCategory 2: a   5% discount\r\nCategory 3: a   8% discount\r\nCategory 4: a 12% discount\r\nFor more details please refer to the tariff on the pop-up; choose a price category and you can pay a top-up immediately. </string>
+    <string name="ActivityPayment_topup_confirm">I known</string>
 
     <!--ActivitySetting-->
     <string name="ActivitySetting_title">Settings</string>
@@ -481,7 +487,7 @@
     <string name="ActivityPerson_hint_spoken">Spoken languages</string>
     <string name="ActivityPerson_hint_about">Introduction</string>
 
-    <!--ActivityHistory-->
+    <!--ActivityRecord-->
     <string name="ActivityHistory_title_student">Study history</string>
     <string name="ActivityHistory_title_teacher">Lessons history</string>
     <string name="ActivityHistory_theme_unselected">Unselected</string>
@@ -615,14 +621,25 @@
     <string name="FragmentLineUp_i_need_enqueue">我要入队</string>
     <string name="FragmentLineUp_i_need_dequeue">我要出队</string>
 
+
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_title">Course list</string>
+
+    <!--FragmentFolder-->
+    <string name="FragmentFolder_authorized_users">This is for authorized users only</string>
+    <string name="FragmentFolder_dialog_positive">OK</string>
 
     <!--ActivityPlay-->
     <string name="ActivityPlay_title">Play</string>
     <string name="ActivityPlay_Recording">Recording</string>
     <string name="ActivityPlay_play_record">Play recording</string>
     <string name="ActivityPlay_play_origin">Play original sound</string>
+    <string name="ActivityPlay_call_for_help">Would you like to connect to one of our tutors for online one-on-one tutoring in this course?</string>
+    <string name="ActivityPlay_call_for_help_positive">Now</string>
+    <string name="ActivityPlay_call_for_help_negative">Later</string>
+
+    <!--ActivityTextbook-->
+    <string name="ActivityTextbook_title">Textbook</string>
 
 
     <string name="xlistview_footer_hint_errors">Failed to load</string>
@@ -641,4 +658,6 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_activity_textbook">ActivityTextbook</string>
+    <string name="action_settings">Settings</string>
 </resources>

@@ -75,7 +75,7 @@ public class RotateAnimation extends Animation {
         }
     }
 
-    public static interface InterpolatedTimeListener {
-        public void interpolatedTime(float interpolatedTime, View view);
+    public interface InterpolatedTimeListener {
+        void interpolatedTime(float interpolatedTime, View view);
     }
 }

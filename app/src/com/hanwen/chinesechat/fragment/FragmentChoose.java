@@ -24,9 +24,9 @@ import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.activity.ActivityAlbum;
+import com.hanwen.chinesechat.activity.ActivityChat;
 import com.hanwen.chinesechat.activity.ActivityProfile;
 import com.hanwen.chinesechat.activity.ActivitySignIn;
-import com.hanwen.chinesechat.activity.ActivityTake;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.Response;
@@ -50,6 +50,7 @@ import java.util.List;
 
 public class FragmentChoose extends Fragment {
     private static final int PERMISSION_REQUESTCODE_RECORD_AUDIO = 1;
+    private static final int REQUEST_CODE_DOCUMENT = 1;
     private String TAG = "FragmentChoose";
     private static final int REFRESH_DATA = 1;
     private static Gson gson = new Gson();
@@ -83,6 +84,15 @@ public class FragmentChoose extends Fragment {
     };
     //endregion
     private boolean permissionCheck = false;//标明是否已经进行过权限确认显示
+    private int documentId = -1;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            documentId = getArguments().getInt("documentId", -1);
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -225,6 +235,15 @@ public class FragmentChoose extends Fragment {
             holder.iv_avatar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (documentId > 1) {
+
+                        //startActivityForResult();
+                    } else {
+                        //startActivity();
+
+                    }
+
+
                     ActivityAlbum.start(getActivity(), new String[]{NetworkUtil.getFullPath(user.Avatar)}, 0);
                 }
             });
@@ -364,7 +383,16 @@ public class FragmentChoose extends Fragment {
                     chatData.setAccid(resp.info.Teacher.Accid);
                     chatData.setExtra(json.toString());
                     chatData.setChatType(AVChatType.AUDIO);
-                    ActivityTake.start(getActivity(), ActivityTake.CHAT_MODE_OUTGOING, chatData);
+
+                    if (documentId > 0) {
+                        Intent intent = new Intent(getContext(), ActivityChat.class);
+                        intent.putExtra(ActivityChat.KEY_CHAT_MODE, ActivityChat.CHAT_MODE_OUTGOING);
+                        intent.putExtra(ActivityChat.KEY_CHAT_MODE, chatData);
+                        startActivityForResult(intent, REQUEST_CODE_DOCUMENT);
+                    } else {
+                        ActivityChat.start(getActivity(), ActivityChat.CHAT_MODE_OUTGOING, chatData);
+                    }
+
 
                     //ActivityCall.start(getActivity(), resp.info.Id, resp.info.Accid, resp.info.Avatar, resp.info.Nickname, resp.info.Username, ActivityCall.CALL_TYPE_AUDIO);
                 } else if (resp.code == 201) {
@@ -435,5 +463,12 @@ public class FragmentChoose extends Fragment {
     private class ChooseTeacherModel {
         public User Student;
         public User Teacher;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_DOCUMENT) {
+            getActivity().finish();
+        }
     }
 }
