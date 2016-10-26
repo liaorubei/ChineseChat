@@ -41,8 +41,6 @@ public class ChineseChat extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        //Log.i(TAG, "onCreate: BRAND=" + Build.BRAND + " MODEL=" + Build.MODEL + " MANUFACTURER=" + Build.MANUFACTURER + " PRODUCT=" + Build.PRODUCT + " DEVICE=" + Build.DEVICE + " HARDWARE=" + Build.HARDWARE + " SERIAL=" + Build.SERIAL);
-
         // 注意：除了 NIMClient.init 接口外，其他 SDK 暴露的接口都只能在 UI 进程调用。
         // 如果 APP 包含远程 service，该 APP 的 Application 的 onCreate 会多次调用。
         // 因此，如果需要在 onCreate 中调用除 init 接口外的其他接口，应先判断当前所属进程，并只有在当前是 UI 进程时才调用。
@@ -53,19 +51,21 @@ public class ChineseChat extends Application {
             mDatabase = new Database(this);
 
             //网易云捕
-            //CrashHandler.init(getApplicationContext());
+            CrashHandler.init(getApplicationContext());
 
             //region 注册来电监听
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
                 public void onEvent(AVChatData chatData) {
-                    Log.i(TAG, "来电监听: " + chatData + " a=" + chatData.getAccount() + " c=" + chatData.getChatId() + " e=" + chatData.getExtra());
+                    Log.i(TAG, "来电监听: " + chatData + " a=" + chatData.getAccount() + " c=" +
+                            chatData.getChatId() + " e=" + chatData.getExtra());
                     ChatData chat = new ChatData();
                     chat.setChatId(chatData.getChatId());
                     chat.setAccid(chatData.getAccount());
                     chat.setChatType(chatData.getChatType());
                     chat.setExtra(chatData.getExtra());
-                    ActivityChat.start(getApplicationContext(), ActivityChat.CHAT_MODE_INCOMING, chat);
+                    ActivityChat.start(getApplicationContext(), ActivityChat.CHAT_MODE_INCOMING,
+                            chat);
                 }
             }, true);
 
@@ -96,9 +96,7 @@ public class ChineseChat extends Application {
                             getSharedPreferences("user", MODE_PRIVATE).edit().clear().commit();
                             CurrentUser = new User();
 
-                            //
-                            // TODO: 2016-07-08  如果当前通话状态为正在进行时,挂断通话
-
+                            //2016-07-08  如果当前通话状态为正在进行时,挂断通话
                             ActivitySignIn.startFromKickout(getApplicationContext());
                             break;
                     }
@@ -108,7 +106,8 @@ public class ChineseChat extends Application {
 
             //是学生端还是教师端
             try {
-                release = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getString("release");
+                release = getPackageManager().getApplicationInfo(getPackageName(), PackageManager
+                        .GET_META_DATA).metaData.getString("release");
                 Log.i(TAG, "release: " + release);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -120,8 +119,10 @@ public class ChineseChat extends Application {
     private SDKOptions getOptions() {
         SDKOptions options = new SDKOptions();
         options.appKey = "599551c5de7282b9a1d686ee40abf74c";
-        options.sdkStorageRootPath = new File(Environment.getExternalStorageDirectory(), getPackageName() + "/nim").getAbsolutePath();
-        options.preloadAttach = true;//后台自动下载附件：如果是语音消息，直接下载文件，如果是图片或视频消息，下载缩略图文件。
+        options.sdkStorageRootPath = new File(Environment.getExternalStorageDirectory(),
+                getPackageName() + "/nim").getAbsolutePath();
+        //后台自动下载附件：如果是语音消息，直接下载文件，如果是图片或视频消息，下载缩略图文件。
+        options.preloadAttach = true;
         return options;
     }
 
@@ -148,9 +149,15 @@ public class ChineseChat extends Application {
         CurrentUser.Coins = sp.getInt("coins", 0);
         CurrentUser.Birth = sp.getString("birth", null);
 
-        return TextUtils.isEmpty(accid) || TextUtils.isEmpty(token) ? null : new LoginInfo(accid, token);
+        return TextUtils.isEmpty(accid) || TextUtils.isEmpty(token) ? null : new LoginInfo(accid,
+                token);
     }
 
+    /**
+     * 上下文全局引用
+     *
+     * @return
+     */
     public static Context getContext() {
         return mContext;
     }
@@ -159,6 +166,11 @@ public class ChineseChat extends Application {
         return "student".equals(release);
     }
 
+    /**
+     * 数据库全局引用
+     *
+     * @return
+     */
     public static Database database() {
         return mDatabase;
     }
@@ -173,6 +185,4 @@ public class ChineseChat extends Application {
         }
         return mDatabase;
     }
-
-
 }
