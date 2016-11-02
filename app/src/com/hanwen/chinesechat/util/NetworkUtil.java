@@ -54,6 +54,8 @@ public class NetworkUtil {
     public static final String userSignIn = domain + "/Api/NimUser/Signin";//username,password,category,system,device
     public static final String userUpdate = domain + "/Api/NimUser/Update";
     public static final String userVerify = domain + "/Api/NimUser/Verify";
+    public static String hskkGetListByRankAndPart = domain + "/Api/Hskk/GetListByRankAndPart";//rank,part,skip,take
+    public static String hskkGetById = domain + "/Api/Hskk/GetById";//id
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {

@@ -42,13 +42,19 @@
         android:src="@drawable/dustbin_checked"
         android:visibility="gone"/>
 
-    <ImageView
-        android:id="@+id/iv_covers"
+    <com.hanwen.chinesechat.view.SquareLayout
+        android:id="@+id/sl_cover"
         android:layout_width="match_parent"
-        android:layout_height="175dp"
-        android:layout_centerInParent="true"
-        android:padding="5dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/background"
-        android:visibility="visible"/>
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_covers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:padding="5dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/background"
+            android:visibility="visible"/>
+    </com.hanwen.chinesechat.view.SquareLayout>
 </RelativeLayout>

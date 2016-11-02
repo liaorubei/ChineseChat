@@ -241,4 +241,5 @@
     <string name="ActivityTake_tab_lyric">课程</string>
     <string name="ActivityPayment_topup_confirm">知道了</string>
     <string name="ActivitySignIn_is_logging">正在登录，请稍候</string>
+    <string name="DOWNLOADED">已下载</string>
 </resources>

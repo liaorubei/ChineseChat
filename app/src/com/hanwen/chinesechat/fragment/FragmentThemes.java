@@ -26,6 +26,9 @@ import com.hanwen.chinesechat.view.RotateAnimation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 话题选择界面，翻牌方式
+ */
 public class FragmentThemes extends Fragment {
     private static final String TAG = "FragmentThemes";
     public static final int RESULTCODE_CHOOSE = 1;

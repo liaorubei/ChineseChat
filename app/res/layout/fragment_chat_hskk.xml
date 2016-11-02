@@ -1,0 +1,235 @@
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_rank"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="HSKK辅导\n请选择级别"
+            android:textColor="@color/color_app"
+            android:textSize="25sp"/>
+
+        <RadioGroup
+            android:id="@+id/rg_rank"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/tv_rank1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_hskk_rank_part_back"
+                android:button="@null"
+                android:gravity="center"
+                android:text="初级"
+                android:textColor="@color/selector_hskk_rank_part_text"/>
+
+            <RadioButton
+                android:id="@+id/tv_rank2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_hskk_rank_part_back"
+                android:button="@null"
+                android:gravity="center"
+                android:text="中级"
+                android:textColor="@color/selector_hskk_rank_part_text"/>
+
+            <RadioButton
+                android:id="@+id/tv_rank3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_hskk_rank_part_back"
+                android:button="@null"
+                android:gravity="center"
+                android:text="高级"
+                android:textColor="@color/selector_hskk_rank_part_text"/>
+        </RadioGroup>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_part"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@color/color_app">
+
+            <ImageView
+                android:id="@+id/iv_back1"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="5dp"
+                android:src="@drawable/icon_back_gray"/>
+
+            <TextView
+                android:id="@+id/tv_rank"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="35dp"
+                android:layout_marginRight="35dp"
+                android:gravity="center"
+                android:textColor="#fff"
+                android:textSize="25sp"/>
+
+            <ImageView
+                android:id="@+id/iv_check"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:padding="5dp"
+                android:src="@drawable/icon_check_gray"/>
+        </RelativeLayout>
+
+        <GridView
+            android:id="@id/gridView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:horizontalSpacing="1dp"
+            android:numColumns="3"
+            android:verticalSpacing="1dp"/>
+
+        <RadioGroup
+            android:id="@+id/rg_part"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/tv_part1"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_hskk_rank_part_back"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Part1"
+                android:textColor="@color/selector_hskk_rank_part_text"/>
+
+            <RadioButton
+                android:id="@+id/tv_part2"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_hskk_rank_part_back"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Part1"
+                android:textColor="@color/selector_hskk_rank_part_text"/>
+
+            <RadioButton
+                android:id="@+id/tv_part3"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/selector_hskk_rank_part_back"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Part1"
+                android:textColor="@color/selector_hskk_rank_part_text"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_tips"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:background="@color/color_app">
+
+            <ImageView
+                android:id="@+id/iv_back2"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:padding="5dp"
+                android:src="@drawable/icon_back_gray"/>
+
+            <TextView
+                android:id="@+id/tv_part"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:gravity="center"
+                android:paddingLeft="35dp"
+                android:paddingRight="35dp"
+                android:textColor="#fff"
+                android:textSize="25sp"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_show"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/tv_position"
+            android:layout_marginTop="35dp"
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp">
+
+            <TextView
+                android:id="@+id/tv_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="15sp"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/color_app_normal"/>
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:divider="@null"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_position"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:text="No.125"
+            android:textColor="@color/color_app"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/iv_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="5dp"
+            android:text="》NEXT"
+            android:textColor="@color/selector_text_enabled_green"
+            android:textSize="20sp"/>
+    </RelativeLayout>
+
+
+</FrameLayout>
+
+
+

@@ -232,6 +232,12 @@
                 android:layout_height="match_parent"
                 android:visibility="invisible"/>
 
+            <FrameLayout
+                android:id="@+id/fl_hskk"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="invisible"/>
+
             <RelativeLayout
                 android:id="@+id/rl_image"
                 android:layout_width="match_parent"
@@ -294,9 +300,9 @@
                     android:layout_toLeftOf="@+id/bt_msg"
                     android:background="@drawable/shape_rectangle_radius05_gray"
                     android:hint="@string/ActivityTake_text_hint_send_text"
-                    android:textColorHint="#fff"
                     android:minHeight="35dp"
-                    android:padding="5dp"/>
+                    android:padding="5dp"
+                    android:textColorHint="#fff"/>
 
                 <Button
                     android:id="@+id/bt_msg"

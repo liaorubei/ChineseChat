@@ -335,8 +335,7 @@
     <string name="MainActivity_one_more_time_quit">Click one more time to quit</string>
 
     <!--FragmentListen-->
-    <string name="FragmentListen_downloaded">DOWNLD</string>
-
+    <string name="DOWNLOADED">DOWNLOADED</string>
 
     <!--ActivityCall-->
     <string name="ActivityCall_pick_theme">Topic bank</string>

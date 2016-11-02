@@ -41,6 +41,7 @@ import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
+import com.hanwen.chinesechat.view.SquareLayout;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -169,7 +170,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                     holder.iv_covers.setImageResource(R.drawable.ic_launcher_student);
                 }
             } else {
-                holder.iv_covers.setVisibility(View.GONE);
+                holder.sl_cover.setVisibility(View.GONE);
             }
 
             holder.rootView.setOnClickListener(new MyOnClickListener(folderDoc) {
@@ -323,6 +324,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
         ImageView iv_covers;
         View ll_title;
         View rootView;
+        public SquareLayout sl_cover;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -330,6 +332,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
             tv_counts = (TextView) itemView.findViewById(R.id.tv_counts);
             iv_covers = (ImageView) itemView.findViewById(R.id.iv_covers);
             ll_title = itemView.findViewById(R.id.ll_title);
+            sl_cover = (SquareLayout) itemView.findViewById(R.id.sl_cover);
             rootView = itemView;
         }
     }

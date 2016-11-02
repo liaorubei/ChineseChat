@@ -128,19 +128,7 @@ public class FragmentListen extends Fragment {
             fragments.add(fragmentLevelsRemote);
 
             //已下载
-            FragmentLevels nativeLevels = new FragmentLevels();
-            Bundle args = new Bundle();
-            ArrayList<Parcelable> value = new ArrayList<>();
-            Level object = new Level();
-            object.Id = -1;
-            object.Name = "DOWNLOADED";
-            object.Show = 1;
-
-            value.add(object);
-            args.putParcelableArrayList("levels", value);
-            args.putString("Le", gson.toJson(value));
-            nativeLevels.setArguments(args);
-            fragments.add(nativeLevels);
+            fragments.add(new FragmentHaveDownloaded());
 
             //通知界面更新数据
             adapter.notifyDataSetChanged();

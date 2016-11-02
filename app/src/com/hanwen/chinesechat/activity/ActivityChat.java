@@ -61,6 +61,7 @@ import com.hanwen.chinesechat.bean.Response;
 import com.hanwen.chinesechat.bean.Theme;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.bean.UserLite;
+import com.hanwen.chinesechat.fragment.FragmentChatHskk;
 import com.hanwen.chinesechat.fragment.FragmentCourse;
 import com.hanwen.chinesechat.fragment.FragmentCourseShow;
 import com.hanwen.chinesechat.fragment.FragmentThemes;
@@ -286,6 +287,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         switch (v.getId()) {
             case R.id.ll_topic:
             case R.id.ll_lyric:
+            case R.id.ll_hskk:
             case R.id.ll_image:
                 //region 话题，课程，图片选项
                 ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(et_msg.getWindowToken(), 0);
@@ -567,17 +569,20 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         ll_control = (ViewGroup) findViewById(R.id.ll_control);
         ll_topic = findViewById(R.id.ll_topic);
         ll_lyric = findViewById(R.id.ll_lyric);
+        View ll_hskk = findViewById(R.id.ll_hskk);
         ll_image = findViewById(R.id.ll_image);
         ll_text = findViewById(R.id.ll_text);
 
         ll_topic.setOnClickListener(this);
         ll_lyric.setOnClickListener(this);
+        ll_hskk.setOnClickListener(this);
         ll_text.setOnClickListener(this);
         ll_image.setOnClickListener(this);
 
         ctrls = new ArrayList<>();
         ctrls.add(ll_topic);
         ctrls.add(ll_lyric);
+        ctrls.add(ll_hskk);
         ctrls.add(ll_image);
         ctrls.add(ll_text);
 
@@ -728,6 +733,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             AVChatOptionalParam params = new AVChatOptionalParam();
             params.enableCallProximity(false);
             AVChatManager.getInstance().call(chatData.getAccount(), chatData.getChatType(), params, option, callback_call);
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.fl_hskk, FragmentChatHskk.newInstance(FragmentChatHskk.OPEN_MODE_PICK, 0), "FragmentChatHskk").commit();
         }
         //endregion
         //region 来电
@@ -804,6 +811,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             getSupportFragmentManager().beginTransaction().replace(R.id.rl_lyric, FragmentCourse.newInstance(ChineseChat.isStudent() ? FragmentCourse.OPEN_MODE_ROOT : FragmentCourse.OPEN_MODE_NONE, chatDataExtra.DocumentId), "FragmentCourse").commit();
         }
         //endregion
+
+        //region处理hskk情况
+
+        //endregion
+
 
         listMessage = new ArrayList<>();
         adapterMessage = new AdapterMessage(listMessage);
@@ -1387,6 +1399,10 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 case NimSysNotice.NOTICE_TYPE_COURSE:
                     getSupportFragmentManager().findFragmentByTag("FragmentCourse").getChildFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentCourseShow.newInstance(Integer.valueOf(info), false)).addToBackStack("FragmentCourseClear").commit();
                     tabsSwitch(R.id.ll_lyric);
+                    break;
+                case NimSysNotice.NoticeType_Hskk:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fl_hskk, FragmentChatHskk.newInstance(FragmentChatHskk.OPEN_MODE_SHOW, Integer.parseInt(info)), "FragmentChatHskk").commit();
+                    tabsSwitch(R.id.ll_hskk);
                     break;
             }
 

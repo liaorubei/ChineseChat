@@ -51,7 +51,7 @@ public class ChineseChat extends Application {
             mDatabase = new Database(this);
 
             //网易云捕
-            CrashHandler.init(getApplicationContext());
+            //CrashHandler.init(getApplicationContext());
 
             //region 注册来电监听
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
