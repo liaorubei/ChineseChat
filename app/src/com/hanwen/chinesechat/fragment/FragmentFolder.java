@@ -155,7 +155,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
     private class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(getActivity().getLayoutInflater().inflate(R.layout.listitem_folder1, null));
+            return new ViewHolder(getActivity().getLayoutInflater().inflate(R.layout.listitem_folder1, parent, false));
         }
 
         @Override
@@ -169,6 +169,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                 } else {
                     holder.iv_covers.setImageResource(R.drawable.ic_launcher_student);
                 }
+                holder.tv_counts.setVisibility(View.GONE);
             } else {
                 holder.sl_cover.setVisibility(View.GONE);
             }
@@ -193,63 +194,6 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                     }
                 }
             });
-
-            /*
-            holder.rootView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (level.Id > 0) {
-                        if (folder.Permission) {
-                            if (dialogProgress == null) {
-                                dialogProgress = new Dialog(getActivity(), R.style.NoTitle);
-                                dialogProgress.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-                                dialogProgress.setContentView(R.layout.dialog_loading);
-                            }
-                            dialogProgress.show();
-                            HttpUtil.Parameters params = new HttpUtil.Parameters();
-                            params.add("folderId", folder.Id);
-                            params.add("userId", ChineseChat.CurrentUser.Id);
-                            HttpUtil.post(NetworkUtil.folderCheckPermission, params, new RequestCallBack<String>() {
-
-                                @Override
-                                public void onSuccess(ResponseInfo<String> responseInfo) {
-                                    Log.i(TAG, "onSuccess: " + responseInfo.result);
-                                    Response<List<Document>> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Document>>>() {
-                                    }.getType());
-                                    dialogProgress.dismiss();
-                                    if (200 == response.code) {
-                                        Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
-                                        intent.putExtra("folder", new Gson().toJson(folder));
-                                        intent.putExtra(ActivityDocsTodo.KEY_SHOW_DATE, level.ShowCover != 1);
-                                        startActivity(intent);
-                                    } else {
-                                        if (dialogPermission == null) {
-                                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                                            builder.setMessage(R.string.FragmentFolder_authorized_users);
-                                            builder.setPositiveButton(R.string.FragmentFolder_dialog_positive, null);
-                                            dialogPermission = builder.create();
-                                        }
-                                        dialogPermission.show();
-                                    }
-                                }
-
-                                @Override
-                                public void onFailure(HttpException error, String msg) {
-                                    Log.i(TAG, "onFailure: error" + error.getMessage() + " msg:" + msg);
-                                    dialogProgress.dismiss();
-                                }
-                            });
-                        } else {
-                            Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
-                            intent.putExtra("folder", new Gson().toJson(folder));
-                            intent.putExtra(ActivityDocsTodo.KEY_SHOW_DATE, level.ShowCover != 1);
-                            startActivity(intent);
-                        }
-                    } else {
-                        ActivityDocsDone.start(getActivity(), folder);
-                    }
-                }
-            });*/
         }
 
         @Override

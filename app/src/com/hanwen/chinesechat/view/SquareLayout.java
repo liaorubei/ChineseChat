@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
 /**
- * Created by ChineseChat on 2016/11/1.
+ * 正方形布局，无论子控件有多少，尺寸是多少，这个而已的高度都是与宽度的长度是一样的，高度不能设置，由宽度定
  */
 public class SquareLayout extends RelativeLayout {
     public SquareLayout(Context context, AttributeSet attrs) {

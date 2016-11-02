@@ -17,6 +17,7 @@ public class NetworkUtil {
     public static final String checkUpdate = domain + "/NewClass/AndroidCheckUpdate";
     public static final String chooseTeacher = domain + "/Api/nimUser/ChooseTeacherV1";//Id,target
     public static final String documentGetById = domain + "/Api/Document/GetById";//id
+    public static final String documentGetListByLevelId = domain + "/Api/Document/GetListByLevelId";//levelId,skip,take
     public static final String documentGetListByFolderId = domain + "/Api/Document/GetListByFolderId";//folderId,userId,skip,take
     public static final String documentGetListByFolderIdWithoutCheck = domain + "/Api/Document/GetListByFolderIdWithoutCheck";//folderId,skip,take
     public static final String feedbackCreate = domain + "/Api/Feedback/Create";

@@ -40,6 +40,7 @@ public class FragmentLevels extends Fragment {
             args.putParcelable(FragmentFolder.KEY_LEVEL, level);
             tabhost.addTab(tabhost.newTabSpec(level.Name).setIndicator(textView), FragmentFolder.class, args);
         }
+        tabhost.addTab(tabhost.newTabSpec("News").setIndicator("News"), FragmentNews.class, null);
         return view;
     }
 }

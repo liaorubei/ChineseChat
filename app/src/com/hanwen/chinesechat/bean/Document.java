@@ -22,11 +22,13 @@ public class Document {
     public long Length;
     public Date Date;
     public long Size;
+    public Date AuditDate;
     /**
      * 播放时长
      */
     public String LengthString;
     public String DateString;
+    public String Cover;
 
     @Override
     public String toString() {

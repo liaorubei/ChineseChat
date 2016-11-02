@@ -14,6 +14,7 @@ import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.fragment.FragmentChatHskk;
 import com.hanwen.chinesechat.fragment.FragmentCourse;
 import com.hanwen.chinesechat.fragment.FragmentCourseNest;
+import com.hanwen.chinesechat.fragment.FragmentNews;
 import com.hanwen.chinesechat.fragment.FragmentTopics;
 import com.hanwen.chinesechat.util.Log;
 
@@ -24,7 +25,7 @@ public class TestActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentChatHskk.newInstance(ChineseChat.isStudent() ? FragmentChatHskk.OPEN_MODE_PICK : FragmentChatHskk.OPEN_MODE_SHOW, 22)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentNews.newInstance("", "")).commit();
     }
 
 }

@@ -18,14 +18,14 @@ android {
     }
 
     productFlavors {
-        student {
+/*        student {
             //applicationId "com.hanwen.chinesechat.student"
             manifestPlaceholders = [release_value: "student", APPLICATION_ICON: "@drawable/ic_launcher_student", APPLICATION_LABEL: "ChineseChat"]
-        }
-/*        teacher {
+        }*/
+        teacher {
             applicationId "com.hanwen.chinesechat.teacher"
             manifestPlaceholders = [release_value: "teacher", APPLICATION_ICON: "@drawable/ic_launcher_teacher", APPLICATION_LABEL: "汉问教师端"]
-        }*/
+        }
     }
 
     sourceSets {

@@ -1,46 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-    <LinearLayout
-        android:id="@+id/ll_title"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_toLeftOf="@+id/iv_delete"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:visibility="visible">
-
-        <TextView
-            android:id="@+id/tv_folder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:padding="5dp"
-            android:singleLine="true"
-            android:text="舌尖上的中国"
-            android:textSize="15sp"/>
-
-        <TextView
-            android:id="@+id/tv_counts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="5dp"
-            android:text="课程10"
-            android:textSize="12sp"/>
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/iv_delete"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_alignParentRight="true"
-        android:padding="15dp"
-        android:src="@drawable/dustbin_checked"
-        android:visibility="gone"/>
+                android:layout_height="wrap_content"
+                android:padding="5dp">
 
     <com.hanwen.chinesechat.view.SquareLayout
         android:id="@+id/sl_cover"
@@ -52,9 +14,46 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:padding="5dp"
             android:scaleType="fitXY"
             android:src="@drawable/background"
             android:visibility="visible"/>
     </com.hanwen.chinesechat.view.SquareLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_title"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sl_cover"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/tv_folder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:text="舌尖上的中国"
+            android:textSize="15sp"/>
+
+        <TextView
+            android:id="@+id/tv_counts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="课程10"
+            android:textSize="12sp"/>
+    </LinearLayout>
+
+    <!--    <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentRight="true"
+            android:padding="15dp"
+            android:src="@drawable/dustbin_checked"
+            android:visibility="gone"/>-->
+
+
 </RelativeLayout>
