@@ -90,11 +90,13 @@ import com.netease.nimlib.sdk.avchat.AVChatStateObserver;
 import com.netease.nimlib.sdk.avchat.constant.AVChatEventType;
 import com.netease.nimlib.sdk.avchat.constant.AVChatTimeOutEvent;
 import com.netease.nimlib.sdk.avchat.constant.AVChatUserQuitType;
+import com.netease.nimlib.sdk.avchat.model.AVChatAudioFrame;
 import com.netease.nimlib.sdk.avchat.model.AVChatCalleeAckEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatCommonEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatNotifyOption;
-import com.netease.nimlib.sdk.avchat.model.AVChatOptionalParam;
+import com.netease.nimlib.sdk.avchat.model.AVChatOptionalConfig;
+import com.netease.nimlib.sdk.avchat.model.AVChatVideoFrame;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
@@ -105,8 +107,6 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
-import com.netease.nimlib.sdk.rts.constant.RTSEventType;
-import com.netease.nimlib.sdk.rts.model.RTSCalleeAckEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -116,6 +116,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -369,7 +370,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     rl_talk.setVisibility(View.VISIBLE);
                     rl_hold.setVisibility(View.INVISIBLE);
 
-                    AVChatOptionalParam params = new AVChatOptionalParam();
+                    AVChatOptionalConfig params = new AVChatOptionalConfig();
                     params.enableCallProximity(false);
                     AVChatManager.getInstance().accept(params, callbackAccept);
                 }
@@ -730,7 +731,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             option.pushSound = "pushRing.aac";//Push
             option.extendMessage = chatData.getExtra();// student.toString();//把呼叫者的用户名,头像发送过去
 
-            AVChatOptionalParam params = new AVChatOptionalParam();
+            AVChatOptionalConfig params = new AVChatOptionalConfig();
             params.enableCallProximity(false);
             AVChatManager.getInstance().call(chatData.getAccount(), chatData.getChatType(), params, option, callback_call);
 
@@ -1086,9 +1087,10 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
 
         @Override
-        public void onConnectionTypeChanged(int i, int i1) {
+        public void onConnectionTypeChanged(int netType) {
 
         }
+
 
         @Override
         public void onLocalRecordEnd(String[] strings, int i) {
@@ -1160,13 +1162,52 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
 
         @Override
-        public void onDeviceEvent(String s, int i, String s1) {
-            Log.i(TAG, "设备事件: " + s1);
+        public void onDeviceEvent(int code, String desc) {
+            Log.i(TAG, "设备事件: " + desc);
             //当设备准备好的时候就默认打开外放
             AVChatManager.getInstance().setSpeaker(true);
             bt_free.setSelected(!AVChatManager.getInstance().speakerEnabled());
         }
 
+        @Override
+        public void onFirstVideoFrameRendered(String user) {
+
+        }
+
+        @Override
+        public void onVideoFrameResolutionChanged(String user, int width, int height, int rotate) {
+
+        }
+
+        @Override
+        public int onVideoFrameFilter(AVChatVideoFrame frame) {
+            return 0;
+        }
+
+        @Override
+        public int onAudioFrameFilter(AVChatAudioFrame frame) {
+            return 0;
+        }
+
+        @Override
+        public void onAudioOutputDeviceChanged(int device) {
+
+        }
+
+        @Override
+        public void onReportSpeaker(Map<String, Integer> speakers, int mixedEnergy) {
+
+        }
+
+        @Override
+        public void onStartLiveResult(int code) {
+
+        }
+
+        @Override
+        public void onStopLiveResult(int code) {
+
+        }
     };
     //endregion
 
@@ -1323,7 +1364,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     //endregion
 
     //region 白板回应监听
-    private Observer<RTSCalleeAckEvent> calleeAckEventObserver = new Observer<RTSCalleeAckEvent>() {
+ /*    private Observer<RTSCalleeAckEvent> calleeAckEventObserver = new Observer<RTSCalleeAckEvent>() {
         @Override
         public void onEvent(RTSCalleeAckEvent rtsCalleeAckEvent) {
             Log.i(TAG, "onEvent: " + rtsCalleeAckEvent.getEvent() + "" + " 对方回应");
@@ -1337,17 +1378,17 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 // add support ActionType
                 SupportActionType.getInstance().addSupportActionType(ActionTypeEnum.Path.getValue(), MyPath.class);
 
-/*                dv_board.init(rtsCalleeAckEvent.getSessionId(), rtsCalleeAckEvent.getAccount(), DoodleView.Mode.BOTH, Color.WHITE, ActivityChat.this);
+                *//* dv_board.init(rtsCalleeAckEvent.getSessionId(), rtsCalleeAckEvent.getAccount(), DoodleView.Mode.BOTH, Color.WHITE, ActivityChat.this);
                 dv_board.setPaintSize(5);
                 dv_board.setPaintType(ActionTypeEnum.Path.getValue());
-                dv_board.setPaintOffset(0, fl_content.getTop());*/
+                dv_board.setPaintOffset(0, fl_content.getTop());*//*
 
                 // 进入会话界面
             } else if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_REJECT) {
                 // 被拒绝，结束会话
             }
         }
-    };
+    };*/
     //endregion
 
     //region 自定义通知监听
