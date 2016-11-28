@@ -35,7 +35,7 @@ public class FragmentFolderDone extends Fragment {
     private MyAdapter adapter = new MyAdapter(list);
 
 
-    @Override
+/*    @Override
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onResume: " + list.size() + " list=" + list);
@@ -47,7 +47,7 @@ public class FragmentFolderDone extends Fragment {
                 list.add(folder);
             }
         }
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

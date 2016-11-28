@@ -242,4 +242,10 @@
     <string name="ActivityPayment_topup_confirm">知道了</string>
     <string name="ActivitySignIn_is_logging">正在登录，请稍候</string>
     <string name="DOWNLOADED">已下载</string>
+    <string name="ActivityFolder_title">课本列表</string>
+    <string name="ActivityDocsTodo_soundPath_error">课程没有上传音频文件</string>
+    <string name="FragmentLineUp_balance_negative">继续</string>
+    <string name="FragmentLineUp_balance_tips">你当前的学币为%1$d，要继续吗？</string>
+    <string name="FragmentLineUp_balance_positive">充值</string>
+    <string name="ActivityChat_balance_tips">你的余额只剩%1$d个学币了（%2$d分钟），继续？</string>
 </resources>

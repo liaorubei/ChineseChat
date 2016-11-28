@@ -64,7 +64,6 @@
         <meta-data
             android:name="BUGRPT_APPID"
             android:value="A009724961"/>
-
         <meta-data
             android:name="com.netease.cosine.target.receiver"
             android:value="com.netease.nimlib.service.NimReceiver"/>
@@ -117,7 +116,6 @@
             android:name="com.netease.cosine.target.CosineReceiver"
             android:exported="true"
             android:process=":cosine"/>
-
 
         <!-- 更新下载服务 -->
         <service android:name=".service.AutoUpdateService"/>
@@ -181,5 +179,10 @@
             android:exported="true"/>
 
         <activity android:name=".activity.ActivityFolder"/>
+        <activity
+            android:name=".activity.ActivityHaveDownloaded"
+            android:label="@string/title_activity_activity_have_downloaded">
+        </activity>
     </application>
+
 </manifest>

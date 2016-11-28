@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,17 +150,23 @@ public class FragmentCourseNestThird extends Fragment implements View.OnClickLis
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Document item = getItem(position);
-            View inflate = View.inflate(getContext(), R.layout.listitem_chat_folder, null);
-            inflate.findViewById(R.id.iv_cover).setVisibility(View.GONE);
+            if (inflate == null) {
+                inflate = View.inflate(getContext(), R.layout.listitem_chat_folder, null);
+            }
+
+            inflate.findViewById(R.id.sl_cover).setVisibility(View.GONE);
             TextView tv_name = (TextView) inflate.findViewById(R.id.tv_name);
             TextView tv_count = (TextView) inflate.findViewById(R.id.tv_count);
             TextView tv_title_sub = (TextView) inflate.findViewById(R.id.tv_title_sub);
-            tv_title_sub.setVisibility(View.VISIBLE);
-            tv_title_sub.setText(item.TitleSubCn);
+
             tv_name.setText(item.TitleCn);
             tv_count.setText(item.TitleEn);
+            tv_count.setVisibility(TextUtils.isEmpty(item.TitleEn) ? View.GONE : View.VISIBLE);
+
+            tv_title_sub.setText(item.TitleSubCn);
+            tv_title_sub.setVisibility(TextUtils.isEmpty(item.TitleSubCn) ? View.GONE : View.VISIBLE);
             return inflate;
         }
     }

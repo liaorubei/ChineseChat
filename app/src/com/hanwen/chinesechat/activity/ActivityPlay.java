@@ -83,7 +83,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     private RelativeLayout rl_buffering;
     private ScrollView sv_lyrics;
     private SeekBar seekBar;
-    private TextView tv_bSide, tv_aSide, tv_title;
+    private TextView tv_bSide, tv_aSide, tv_title, tv_title_en;
     private TextView tv_main;
     private TextView tv_play_record_time;
     private ValueAnimator toRAnimator, toLAnimator;// 控制按钮布局的向右向左属性动画
@@ -232,6 +232,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         tv_aSide.setText("00:00");
         tv_bSide.setText(document.LengthString);
         tv_title.setText(document.Title);
+        tv_title_en.setText(document.TitleEn);
+        tv_title_en.setVisibility(TextUtils.isEmpty(document.TitleEn) ? View.GONE : View.VISIBLE);
 
         specialLyricViews = new ArrayList<SpecialLyricView>();
 
@@ -400,6 +402,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         tv_aSide = (TextView) findViewById(R.id.tv_aSide);
         tv_bSide = (TextView) findViewById(R.id.tv_bSide);
         tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_title_en = (TextView) findViewById(R.id.tv_title_en);
 
         ll_play = (LinearLayout) findViewById(R.id.ll_play);
         ll_tape = (LinearLayout) findViewById(R.id.ll_tape);

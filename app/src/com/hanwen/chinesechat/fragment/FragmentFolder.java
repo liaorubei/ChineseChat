@@ -17,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,7 +103,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
         listView.setAdapter(adapter);
     }
 
-    @Override
+/*    @Override
     public void onResume() {
         super.onResume();
         if (level.Id < 0) {
@@ -120,7 +121,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
             adapter.notifyDataSetChanged();
             swipe.setRefreshEnabled(false);
         }
-    }
+    }*/
 
     @Override
     public void onRefresh() {
@@ -137,7 +138,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                     data.clear();
                     for (Folder f : resp.info) {
                         FolderDoc object = new FolderDoc(f);
-                        object.Name2 = String.format("课程：%1$d", f.DocsCount);
+                        object.Name2 = level.ShowCover == 1 ? f.NameSubCn : String.format("课程：%1$2d", f.DocsCount);
                         data.add(object);
                     }
                     adapter.notifyDataSetChanged();
@@ -164,12 +165,13 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
             holder.tv_folder.setText(folderDoc.Name1);
             holder.tv_counts.setText(folderDoc.Name2);
             if (level.ShowCover == 1) {
+                holder.tv_folder.setGravity(Gravity.CENTER);
+                holder.tv_counts.setGravity(Gravity.CENTER);
                 if (!TextUtils.isEmpty(folderDoc.Cover)) {
-                    CommonUtil.showBitmap(holder.iv_covers, NetworkUtil.getFullPath(folderDoc.Cover));
+                    CommonUtil.showIcon(getContext(), holder.iv_covers, folderDoc.Cover);
                 } else {
                     holder.iv_covers.setImageResource(R.drawable.ic_launcher_student);
                 }
-                holder.tv_counts.setVisibility(View.GONE);
             } else {
                 holder.sl_cover.setVisibility(View.GONE);
             }

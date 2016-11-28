@@ -46,7 +46,7 @@ public class NetworkUtil {
     public static final String teacherDequeue = domain + "/Api/NimUser/TeacherDequeue";//Id
     public static final String teacherEnqueue = domain + "/Api/NimUser/TeacherEnqueue";
     public static final String teacherRefresh = domain + "/Api/NimUser/TeacherRefresh";//id,isOnline
-    public static final String themeGetById = domain + "/Api/Theme/GetById";
+    public static final String themeGetById = domain + "/Api/Theme/GetById";//id
     public static final String ThemeSelect = domain + "/Api/Theme/Select";
     public static final String userCreate = domain + "/Api/NimUser/create";
     public static final String userGetByAccId = domain + "/Api/NimUser/GetByAccId";
@@ -57,6 +57,7 @@ public class NetworkUtil {
     public static final String userVerify = domain + "/Api/NimUser/Verify";
     public static String hskkGetListByRankAndPart = domain + "/Api/Hskk/GetListByRankAndPart";//rank,part,skip,take
     public static String hskkGetById = domain + "/Api/Hskk/GetById";//id
+    public static String folderGetList = domain + "/Api/Folder/GetList";
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {
@@ -66,7 +67,6 @@ public class NetworkUtil {
     }
 
     public static String getDocById(int id) {
-
         return domain + "/NewClass/DocById/" + id;
     }
 

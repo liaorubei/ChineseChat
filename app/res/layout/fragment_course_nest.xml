@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:horizontalSpacing="1dp"
+    android:horizontalSpacing="10dp"
     android:numColumns="3"
-    android:verticalSpacing="1dp"/>
+    android:verticalSpacing="10dp"
+    android:background="#BEEDD5"/>

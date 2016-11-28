@@ -14,6 +14,14 @@ public class Level implements Parcelable {
     public int ShowCover;
     public List<Folder> Folders;
 
+    public Level(){}
+
+    public Level(int id, String name,int showCover) {
+        this.Id=id;
+        this.Name=name;
+        this.ShowCover=showCover;
+    }
+
     @Override
     public String toString() {
         return "Level{" +

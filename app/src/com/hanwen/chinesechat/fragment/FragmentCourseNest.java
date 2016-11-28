@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 
+import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +30,6 @@ import com.hanwen.chinesechat.util.NetworkUtil;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,8 +93,7 @@ public class FragmentCourseNest extends Fragment {
             }
         });
         HttpUtil.Parameters params = new HttpUtil.Parameters();
-        Level level = ChineseChat.database().levelGetByName("TEXTBOOK");
-        params.add("levelId", level.Id);
+        params.add("levelId", 8);
         HttpUtil.post(NetworkUtil.folderGetListByLevelId, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -119,13 +118,21 @@ public class FragmentCourseNest extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Folder item = getItem(position);
-            View inflate = View.inflate(getActivity(), R.layout.listitem_chat_folder, null);
+            if (inflate == null) {
+                inflate = View.inflate(getActivity(), R.layout.listitem_chat_folder, null);
+            }
             ImageView iv_cover = (ImageView) inflate.findViewById(R.id.iv_cover);
-            CommonUtil.showBitmap(iv_cover, NetworkUtil.getFullPath(item.Cover));
+            CommonUtil.showIcon(getContext(), iv_cover, item.Cover);
             TextView tv_name = (TextView) inflate.findViewById(R.id.tv_name);
             tv_name.setText(item.Name);
+            tv_name.setGravity(Gravity.CENTER);
+            TextView tv_name_sub = (TextView) inflate.findViewById(R.id.tv_count);
+            tv_name_sub.setText(item.NameSubCn);
+            tv_name_sub.setGravity(Gravity.CENTER);
+            //tv_name_sub.setVisibility(TextUtils.isEmpty(item.NameSubCn) ? View.GONE : View.VISIBLE);
+            inflate.findViewById(R.id.tv_title_sub).setVisibility(View.GONE);
             return inflate;
         }
     }

@@ -74,15 +74,18 @@ public class CommonUtil {
         editor.commit();
     }
 
-    /*
-    * 显示头像专用，因为头像的图片在网络上的位置和手机本地的位置是相对一样的
-    *
-    * */
-    public static void showIcon(Context context, ImageView iv_icon, String icon) {
-        if (!TextUtils.isEmpty(icon)) {
-            final File file = new File(context.getFilesDir(), icon);
-            String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(icon);
-            new BitmapUtils(context).display(iv_icon, path, new BitmapLoadCallBack<ImageView>() {
+    /**
+     * 显示图片，会优先使用缓存图片，如果本地没有，则请求网络图片
+     *
+     * @param context      上下文
+     * @param imageView    要显示的图片控件
+     * @param relativePath 相对路径，如果在本地查不到图片，则自动添加网络图片的域名，组成全路径
+     */
+    public static void showIcon(Context context, ImageView imageView, String relativePath) {
+        if (!TextUtils.isEmpty(relativePath)) {
+            final File file = new File(context.getFilesDir(), relativePath);
+            String path = file.exists() ? file.getAbsolutePath() : NetworkUtil.getFullPath(relativePath);
+            new BitmapUtils(context).display(imageView, path, new BitmapLoadCallBack<ImageView>() {
                 @Override
                 public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
                     container.setImageBitmap(bitmap);
@@ -100,9 +103,11 @@ public class CommonUtil {
 
                 @Override
                 public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-                    container.setImageResource(R.drawable.ic_launcher_student);
+                    container.setImageResource(ChineseChat.isStudent() ? R.drawable.ic_launcher_student : R.drawable.ic_launcher_teacher);
                 }
             });
+        } else {
+            imageView.setImageResource(ChineseChat.isStudent() ? R.drawable.ic_launcher_student : R.drawable.ic_launcher_teacher);
         }
     }
 
@@ -191,6 +196,7 @@ public class CommonUtil {
 
     /**
      * 给HSKK实体附加说明数据，因为这样说明是一样的，所以服务器不用保存这些数据
+     *
      * @param hskk
      */
     public static void hskkDesc(Hskk hskk) {

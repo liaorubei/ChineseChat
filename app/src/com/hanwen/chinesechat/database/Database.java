@@ -1,13 +1,9 @@
 package com.hanwen.chinesechat.database;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -19,10 +15,10 @@ import com.hanwen.chinesechat.bean.UrlCache;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.Log;
 
-import org.apache.commons.logging.impl.LogFactoryImpl;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Database {
-
     private static final String TAG = "Database";
     private MySQLiteOpenHelper helper;
     private SQLiteDatabase mReadable;
@@ -83,18 +79,19 @@ public class Database {
 
     public void docsInsert(Document item) {
         ContentValues values = new ContentValues();
-
         values.put("Id", item.Id);
-        values.put("Title", item.Title);
-        values.put("LevelId", item.LevelId);
+        values.put("TitleCn", item.Title);
+        values.put("TitleEn", item.TitleEn);
+        values.put("TitleSubCn", item.TitleSubCn);
+        values.put("TitleSubEn", item.TitleSubEn);
         values.put("FolderId", item.FolderId);
         values.put("SoundPath", item.SoundPath);
+        values.put("Category", item.Category);
         values.put("IsDownload", 0);
         Log.i(TAG, "docsInsert: insert=" + mWritable.insert("document", null, values));
-
     }
 
-    public List<Document> docsSelectListByFolderId(Integer folderId) {
+    public List<Document> docsSelectListByFolderId(int folderId) {
         Cursor cursor = mReadable.rawQuery("select Json from document where IsDownload=1 and FolderId=?", new String[]{folderId + ""});
         List<Document> list = new ArrayList<Document>();
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
@@ -107,7 +104,7 @@ public class Database {
     }
 
     public List<DownloadInfo> docsSelectUnfinishedDownload() {
-        Cursor cursor = mReadable.rawQuery("select Id,Title,SoundPath from document where IsDownload=0", null);
+        Cursor cursor = mReadable.rawQuery("select Id,TitleCn,SoundPath from document where IsDownload=0", null);
         List<DownloadInfo> infos = new ArrayList<DownloadInfo>();
         while (cursor.moveToNext()) {
             DownloadInfo info = new DownloadInfo();
@@ -150,7 +147,7 @@ public class Database {
      * @return select Id,Name,(select count(FolderId) from document where FolderId=folder.Id) as DocsCount from folder order by folder.Id
      */
     public List<Folder> folderSelectListWithDocsCount() {
-        Cursor cursor = mReadable.rawQuery("select F.Id,F.Name,(select count(FolderId) from document where FolderId=F.Id) as DocsCount,F.Sort,F.Cover,F.LevelId from folder as F inner join Level as L on F.LevelId=L.Id order by L.Sort,F.Sort", null);
+        Cursor cursor = mReadable.rawQuery("select Id,Name,(select count(document.FolderId) From Document where Document.IsDownload=1 and Document.FolderId=Folder.Id) as DocsCount,Sort,Cover,LevelId From Folder where Folder.Id in (select distinct FolderId From Document)", null);
         List<Folder> list = new ArrayList<Folder>();
         while (cursor.moveToNext()) {
             Folder folder = new Folder();
@@ -176,7 +173,7 @@ public class Database {
     }
 
     public DownloadInfo docsSelectById(int id) {
-        Cursor cursor = mReadable.rawQuery("select Id,Json,Title,IsDownload from document where Id=?", new String[]{id + ""});
+        Cursor cursor = mReadable.rawQuery("select Id,Json,TitleCn,IsDownload from document where Id=?", new String[]{id + ""});
         DownloadInfo info = null;
         if (cursor.moveToNext()) {
             info = new DownloadInfo();
@@ -203,9 +200,10 @@ public class Database {
         value.put("Id", folder.Id);
         value.put("Name", folder.Name);
         value.put("Sort", folder.Sort);
-        value.put("LevelId", folder.LevelId);
+        value.put("Show", folder.Show);
         value.put("Cover", folder.Cover);
-        mWritable.insertWithOnConflict("folder", "", value, SQLiteDatabase.CONFLICT_REPLACE);
+        value.put("LevelId", folder.LevelId);
+        mWritable.insertWithOnConflict("folder", null, value, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public void userInsertOrReplace(String username, String password) {
@@ -228,12 +226,6 @@ public class Database {
         return users;
     }
 
-    public Document documentGetById(int documentId) {
-
-
-        return null;
-    }
-
     public Level levelGetByName(String name) {
         Cursor cursor = mReadable.query("Level", new String[]{"Id", "Name", "Sort"}, "Name=?", new String[]{name}, null, null, null);
         Level level = null;
@@ -251,24 +243,75 @@ public class Database {
      * 通过等级Id查询文件夹列表，查询课本列表
      *
      * @param levelId 课本等级
-     * @return null, 或者0长度及以上的集合
+     * @return 0长度及以上的集合
      */
     public ArrayList<Folder> FolderListGetByLevelId(int levelId) {
         Cursor cursor = mReadable.query("Folder", new String[]{"Id", "Name", "Sort", "Cover"}, "LevelId=?", new String[]{levelId + ""}, null, null, "Sort");
-        ArrayList<Folder> list = null;
-        if (cursor.getCount() > 0) {
-            list = new ArrayList<Folder>();
-            while (cursor.moveToNext()) {
-                Folder folder = new Folder();
-                folder.Id = cursor.getInt(0);
-                folder.Name = cursor.getString(1);
-                folder.Sort = cursor.getInt(2);
-                folder.Cover = cursor.getString(3);
-                folder.LevelId = levelId;
-                list.add(folder);
-            }
+        ArrayList<Folder> list = new ArrayList<Folder>();
+        while (cursor.moveToNext()) {
+            Folder folder = new Folder();
+            folder.Id = cursor.getInt(0);
+            folder.Name = cursor.getString(1);
+            folder.Sort = cursor.getInt(2);
+            folder.Cover = cursor.getString(3);
+            folder.LevelId = levelId;
+            list.add(folder);
         }
         cursor.close();
         return list;
+    }
+
+    public List<Document> docsGetListDownloaded() {
+        List<Document> list = new ArrayList<>();
+        Cursor cursor = mReadable.query("Document", new String[]{"Id", "TitleCn", "TitleEn", "TitleSubCn", "TitleSubEn", "Category", "SoundPath", "FolderId"}, "IsDownload=1", null, null, null, null);
+        while (cursor.moveToNext()) {
+            Document document = new Document();
+            document.Id = cursor.getInt(0);
+            document.TitleCn = cursor.getString(1);
+            document.TitleEn = cursor.getString(2);
+            document.TitleSubCn = cursor.getString(3);
+            document.TitleSubEn = cursor.getString(4);
+            document.Category = cursor.getInt(5);
+            document.SoundPath = cursor.getString(6);
+            document.FolderId = cursor.getInt(7);
+            list.add(document);
+        }
+        cursor.close();
+        return list;
+    }
+
+    public Folder folderGetById(Integer id) {
+        Cursor cursor = mReadable.query("Folder", new String[]{"Id", "Name", "Sort", "Show", "Cover", "LevelId"}, "Id=?", new String[]{"" + id}, null, null, null);
+        Folder folder = null;
+        if (cursor.moveToNext()) {
+            folder = new Folder();
+            folder.Id = cursor.getInt(0);
+            folder.Name = cursor.getString(1);
+            folder.Sort = cursor.getInt(2);
+            folder.Show = cursor.getInt(3);
+            folder.Cover = cursor.getString(4);
+            folder.LevelId = cursor.getInt(5);
+        }
+        cursor.close();
+        return folder;
+    }
+
+    public List<Document> docsGetDownloadedListByFolderId(int folderId) {
+        Cursor cursor = mReadable.query("Document", new String[]{"Id", "TitleCn", "TitleEn", "TitleSubCn", "TitleSubEn", "FolderId", "Category", "SoundPath"}, "FolderId=? and IsDownload=1", new String[]{"" + folderId}, null, null, "TitleCn");
+        List<Document> documents = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            Document document = new Document();
+            document.Id = cursor.getInt(0);
+            document.TitleCn = cursor.getString(1);
+            document.TitleEn = cursor.getString(2);
+            document.TitleSubCn = cursor.getString(3);
+            document.TitleSubEn = cursor.getString(4);
+            document.FolderId = cursor.getInt(5);
+            document.Category = cursor.getInt(6);
+            document.SoundPath = cursor.getString(7);
+            documents.add(document);
+        }
+        cursor.close();
+        return documents;
     }
 }

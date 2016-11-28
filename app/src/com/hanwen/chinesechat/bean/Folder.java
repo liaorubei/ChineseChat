@@ -37,6 +37,10 @@ public class Folder implements Parcelable {
             return new Folder[size];
         }
     };
+    public String NameEn;
+    public String NameSubCn;
+    public String NameSubEn;
+    public int Show;
 
     @Override
     public String toString() {

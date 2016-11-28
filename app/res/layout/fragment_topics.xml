@@ -2,66 +2,74 @@
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context="com.hanwen.chinesechat.fragment.FragmentTopics">
+             android:background="#fff">
 
     <LinearLayout
+        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="center">
 
             <TextView
+                android:id="@+id/tv_tips"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="Topic"/>
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                android:padding="5dp"
+                android:text="Topic:"/>
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/ll_pick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="5dp"
+                android:layout_toRightOf="@+id/tv_tips"
+                android:background="@drawable/shape_rectangle_radius05_green"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="5dp"
+                android:visibility="gone">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/tv_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/shape_rectangle_radius05_gray"
-                    android:orientation="vertical">
+                    android:text="未选择"
+                    android:textColor="#fff"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="中文"/>
+                <TextView
+                    android:id="@+id/tv_name_en"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Unselected"
+                    android:textColor="#fff"/>
+            </LinearLayout>
+        </RelativeLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:text="english"/>
-                </LinearLayout>
-            </FrameLayout>
-        </LinearLayout>
-
-        <View
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000"/>
 
         <TextView
+            android:id="@+id/tv_random"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
+            android:layout_margin="5dp"
             android:background="@drawable/shape_rectangle_radius05_gray"
-            android:padding="10dp"
-            android:text="Random Topics"/>
+            android:padding="5dp"
+            android:text="Random Topics"
+            android:textColor="#fff"/>
 
-        <View
+        <ImageView
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="#000"/>
@@ -69,6 +77,8 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
             android:text="Select a Topic from the list below"/>
 
         <ScrollView
@@ -77,12 +87,30 @@
             android:layout_height="match_parent"/>
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/iv_check"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="right"
+        android:background="@color/color_app"
+        android:padding="5dp"
+        android:src="@drawable/icon_check_gray"/>
 
     <TextView
+        android:id="@+id/tv_current"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:text="12315"
-        android:ellipsize="end"/>
+        android:layout_gravity="center"
+        android:text="已选择"
+        android:textColor="@color/color_app"
+        android:textSize="25sp"
+        android:visibility="invisible"/>
 
+    <ImageView
+        android:id="@+id/iv_home"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="right|bottom"
+        android:src="@drawable/icon_home"
+        android:visibility="invisible"/>
 </FrameLayout>

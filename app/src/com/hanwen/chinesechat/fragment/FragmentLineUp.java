@@ -27,6 +27,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.activity.ActivityPayment;
 import com.hanwen.chinesechat.activity.ActivityProfile;
 import com.hanwen.chinesechat.activity.ActivitySignIn;
 import com.hanwen.chinesechat.activity.ActivityChat;
@@ -56,7 +57,6 @@ import java.util.List;
  * Created by liaorubei on 2016/1/14.
  */
 public class FragmentLineUp extends Fragment implements View.OnClickListener, XListView.IXListViewListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
-
     private static final String TAG = "FragmentLineUp";
     private static final int REFRESH_DATA = 1;
     private static final int REQUEST_CODE_DOCUMENT = 1;
@@ -89,6 +89,7 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
     private User teacher;
     private AlertDialog dialogLogin;
     private int documentId = -1;
+    private boolean permissionCheck = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -370,14 +371,15 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
                     boolean isGranted = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 
                     if (!isGranted) {
-/*                        if (!permissionCheck) {
+                        if (!permissionCheck) {
                             permissionCheck = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                             builder.setTitle("Unavailable");
                             builder.setMessage("You must turn on the microphone before calling the tutor. Please enter  Settings options to allow ChineseChat's access to your microphone");
+                            builder.setPositiveButton("OK", null);
                             builder.show();
                             return;
-                        }*/
+                        }
                         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUESTCODE_RECORD_AUDIO);
                     } else {
                         callTeacher(user);
@@ -413,63 +415,36 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
         HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Response<ChooseTeacherModel> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<ChooseTeacherModel>>() {
-                }.getType());
+                Log.i(TAG, "onSuccess: " + responseInfo.result);
+                Response<ChooseTeacherModel> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<ChooseTeacherModel>>() {}.getType());
                 if (resp.code == 200) {
 
-                    //兼容老版本写法1.1.7及之前,当教师是1.1.7之前的版本,要把学生的信息传递给教师
-                    JsonObject json = new JsonObject();
-                    json.addProperty("Id", resp.info.Student.Id);
-                    json.addProperty("Avatar", resp.info.Student.Avatar);
-                    json.addProperty("Nickname", resp.info.Student.Nickname);
-                    json.addProperty("Country", resp.info.Student.Country);
-                    json.addProperty("DocumentId", documentId);
+                    final User studentResp = resp.info.Student;
+                    final User teacherResp = resp.info.Teacher;
+                    if (studentResp.Coins <= 30) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-                    //新版本要求显示教师及学生明细1.1.8版本
-                    JsonObject student = new JsonObject();
-                    student.addProperty("Id", resp.info.Student.Id);
-                    student.addProperty("Avatar", resp.info.Student.Avatar);
-                    student.addProperty("Nickname", resp.info.Student.Nickname);
-                    student.addProperty("Country", resp.info.Student.Country);
-
-                    JsonObject studentSummary = new JsonObject();
-                    studentSummary.addProperty("month", resp.info.Student.Summary.month);
-                    studentSummary.addProperty("count", resp.info.Student.Summary.count);
-                    studentSummary.addProperty("duration", resp.info.Student.Summary.duration);
-                    student.add("Summary", studentSummary);
-                    json.add("Student", student);
-
-                    JsonObject teacher = new JsonObject();
-                    teacher.addProperty("Id", resp.info.Teacher.Id);
-                    teacher.addProperty("Avatar", resp.info.Teacher.Avatar);
-                    teacher.addProperty("Nickname", resp.info.Teacher.Nickname);
-                    teacher.addProperty("Country", resp.info.Teacher.Country);
-
-                    JsonObject teacherSummary = new JsonObject();
-                    teacherSummary.addProperty("month", resp.info.Teacher.Summary.month);
-                    teacherSummary.addProperty("count", resp.info.Teacher.Summary.count);
-                    teacherSummary.addProperty("duration", resp.info.Teacher.Summary.duration);
-                    teacher.add("Summary", teacherSummary);
-                    json.add("Teacher", teacher);
-
-                    ChatData chatData = new ChatData();
-                    chatData.setAccid(resp.info.Teacher.Accid);
-                    chatData.setExtra(json.toString());
-                    chatData.setChatType(AVChatType.AUDIO);
-
-                    Log.i(TAG, "onSuccess: " + documentId);
-                    if (documentId > 0) {
-                        Log.i(TAG, "onSuccess: " + json);
-                        Intent intent = new Intent(getContext(), ActivityChat.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra(ActivityChat.KEY_CHAT_MODE, ActivityChat.CHAT_MODE_OUTGOING);
-                        intent.putExtra(ActivityChat.KEY_CHAT_DATA, chatData);
-                        startActivityForResult(intent, REQUEST_CODE_DOCUMENT);
-                    } else {
-                        ActivityChat.start(getActivity(), ActivityChat.CHAT_MODE_OUTGOING, chatData);
+                        builder.setMessage(getString(R.string.FragmentLineUp_balance_tips, studentResp.Coins));
+                        builder.setNegativeButton(R.string.FragmentLineUp_balance_negative, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                sendCall(studentResp, teacherResp);
+                            }
+                        });
+                        builder.setPositiveButton(R.string.FragmentLineUp_balance_positive, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                Intent intent = new Intent(getContext(), ActivityPayment.class);
+                                startActivity(intent);
+                            }
+                        });
+                        builder.show();
+                        return;
                     }
 
-                    //ActivityCall.start(getActivity(), resp.info.Id, resp.info.Accid, resp.info.Avatar, resp.info.Nickname, resp.info.Username, ActivityCall.CALL_TYPE_AUDIO);
+                    sendCall(studentResp, teacherResp);
+
                 } else if (resp.code == 201) {
                     CommonUtil.toast(R.string.FragmentChoose_The_tutor_is_busy_now);
                 } else if (resp.code == 202) {
@@ -491,6 +466,66 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
         });
     }
 
+    /**
+     * 发送一个外拔电话，由学生拨出到老师
+     *
+     * @param student 学生实体，要求有Id，Nickname等
+     * @param teacher 教师实体，要求有Id，Nickname等
+     */
+    private void sendCall(User student, User teacher) {
+        //兼容老版本写法1.1.7及之前,当教师是1.1.7之前的版本,要把学生的信息传递给教师
+        JsonObject json = new JsonObject();
+        json.addProperty("Id", student.Id);
+        json.addProperty("Avatar", student.Avatar);
+        json.addProperty("Nickname", student.Nickname);
+        json.addProperty("Country", student.Country);
+        json.addProperty("DocumentId", documentId);
+
+        //新版本要求显示教师及学生明细1.1.8版本
+        JsonObject studentJson = new JsonObject();
+        studentJson.addProperty("Id", student.Id);
+        studentJson.addProperty("Avatar", student.Avatar);
+        studentJson.addProperty("Nickname", student.Nickname);
+        studentJson.addProperty("Country", student.Country);
+
+        JsonObject studentSummary = new JsonObject();
+        studentSummary.addProperty("month", student.Summary.month);
+        studentSummary.addProperty("count", student.Summary.count);
+        studentSummary.addProperty("duration", student.Summary.duration);
+        studentJson.add("Summary", studentSummary);
+        json.add("Student", studentJson);
+
+        JsonObject teacherJson = new JsonObject();
+        teacherJson.addProperty("Id", teacher.Id);
+        teacherJson.addProperty("Avatar", teacher.Avatar);
+        teacherJson.addProperty("Nickname", teacher.Nickname);
+        teacherJson.addProperty("Country", teacher.Country);
+
+        JsonObject teacherSummary = new JsonObject();
+        teacherSummary.addProperty("month", teacher.Summary.month);
+        teacherSummary.addProperty("count", teacher.Summary.count);
+        teacherSummary.addProperty("duration", teacher.Summary.duration);
+        teacherJson.add("Summary", teacherSummary);
+        json.add("Teacher", teacherJson);
+
+        ChatData chatData = new ChatData();
+        chatData.setAccid(teacher.Accid);
+        chatData.setExtra(json.toString());
+        chatData.setChatType(AVChatType.AUDIO);
+
+        Log.i(TAG, "onSuccess: " + documentId);
+        if (documentId > 0) {
+            Log.i(TAG, "onSuccess: " + json);
+            Intent intent = new Intent(getContext(), ActivityChat.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra(ActivityChat.KEY_CHAT_MODE, ActivityChat.CHAT_MODE_OUTGOING);
+            intent.putExtra(ActivityChat.KEY_CHAT_DATA, chatData);
+            startActivityForResult(intent, REQUEST_CODE_DOCUMENT);
+        } else {
+            ActivityChat.start(getActivity(), ActivityChat.CHAT_MODE_OUTGOING, chatData);
+        }
+    }
+
     private static final int PERMISSION_REQUESTCODE_RECORD_AUDIO = 1;
 
     @Override
@@ -502,6 +537,7 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.i(TAG, "onRequestPermissionsResult: ");
         if (requestCode == PERMISSION_REQUESTCODE_RECORD_AUDIO) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 callTeacher(teacher);
@@ -510,7 +546,6 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
             }
         }
     }
-
 
     private class ViewHolder {
         public TextView tv_status;

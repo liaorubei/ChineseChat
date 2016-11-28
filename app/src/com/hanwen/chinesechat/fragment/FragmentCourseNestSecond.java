@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -84,7 +85,7 @@ public class FragmentCourseNestSecond extends Fragment {
 
         TextView tv_name = (TextView) view.findViewById(R.id.tv_name);
         tv_name.setText(parent.Name);
-        GridView gridView = (GridView) view.findViewById(R.id.gridView);
+        AbsListView gridView = (AbsListView) view.findViewById(R.id.gridView);
         data.clear();
         adapter.notifyDataSetChanged();
         gridView.setAdapter(adapter);
@@ -123,15 +124,19 @@ public class FragmentCourseNestSecond extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Folder item = getItem(position);
-            View inflate = View.inflate(getContext(), R.layout.listitem_chat_folder, null);
+            if (inflate == null) {
+                inflate = View.inflate(getContext(), R.layout.listitem_activity_folder, null);
+            }
+            ImageView iv_cover = (ImageView) inflate.findViewById(R.id.iv_cover);
+            CommonUtil.showIcon(getContext(), iv_cover, item.Cover);
+
             TextView tv_name = (TextView) inflate.findViewById(R.id.tv_name);
             tv_name.setText(item.Name);
-            TextView tv_count = (TextView) inflate.findViewById(R.id.tv_count);
-            tv_count.setText("课程：" + item.DocsCount);
-            ImageView iv_cover = (ImageView) inflate.findViewById(R.id.iv_cover);
-            CommonUtil.showBitmap(iv_cover, NetworkUtil.getFullPath(item.Cover));
+
+            TextView tv_name_en = (TextView) inflate.findViewById(R.id.tv_name_en);
+            tv_name_en.setText(item.NameEn);
             return inflate;
         }
     }

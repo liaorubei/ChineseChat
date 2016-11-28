@@ -29,16 +29,19 @@ public class Document {
     public String LengthString;
     public String DateString;
     public String Cover;
+    public Folder Folder;
 
-    @Override
     public String toString() {
         return "Document{" +
                 "Id=" + Id +
+                ", FolderId=" + FolderId +
                 ", TitleCn='" + TitleCn + '\'' +
+                ", TitleEn='" + TitleEn + '\'' +
                 ", TitleSubCn='" + TitleSubCn + '\'' +
-                ", Duration=" + Duration +
+                ", TitleSubEn='" + TitleSubEn + '\'' +
+                ", Category=" + Category +
                 ", SoundPath='" + SoundPath + '\'' +
-                ", Lyrics=" + Lyrics +
+                ", Cover='" + Cover + '\'' +
                 '}';
     }
 }

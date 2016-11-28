@@ -31,8 +31,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -41,7 +39,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -65,9 +62,8 @@ import com.hanwen.chinesechat.fragment.FragmentChatHskk;
 import com.hanwen.chinesechat.fragment.FragmentCourse;
 import com.hanwen.chinesechat.fragment.FragmentCourseShow;
 import com.hanwen.chinesechat.fragment.FragmentThemes;
-import com.hanwen.chinesechat.rts.ActionTypeEnum;
-import com.hanwen.chinesechat.rts.doodle.SupportActionType;
-import com.hanwen.chinesechat.rts.doodle.action.MyPath;
+import com.hanwen.chinesechat.fragment.FragmentTopics;
+import com.hanwen.chinesechat.fragment.FragmentTopicsShow;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.FileUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
@@ -89,6 +85,7 @@ import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.AVChatStateObserver;
 import com.netease.nimlib.sdk.avchat.constant.AVChatEventType;
 import com.netease.nimlib.sdk.avchat.constant.AVChatTimeOutEvent;
+import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 import com.netease.nimlib.sdk.avchat.constant.AVChatUserQuitType;
 import com.netease.nimlib.sdk.avchat.model.AVChatAudioFrame;
 import com.netease.nimlib.sdk.avchat.model.AVChatCalleeAckEvent;
@@ -171,6 +168,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     private View ll_image;
     private View ll_text;
 
+    private long delayMillisRefresh = 60 * 1000;//学生端第分钟计时刷新时间，第60秒刷新一次，当学币少于30时，每15秒刷新一次
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -184,15 +182,18 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 HttpUtil.post(NetworkUtil.callRefresh, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                        Log.i(TAG, "onSuccess: " + responseInfo.result);
+                        Log.i(TAG, "刷新成功: " + responseInfo.result);
                         Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {}.getType());
                         if (200 == resp.code) {
                             if (resp.info.Coins <= 30) {
-                                if (dialogCoins == null) {
+                                if (delayMillisRefresh > 15000) {
                                     Builder builder = new Builder(ActivityChat.this);
-                                    builder.setMessage("你的帐号只剩30个学币了，请注意");
-                                    builder.setPositiveButton("确定", null);
-                                    dialogCoins = builder.show();
+                                    builder.setMessage(getString(R.string.ActivityChat_balance_tips, resp.info.Coins, resp.info.Coins / 10));
+                                    builder.setPositiveButton(R.string.ActivityTake_confirm, null);
+                                    builder.show();
+
+                                    //当学币少于30时，刷新时间15秒提示一次
+                                    delayMillisRefresh = 15 * 1000;
                                 }
                             }
                         } else {
@@ -203,11 +204,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        Log.i(TAG, "onFailure: " + msg + " url=" + this.getRequestUrl());
+                        Log.i(TAG, "刷新失败: " + msg + " url=" + this.getRequestUrl());
                         CommonUtil.toast(getString(R.string.network_error));
                     }
                 });
-                sendEmptyMessageDelayed(WHAT_REFRESH, 60 * 1000);
+                sendEmptyMessageDelayed(WHAT_REFRESH, delayMillisRefresh);
             }
 
             //
@@ -354,14 +355,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 break;
             case R.id.bt_reject:
                 //region拒绝接听
-            {
-                Animation animation = new ScaleAnimation(1F, 0F, 1F, 0F, Animation.RELATIVE_TO_SELF, 0.5F, Animation.RELATIVE_TO_SELF, 0.5F);
-                animation.setDuration(500);
-                ll_hang.startAnimation(animation);
                 hangup();
-            }
-            //endregion
-            break;
+                //endregion
+                break;
             case R.id.bt_accept:
                 //region 同意接听
                 if (!isAccept) {
@@ -370,9 +366,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     rl_talk.setVisibility(View.VISIBLE);
                     rl_hold.setVisibility(View.INVISIBLE);
 
-                    AVChatOptionalConfig params = new AVChatOptionalConfig();
-                    params.enableCallProximity(false);
-                    AVChatManager.getInstance().accept(params, callbackAccept);
+                    AVChatOptionalConfig config = new AVChatOptionalConfig();
+                    config.enableCallProximity(false);
+                    AVChatManager.getInstance().accept(null, callbackAccept);
                 }
                 //endregion
                 break;
@@ -459,7 +455,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Response<Theme> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Theme>>() {}.getType());
-
                 list.clear();
                 adapter.notifyDataSetChanged();
                 if (resp.code == 200) {
@@ -469,6 +464,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     }
                 }
                 adapter.notifyDataSetChanged();
+                listview.smoothScrollToPosition(0);
                 rl_theme.setVisibility(View.VISIBLE);
             }
 
@@ -693,6 +689,12 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         chatMode = intent.getIntExtra(KEY_CHAT_MODE, -1);
         chatData = (ChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
         chatDataExtra = gson.fromJson(chatData.getExtra(), ChatDataExtra.class);
+        if (chatDataExtra == null) {
+            chatDataExtra = new ChatDataExtra();
+        }
+
+
+        Log.i(TAG, "initData: " + chatData);
 
         //region 去电
         if (chatMode == CHAT_MODE_OUTGOING) {
@@ -733,7 +735,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
             AVChatOptionalConfig params = new AVChatOptionalConfig();
             params.enableCallProximity(false);
-            AVChatManager.getInstance().call(chatData.getAccount(), chatData.getChatType(), params, option, callback_call);
+
+            AVChatManager.getInstance().call(chatData.getAccount(), AVChatType.AUDIO, params, option, callback_call);
 
             getSupportFragmentManager().beginTransaction().replace(R.id.fl_hskk, FragmentChatHskk.newInstance(FragmentChatHskk.OPEN_MODE_PICK, 0), "FragmentChatHskk").commit();
         }
@@ -768,8 +771,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 HttpUtil.post(NetworkUtil.nimUserGetUserChatDataByAccid, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                        Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {
-                        }.getType());
+                        Response<User> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<User>>() {}.getType());
                         if (resp.code == 200) {
                             User user = resp.info;
 
@@ -1114,7 +1116,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
         @Override
         public void onLeaveChannel() {
-
             //2016-07-21 当自己意外退出频道时,应该退出界面
             Log.i(TAG, "离开频道: ");
         }
@@ -1159,6 +1160,10 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             //当通话建立时,切换待接通接通界面和接通接通界面,切换大小头像,并显示对方资料
             rl_talk.setVisibility(View.VISIBLE);
             rl_hold.setVisibility(View.INVISIBLE);
+
+            if (chatMode == CHAT_MODE_OUTGOING) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.rl_theme, FragmentTopics.newInstance(chatData.getAccount()), "FragmentTopics").commit();
+            }
         }
 
         @Override
@@ -1246,7 +1251,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     handler.sendEmptyMessageDelayed(WHAT_HANG_UP, 60 * 1000);
 
                     //刷新定时
-                    handler.sendEmptyMessageDelayed(WHAT_REFRESH, 60 * 1000);
+                    handler.sendEmptyMessageDelayed(WHAT_REFRESH, 1000);
                 } else {
                     // 设备初始化失败，无法进行通话
                     CommonUtil.toast(R.string.ActivityCall_device_error);
@@ -1266,6 +1271,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             if (TextUtils.isEmpty(callId)) {
                 SoundPlayer.instance(ChineseChat.getContext()).stop();
             } else {
+
                 chatHistoryFinish();
             }
             finish();
@@ -1413,7 +1419,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 break;
                 case NimSysNotice.NoticeType_Card: {
                     Theme theme = gson.fromJson(info, Theme.class);
-                    CommonUtil.toast("对方选择了话题:" + theme.Name);
+                    //CommonUtil.toast("对方选择了话题:" + theme.Name);
 
                     Parameters params = new Parameters();
                     params.add("chatId", chatData.getChatId());
@@ -1437,8 +1443,29 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     CALL_ID_RECEIVE = true;
                     callId = info;
                     break;
+                case NimSysNotice.NOTICE_TYPE_TOPIC:
+                    //显示学生选择的话题
+                    getSupportFragmentManager().beginTransaction().replace(R.id.rl_theme, FragmentTopicsShow.newInstance(Integer.parseInt(info)), "FragmentTopicsShow").commit();
+                    //保存学生选择的话题
+                    Parameters params = new Parameters();
+                    params.add("chatId", chatData.getChatId());
+                    params.add("themeId", info);
+                    HttpUtil.post(NetworkUtil.chatAddTheme, params, new RequestCallBack<String>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<String> responseInfo) {
+                            Log.i(TAG, "onSuccess: " + responseInfo.result);
+                        }
+
+                        @Override
+                        public void onFailure(HttpException error, String msg) {
+                            Log.i(TAG, "onFailure: " + msg);
+                        }
+                    });
+                    //界面调整
+                    tabsSwitch(R.id.ll_topic);
+                    break;
                 case NimSysNotice.NOTICE_TYPE_COURSE:
-                    getSupportFragmentManager().findFragmentByTag("FragmentCourse").getChildFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentCourseShow.newInstance(Integer.valueOf(info), false)).addToBackStack("FragmentCourseClear").commit();
+                    getSupportFragmentManager().findFragmentByTag("FragmentCourse").getChildFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentCourseShow.newInstance(Integer.parseInt(info), false)).addToBackStack("FragmentCourseClear").commit();
                     tabsSwitch(R.id.ll_lyric);
                     break;
                 case NimSysNotice.NoticeType_Hskk:
@@ -1534,7 +1561,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         public View getView(int position, View convertView, ViewGroup parent) {
             String item = getItem(position);
 
-            View inflate = View.inflate(getApplication(), R.layout.listitem_call, null);
+            View inflate = View.inflate(getApplication(), R.layout.listitem_topic, null);
             TextView textview = (TextView) inflate.findViewById(R.id.textview);
             textview.setText(item);
             return inflate;

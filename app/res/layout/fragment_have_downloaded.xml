@@ -11,9 +11,47 @@
         android:text="@string/DOWNLOADED"
         android:textColor="@color/color_app"/>
 
-    <ListView
-        android:id="@+id/listView"
+    <RelativeLayout
+        android:id="@+id/rl_course"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:dividerHeight="1dp"/>
+        android:layout_height="50dp"
+        android:layout_marginBottom="15dp"
+        android:layout_marginTop="15dp"
+        android:background="#1000"
+        android:gravity="center_vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TEXTBOOK"/>
+
+        <TextView
+            android:id="@+id/tv_count_course"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="9"/>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_levels"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="#1000"
+        android:gravity="center_vertical"
+        android:padding="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LEVEL 1,2"/>
+
+        <TextView
+            android:id="@+id/tv_count_levels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="10"/>
+    </RelativeLayout>
 </LinearLayout>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff">
+
+    <RelativeLayout
+        android:id="@id/layout_title"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#00a478">
+
+        <ImageView
+            android:id="@+id/iv_home"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerVertical="true"
+            android:padding="10dp"
+            android:src="@drawable/home_back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/ActivityDocsTodo_title"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"/>
+
+        <ImageView
+            android:id="@+id/iv_menu"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentRight="true"
+            android:padding="10dp"
+            android:src="@drawable/selector_icon_delete"/>
+    </RelativeLayout>
+
+    <ExpandableListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/layout_title"
+        android:background="#08000000"
+        android:childDivider="@null"
+        android:divider="@null"
+        android:dividerHeight="2dp"
+        android:groupIndicator="@null"/>
+
+    <ImageView
+        android:id="@+id/iv_delete"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="25dp"
+        android:background="@drawable/shape_oval_white"
+        android:padding="10dp"
+        android:src="@drawable/selector_icon_delete1"
+        android:visibility="invisible"/>
+</RelativeLayout>

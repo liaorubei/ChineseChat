@@ -8,8 +8,6 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
-import android.text.format.Formatter;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -21,26 +19,25 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.hanwen.chinesechat.bean.Response;
-import com.hanwen.chinesechat.util.FileUtil;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.hanwen.chinesechat.ChineseChat;
+import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.DownloadInfo;
 import com.hanwen.chinesechat.bean.Folder;
+import com.hanwen.chinesechat.bean.Response;
 import com.hanwen.chinesechat.bean.UrlCache;
-import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.service.DownloadService;
 import com.hanwen.chinesechat.service.DownloadService.MyBinder;
 import com.hanwen.chinesechat.util.CommonUtil;
+import com.hanwen.chinesechat.util.FileUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.view.CircularProgressBar;
-import com.hanwen.chinesechat.R;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,7 +49,6 @@ import java.util.Observer;
 //文档显示界面,非下载
 public class ActivityDocsTodo extends Activity implements OnClickListener {
     public static final String TAG = "ActivityDocsTodo";
-    public static final String KEY_SHOW_DATE = "KEY_SHOW_DATE";
     private List<Document> list;
     private List<ViewHelper> data;
     private List<Document> down;
@@ -69,7 +65,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     private ImageView iv_menu;
     private ImageView iv_delete;
     private ImageView cb_check_all;
-    private boolean showDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,7 +76,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         // 取得传递过来的数据
         Intent intent = getIntent();
         folder = intent.getParcelableExtra("folder");
-        showDate = intent.getBooleanExtra("showDate", true);
 
         initView();
 
@@ -310,9 +304,9 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
             holder.tv_title_two.setText(item.TitleEn);
             holder.tv_title_two.setVisibility(TextUtils.isEmpty(item.TitleEn) ? View.GONE : View.VISIBLE);
             holder.tv_title_sub_cn.setText(item.TitleSubCn);
-            holder.tv_title_sub_cn.setVisibility(item.Category == 1 ? View.VISIBLE : View.GONE);
+            holder.tv_title_sub_cn.setVisibility(item.Category == 2 ? View.VISIBLE : View.GONE);
             holder.tv_date.setText(sdf.format(item.Date));
-            holder.tv_date.setVisibility(item.Category == 1 ? View.GONE : View.VISIBLE);
+            holder.tv_date.setVisibility(item.Category == 2 ? View.GONE : View.VISIBLE);
             holder.tv_size.setText(FileUtil.formatFileSize(item.Length, FileUtil.SizeUnit.MB));
             holder.tv_time.setText(item.LengthString);
 

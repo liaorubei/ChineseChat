@@ -197,8 +197,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                 HttpUtil.post(NetworkUtil.chooseTeacher, parameters, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
-                        Response<ChatDataExtra> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<ChatDataExtra>>() {
-                        }.getType());
+                        Response<ChatDataExtra> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<ChatDataExtra>>() {}.getType());
                         if (resp.code == 200) {
                             ChatDataExtra extra = resp.info;
                             extra.Id = extra.Teacher.Id;
@@ -207,7 +206,7 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                             extra.Username = extra.Teacher.Username;
 
                             ChatData chatData = new ChatData();
-                            chatData.setAccid(resp.info.Accid);
+                            chatData.setAccid(resp.info.Teacher.Accid);
                             chatData.setExtra(gson.toJson(extra));
                             chatData.setChatType(AVChatType.AUDIO);
                             ActivityChat.start(ActivityProfile.this, ActivityChat.CHAT_MODE_OUTGOING, chatData);

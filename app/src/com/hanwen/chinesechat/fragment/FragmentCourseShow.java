@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * create an instance of this fragment.
+ * 实时语音界面，课程模块，课程显示界面，要求传入课程的Id
  */
 public class FragmentCourseShow extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentCourseShow";
@@ -41,6 +41,7 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
     private List<Lyric> data = new ArrayList<>();
     private Adapter adapter = new Adapter(data);
     private TextView tv_name;
+    private TextView tv_folder;
 
     public static FragmentCourseShow newInstance(int documentId, boolean showBack) {
         FragmentCourseShow fragment = new FragmentCourseShow();
@@ -72,6 +73,7 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
         View iv_back = view.findViewById(R.id.iv_back);
         iv_back.setOnClickListener(this);
         iv_back.setVisibility(showBack ? View.VISIBLE : View.INVISIBLE);
+        tv_folder = (TextView) view.findViewById(R.id.tv_folder);
         ListView listView = (ListView) view.findViewById(R.id.listView);
         View iv_home = view.findViewById(R.id.iv_home);
         iv_home.setVisibility(ChineseChat.isStudent() ? View.VISIBLE : View.INVISIBLE);
@@ -79,6 +81,7 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
         data.clear();
         adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
+
         HttpUtil.Parameters params = new HttpUtil.Parameters();
         params.add("id", documentId);
         HttpUtil.post(NetworkUtil.documentGetById, params, new RequestCallBack<String>() {
@@ -86,7 +89,11 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<Document> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<Document>>() {}.getType());
-                tv_name.setText(resp.info.Title);
+
+                tv_folder.setText(resp.info.Title);
+                if (resp.info.Folder != null) {
+                    tv_name.setText(resp.info.Folder.Name);
+                }
                 data.addAll(resp.info.Lyrics);
                 adapter.notifyDataSetChanged();
             }
@@ -96,18 +103,6 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
                 Log.i(TAG, "onFailure: " + msg);
             }
         });
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.i(TAG, "onDestroy: ");
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.i(TAG, "onDetach: ");
     }
 
     @Override
@@ -129,14 +124,17 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Lyric item = getItem(position);
-            View inflate = View.inflate(getContext(), R.layout.listitem_chat_folder, null);
-            inflate.findViewById(R.id.iv_cover).setVisibility(View.GONE);
+            if (inflate == null) {
+                inflate = View.inflate(getContext(), R.layout.listitem_chat_folder, null);
+            }
+            inflate.findViewById(R.id.sl_cover).setVisibility(View.GONE);
             TextView tv_name = (TextView) inflate.findViewById(R.id.tv_name);
             tv_name.setText(item.Original);
             TextView tv_count = (TextView) inflate.findViewById(R.id.tv_count);
             tv_count.setText(item.Translate);
+            inflate.findViewById(R.id.tv_title_sub).setVisibility(View.GONE);
             return inflate;
         }
     }

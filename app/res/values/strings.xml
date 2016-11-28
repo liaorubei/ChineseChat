@@ -376,6 +376,7 @@
     <string name="ActivityTake_tab_texts">Text</string>
     <string name="ActivityTake_tab_image">Image</string>
     <string name="ActivityTake_tab_hskk">HSKK</string>
+    <string name="ActivityChat_balance_tips">Your current balance is only %1$d coins(%2$d mins).Continue</string>
     <!--FragmentThemes-->
 
 
@@ -619,7 +620,9 @@
     <string name="FragmentLineUp_in_the_line">排队中</string>
     <string name="FragmentLineUp_i_need_enqueue">我要入队</string>
     <string name="FragmentLineUp_i_need_dequeue">我要出队</string>
-
+    <string name="FragmentLineUp_balance_tips">Your current balance is %1$d coins.Continue?</string>
+    <string name="FragmentLineUp_balance_negative">Continue</string>
+    <string name="FragmentLineUp_balance_positive">Top-up</string>
 
     <!--ActivityDocsTodo-->
     <string name="ActivityDocsTodo_title">Course list</string>
@@ -640,6 +643,8 @@
     <!--ActivityTextbook-->
     <string name="ActivityTextbook_title">Textbook</string>
 
+    <string name="ActivityFolder_title">Textbooks</string>
+
 
     <string name="xlistview_footer_hint_errors">Failed to load</string>
     <string name="xlistview_footer_hint_nomore">The end</string>
@@ -659,4 +664,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_activity_textbook">ActivityTextbook</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_activity_have_downloaded">ActivityHaveDownloaded</string>
 </resources>

@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <com.hanwen.chinesechat.view.SquareLayout
+        android:id="@+id/sl_cover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/iv_cover"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_launcher_student"/>
+    </com.hanwen.chinesechat.view.SquareLayout>
 
     <TextView
         android:id="@id/tv_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"/>
+        android:singleLine="true"/>
 
     <TextView
         android:id="@+id/tv_count"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_name"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"/>
+        android:singleLine="true"/>
 
     <TextView
         android:id="@+id/tv_title_sub"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_count"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:visibility="gone"/>
-
-    <ImageView
-        android:id="@+id/iv_cover"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_launcher_student"/>
-</RelativeLayout>
+        android:singleLine="true"/>
+</LinearLayout>

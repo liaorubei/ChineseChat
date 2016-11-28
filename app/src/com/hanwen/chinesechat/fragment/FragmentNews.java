@@ -28,6 +28,7 @@ import com.hanwen.chinesechat.activity.ActivityPlay;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.Response;
+import com.hanwen.chinesechat.util.FileUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.HttpUtil.Parameters;
 import com.hanwen.chinesechat.util.Log;
@@ -46,20 +47,12 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentNews#newInstance} factory method to
- * create an instance of this fragment.
+ * 主页面Listen模块的News界面，新闻显示中文/英文标题，并且要求显示文件大小，时长，发布日期
  */
 public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefreshListener {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "FragmentNews";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private List<Document> data = new ArrayList<>();
     private Integer take = 25;
     private ListView swipe_target;
@@ -67,10 +60,6 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
 
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-
-    public FragmentNews() {
-        // Required empty public constructor
-    }
 
     /**
      * Use this factory method to create a new instance of
@@ -88,15 +77,6 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -122,6 +102,8 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
                 ViewHolder holder = (ViewHolder) convertView.getTag();
                 holder.tv_title_cn.setText(item.TitleCn);
                 holder.tv_title_en.setText(item.TitleEn);
+                holder.tv_size.setText(FileUtil.formatFileSize(item.Length, FileUtil.SizeUnit.MB));
+                holder.tv_time.setText(item.LengthString);
                 holder.tv_date.setText(sdf.format(item.AuditDate));
 
                 new BitmapUtils(getContext(), getContext().getCacheDir().getAbsolutePath()).display(holder.iv_cover, NetworkUtil.getFullPath(item.Cover), new BitmapLoadCallBack<ImageView>() {
@@ -144,7 +126,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
                 Document document = (Document) parent.getAdapter().getItem(position);
                 Intent intent = new Intent(getContext(), ActivityPlay.class);
                 intent.putExtra("Id", document.Id);
-                intent.putExtra("mode","Online");
+                intent.putExtra("mode", "Online");
                 startActivity(intent);
             }
         });
@@ -156,7 +138,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
         HttpUtil.post(NetworkUtil.documentGetListByLevelId, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
+                //Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<Document>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Document>>>() {}.getType());
                 List<Document> info = resp.info;
 
@@ -185,7 +167,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 swipe.setLoadingMore(false);
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
+                //Log.i(TAG, "onSuccess: " + responseInfo.result);
                 Response<List<Document>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Document>>>() {}.getType());
                 List<Document> info = resp.info;
 
@@ -214,7 +196,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
         HttpUtil.post(NetworkUtil.documentGetListByLevelId, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
+                //Log.i(TAG, "onSuccess: " + responseInfo.result);
                 swipe.setRefreshing(false);
                 Response<List<Document>> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<List<Document>>>() {}.getType());
                 List<Document> info = resp.info;
@@ -238,12 +220,16 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
     private class ViewHolder {
         private TextView tv_title_cn;
         private TextView tv_title_en;
+        private TextView tv_size;
+        private TextView tv_time;
         public TextView tv_date;
         public ImageView iv_cover;
 
         public ViewHolder(View convertView) {
             this.tv_title_cn = (TextView) convertView.findViewById(R.id.tv_title_cn);
             this.tv_title_en = (TextView) convertView.findViewById(R.id.tv_title_en);
+            this.tv_size = (TextView) convertView.findViewById(R.id.tv_size);
+            this.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
             this.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
             this.iv_cover = (ImageView) convertView.findViewById(R.id.iv_cover);
             convertView.setTag(this);

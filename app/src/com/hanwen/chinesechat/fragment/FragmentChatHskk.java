@@ -1,16 +1,25 @@
 package com.hanwen.chinesechat.fragment;
 
+import android.app.Dialog;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -32,6 +41,9 @@ import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
+import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
@@ -42,6 +54,8 @@ import com.netease.nimlib.sdk.msg.model.CustomNotification;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 /**
  * 实时通话界面HSKK部分，该界面只提供一个ChildFragmentManager和FrameLayout
@@ -160,6 +174,7 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 HskkQuestion item = getItem(position);
+                final int index = position;
                 if (convertView == null) {
                     convertView = View.inflate(getContext(), R.layout.listitem_chat_hskk_question, null);
                     new ViewHolder(convertView);
@@ -167,8 +182,77 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
                 ViewHolder holder = (ViewHolder) convertView.getTag();
                 holder.tv_name.setText(item.TextCN);
                 if (item.Hskk.Category == 2) {
-                    holder.tv_name.setVisibility(View.GONE);
                     holder.iv_image.setVisibility(View.VISIBLE);
+                    holder.iv_image.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final Dialog dialogZoom = new Dialog(getContext(), R.style.NoTitle_Fullscreen);
+                            dialogZoom.setContentView(R.layout.dialog_album);
+                            ViewPager viewPagerImageMessage = (ViewPager) dialogZoom.findViewById(R.id.viewpager);
+                            viewPagerImageMessage.setAdapter(new PagerAdapter() {
+                                @Override
+                                public int getCount() {
+                                    return listQuestion.size();
+                                }
+
+                                @Override
+                                public boolean isViewFromObject(View view, Object object) {
+                                    return view.equals(object);
+                                }
+
+                                @Override
+                                public Object instantiateItem(ViewGroup container, int position) {
+                                    Log.i(TAG, "instantiateItem: " + listQuestion.get(position).Image);
+                                    FrameLayout fl = new FrameLayout(getContext());
+                                    final ProgressBar pb = new ProgressBar(getContext());
+                                    pb.setVisibility(View.VISIBLE);
+
+                                    final ImageView photoView = new ImageView(getContext());
+                                    final PhotoViewAttacher photoViewAttacher = new PhotoViewAttacher(photoView);
+                                    photoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
+                                        @Override
+                                        public void onViewTap(View view, float x, float y) {
+                                            dialogZoom.dismiss();
+                                            photoViewAttacher.setScale(1);
+                                        }
+                                    });
+                                    photoView.setImageResource(R.drawable.background);
+                                    new BitmapUtils(getContext(), getContext().getCacheDir().getAbsolutePath()).display(photoView, NetworkUtil.getFullPath(listQuestion.get(position).Image), new BitmapLoadCallBack<ImageView>() {
+                                        @Override
+                                        public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+                                            Log.i(TAG, "onLoadCompleted: ");
+                                            photoView.setImageBitmap(bitmap);
+                                            photoViewAttacher.update();
+                                            pb.setVisibility(View.INVISIBLE);
+                                        }
+
+                                        @Override
+                                        public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
+                                            Log.i(TAG, "onLoadFailed: ");
+                                            photoViewAttacher.update();
+                                            pb.setVisibility(View.INVISIBLE);
+                                        }
+                                    });
+                                    fl.addView(photoView, new FrameLayout.LayoutParams(-1, -1));
+
+                                    int v = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+                                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(v, v);
+                                    params.gravity = Gravity.CENTER;
+                                    fl.addView(pb, params);
+
+                                    container.addView(fl);
+                                    return fl;
+                                }
+
+                                @Override
+                                public void destroyItem(ViewGroup container, int position, Object object) {
+                                    container.removeView((View) object);
+                                }
+                            });
+                            viewPagerImageMessage.setCurrentItem(index, true);
+                            dialogZoom.show();
+                        }
+                    });
                     new BitmapUtils(getContext(), getContext().getCacheDir().getAbsolutePath()).display(holder.iv_image, NetworkUtil.getFullPath(item.Image));
                 } else {
                     holder.iv_image.setVisibility(View.GONE);

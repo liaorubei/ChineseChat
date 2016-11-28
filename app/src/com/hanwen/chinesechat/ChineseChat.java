@@ -57,15 +57,13 @@ public class ChineseChat extends Application {
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
                 public void onEvent(AVChatData chatData) {
-                    Log.i(TAG, "来电监听: " + chatData + " a=" + chatData.getAccount() + " c=" +
-                            chatData.getChatId() + " e=" + chatData.getExtra());
+                    Log.i(TAG, "来电监听: " + chatData + " a=" + chatData.getAccount() + " c=" + chatData.getChatId() + " e=" + chatData.getExtra());
                     ChatData chat = new ChatData();
                     chat.setChatId(chatData.getChatId());
                     chat.setAccid(chatData.getAccount());
                     chat.setChatType(chatData.getChatType());
                     chat.setExtra(chatData.getExtra());
-                    ActivityChat.start(getApplicationContext(), ActivityChat.CHAT_MODE_INCOMING,
-                            chat);
+                    ActivityChat.start(getApplicationContext(), ActivityChat.CHAT_MODE_INCOMING, chat);
                 }
             }, true);
 
@@ -106,9 +104,7 @@ public class ChineseChat extends Application {
 
             //是学生端还是教师端
             try {
-                release = getPackageManager().getApplicationInfo(getPackageName(), PackageManager
-                        .GET_META_DATA).metaData.getString("release");
-                Log.i(TAG, "release: " + release);
+                release = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA).metaData.getString("release");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -119,8 +115,7 @@ public class ChineseChat extends Application {
     private SDKOptions getOptions() {
         SDKOptions options = new SDKOptions();
         options.appKey = "599551c5de7282b9a1d686ee40abf74c";
-        options.sdkStorageRootPath = new File(Environment.getExternalStorageDirectory(),
-                getPackageName() + "/nim").getAbsolutePath();
+        options.sdkStorageRootPath = new File(Environment.getExternalStorageDirectory(), getPackageName() + "/nim").getAbsolutePath();
         //后台自动下载附件：如果是语音消息，直接下载文件，如果是图片或视频消息，下载缩略图文件。
         options.preloadAttach = true;
         return options;
@@ -149,8 +144,7 @@ public class ChineseChat extends Application {
         CurrentUser.Coins = sp.getInt("coins", 0);
         CurrentUser.Birth = sp.getString("birth", null);
 
-        return TextUtils.isEmpty(accid) || TextUtils.isEmpty(token) ? null : new LoginInfo(accid,
-                token);
+        return TextUtils.isEmpty(accid) || TextUtils.isEmpty(token) ? null : new LoginInfo(accid, token);
     }
 
     /**

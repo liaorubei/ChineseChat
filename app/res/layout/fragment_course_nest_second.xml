@@ -2,27 +2,32 @@
                 xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                tools:context="com.hanwen.chinesechat.fragment.FragmentCourseNestSecond">
+                android:background="#1000">
 
     <TextView
         android:id="@+id/tv_name"
         android:layout_width="match_parent"
-        android:layout_height="25dp"
+        android:layout_height="35dp"
+        android:background="@color/color_app"
         android:gravity="center"
-        android:text="@string/hello_blank_fragment"/>
+        android:textColor="#fff"
+        tools:text="课本合集名称"/>
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
-        android:src="@drawable/icon_back"/>
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="5dp"
+        android:src="@drawable/home_back"
+        tools:ignore="contentDescription"/>
 
-    <GridView
+    <ListView
         android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/tv_name"
-        android:horizontalSpacing="1dp"
-        android:numColumns="3"
-        android:verticalSpacing="1dp"/>
+        android:layout_marginTop="5dp"
+        android:background="#fff"
+        android:divider="#1000"
+        android:dividerHeight="5dp"/>
 </RelativeLayout>

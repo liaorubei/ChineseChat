@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp">
@@ -16,7 +17,8 @@
             android:layout_centerInParent="true"
             android:scaleType="fitXY"
             android:src="@drawable/background"
-            android:visibility="visible"/>
+            android:visibility="visible"
+            tools:ignore="contentDescription"/>
     </com.hanwen.chinesechat.view.SquareLayout>
 
     <LinearLayout
@@ -33,17 +35,17 @@
             android:id="@+id/tv_folder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
             android:singleLine="true"
-            android:text="舌尖上的中国"
-            android:textSize="15sp"/>
+            android:textSize="15sp"
+            tools:text="舌尖上的中国"/>
 
         <TextView
             android:id="@+id/tv_counts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="课程10"
-            android:textSize="12sp"/>
+            android:singleLine="true"
+            android:textSize="12sp"
+            tools:text="课程10"/>
     </LinearLayout>
 
     <!--    <ImageView
