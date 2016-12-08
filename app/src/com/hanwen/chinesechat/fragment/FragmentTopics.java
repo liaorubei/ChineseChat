@@ -100,7 +100,7 @@ public class FragmentTopics extends Fragment implements View.OnClickListener {
 
                     ll_content.setVisibility(View.INVISIBLE);
                     iv_check.setVisibility(View.INVISIBLE);
-                    tv_current.setText(theme.Name);
+                    tv_current.setText(String.format("%1$s\n%2$s", theme.Name, theme.NameEn));
                     tv_current.setVisibility(View.VISIBLE);
                     iv_home.setVisibility(View.VISIBLE);
                 }

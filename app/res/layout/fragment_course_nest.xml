@@ -1,9 +1,10 @@
 <GridView
-    android:id="@+id/gridView"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/gridView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#BEEDD5"
     android:horizontalSpacing="10dp"
     android:numColumns="3"
-    android:verticalSpacing="10dp"
-    android:background="#BEEDD5"/>
+    android:padding="5dp"
+    android:verticalSpacing="10dp"/>

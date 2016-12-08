@@ -5,7 +5,9 @@
                 android:background="#1000"
                 android:descendantFocusability="blocksDescendants"
                 android:orientation="horizontal"
-                android:paddingLeft="10dp">
+                android:paddingBottom="2dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="2dp">
 
     <ImageView
         android:id="@+id/iv_cover"
@@ -50,5 +52,4 @@
         android:layout_centerVertical="true"
         android:padding="10dp"
         android:src="@drawable/selector_box_check"/>
-
 </RelativeLayout>

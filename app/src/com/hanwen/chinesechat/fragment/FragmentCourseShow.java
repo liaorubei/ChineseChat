@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,10 +132,14 @@ public class FragmentCourseShow extends Fragment implements View.OnClickListener
             }
             inflate.findViewById(R.id.sl_cover).setVisibility(View.GONE);
             TextView tv_name = (TextView) inflate.findViewById(R.id.tv_name);
+            tv_name.setSingleLine(false);
             tv_name.setText(item.Original);
             TextView tv_count = (TextView) inflate.findViewById(R.id.tv_count);
             tv_count.setText(item.Translate);
+            tv_count.setSingleLine(false);
+            tv_count.setVisibility(TextUtils.isEmpty(item.Translate) ? View.GONE : View.VISIBLE);
             inflate.findViewById(R.id.tv_title_sub).setVisibility(View.GONE);
+
             return inflate;
         }
     }

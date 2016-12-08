@@ -49,8 +49,8 @@
         android:layout_marginRight="10dp"
         android:layout_toLeftOf="@id/rl_ctrl"
         android:orientation="vertical"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp">
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -63,8 +63,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:text="59:59"
-                android:textColor="@color/color_two"
-                android:textSize="12sp"/>
+                android:textColor="@color/color_two"/>
 
             <TextView
                 android:id="@+id/tv_size"
@@ -74,8 +73,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_toLeftOf="@id/tv_time"
                 android:text="56.00MB"
-                android:textColor="@color/color_two"
-                android:textSize="12sp"/>
+                android:textColor="@color/color_two"/>
 
             <TextView
                 android:id="@+id/tv_date"
@@ -86,7 +84,6 @@
                 android:layout_toLeftOf="@id/tv_size"
                 android:text="2012-12-12"
                 android:textColor="@color/color_two"
-                android:textSize="12sp"
                 android:visibility="visible"/>
 
             <TextView
@@ -99,7 +96,7 @@
                 android:singleLine="true"
                 android:text="第一标题第一标题第一标题第一标题第一标题第一标题第一标题第一标题"
                 android:textColor="@color/main_dark"
-                android:textSize="17sp"/>
+                android:textSize="15sp"/>
         </RelativeLayout>
 
         <TextView
@@ -109,8 +106,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Study: Head Lice Growing Resistant to Existing Treatments"
-            android:textColor="@color/color_two"
-            android:textSize="15sp"/>
+            android:textColor="@color/color_two"/>
 
         <TextView
             android:id="@+id/tv_title_sub_cn"
@@ -119,8 +115,6 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:text="Study: Head Lice Growing Resistant to Existing Treatments"
-            android:textColor="@color/color_two"
-            android:textSize="15sp"/>
+            android:textColor="@color/color_two"/>
     </LinearLayout>
-
 </RelativeLayout>

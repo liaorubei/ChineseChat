@@ -223,7 +223,7 @@
     <string name="ActivityHistory_durations">时长：%1$s 分钟</string>
     <string name="ActivityTake_show_teacher_summary">授课情况：%1$d分钟（%2$d次/%3$d月份）</string>
     <string name="ActivityTake_show_student_summary">学习情况：%1$d分钟（%2$d次）</string>
-    <string name="ActivityTake_show_student_nickname">昵称：%1$s 国家：%2$s</string>
+    <string name="ActivityTake_show_student_nickname"><![CDATA[昵称：%1$s    国家：%2$s]]></string>
     <string name="ActivityTake_text_hint_send_text">请输入</string>
     <string name="ActivityTake_pick_image">选择</string>
     <string name="ActivityTake_send_texts">发送</string>
@@ -248,4 +248,6 @@
     <string name="FragmentLineUp_balance_tips">你当前的学币为%1$d，要继续吗？</string>
     <string name="FragmentLineUp_balance_positive">充值</string>
     <string name="ActivityChat_balance_tips">你的余额只剩%1$d个学币了（%2$d分钟），继续？</string>
+    <string name="ActivityChat_text_album">相册</string>
+    <string name="ActivityChat_text_camera">相机</string>
 </resources>

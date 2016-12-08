@@ -13,7 +13,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -40,6 +42,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -80,6 +83,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.avchat.AVChatCallback;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.AVChatStateObserver;
@@ -99,6 +103,7 @@ import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.attachment.ImageAttachment;
 import com.netease.nimlib.sdk.msg.constant.AttachStatusEnum;
+import com.netease.nimlib.sdk.msg.constant.MsgDirectionEnum;
 import com.netease.nimlib.sdk.msg.constant.MsgTypeEnum;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress;
@@ -111,9 +116,13 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -122,17 +131,19 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  * 实时音视频聊天界面
  */
 public class ActivityChat extends FragmentActivity implements OnClickListener {
+    public static final String TAG = "ActivityChat";
     public static final int CHAT_MODE_INCOMING = 1;
     public static final int CHAT_MODE_OUTGOING = 0;
-    public static final int REQUEST_CODE_THEME = 1;
+
     public static final int REQUEST_CODE_IMAGE = 2;
+    public static final int REQUEST_CODE_IMAGE_CAPTURE = 3;
+    public static final int REQUEST_CODE_THEME = 1;
     public static final int WHAT_HANG_UP = 3;
     public static final int WHAT_PEER_BUSY = 2;
     public static final int WHAT_PLAY_SOUND = 1;
     public static final int WHAT_REFRESH = 4;
     public static final String KEY_CHAT_DATA = "KEY_CHAT_DATA";
     public static final String KEY_CHAT_MODE = "KEY_CHAT_MODE";
-    public static final String TAG = "ActivityChat";
 
     private AdapterMessage adapterMessage;
     private boolean CALL_ID_RECEIVE = false;
@@ -148,7 +159,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     private int chatMode;
 
     private List<IMMessage> listImageMessage = new ArrayList<IMMessage>();
-    private List<Lyric> listLyrics = new ArrayList<>();
     private List<MessageText> listMessage;
     private List<String> list;
     private ListView listview;
@@ -167,6 +177,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
     private View ll_image;
     private View ll_text;
+
+    private File fileImageCapture;
 
     private long delayMillisRefresh = 60 * 1000;//学生端第分钟计时刷新时间，第60秒刷新一次，当学币少于30时，每15秒刷新一次
     private Handler handler = new Handler() {
@@ -251,13 +263,13 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     private ImageView iv_image;
     private View iv_image_send;
     private String currentImagePath = null;
+    private int currentImageIndex = -1;//图片切换当前所在的索引
     private View ll_lyric;
 
     private ViewGroup ll_control;
     private Dialog dialogZoom;
     private boolean isAccept = false;
     private AlertDialog dialogCoins;
-    private PhotoView photoView;
     private ProgressBar pb_loading;
     private Theme currentTheme;
     private ViewPager viewPagerImageMessage;
@@ -268,6 +280,10 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     private View iv_hang;
     private View iv_mute;
     private TextView tv_theme_center;
+    private View iv_prev;
+    private View iv_next;
+    private TextView tv_status;
+    private AlertDialog dialog_chat_image;
 
     //endregion
 
@@ -333,24 +349,37 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 break;
             case R.id.iv_image_send:
                 //region图片消息发送按钮
-
-/*                *//** 创建图片消息
-             * // 聊天对象的 ID，如果是单聊，为用户帐号，如果是群聊，为群组 ID
-             * // 聊天类型，单聊或群组
-             *  // 图片文件对象
-             *   // 文件显示名字，如果第三方 APP 不关注，可以为 null
-             *//*
-                IMMessage message = MessageBuilder.createImageMessage(chatData.getAccount(), SessionTypeEnum.P2P,
-                        new File(Environment.getExternalStorageDirectory(), "DCIM/QQPhoto/IMG20151214092728.jpg"), null);
-                *//**
-             *@param msg - 带发送的消息体，由MessageBuilder构造
-             *@param resend - 如果是发送失败后重发，标记为true，否则填false
-             *//*
-                NIMClient.getService(MsgService.class).sendMessage(message, false);*/
-
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent, REQUEST_CODE_IMAGE);
+                if (dialog_chat_image == null) {
+                    Builder builder = new Builder(this);
+                    View inflate = getLayoutInflater().inflate(R.layout.dialog_chat_image, null);
+                    inflate.findViewById(R.id.ll_album).setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+                            startActivityForResult(intent, REQUEST_CODE_IMAGE);
+                            dialog_chat_image.dismiss();
+                        }
+                    });
+                    inflate.findViewById(R.id.ll_camera).setOnClickListener(new OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            File image = getExternalFilesDir("image");
+                            if (image != null && image.exists()) {
+                                fileImageCapture = new File(image, String.format("%1$s.jpg", UUID.randomUUID()));
+                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileImageCapture));
+                                startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
+                                dialog_chat_image.dismiss();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "SDCard异常，无法保存照片！", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                    builder.setView(inflate);
+                    dialog_chat_image = builder.create();
+                }
+                dialog_chat_image.show();
                 //endregion
                 break;
             case R.id.bt_reject:
@@ -415,13 +444,39 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             case R.id.iv_image:
                 //region 点击图片放大
                 if (listImageMessage.size() > 0) {
-                    viewPagerImageMessage.setCurrentItem(listImageMessage.size() - 1);
+                    viewPagerImageMessage.setCurrentItem(currentImageIndex);
                     TextView tv_index = (TextView) dialogZoom.findViewById(R.id.tv_index);
-                    tv_index.setText(String.format("%1$d/%1$d", listImageMessage.size()));
+                    tv_index.setText(String.format("%1$d/%2$d", currentImageIndex + 1, listImageMessage.size()));
                     dialogZoom.show();
                 }
                 //endregion
                 break;
+            case R.id.iv_prev:
+                //region 图片显示控制
+            {
+                currentImageIndex--;
+                IMMessage message = listImageMessage.get(currentImageIndex);
+                ImageAttachment attachment = (ImageAttachment) message.getAttachment();
+                String path = TextUtils.isEmpty(attachment.getPath()) ? attachment.getThumbPath() : attachment.getPath();
+                CommonUtil.showBitmap(iv_image, path);
+                iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
+                iv_next.setVisibility(View.VISIBLE);
+            }
+            //endregion
+            break;
+            case R.id.iv_next:
+                //region 图片显示控制
+            {
+                currentImageIndex++;
+                IMMessage message = listImageMessage.get(currentImageIndex);
+                ImageAttachment attachment = (ImageAttachment) message.getAttachment();
+                String path = TextUtils.isEmpty(attachment.getPath()) ? attachment.getThumbPath() : attachment.getPath();
+                CommonUtil.showBitmap(iv_image, path);
+                iv_prev.setVisibility(View.VISIBLE);
+                iv_next.setVisibility(currentImageIndex < listImageMessage.size() - 1 ? View.VISIBLE : View.INVISIBLE);
+            }
+            //endregion
+            break;
 
         }
     }
@@ -432,6 +487,19 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             View ctrl = ctrls.get(i);
             ctrl.setSelected(ctrl.getId() == identifyId);
             fl_content.getChildAt(i).setVisibility(ctrl.getId() == identifyId ? View.VISIBLE : View.INVISIBLE);
+        }
+
+        //隐藏图片缩放窗口
+        if (identifyId != R.id.ll_image && dialogZoom != null) {
+            dialogZoom.dismiss();
+        }
+
+        //隐藏HSKK图片缩放窗口
+        if (identifyId != R.id.ll_hskk) {
+            android.support.v4.app.Fragment fragmentChatHskk = getSupportFragmentManager().findFragmentByTag("FragmentChatHskk");
+            if (fragmentChatHskk != null && fragmentChatHskk instanceof FragmentChatHskk) {
+                ((FragmentChatHskk) fragmentChatHskk).dismissDialog();
+            }
         }
     }
 
@@ -478,8 +546,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate: savedInstanceState=" + savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
         setContentView(R.layout.activity_chat);
+
+        //  getActionBar().hide();
 
         initView();
         initData();
@@ -498,6 +569,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         //未接通界面时，头像，昵称，按钮
         iv_icon = (ImageView) findViewById(R.id.iv_icon);
         tv_nick = (TextView) findViewById(R.id.tv_nick);
+        tv_status = (TextView) findViewById(R.id.tv_status);
 
         //控制按钮,布局
         ll_call = findViewById(R.id.ll_call);
@@ -559,6 +631,10 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         rl_image = findViewById(R.id.rl_image);
         iv_image = (ImageView) findViewById(R.id.iv_image);
         iv_image.setOnClickListener(this);
+        iv_prev = findViewById(R.id.iv_prev);
+        iv_next = findViewById(R.id.iv_next);
+        iv_prev.setOnClickListener(this);
+        iv_next.setOnClickListener(this);
         iv_image_send = findViewById(R.id.iv_image_send);
         iv_image_send.setOnClickListener(this);
 
@@ -672,6 +748,14 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
             @Override
             public void onPageSelected(int position) {
+                currentImageIndex = position;
+                ImageAttachment attachment = (ImageAttachment) listImageMessage.get(position).getAttachment();
+                String path = TextUtils.isEmpty(attachment.getPath()) ? attachment.getThumbPath() : attachment.getPath();
+
+                iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
+                iv_next.setVisibility(currentImageIndex < listImageMessage.size() - 1 ? View.VISIBLE : View.INVISIBLE);
+
+                CommonUtil.showBitmap(iv_image, path);
                 TextView tv_index = (TextView) dialogZoom.findViewById(R.id.tv_index);
                 tv_index.setText(String.format("%1$d/%2$d", position + 1, listImageMessage.size()));
             }
@@ -712,9 +796,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             tv_name.setText(getString(R.string.ActivityTake_show_teacher_nickname, chatDataExtra.Teacher.Nickname));
             tv_nick.setText(chatDataExtra.Teacher.Nickname);
             tv_case.setText(getString(R.string.ActivityTake_show_teacher_summary, chatDataExtra.Teacher.Summary.duration, chatDataExtra.Teacher.Summary.count, chatDataExtra.Teacher.Summary.month));
-
-            CommonUtil.showBitmap(iv_icon, NetworkUtil.getFullPath(chatDataExtra.Teacher.Avatar));
-            CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(chatDataExtra.Teacher.Avatar));
+            tv_status.setText("Waiting to response");
+            CommonUtil.showIcon(getApplicationContext(), iv_icon, chatDataExtra.Teacher.Avatar);
+            CommonUtil.showIcon(getApplicationContext(), iv_avatar, chatDataExtra.Teacher.Avatar);
 
             //呼出
             JsonObject student = new JsonObject();
@@ -819,7 +903,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
         //endregion
 
-
         listMessage = new ArrayList<>();
         adapterMessage = new AdapterMessage(listMessage);
         lv_msg.setAdapter(adapterMessage);
@@ -870,7 +953,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             //region选择图片,发送图片
             if (resultCode == Activity.RESULT_OK) {
                 File photoPick = new File(FileUtil.getPath(this, data.getData()));
-                File newFile = new File(getCacheDir(), "cache.jpg");
+                File newFile = new File(getExternalFilesDir("image/thumb"), photoPick.getName());
                 FileOutputStream out = null;
 
                 //图片压缩,如果选择的图片大于1M，压缩图片 1024 * 1024=1048576
@@ -911,10 +994,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                  *@param display 文件显示名字，如果第三方 APP 不关注，可以为 null
                  */
                 IMMessage message = MessageBuilder.createImageMessage(chatData.getAccount(), SessionTypeEnum.P2P, out == null ? photoPick : newFile, null);
-                /**
-                 *@param msg - 带发送的消息体，由MessageBuilder构造
-                 *@param resend - 如果是发送失败后重发，标记为true，否则填false
-                 */
                 NIMClient.getService(MsgService.class).sendMessage(message, false);
                 CommonUtil.showBitmap(iv_image, photoPick.getAbsolutePath());
 
@@ -923,9 +1002,89 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 //把图片添加到可放大图片列表
                 listImageMessage.add(message);
                 viewPagerImageMessage.getAdapter().notifyDataSetChanged();
+                currentImageIndex = listImageMessage.size() - 1;
+                iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
+                iv_next.setVisibility(View.INVISIBLE);
+            }
+            //endregion
+        } else if (requestCode == REQUEST_CODE_IMAGE_CAPTURE) {
+            //region 从摄像头获取照片
+            if (resultCode == Activity.RESULT_OK) {
+                File photoPick = fileImageCapture;
+                File newFile = new File(getExternalFilesDir("image/thumb"), photoPick.getName());
+                FileOutputStream out = null;
+
+                //图片压缩,如果选择的图片大于1M，压缩图片 1024 * 1024=1048576
+                if (photoPick.exists() && photoPick.length() > 512000) {
+                    try {
+                        pb_loading.setVisibility(View.VISIBLE);
+                        Bitmap bitmap = BitmapFactory.decodeFile(photoPick.getAbsolutePath());
+
+                        int quality = 90;
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        long length = photoPick.length();
+
+                        //压缩图片到内存中保存
+                        while (length > 512000) {
+                            stream.reset();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, quality > 10 ? quality : 10, stream);
+                            length = stream.size();
+                            quality -= 10;
+                        }
+                        bitmap.recycle();
+
+                        //把内存中的图片保存到文件系统
+                        out = new FileOutputStream(newFile);
+                        stream.writeTo(out);
+                        out.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                Log.i(TAG, "onActivityResult:2" + out + " ," + photoPick.length() + " ," + newFile.length());
+
+                //记录图片显示界面当前显示的图上的路径
+                currentImagePath = photoPick.getAbsolutePath();
+
+                /**创建图片消息
+                 *@param accid 聊天对象的 ID，如果是单聊，为用户帐号，如果是群聊，为群组 ID
+                 *@param ChatType 聊天类型，单聊或群组
+                 *@param file 图片文件对象
+                 *@param display 文件显示名字，如果第三方 APP 不关注，可以为 null
+                 */
+                IMMessage message = MessageBuilder.createImageMessage(chatData.getAccount(), SessionTypeEnum.P2P, out == null ? photoPick : newFile, null);
+                NIMClient.getService(MsgService.class).sendMessage(message, false).setCallback(new RequestCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "onSuccess: ");
+                    }
+
+                    @Override
+                    public void onFailed(int i) {
+                        Log.i(TAG, "onFailed: " + i);
+                    }
+
+                    @Override
+                    public void onException(Throwable throwable) {
+                        Log.i(TAG, "onException: " + throwable.getMessage());
+                    }
+                });
+                CommonUtil.showBitmap(iv_image, photoPick.getAbsolutePath());
+
+                Log.i(TAG, "onActivityResult: 3");
+                //删除临时压缩的照片，因为消息发送是一个异步动作，但是不知道什么时候消息才发送完，所以不删除临时文件
+
+                //把图片添加到可放大图片列表
+                listImageMessage.add(message);
+                viewPagerImageMessage.getAdapter().notifyDataSetChanged();
+                currentImageIndex = listImageMessage.size() - 1;
+                iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
+                iv_next.setVisibility(View.INVISIBLE);
             }
             //endregion
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -1026,6 +1185,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             chatHistoryCreate();
 
             //定时挂断
+            tv_status.setText("Connecting...");
         }
 
         @Override
@@ -1096,7 +1256,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
         @Override
         public void onLocalRecordEnd(String[] strings, int i) {
-            Log.i(TAG, "onLocalRecordEnd: " + strings.toString() + " i=" + i);
         }
 
         @Override
@@ -1222,6 +1381,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         public void onEvent(AVChatCalleeAckEvent event) {
             Log.i(TAG, "对方回应监听: ChatId=" + event.getChatId() + " Event=" + event.getEvent() + " account=" + event.getAccount() + " extra=" + event.getExtra());
 
+            tv_status.setText("Connecting...");
+
             SoundPlayer.instance(ChineseChat.getContext()).stop();
             handler.removeMessages(WHAT_PLAY_SOUND);
 
@@ -1317,6 +1478,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     Log.i(TAG, "图片消息: uuid=" + m.getUuid() + ",ThumbPath=" + attachment.getThumbPath() + ",path=" + attachment.getPath() + ",url=" + attachment.getUrl());
                     listImageMessage.add(m);
 
+                    currentImageIndex = listImageMessage.size() - 1;
+
+                    iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
+                    iv_next.setVisibility(View.INVISIBLE);
+
                     viewPagerImageMessage.getAdapter().notifyDataSetChanged();
                     viewPagerImageMessage.setCurrentItem(listImageMessage.size() - 1);//当收到图片时，如果正在查看大图，也刷新大图显示
                     TextView tv_index = (TextView) dialogZoom.findViewById(R.id.tv_index);//更新图片查看器索引
@@ -1333,28 +1499,18 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         public void onEvent(IMMessage msg) {
             //Log.i(TAG, "状态监听: uuid=" + msg.getUuid() + ",type=" + msg.getMsgType() + ",status=" + msg.getStatus() + "，AttachStatus=" + msg.getAttachStatus());
 
+
             if (msg.getMsgType() == MsgTypeEnum.image) {
                 ImageAttachment attachment = (ImageAttachment) msg.getAttachment();
-                AttachStatusEnum attachStatus = msg.getAttachStatus();
+                Log.i(TAG, "图片下载: uuid=" + msg.getUuid() + ",url=" + attachment.getUrl() + ",path=" + attachment.getPath() + ",thumbpath=" + attachment.getThumbPath());
 
-                Log.i(TAG, "图片下载: uuid=" + msg.getUuid() + ",url=" + attachment.getUrl() + ",path=" + attachment.getPath() + ",thumbpath=" + attachment.getThumbPath() + ",AttachStatus=" + attachStatus);
+                pb_loading.setVisibility(msg.getAttachStatus() == AttachStatusEnum.transferred ? View.INVISIBLE : View.VISIBLE);
 
-                if (attachStatus == AttachStatusEnum.transferring) {
-                    pb_loading.setVisibility(View.VISIBLE);
-                } else if (attachStatus == AttachStatusEnum.transferred) {
-                    pb_loading.setVisibility(View.INVISIBLE);
+                if (msg.getDirect() == MsgDirectionEnum.In) {
                     String s = TextUtils.isEmpty(attachment.getPath()) ? attachment.getThumbPath() : attachment.getPath();
-
-                    Drawable fromPath = BitmapDrawable.createFromPath(s);
-                    //加载小图
-                    iv_image.setImageDrawable(fromPath);
-                    //加载大图
-                    if (photoView != null) {
-                        photoView.setImageDrawable(fromPath);
-                    }
+                    CommonUtil.showBitmap(iv_image, s);
                 }
             }
-
         }
     };
     //endregion
@@ -1367,34 +1523,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             pb_loading.setVisibility(View.VISIBLE);
         }
     };
-    //endregion
-
-    //region 白板回应监听
- /*    private Observer<RTSCalleeAckEvent> calleeAckEventObserver = new Observer<RTSCalleeAckEvent>() {
-        @Override
-        public void onEvent(RTSCalleeAckEvent rtsCalleeAckEvent) {
-            Log.i(TAG, "onEvent: " + rtsCalleeAckEvent.getEvent() + "" + " 对方回应");
-            if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_AGREE) {
-
-                Log.i(TAG, "onEvent: rtsCalleeAckEvent.isTunReady()=" + rtsCalleeAckEvent.isTunReady());
-                // 判断SDK自动开启通道是否成功
-                if (!rtsCalleeAckEvent.isTunReady()) {
-                    return;
-                }
-                // add support ActionType
-                SupportActionType.getInstance().addSupportActionType(ActionTypeEnum.Path.getValue(), MyPath.class);
-
-                *//* dv_board.init(rtsCalleeAckEvent.getSessionId(), rtsCalleeAckEvent.getAccount(), DoodleView.Mode.BOTH, Color.WHITE, ActivityChat.this);
-                dv_board.setPaintSize(5);
-                dv_board.setPaintType(ActionTypeEnum.Path.getValue());
-                dv_board.setPaintOffset(0, fl_content.getTop());*//*
-
-                // 进入会话界面
-            } else if (rtsCalleeAckEvent.getEvent() == RTSEventType.CALLEE_ACK_REJECT) {
-                // 被拒绝，结束会话
-            }
-        }
-    };*/
     //endregion
 
     //region 自定义通知监听

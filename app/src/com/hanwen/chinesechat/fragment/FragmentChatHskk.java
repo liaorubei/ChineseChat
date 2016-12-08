@@ -98,6 +98,7 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
             }
         }
     };
+    private Dialog dialogZoom;
 
     public static FragmentChatHskk newInstance(int openMode, int hskkId) {
         FragmentChatHskk fragmentChatHskk = new FragmentChatHskk();
@@ -186,7 +187,7 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
                     holder.iv_image.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            final Dialog dialogZoom = new Dialog(getContext(), R.style.NoTitle_Fullscreen);
+                            dialogZoom = new Dialog(getContext(), R.style.NoTitle_Fullscreen);
                             dialogZoom.setContentView(R.layout.dialog_album);
                             ViewPager viewPagerImageMessage = (ViewPager) dialogZoom.findViewById(R.id.viewpager);
                             viewPagerImageMessage.setAdapter(new PagerAdapter() {
@@ -267,7 +268,7 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
             iv_next.setVisibility(View.INVISIBLE);
             iv_back2.setVisibility(View.INVISIBLE);
             rl_tips.setVisibility(View.VISIBLE);
-            tv_position.setVisibility(View.INVISIBLE);
+            tv_position.setVisibility(View.GONE);
 
             HttpUtil.Parameters params = new HttpUtil.Parameters();
             params.add("id", hskkId);
@@ -295,6 +296,18 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
                 }
             });
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause: ");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.i(TAG, "onStop: ");
     }
 
     @Override
@@ -463,15 +476,24 @@ public class FragmentChatHskk extends Fragment implements View.OnClickListener, 
         }
     }
 
+    /**
+     * 隐藏图片缩放对话框
+     */
+    public void dismissDialog() {
+        if (dialogZoom != null) {
+            dialogZoom.dismiss();
+        }
+    }
+
     private class ViewHolder {
         public TextView tv_name;
         public ImageView iv_image;
-
         public ViewHolder(View convertView) {
             this.tv_name = (TextView) convertView.findViewById(R.id.tv_name);
             this.iv_image = (ImageView) convertView.findViewById(R.id.iv_image);
             convertView.setTag(this);
         }
     }
+
 
 }

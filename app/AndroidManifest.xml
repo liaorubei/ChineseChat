@@ -52,7 +52,7 @@
         <activity
             android:name=".activity.ActivitySplash"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan|stateHidden">
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -72,18 +72,6 @@
         <meta-data
             android:name="release"
             android:value="${release_value}"/>
-
-        <!-- 申明白板会话的广播接收器，第三方APP集成时，action中的com.netease.nim.demo请替换为自己的包名 -->
-        <receiver
-            android:name="com.netease.nimlib.receiver.RTSBroadcastReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-
-                <!-- <action android:name="com.netease.nim.demo.ACTION.RECEIVE_RTS_NOTIFICATION"/> -->
-                <action android:name="com.hanwen.chinesechat.ACTION.RECEIVE_RTS_NOTIFICATION"/>
-            </intent-filter>
-        </receiver>
 
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
@@ -147,7 +135,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"/>
         <activity android:name=".activity.ActivityRecord"/>
         <activity android:name=".activity.QuestionActivity"/>
         <activity android:name=".activity.ActivityPayment"/>
@@ -165,6 +153,8 @@
         <activity android:name=".activity.ActivitySecurity"/>
         <activity android:name=".activity.ActivityBlank"/>
         <activity android:name=".activity.ActivityTextbook"/>
+        <activity android:name=".activity.ActivityFolder"/>
+        <activity android:name=".activity.ActivityHaveDownloaded"/>
         <activity
             android:name=".activity.ActivityAlbum"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
@@ -178,11 +168,18 @@
             android:enabled="true"
             android:exported="true"/>
 
-        <activity android:name=".activity.ActivityFolder"/>
+
+        <!--支付宝登录及支付界面，当手机没有安装支付宝的时候使用-->
         <activity
-            android:name=".activity.ActivityHaveDownloaded"
-            android:label="@string/title_activity_activity_have_downloaded">
-        </activity>
+            android:name="com.alipay.sdk.app.H5PayActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"/>
+        <activity
+            android:name="com.alipay.sdk.auth.AuthActivity"
+            android:configChanges="orientation|keyboardHidden|navigation"
+            android:exported="false"
+            android:screenOrientation="behind"/>
     </application>
 
 </manifest>

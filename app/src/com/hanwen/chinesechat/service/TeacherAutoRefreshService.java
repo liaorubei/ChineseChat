@@ -21,13 +21,14 @@ import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
-//教师保持在线自动刷新服务,与教师排队界面的自动刷新服务相冲突，如果排队界面是visable，那么自动刷新服务不发送请求，自动刷新服务每4分钟刷新一次
+//教师保持在线自动刷新服务,与教师排队界面的自动刷新服务相冲突
 public class TeacherAutoRefreshService extends Service {
     private static final String TAG = "TeacherAutoRefreshService";
     private static final int WHAT_REFRESH = 1;
@@ -43,10 +44,25 @@ public class TeacherAutoRefreshService extends Service {
                 params.add("isOnline", NIMClient.getStatus() == StatusCode.LOGINED ? 1 : 0);
                 HttpUtil.post(NetworkUtil.teacherRefresh, params, null);
 
-                IMMessage message = MessageBuilder.createEmptyMessage("12315", SessionTypeEnum.P2P, System.currentTimeMillis());
-                NIMClient.getService(MsgService.class).sendMessage(message, false);
+                IMMessage message = MessageBuilder.createTextMessage("1", SessionTypeEnum.P2P, "1");// MessageBuilder.createEmptyMessage("12315", SessionTypeEnum.P2P,0);
+                NIMClient.getService(MsgService.class).sendMessage(message, false).setCallback(new RequestCallback<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.i(TAG, "onSuccess: ");
+                    }
 
-                sendEmptyMessageDelayed(WHAT_REFRESH, 60 * 1000);
+                    @Override
+                    public void onFailed(int i) {
+                        Log.i(TAG, "onFailed: " + i);
+                    }
+
+                    @Override
+                    public void onException(Throwable throwable) {
+                        Log.i(TAG, "onException: " + throwable.getMessage());
+                    }
+                });
+
+                sendEmptyMessageDelayed(WHAT_REFRESH, 2 * 60 * 1000);
             }
         }
     };
@@ -56,18 +72,13 @@ public class TeacherAutoRefreshService extends Service {
     public void onCreate() {
         super.onCreate();
         handler.sendEmptyMessageDelayed(WHAT_REFRESH, 0);
-
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 ConnectivityManager systemService = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
                 boolean availableMobile = systemService.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState() == NetworkInfo.State.CONNECTED;
                 boolean availableWifi = systemService.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState() == NetworkInfo.State.CONNECTED;
-
                 Log.i(TAG, "onReceive: availableMobile=" + availableMobile + " availableWifi=" + availableWifi);
-/*
-                String typeName = systemService.getActiveNetworkInfo().getTypeName();
-                Log.i(TAG, "onReceive: " + typeName);*/
             }
         };
 

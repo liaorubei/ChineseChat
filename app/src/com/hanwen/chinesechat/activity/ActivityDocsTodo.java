@@ -101,7 +101,12 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     }
 
     private void initData() {
-        String url = NetworkUtil.documentGetListByFolderId + String.format("?folderId=%1$d&userId=%2$d", folder.Id, ChineseChat.CurrentUser.Id);
+        //防异常处理
+        int id = -1;
+        if (ChineseChat.CurrentUser != null) {
+            id = ChineseChat.CurrentUser.Id;
+        }
+        String url = NetworkUtil.documentGetListByFolderId + String.format("?folderId=%1$d&userId=%2$d", folder.Id, id);
         Log.i(TAG, "initData: " + url);
 
         UrlCache cache = ChineseChat.database().cacheSelectByUrl(url);

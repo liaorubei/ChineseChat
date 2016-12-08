@@ -162,10 +162,12 @@ public class FragmentCourseNestThird extends Fragment implements View.OnClickLis
             TextView tv_title_sub = (TextView) inflate.findViewById(R.id.tv_title_sub);
 
             tv_name.setText(item.TitleCn);
+            tv_name.setSingleLine(false);
             tv_count.setText(item.TitleEn);
+            tv_count.setSingleLine(false);
             tv_count.setVisibility(TextUtils.isEmpty(item.TitleEn) ? View.GONE : View.VISIBLE);
-
             tv_title_sub.setText(item.TitleSubCn);
+            tv_title_sub.setSingleLine(false);
             tv_title_sub.setVisibility(TextUtils.isEmpty(item.TitleSubCn) ? View.GONE : View.VISIBLE);
             return inflate;
         }

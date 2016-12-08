@@ -156,7 +156,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
     private class MyAdapter extends RecyclerView.Adapter<ViewHolder> {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ViewHolder(getActivity().getLayoutInflater().inflate(R.layout.listitem_folder1, parent, false));
+            return new ViewHolder(View.inflate(getContext(), R.layout.listitem_folder1, null));
         }
 
         @Override

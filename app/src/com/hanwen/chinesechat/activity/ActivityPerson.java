@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 //个人资料编辑页面
@@ -254,6 +255,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 }
             });
 
+            if (user.Photos == null)
+                return;
             //
             for (String s : user.Photos) {
                 ImageView photoAdd = new ImageView(this);
@@ -544,7 +547,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
         return mediaFile;
     }

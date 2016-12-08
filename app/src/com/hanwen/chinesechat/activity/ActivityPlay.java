@@ -76,7 +76,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     private int titck = 0;
     private Integer subTitleState = 0;
     private LinearLayout ll_lyrics, ll_play, ll_tape;
-    private List<SpecialLyricView> specialLyricViews;
+    private List<SpecialLyricView> specialLyricViews = new ArrayList<SpecialLyricView>();
     private MediaPlayer playerOrigin, playerRecord;// 原音,录音播放对象
     private MediaRecorder recorder;// 音频录音对象
     private MediaState currentState = MediaState.播放原音;
@@ -96,9 +96,9 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         setContentView(R.layout.activity_play);
 
         subTitleIcons = new ArrayList<Integer>();
-        subTitleIcons.add(R.drawable.switch_none);
-        subTitleIcons.add(R.drawable.switch_cn);
-        subTitleIcons.add(R.drawable.switch_cnen);
+        subTitleIcons.add(R.drawable.switch_news);
+        subTitleIcons.add(R.drawable.switch_news);
+        subTitleIcons.add(R.drawable.switch_news);
 
         initView();
 
@@ -235,8 +235,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         tv_title_en.setText(document.TitleEn);
         tv_title_en.setVisibility(TextUtils.isEmpty(document.TitleEn) ? View.GONE : View.VISIBLE);
 
-        specialLyricViews = new ArrayList<SpecialLyricView>();
-
+        specialLyricViews.clear();
         for (Lyric lyric : document.Lyrics) {
             SpecialLyricView specialLyricView = new SpecialLyricView(ActivityPlay.this, lyric);
             specialLyricViews.add(specialLyricView);
@@ -246,7 +245,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
         for (SpecialLyricView specialLyricView : specialLyricViews) {
             // 在刚开始的时候,显示中文字幕的
-            specialLyricView.showEnCn(SpecialLyricView.SHOW_NONE);
+            specialLyricView.showEnCn(SpecialLyricView.SHOW_ENCN);
             ll_lyrics.addView(specialLyricView);
         }
 
@@ -765,20 +764,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     @Override
     public void onPrepared(MediaPlayer mp) {
         rl_buffering.setVisibility(View.INVISIBLE);
-
-        iv_cover.setVisibility(View.VISIBLE);
-        AnimationSet set = new AnimationSet(true);
-
-        AlphaAnimation alpha = new AlphaAnimation(0F, 1F);
-        alpha.setDuration(2000);
-
-        ScaleAnimation scale = new ScaleAnimation(0F, 1F, 0F, 1F);
-        scale.setDuration(2000);
-
-        set.addAnimation(alpha);
-        set.addAnimation(scale);
-        iv_cover.startAnimation(alpha);
-
+        sv_lyrics.setVisibility(View.VISIBLE);
         mp.start();
         seekBar.setMax(mp.getDuration());
         tv_bSide.setText(millisecondsFormat(mp.getDuration()));
@@ -908,7 +894,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
     }
 
     private void showOrHideSubtitle(int state) {
-
+/*
         Integer integer = subTitleIcons.get(state);
         switch (integer) {
             case R.drawable.switch_none:
@@ -928,6 +914,34 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                     view.showEnCn(SpecialLyricView.SHOW_ENCN);
                     iv_cover.setVisibility(View.INVISIBLE);
                 }
+                break;
+            default:
+
+                break;
+        }*/
+
+        //20161202要求更改中英文显示方式，先显示汉字/英文（拼音），第二显示中文或者拼音，第三显示封面
+        switch (state) {
+            case 0:
+                for (SpecialLyricView view : specialLyricViews) {
+                    view.showEnCn(SpecialLyricView.SHOW_ENCN);
+                    iv_cover.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case 1:
+                for (SpecialLyricView view : specialLyricViews) {
+                    view.showEnCn(SpecialLyricView.SHOW_CN);
+                    iv_cover.setVisibility(View.INVISIBLE);
+                }
+                break;
+            case 2:
+                for (SpecialLyricView view : specialLyricViews) {
+                    view.showEnCn(SpecialLyricView.SHOW_NONE);
+                    iv_cover.setVisibility(View.VISIBLE);
+                }
+                break;
+            default:
+
                 break;
         }
 

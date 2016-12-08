@@ -40,7 +40,6 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
     private TextView tv_location;
     private TextView tv_about, tv_school, tv_language, tv_hobby;
     private LinearLayout ll_album;
-
     private ImageView iv_call;
     private User user;
     private Gson gson = new Gson();
@@ -117,15 +116,14 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<User> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
-                }.getType());
+                Response<User> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {}.getType());
                 if (o.code == 200) {
                     User info = o.info;
                     tv_location.setText(info.Spoken);
                     tv_school.setText(info.School);
                     tv_language.setText(info.Spoken);
                     tv_hobby.setText(info.Hobbies);
-
+                    tv_about.setText(info.About);
                     if (info.Photos.size() > 0) {
                         ll_album.removeAllViews();
                     }

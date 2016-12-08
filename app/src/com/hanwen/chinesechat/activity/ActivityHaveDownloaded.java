@@ -1,18 +1,15 @@
 package com.hanwen.chinesechat.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
@@ -22,7 +19,6 @@ import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.util.CommonUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ActivityHaveDownloaded extends Activity implements View.OnClickListener {

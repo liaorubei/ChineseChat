@@ -51,7 +51,7 @@ public class ChineseChat extends Application {
             mDatabase = new Database(this);
 
             //网易云捕
-            //CrashHandler.init(getApplicationContext());
+            CrashHandler.init(getApplicationContext());
 
             //region 注册来电监听
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
@@ -115,7 +115,7 @@ public class ChineseChat extends Application {
     private SDKOptions getOptions() {
         SDKOptions options = new SDKOptions();
         options.appKey = "599551c5de7282b9a1d686ee40abf74c";
-        options.sdkStorageRootPath = new File(Environment.getExternalStorageDirectory(), getPackageName() + "/nim").getAbsolutePath();
+        options.sdkStorageRootPath = new File(getExternalCacheDir(), "NimClient").getAbsolutePath();//new File(Environment.getExternalStorageDirectory(), getPackageName() + "/nim").getAbsolutePath();
         //后台自动下载附件：如果是语音消息，直接下载文件，如果是图片或视频消息，下载缩略图文件。
         options.preloadAttach = true;
         return options;

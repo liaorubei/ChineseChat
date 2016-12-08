@@ -1,8 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#F0F0F0"
-    android:orientation="vertical">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#F0F0F0"
+              android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/ll_person"
@@ -12,8 +12,9 @@
         android:background="#fff"
         android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_avatar"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
@@ -21,7 +22,7 @@
             android:layout_marginTop="20dp"
             android:src="@drawable/ic_launcher_student"
             app:civ_border_color="#0000A478"
-            app:civ_border_width="2dp" />
+            app:civ_border_width="2dp"/>
 
         <LinearLayout
             android:id="@+id/ll_gender"
@@ -36,14 +37,14 @@
                 android:layout_height="25dp"
                 android:gravity="center"
                 android:text="@string/FragmentPerson_unlogin"
-                android:textSize="18sp" />
+                android:textSize="18sp"/>
 
             <ImageView
                 android:id="@+id/iv_gender"
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:padding="3dp"
-                android:visibility="gone" />
+                android:visibility="gone"/>
         </LinearLayout>
 
         <TextView
@@ -52,7 +53,7 @@
             android:layout_height="25dp"
             android:gravity="center"
             android:text="@string/fragment_person_history"
-            android:textSize="15sp" />
+            android:textSize="15sp"/>
     </LinearLayout>
 
     <RelativeLayout
@@ -66,25 +67,23 @@
             android:id="@+id/iv_topup"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
             android:padding="5dp"
-            android:src="@drawable/icon_wallet" />
+            android:src="@drawable/icon_wallet"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_topup"
-            android:text="@string/fragment_person_recharge" />
+            android:text="@string/fragment_person_recharge"/>
 
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/icon_menu_arrow" />
+            android:padding="10dp"
+            android:src="@drawable/icon_menu_arrow"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -98,9 +97,8 @@
             android:id="@+id/iv_record"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
             android:padding="5dp"
-            android:src="@drawable/icon_record" />
+            android:src="@drawable/icon_record"/>
 
         <TextView
             android:id="@+id/tv_history"
@@ -108,15 +106,14 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_record"
-            android:text="@string/fragment_person_history" />
+            android:text="@string/fragment_person_history"/>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/icon_menu_arrow" />
+            android:padding="10dp"
+            android:src="@drawable/icon_menu_arrow"/>
     </RelativeLayout>
 
     <RelativeLayout
@@ -130,24 +127,22 @@
             android:id="@+id/iv_setting"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_centerVertical="true"
             android:padding="5dp"
-            android:src="@drawable/icon_setting" />
+            android:src="@drawable/icon_setting"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_setting"
-            android:text="@string/fragment_person_setting" />
+            android:text="@string/fragment_person_setting"/>
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/icon_menu_arrow" />
+            android:padding="10dp"
+            android:src="@drawable/icon_menu_arrow"/>
     </RelativeLayout>
 </LinearLayout>
 
