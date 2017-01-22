@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * 已下载，要求显示所有已经下载的文件夹
+ * 已下载，要求显示所有已经下载的文件夹，课本与级别分开的方式
  */
 public class FragmentHaveDownloaded extends Fragment implements View.OnClickListener {
     private static final String TAG = "FragmentHaveDownloaded";
@@ -76,16 +76,18 @@ public class FragmentHaveDownloaded extends Fragment implements View.OnClickList
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.rl_course:
-            {    Intent intent = new Intent(getContext(), ActivityHaveDownloaded.class);
+            case R.id.rl_course: {
+                Intent intent = new Intent(getContext(), ActivityHaveDownloaded.class);
                 intent.putExtra("FolderIds", idsCourse);
-                startActivity(intent);}
-                break;
-            case R.id.rl_levels:
-            {   Intent intent = new Intent(getContext(), ActivityHaveDownloaded.class);
+                startActivity(intent);
+            }
+            break;
+            case R.id.rl_levels: {
+                Intent intent = new Intent(getContext(), ActivityHaveDownloaded.class);
                 intent.putExtra("FolderIds", idsLevels);
-                startActivity(intent);}
-                break;
+                startActivity(intent);
+            }
+            break;
         }
 
     }

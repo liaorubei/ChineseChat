@@ -92,11 +92,14 @@ public class Database {
     }
 
     public List<Document> docsSelectListByFolderId(int folderId) {
-        Cursor cursor = mReadable.rawQuery("select Json from document where IsDownload=1 and FolderId=?", new String[]{folderId + ""});
+        Cursor cursor = mReadable.rawQuery("select Json,TitleEn,TitleSubCn from document where IsDownload=1 and FolderId=?", new String[]{folderId + ""});
         List<Document> list = new ArrayList<Document>();
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
         while (cursor.moveToNext()) {
             Document document = gson.fromJson(cursor.getString(0), Document.class);
+            document.TitleEn = cursor.getString(1);
+            document.TitleTwo = document.TitleEn;
+            document.TitleSubCn = cursor.getString(2);
             list.add(document);
         }
         cursor.close();
@@ -147,7 +150,7 @@ public class Database {
      * @return select Id,Name,(select count(FolderId) from document where FolderId=folder.Id) as DocsCount from folder order by folder.Id
      */
     public List<Folder> folderSelectListWithDocsCount() {
-        Cursor cursor = mReadable.rawQuery("select Id,Name,(select count(document.FolderId) From Document where Document.IsDownload=1 and Document.FolderId=Folder.Id) as DocsCount,Sort,Cover,LevelId From Folder where Folder.Id in (select distinct FolderId From Document)", null);
+        Cursor cursor = mReadable.rawQuery("select Id,Name,(select count(document.FolderId) From Document where Document.IsDownload=1 and Document.FolderId=Folder.Id) as DocsCount,Sort,Cover,LevelId From Folder where Folder.Id in (select distinct FolderId From Document) order by Name desc", null);
         List<Folder> list = new ArrayList<Folder>();
         while (cursor.moveToNext()) {
             Folder folder = new Folder();
@@ -261,6 +264,7 @@ public class Database {
         return list;
     }
 
+
     public List<Document> docsGetListDownloaded() {
         List<Document> list = new ArrayList<>();
         Cursor cursor = mReadable.query("Document", new String[]{"Id", "TitleCn", "TitleEn", "TitleSubCn", "TitleSubEn", "Category", "SoundPath", "FolderId"}, "IsDownload=1", null, null, null, null);
@@ -313,5 +317,24 @@ public class Database {
         }
         cursor.close();
         return documents;
+    }
+
+    public void docsInsertOrReplace(Document document) {
+
+    }
+
+    public List<Document> docsGetListAll() {
+        List<Document> list = new ArrayList<>();
+        Cursor cursor = mReadable.query("Document", new String[]{"Id", "TitleCn", "TitleEn", "IsDownload"}, null, null, null, null, "Id");
+        while (cursor.moveToNext()) {
+            Document document = new Document();
+            document.Id = cursor.getInt(0);
+            document.TitleCn = cursor.getString(1);
+            document.TitleEn = cursor.getString(2);
+            document.IsDownload = cursor.getInt(3);
+            list.add(document);
+        }
+        cursor.close();
+        return list;
     }
 }

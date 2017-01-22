@@ -195,7 +195,6 @@ public class CircularProgressBar extends View {
             this.progress = progress;
             postInvalidate();
         }
-
     }
 
     public int getCricleColor() {

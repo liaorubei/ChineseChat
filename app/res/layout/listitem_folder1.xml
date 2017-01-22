@@ -18,7 +18,8 @@
             android:scaleType="fitXY"
             android:src="@drawable/background"
             android:visibility="visible"
-            tools:ignore="contentDescription"/>
+            tools:ignore="contentDescription"
+            android:padding="5dp"/>
     </com.hanwen.chinesechat.view.SquareLayout>
 
     <LinearLayout

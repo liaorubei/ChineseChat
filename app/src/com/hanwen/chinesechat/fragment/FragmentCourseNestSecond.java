@@ -1,26 +1,27 @@
 package com.hanwen.chinesechat.fragment;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Folder;
 import com.hanwen.chinesechat.bean.Response;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
+import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -35,8 +36,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentCourseNestSecond extends Fragment {
+    private static final String TAG = "FragmentCourseNestSecond";
     private static final String KEY_PARENT = "KEY_PARENT";
-    private static final String ARG_PARAM2 = "param2";
     private Folder parent;
     private List<Folder> data = new ArrayList<Folder>();
     private Adapter adapter = new Adapter(data);
@@ -75,6 +76,7 @@ public class FragmentCourseNestSecond extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        //Log.i(TAG, "onViewCreated: " + parent);
         View viewById = view.findViewById(R.id.iv_back);
         viewById.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,14 +96,15 @@ public class FragmentCourseNestSecond extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Folder folder = data.get(position);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fl_content, folder.HasChildren ? FragmentCourseNestSecond.newInstance(folder) : FragmentCourseNestThird.newInstance(folder), folder.Name);
+                fragmentTransaction.replace(R.id.fl_content, folder.KidsCount > 0 ? FragmentCourseNestSecond.newInstance(folder) : FragmentCourseNestThird.newInstance(folder), folder.Name);
                 fragmentTransaction.addToBackStack(folder.Name).commit();
             }
         });
 
         HttpUtil.Parameters params = new HttpUtil.Parameters();
-        params.add("folderId", parent.Id);
-        HttpUtil.post(NetworkUtil.folderGetChildListByParentId, params, new RequestCallBack<String>() {
+        params.add("userId", ChineseChat.CurrentUser.Id);
+        params.add("parentId", parent.TargetId > 0 ? parent.TargetId : parent.Id);
+        HttpUtil.post(NetworkUtil.folderGetList, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Response<List<Folder>> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {}.getType());

@@ -202,14 +202,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:visibility="invisible"
-                >
+                android:visibility="invisible">
 
                 <TextView
                     android:id="@+id/tv_theme"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
+                    android:background="@color/color_app"
                     android:gravity="center"
+                    android:textColor="#fff"
                     android:textSize="15sp"/>
 
                 <ListView
@@ -239,17 +240,69 @@
                     android:textSize="25sp"/>
             </RelativeLayout>
 
-            <FrameLayout
+            <RelativeLayout
                 android:id="@+id/rl_lyric"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible"/>
+                android:visibility="invisible">
 
-            <FrameLayout
+                <TextView
+                    android:id="@+id/tv_folder"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:background="@color/color_app"
+                    android:gravity="center"
+                    android:textColor="#fff"
+                    android:textSize="15sp"/>
+
+                <TextView
+                    android:id="@+id/tv_course"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_folder"
+                    android:gravity="center"
+                    android:textColor="#A000"/>
+
+                <ListView
+                    android:id="@+id/listViewCourse"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tv_course"
+                    android:scrollbars="none"/>
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:id="@+id/fl_hskk"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible"/>
+                android:visibility="invisible">
+
+                <TextView
+                    android:id="@+id/tv_hskkPart"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:background="@color/color_app"
+                    android:gravity="center"
+                    android:textColor="#fff"/>
+
+                <TextView
+                    android:id="@+id/tv_hskkDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_hskkPart"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:textColor="#A000"
+                    android:textSize="20sp"/>
+
+                <ListView
+                    android:id="@+id/listViewHskk"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/tv_hskkDesc"
+                    android:scrollbars="none"/>
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/rl_image"
@@ -305,8 +358,7 @@
                 android:id="@+id/rl_texts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="invisible"
-                >
+                android:visibility="invisible">
 
                 <ListView
                     android:id="@+id/lv_msg"

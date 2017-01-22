@@ -5,18 +5,20 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.provider.MediaStore;
@@ -50,23 +52,12 @@ import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.base.BaseAdapter;
-import com.hanwen.chinesechat.bean.CallLog;
-import com.hanwen.chinesechat.bean.ChatData;
-import com.hanwen.chinesechat.bean.ChatDataExtra;
-import com.hanwen.chinesechat.bean.Lyric;
-import com.hanwen.chinesechat.bean.MessageText;
-import com.hanwen.chinesechat.bean.NimSysNotice;
-import com.hanwen.chinesechat.bean.Question;
-import com.hanwen.chinesechat.bean.Response;
-import com.hanwen.chinesechat.bean.Theme;
-import com.hanwen.chinesechat.bean.User;
-import com.hanwen.chinesechat.bean.UserLite;
+import com.hanwen.chinesechat.bean.*;
 import com.hanwen.chinesechat.fragment.FragmentChatHskk;
 import com.hanwen.chinesechat.fragment.FragmentCourse;
-import com.hanwen.chinesechat.fragment.FragmentCourseShow;
 import com.hanwen.chinesechat.fragment.FragmentThemes;
 import com.hanwen.chinesechat.fragment.FragmentTopics;
-import com.hanwen.chinesechat.fragment.FragmentTopicsShow;
+import com.hanwen.chinesechat.service.ServiceChat;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.FileUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
@@ -116,11 +107,8 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -132,9 +120,11 @@ import uk.co.senab.photoview.PhotoViewAttacher;
  */
 public class ActivityChat extends FragmentActivity implements OnClickListener {
     public static final String TAG = "ActivityChat";
+    public static final String KEY_CHAT_DATA = "KEY_CHAT_DATA";
+    public static final String KEY_CHAT_MODE = "KEY_CHAT_MODE";
+
     public static final int CHAT_MODE_INCOMING = 1;
     public static final int CHAT_MODE_OUTGOING = 0;
-
     public static final int REQUEST_CODE_IMAGE = 2;
     public static final int REQUEST_CODE_IMAGE_CAPTURE = 3;
     public static final int REQUEST_CODE_THEME = 1;
@@ -142,13 +132,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     public static final int WHAT_PEER_BUSY = 2;
     public static final int WHAT_PLAY_SOUND = 1;
     public static final int WHAT_REFRESH = 4;
-    public static final String KEY_CHAT_DATA = "KEY_CHAT_DATA";
-    public static final String KEY_CHAT_MODE = "KEY_CHAT_MODE";
 
+    public AVChatData chatData;
     private AdapterMessage adapterMessage;
     private boolean CALL_ID_RECEIVE = false;
     private boolean IS_CALL_ESTABLISHED = false;//通话是否已经建立
-    public ChatData chatData;
     private ChatDataExtra chatDataExtra;
     private Chronometer cm_time;
     private EditText et_msg;
@@ -160,7 +148,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
     private List<IMMessage> listImageMessage = new ArrayList<IMMessage>();
     private List<MessageText> listMessage;
-    private List<String> list;
+    private List<String> listTopic;
+    private List<String> listImage = new ArrayList<>();
     private ListView listview;
     private ListView lv_msg;
     private AdapterThemes adapter;
@@ -180,7 +169,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
     private File fileImageCapture;
 
-    private long delayMillisRefresh = 60 * 1000;//学生端第分钟计时刷新时间，第60秒刷新一次，当学币少于30时，每15秒刷新一次
+    private long delayMillisRefresh = 45 * 1000;//学生端第分钟计时刷新时间，第60秒刷新一次，当学币少于30时，每15秒刷新一次
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -191,6 +180,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             else if (msg.what == WHAT_REFRESH) {
                 Parameters params = new Parameters();
                 params.add("callId", callId);
+                //Log.i(TAG, "callId=" + callId + ",chatId=" + chatData.getChatId());
                 HttpUtil.post(NetworkUtil.callRefresh, params, new RequestCallBack<String>() {
                     @Override
                     public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -207,6 +197,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                                     //当学币少于30时，刷新时间15秒提示一次
                                     delayMillisRefresh = 15 * 1000;
                                 }
+                            } else {
+                                delayMillisRefresh = 60 * 1000;
                             }
                         } else {
                             hangup();
@@ -216,7 +208,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
                     @Override
                     public void onFailure(HttpException error, String msg) {
-                        Log.i(TAG, "刷新失败: " + msg + " url=" + this.getRequestUrl());
+                        Log.i(TAG, "刷新失败: " + msg + " url=" + this.getRequestUrl() + ",error=" + error.getMessage());
                         CommonUtil.toast(getString(R.string.network_error));
                     }
                 });
@@ -225,6 +217,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
             //
             else if (msg.what == WHAT_HANG_UP) {
+                Log.i(TAG, "handleMessage: WHAT_HANG_UP");
                 if (TextUtils.isEmpty(callId)) {
                     hangup();
                 }
@@ -284,8 +277,106 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     private View iv_next;
     private TextView tv_status;
     private AlertDialog dialog_chat_image;
+    private ServiceConnection connServiceChat;
+    private ServiceChat.MyBinder connection;
+    private TextView tv_folder;
+    private TextView tv_course;
+    private ListView listViewCourse;
+    private List<Lyric> listLyric;
+    private TextView tv_hskkPart;
+    private TextView tv_hskkDesc;
+    private ListView listViewHskk;
+    private List<HskkQuestion> listHskk;
 
     //endregion
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //Log.i(TAG, "onCreate: savedInstanceState=" + savedInstanceState + ",/n listview=" + listview);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        setContentView(R.layout.activity_chat);
+
+        Intent intent = getIntent();
+        chatMode = intent.getIntExtra(KEY_CHAT_MODE, -1);
+        chatData = (AVChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
+        chatDataExtra = gson.fromJson(chatData.getExtra(), ChatDataExtra.class);
+        if (chatDataExtra == null) {
+            chatDataExtra = new ChatDataExtra();
+        }
+
+        Log.i(TAG, "onCreate: " + chatData + ",Extra=" + chatData.getExtra());
+
+        initView();
+        initData();
+
+        registerObserver(true);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.intent.action.PHONE_STATE");
+        registerReceiver(broadcastReceiver, filter);
+
+        Intent service = new Intent(this, ServiceChat.class);
+        connServiceChat = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                connection = (ServiceChat.MyBinder) service;
+                Log.i(TAG, "onServiceConnected: " + connection.isCallEstablished());
+
+                if (chatMode == ActivityChat.CHAT_MODE_OUTGOING) {
+
+                    if (!connection.isCallEstablished()) {
+                        //呼出
+                        JsonObject student = new JsonObject();
+                        student.addProperty("Id", ChineseChat.CurrentUser.Id);
+                        student.addProperty("Avatar", ChineseChat.CurrentUser.Avatar);
+                        student.addProperty("Nickname", ChineseChat.CurrentUser.Nickname);
+                        JsonObject summary = new JsonObject();
+                        summary.addProperty("month", 0);
+                        summary.addProperty("count", 0);
+                        summary.addProperty("duration", 0);
+                        student.add("Summary", summary);
+
+                        AVChatNotifyOption option = new AVChatNotifyOption();
+                        option.apnsBadge = false;
+                        option.apnsInuse = true;
+                        option.pushSound = "pushRing.aac";//Push
+                        option.extendMessage = chatData.getExtra();// student.toString();//把呼叫者的用户名,头像发送过去
+
+                        AVChatOptionalConfig params = new AVChatOptionalConfig();
+                        params.enableCallProximity(false);
+
+                        AVChatManager.getInstance().call(chatData.getAccount(), AVChatType.AUDIO, params, option, callback_call);
+                    }
+                }
+
+
+                if (connection.isCallEstablished()) {
+                    rl_hold.setVisibility(View.INVISIBLE);
+                    rl_talk.setVisibility(View.VISIBLE);
+                    cm_time.setBase(connection.getEstablishedBaseTime());
+                    cm_time.start();
+                }
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        bindService(service, connServiceChat, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy: ");
+        registerObserver(false);
+
+        unbindService(connServiceChat);
+        unregisterReceiver(broadcastReceiver);
+        handler.removeCallbacksAndMessages(null);//避免出现拨出又马上挂断的情况,回铃声会在5秒之后响起
+    }
 
     /**
      * @param context  上下文
@@ -317,7 +408,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 tabsSwitch(v.getId());
                 //endregion
                 break;
-            case R.id.bt_pick_theme:
+            case R.id.bt_pick_theme://由于话题发送功能转换到了Fragment中，所以此按钮废弃
                 //region主题发送按钮
                 ActivityTheme.start(ActivityChat.this, gson.toJson(currentTheme));
                 //endregion
@@ -443,10 +534,20 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 break;
             case R.id.iv_image:
                 //region 点击图片放大
-                if (listImageMessage.size() > 0) {
-                    viewPagerImageMessage.setCurrentItem(currentImageIndex);
+                //更换数据
+
+                listImage.clear();
+                for (IMMessage m : listImageMessage) {
+                    String urlImage = ((ImageAttachment) m.getAttachment()).getUrl();
+                    listImage.add(urlImage);
+                }
+
+                if (listImage.size() > 0) {
                     TextView tv_index = (TextView) dialogZoom.findViewById(R.id.tv_index);
-                    tv_index.setText(String.format("%1$d/%2$d", currentImageIndex + 1, listImageMessage.size()));
+                    tv_index.setVisibility(View.VISIBLE);
+                    tv_index.setText(String.format("%1$d/%2$d", currentImageIndex + 1, listImage.size()));
+                    viewPagerImageMessage.setAdapter(new AdapterImage());
+                    viewPagerImageMessage.setCurrentItem(currentImageIndex);
                     dialogZoom.show();
                 }
                 //endregion
@@ -490,7 +591,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
 
         //隐藏图片缩放窗口
-        if (identifyId != R.id.ll_image && dialogZoom != null) {
+        if (dialogZoom != null && dialogZoom.isShowing()) {
             dialogZoom.dismiss();
         }
 
@@ -506,6 +607,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     private void hangup() {
         AVChatManager.getInstance().hangUp(callbackHangup);
         SoundPlayer.instance(ChineseChat.getContext()).stop();
+        Intent service = new Intent(getApplicationContext(), ServiceChat.class);
+        stopService(service);
     }
 
     private void showThemeQuestion(Theme theme) {
@@ -523,12 +626,12 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Response<Theme> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Theme>>() {}.getType());
-                list.clear();
+                listTopic.clear();
                 adapter.notifyDataSetChanged();
                 if (resp.code == 200) {
                     List<Question> questions = resp.info.Questions;
                     for (Question q : questions) {
-                        list.add(q.Name);
+                        listTopic.add(q.Name);
                     }
                 }
                 adapter.notifyDataSetChanged();
@@ -541,25 +644,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 Log.i(TAG, "onFailure: " + msg);
             }
         });
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Log.i(TAG, "onCreate: savedInstanceState=" + savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-        setContentView(R.layout.activity_chat);
-
-        //  getActionBar().hide();
-
-        initView();
-        initData();
-
-        registerObserver(true);
-
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("android.intent.action.PHONE_STATE");
-        registerReceiver(broadcastReceiver, filter);
     }
 
     private void initView() {
@@ -608,10 +692,22 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         rl_theme = findViewById(R.id.rl_theme);
         tv_theme = (TextView) findViewById(R.id.tv_theme);
         listview = (ListView) findViewById(R.id.listview);
-        tv_theme_center = (TextView) findViewById(R.id.tv_theme_center);
+        tv_theme_center = (TextView) findViewById(R.id.tv_theme_center);//废弃
+
+        //由于话题发送功能转换到了Fragment中，所以此按钮废弃
         Button bt_pick_theme = (Button) findViewById(R.id.bt_pick_theme);
         bt_pick_theme.setVisibility(ChineseChat.isStudent() ? View.VISIBLE : View.INVISIBLE);
         bt_pick_theme.setOnClickListener(this);
+
+        //课程
+        tv_folder = (TextView) findViewById(R.id.tv_folder);
+        tv_course = (TextView) findViewById(R.id.tv_course);
+        listViewCourse = (ListView) findViewById(R.id.listViewCourse);
+
+        //HSKK
+        tv_hskkPart = (TextView) findViewById(R.id.tv_hskkPart);
+        tv_hskkDesc = (TextView) findViewById(R.id.tv_hskkDesc);
+        listViewHskk = (ListView) findViewById(R.id.listViewHskk);
 
         //文字
         lv_msg = (ListView) findViewById(R.id.lv_msg);
@@ -672,74 +768,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         pb_loading = (ProgressBar) findViewById(R.id.pb_loading);
         pb_loading.setVisibility(View.INVISIBLE);
 
-        list = new ArrayList<>();
-        adapter = new AdapterThemes(list);
-        listview.setAdapter(adapter);
-
         //region 初始化图片查看对话框
         dialogZoom = new Dialog(this, R.style.NoTitle_Fullscreen);
         dialogZoom.setContentView(R.layout.dialog_album);
         viewPagerImageMessage = (ViewPager) dialogZoom.findViewById(R.id.viewpager);
-        viewPagerImageMessage.setAdapter(new PagerAdapter() {
-            @Override
-            public int getCount() {
-                return listImageMessage.size();
-            }
-
-            @Override
-            public boolean isViewFromObject(View view, Object object) {
-                return view.equals(object);
-            }
-
-            @Override
-            public Object instantiateItem(ViewGroup container, int position) {
-                ImageAttachment attachment = (ImageAttachment) listImageMessage.get(position).getAttachment();
-                FrameLayout fl = new FrameLayout(getApplication());
-                final ProgressBar pb = new ProgressBar(getApplication());
-                pb.setVisibility(View.VISIBLE);
-
-                final ImageView photoView = new ImageView(getApplicationContext());
-                final PhotoViewAttacher photoViewAttacher = new PhotoViewAttacher(photoView);
-                photoViewAttacher.setOnViewTapListener(new PhotoViewAttacher.OnViewTapListener() {
-                    @Override
-                    public void onViewTap(View view, float x, float y) {
-                        dialogZoom.dismiss();
-                        photoViewAttacher.setScale(1);
-                    }
-                });
-                photoView.setImageResource(R.drawable.background);
-                new BitmapUtils(getApplicationContext(), getCacheDir().getAbsolutePath()).display(photoView, attachment.getUrl(), new BitmapLoadCallBack<ImageView>() {
-                    @Override
-                    public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
-                        Log.i(TAG, "onLoadCompleted: ");
-                        photoView.setImageBitmap(bitmap);
-                        photoViewAttacher.update();
-                        pb.setVisibility(View.INVISIBLE);
-                    }
-
-                    @Override
-                    public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
-                        Log.i(TAG, "onLoadFailed: ");
-                        photoViewAttacher.update();
-                        pb.setVisibility(View.INVISIBLE);
-                    }
-                });
-                fl.addView(photoView, new FrameLayout.LayoutParams(-1, -1));
-
-                int v = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(v, v);
-                params.gravity = Gravity.CENTER;
-                fl.addView(pb, params);
-
-                container.addView(fl);
-                return fl;
-            }
-
-            @Override
-            public void destroyItem(ViewGroup container, int position, Object object) {
-                container.removeView((View) object);
-            }
-        });
+        viewPagerImageMessage.setAdapter(new AdapterImage());
         viewPagerImageMessage.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -748,16 +781,15 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
             @Override
             public void onPageSelected(int position) {
-                currentImageIndex = position;
-                ImageAttachment attachment = (ImageAttachment) listImageMessage.get(position).getAttachment();
-                String path = TextUtils.isEmpty(attachment.getPath()) ? attachment.getThumbPath() : attachment.getPath();
-
-                iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
-                iv_next.setVisibility(currentImageIndex < listImageMessage.size() - 1 ? View.VISIBLE : View.INVISIBLE);
-
-                CommonUtil.showBitmap(iv_image, path);
                 TextView tv_index = (TextView) dialogZoom.findViewById(R.id.tv_index);
-                tv_index.setText(String.format("%1$d/%2$d", position + 1, listImageMessage.size()));
+                if (tv_index.getVisibility() == View.VISIBLE) {
+                    tv_index.setText(String.format("%1$d/%2$d", position + 1, listImage.size()));
+                    currentImageIndex = position;
+                    String path = listImage.get(position);
+                    iv_prev.setVisibility(currentImageIndex > 0 ? View.VISIBLE : View.INVISIBLE);
+                    iv_next.setVisibility(currentImageIndex < listImageMessage.size() - 1 ? View.VISIBLE : View.INVISIBLE);
+                    CommonUtil.showBitmap(iv_image, path);
+                }
             }
 
             @Override
@@ -769,19 +801,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     }
 
     private void initData() {
-        Intent intent = getIntent();
-        chatMode = intent.getIntExtra(KEY_CHAT_MODE, -1);
-        chatData = (ChatData) intent.getSerializableExtra(KEY_CHAT_DATA);
-        chatDataExtra = gson.fromJson(chatData.getExtra(), ChatDataExtra.class);
-        if (chatDataExtra == null) {
-            chatDataExtra = new ChatDataExtra();
-        }
-
-
-        Log.i(TAG, "initData: " + chatData);
-
         //region 去电
         if (chatMode == CHAT_MODE_OUTGOING) {
+            //外呼铃声
             SoundPlayer.instance(ChineseChat.getContext()).play(SoundPlayer.RingerTypeEnum.CONNECTING);
 
             //界面
@@ -796,46 +818,33 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             tv_name.setText(getString(R.string.ActivityTake_show_teacher_nickname, chatDataExtra.Teacher.Nickname));
             tv_nick.setText(chatDataExtra.Teacher.Nickname);
             tv_case.setText(getString(R.string.ActivityTake_show_teacher_summary, chatDataExtra.Teacher.Summary.duration, chatDataExtra.Teacher.Summary.count, chatDataExtra.Teacher.Summary.month));
-            tv_status.setText("Waiting to response");
+            tv_status.setText("Waiting for response");
             CommonUtil.showIcon(getApplicationContext(), iv_icon, chatDataExtra.Teacher.Avatar);
             CommonUtil.showIcon(getApplicationContext(), iv_avatar, chatDataExtra.Teacher.Avatar);
 
-            //呼出
-            JsonObject student = new JsonObject();
-            student.addProperty("Id", ChineseChat.CurrentUser.Id);
-            student.addProperty("Avatar", ChineseChat.CurrentUser.Avatar);
-            student.addProperty("Nickname", ChineseChat.CurrentUser.Nickname);
-            JsonObject summary = new JsonObject();
-            summary.addProperty("month", 0);
-            summary.addProperty("count", 0);
-            summary.addProperty("duration", 0);
-            student.add("Summary", summary);
+            //初始化交互界面，话题，课程，模拟考试
+            getSupportFragmentManager().beginTransaction().replace(R.id.rl_theme, FragmentTopics.newInstance(chatData.getAccount()), "FragmentTopics").commit();
+            tabsSwitch(R.id.ll_topic);
 
-            AVChatNotifyOption option = new AVChatNotifyOption();
-            option.apnsBadge = false;
-            option.apnsInuse = true;
-            option.pushSound = "pushRing.aac";//Push
-            option.extendMessage = chatData.getExtra();// student.toString();//把呼叫者的用户名,头像发送过去
-
-            AVChatOptionalConfig params = new AVChatOptionalConfig();
-            params.enableCallProximity(false);
-
-            AVChatManager.getInstance().call(chatData.getAccount(), AVChatType.AUDIO, params, option, callback_call);
-
+            //region处理文档情况
+            //chatDataExtra.DocumentId = 1180;
+            if (chatDataExtra.DocumentId > 0) {
+                tabsSwitch(R.id.ll_lyric);
+                getSupportFragmentManager().beginTransaction().replace(R.id.rl_lyric, FragmentCourse.newInstance(FragmentCourse.OPEN_MODE_SHOW, chatDataExtra.DocumentId), "FragmentCourse").commit();
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.rl_lyric, FragmentCourse.newInstance(ChineseChat.isStudent() ? FragmentCourse.OPEN_MODE_ROOT : FragmentCourse.OPEN_MODE_NONE, chatDataExtra.DocumentId), "FragmentCourse").commit();
+            }
+            //endregion
             getSupportFragmentManager().beginTransaction().replace(R.id.fl_hskk, FragmentChatHskk.newInstance(FragmentChatHskk.OPEN_MODE_PICK, 0), "FragmentChatHskk").commit();
         }
         //endregion
         //region 来电
         else if (chatMode == CHAT_MODE_INCOMING) {
-            SoundPlayer.instance(ChineseChat.getContext()).play(SoundPlayer.RingerTypeEnum.RING);
-
             //界面
             ll_hang.setVisibility(View.VISIBLE);
             ll_call.setVisibility(View.INVISIBLE);
             rl_hold.setVisibility(View.VISIBLE);
             rl_talk.setVisibility(View.INVISIBLE);
-
-            //隐藏没有必要的界面
 
             //2016-07-21 如果没有对方数据,那么请求网络
             if (chatDataExtra.Student == null || chatDataExtra.Teacher == null) {
@@ -880,6 +889,32 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 CommonUtil.showBitmap(iv_icon, NetworkUtil.getFullPath(chatDataExtra.Student.Avatar));
                 CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(chatDataExtra.Student.Avatar));
             }
+
+            if (chatDataExtra.DocumentId > 0) {
+                tabsSwitch(R.id.ll_lyric);
+                HttpUtil.Parameters params = new HttpUtil.Parameters();
+                params.add("id", chatDataExtra.DocumentId);
+                HttpUtil.post(NetworkUtil.documentGetById, params, new RequestCallBack<String>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<String> responseInfo) {
+                        Log.i(TAG, "onSuccess: " + responseInfo.result);
+                        Response<Document> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<Document>>() {}.getType());
+                        Document document = resp.info;
+                        listLyric.clear();
+                        listLyric.addAll(document.Lyrics);
+                        ((BaseAdapter) listViewCourse.getAdapter()).notifyDataSetChanged();
+                        listViewCourse.setSelection(0);
+
+                        tv_folder.setText(document.Folder.Name);
+                        tv_course.setText(document.Title);
+                    }
+
+                    @Override
+                    public void onFailure(HttpException error, String msg) {
+                        Log.i(TAG, "onFailure: " + msg);
+                    }
+                });
+            }
         }
         //endregion
         //region 异常
@@ -889,19 +924,16 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
         //endregion
 
-        //region处理文档情况
-        //chatDataExtra.DocumentId = 1180;
-        if (chatDataExtra.DocumentId > 0) {
-            tabsSwitch(R.id.tv_lyric);
-            getSupportFragmentManager().beginTransaction().replace(R.id.rl_lyric, FragmentCourse.newInstance(FragmentCourse.OPEN_MODE_SHOW, chatDataExtra.DocumentId), "FragmentCourse").commit();
-        } else {
-            getSupportFragmentManager().beginTransaction().replace(R.id.rl_lyric, FragmentCourse.newInstance(ChineseChat.isStudent() ? FragmentCourse.OPEN_MODE_ROOT : FragmentCourse.OPEN_MODE_NONE, chatDataExtra.DocumentId), "FragmentCourse").commit();
-        }
-        //endregion
+        listTopic = new ArrayList<>();
+        adapter = new AdapterThemes(listTopic);
+        listview.setAdapter(adapter);
 
-        //region处理hskk情况
+        listLyric = new ArrayList<>();
+        AdapterCourse adapterCourse = new AdapterCourse(listLyric);
+        listViewCourse.setAdapter(adapterCourse);
 
-        //endregion
+        listHskk = new ArrayList<>();
+        listViewHskk.setAdapter(new AdapterHskk(listHskk));
 
         listMessage = new ArrayList<>();
         adapterMessage = new AdapterMessage(listMessage);
@@ -909,11 +941,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        registerObserver(false);
-        unregisterReceiver(broadcastReceiver);
-        handler.removeCallbacksAndMessages(null);//避免出现拨出又马上挂断的情况,回铃声会在5秒之后响起
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.i(TAG, "onSaveInstanceState: ");
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -1162,13 +1192,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
         @Override
         public void onSuccess(AVChatData avChatData) {
-            Log.i(TAG, "拨打成功回调: ChatId=" + avChatData.getChatId());
-            chatData.setChatId(avChatData.getChatId());
-            Log.i(TAG, "onSuccess: " + chatData.getAccount() + " " + chatData.getExtra());
-            Log.i(TAG, "onSuccess: " + avChatData.getAccount() + " " + avChatData.getExtra());
-
+            Log.i(TAG, "拨打成功回调: " + avChatData + ",Extra=" + avChatData.getExtra());
             //记录下ChatId,如果对方还没有接听就直接挂断,帮对方上线并入队,如果拨打失败则暂时不上线
-            //chatId = avChatData.getChatId();
+            chatData = avChatData;
             handler.sendEmptyMessageDelayed(WHAT_PLAY_SOUND, 5000);
         }
     };
@@ -1180,9 +1206,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         public void onSuccess(Void aVoid) {
             Log.i(TAG, "回应成功: ");
             SoundPlayer.instance(ChineseChat.getContext()).stop();
-
-            //创建记录
-            chatHistoryCreate();
 
             //定时挂断
             tv_status.setText("Connecting...");
@@ -1270,18 +1293,18 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
 
         @Override
         public void onJoinedChannel(int i, String s, String s1) {
-            Log.i(TAG, "进入频道: ");
+            Log.i(TAG, "自己进入频道: " + i + " ," + s + " ," + s1);
         }
 
         @Override
         public void onLeaveChannel() {
             //2016-07-21 当自己意外退出频道时,应该退出界面
-            Log.i(TAG, "离开频道: ");
+            Log.i(TAG, "自己离开频道: ");
         }
 
         @Override
         public void onUserJoined(String s) {
-            Log.i(TAG, "对方加入: " + s);
+            Log.i(TAG, "对方进入频道: accid=" + s);
         }
 
         @Override
@@ -1320,9 +1343,44 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             rl_talk.setVisibility(View.VISIBLE);
             rl_hold.setVisibility(View.INVISIBLE);
 
-            if (chatMode == CHAT_MODE_OUTGOING) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.rl_theme, FragmentTopics.newInstance(chatData.getAccount()), "FragmentTopics").commit();
-            }
+            //通知服务器创建记录
+            Parameters parameters = new Parameters();
+            parameters.add("source", chatDataExtra.Student.Id);
+            parameters.add("target", chatDataExtra.Teacher.Id);
+            parameters.add("chatId", chatData.getChatId());
+            parameters.add("chatType", chatData.getChatType().getValue());
+            parameters.add("userId", ChineseChat.CurrentUser.Id);
+            HttpUtil.post(NetworkUtil.callCreate, parameters, new RequestCallBack<String>() {
+
+                @Override
+                public void onSuccess(ResponseInfo<String> responseInfo) {
+                    Log.i(TAG, "记录创建成功:" + responseInfo.result);
+                    Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {}.getType());
+
+                    //记录callId
+                    if (resp.code == 200) {
+                        callId = resp.info.Id;
+                        //发送callId
+                        if (!CALL_ID_RECEIVE) {
+                            Log.i(TAG, "CALL_ID_RECEIVE=" + CALL_ID_RECEIVE + " Send CallId=" + callId);
+                            NimSysNotice<String> notice = new NimSysNotice<String>();
+                            notice.type = NimSysNotice.NoticeType_Chat;
+                            notice.info = callId;
+
+                            CustomNotification notification = new CustomNotification();
+                            notification.setSessionId(chatData.getAccount());
+                            notification.setSessionType(SessionTypeEnum.P2P);
+                            notification.setContent(gson.toJson(notice));
+                            NIMClient.getService(MsgService.class).sendCustomNotification(notification);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(HttpException error, String msg) {
+                    Log.i(TAG, "记录创建失败: " + msg);
+                }
+            });
         }
 
         @Override
@@ -1405,14 +1463,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     // 设备初始化成功，开始通话,关闭回铃声
                     CommonUtil.toast(R.string.ActivityCall_device_ready);
 
-                    //创建记录
-                    chatHistoryCreate();
-
                     //挂断定时
                     handler.sendEmptyMessageDelayed(WHAT_HANG_UP, 60 * 1000);
 
                     //刷新定时
-                    handler.sendEmptyMessageDelayed(WHAT_REFRESH, 1000);
+                    handler.sendEmptyMessageDelayed(WHAT_REFRESH, 15 * 1000);
                 } else {
                     // 设备初始化失败，无法进行通话
                     CommonUtil.toast(R.string.ActivityCall_device_error);
@@ -1420,7 +1475,6 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 }
             }
         }
-
     };
     //endregion
 
@@ -1436,6 +1490,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 chatHistoryFinish();
             }
             finish();
+
+            Intent service = new Intent(getApplicationContext(), ServiceChat.class);
+            stopService(service);
         }
     };
     //endregion
@@ -1572,9 +1629,9 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                     callId = info;
                     break;
                 case NimSysNotice.NOTICE_TYPE_TOPIC:
-                    //显示学生选择的话题
-                    getSupportFragmentManager().beginTransaction().replace(R.id.rl_theme, FragmentTopicsShow.newInstance(Integer.parseInt(info)), "FragmentTopicsShow").commit();
+                    //显示学生选择的话题,由于界面onPause的原因，切换成Fragment容易出问题，所以更换为ListView
                     //保存学生选择的话题
+                {
                     Parameters params = new Parameters();
                     params.add("chatId", chatData.getChatId());
                     params.add("themeId", info);
@@ -1582,6 +1639,19 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                         @Override
                         public void onSuccess(ResponseInfo<String> responseInfo) {
                             Log.i(TAG, "onSuccess: " + responseInfo.result);
+                            Response<Theme> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<Theme>>() {}.getType());
+                            if (resp.code == 200) {
+                                Theme theme = resp.info;
+                                tv_theme.setText(theme.Name);
+                                listTopic.clear();
+                                for (Question q : theme.Questions) {
+                                    listTopic.add(q.Name);
+                                }
+                                ((BaseAdapter) listview.getAdapter()).notifyDataSetChanged();
+                                listview.setSelection(0);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "对方话题发送太快了", Toast.LENGTH_SHORT).show();
+                            }
                         }
 
                         @Override
@@ -1589,76 +1659,87 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                             Log.i(TAG, "onFailure: " + msg);
                         }
                     });
-                    //界面调整
-                    tabsSwitch(R.id.ll_topic);
-                    break;
+                }
+                //界面调整
+                tabsSwitch(R.id.ll_topic);
+                break;
                 case NimSysNotice.NOTICE_TYPE_COURSE:
-                    getSupportFragmentManager().findFragmentByTag("FragmentCourse").getChildFragmentManager().beginTransaction().replace(R.id.fl_content, FragmentCourseShow.newInstance(Integer.parseInt(info), false)).addToBackStack("FragmentCourseClear").commit();
-                    tabsSwitch(R.id.ll_lyric);
-                    break;
-                case NimSysNotice.NoticeType_Hskk:
-                    getSupportFragmentManager().beginTransaction().replace(R.id.fl_hskk, FragmentChatHskk.newInstance(FragmentChatHskk.OPEN_MODE_SHOW, Integer.parseInt(info)), "FragmentChatHskk").commit();
-                    tabsSwitch(R.id.ll_hskk);
-                    break;
-            }
+                    //显示学生选择的课程,由于Fragment与OnPause冲突的原由，原代码废弃，此为新代码
+                {
+                    HttpUtil.Parameters params = new HttpUtil.Parameters();
+                    params.add("id", info);
+                    HttpUtil.post(NetworkUtil.documentGetById, params, new RequestCallBack<String>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<String> responseInfo) {
+                            Log.i(TAG, "onSuccess: " + responseInfo.result);
+                            Response<Document> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<Document>>() {}.getType());
+                            Document document = resp.info;
+                            listLyric.clear();
+                            listLyric.addAll(document.Lyrics);
+                            ((BaseAdapter) listViewCourse.getAdapter()).notifyDataSetChanged();
+                            listViewCourse.setSelection(0);
 
+                            tv_folder.setText(document.Folder.Name);
+                            tv_course.setText(document.Title);
+                        }
+
+                        @Override
+                        public void onFailure(HttpException error, String msg) {
+                            Log.i(TAG, "onFailure: " + msg);
+                        }
+                    });
+                }
+
+                //切换界面
+                tabsSwitch(R.id.ll_lyric);
+                break;
+                case NimSysNotice.NoticeType_Hskk:
+                    //显示学生选择的HSKK
+                {
+                    HttpUtil.Parameters params = new HttpUtil.Parameters();
+                    params.add("id", info);
+                    HttpUtil.post(NetworkUtil.hskkGetById, params, new RequestCallBack<String>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<String> responseInfo) {
+                            Response<Hskk> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<Hskk>>() {}.getType());
+                            Hskk info = resp.info;
+                            CommonUtil.hskkDesc(info);
+                            tv_hskkPart.setText(String.format("%1$s/%2$s", info.PartName, info.RankName));
+                            tv_hskkDesc.setText(info.Desc);
+                            List<HskkQuestion> questions = info.Questions;
+                            listHskk.clear();
+                            for (HskkQuestion h : questions) {
+                                h.Hskk = info;
+                                listHskk.add(h);
+                            }
+                            ((BaseAdapter) listViewHskk.getAdapter()).notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onFailure(HttpException error, String msg) {
+
+                        }
+                    });
+                }
+                //切换界面
+                tabsSwitch(R.id.ll_hskk);
+                break;
+            }
         }
     };
-
     //endregion
-
-    private void chatHistoryCreate() {
-        Parameters parameters = new Parameters();
-        parameters.add("source", chatDataExtra.Student.Id);
-        parameters.add("target", chatDataExtra.Teacher.Id);
-        parameters.add("chatId", chatData.getChatId());
-        parameters.add("chatType", chatData.getChatType().getValue());
-        HttpUtil.post(NetworkUtil.callCreate, parameters, new RequestCallBack<String>() {
-
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "记录创建成功:" + responseInfo.result);
-                Response<CallLog> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
-                }.getType());
-
-                //记录callId
-                if (resp.code == 200) {
-                    callId = resp.info.Id;
-                }
-
-                //发送callId
-                Log.i(TAG, "发送CallId: " + !CALL_ID_RECEIVE);
-                if (!CALL_ID_RECEIVE) {
-                    NimSysNotice<String> notice = new NimSysNotice<String>();
-                    notice.type = NimSysNotice.NoticeType_Chat;
-                    notice.info = callId;
-
-                    CustomNotification notification = new CustomNotification();
-                    notification.setSessionId(chatData.getAccount());
-                    notification.setSessionType(SessionTypeEnum.P2P);
-                    notification.setContent(gson.toJson(notice));
-                    NIMClient.getService(MsgService.class).sendCustomNotification(notification);
-                }
-            }
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "记录创建失败: " + msg);
-            }
-        });
-    }
 
     private void chatHistoryFinish() {
         Parameters parameters = new Parameters();
         parameters.add("callId", callId);
+        parameters.add("userId", ChineseChat.CurrentUser.Id);
         HttpUtil.post(NetworkUtil.callFinish, parameters, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "记录结束成功:" + responseInfo.result);
 
                 //如果是学生端,保存学币信息,如果是教师端,保存当月课时统计
-                Response<CallLog> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {
-                }.getType());
+                Response<CallLog> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<CallLog>>() {}.getType());
 
                 if (resp.code == 200) {
                     if (ChineseChat.isStudent()) {
@@ -1686,10 +1767,11 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             String item = getItem(position);
-
-            View inflate = View.inflate(getApplication(), R.layout.listitem_topic, null);
+            if (inflate == null) {
+                inflate = View.inflate(getApplication(), R.layout.listitem_topic, null);
+            }
             TextView textview = (TextView) inflate.findViewById(R.id.textview);
             textview.setText(item);
             return inflate;
@@ -1702,15 +1784,63 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Lyric item = getItem(position);
-            View inflate = View.inflate(getApplication(), R.layout.listitem_lyric, null);
-            TextView viewById = (TextView) inflate.findViewById(R.id.tv_Original);
-            TextView viewById1 = (TextView) inflate.findViewById(R.id.tv_Translate);
+            if (inflate == null) {
+                inflate = View.inflate(getApplicationContext(), R.layout.listitem_chat_folder, null);
+            }
+            inflate.findViewById(R.id.sl_cover).setVisibility(View.GONE);
+            TextView tv_name = (TextView) inflate.findViewById(R.id.tv_name);
+            tv_name.setSingleLine(false);
+            tv_name.setText(item.Original);
+            TextView tv_count = (TextView) inflate.findViewById(R.id.tv_count);
+            tv_count.setText(item.Translate);
+            tv_count.setSingleLine(false);
+            tv_count.setVisibility(TextUtils.isEmpty(item.Translate) ? View.GONE : View.VISIBLE);
+            inflate.findViewById(R.id.tv_title_sub).setVisibility(View.GONE);
 
-            viewById.setText(item.Original);
-            viewById1.setText(item.Translate);
             return inflate;
+        }
+    }
+
+    private class AdapterHskk extends BaseAdapter<HskkQuestion> {
+        public AdapterHskk(List<HskkQuestion> list) {
+            super(list);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            HskkQuestion item = getItem(position);
+            final int index = position;
+            if (convertView == null) {
+                convertView = View.inflate(getApplicationContext(), R.layout.listitem_chat_hskk_question, null);
+            }
+            TextView tv_name = (TextView) convertView.findViewById(R.id.tv_name);
+            tv_name.setText(item.TextCN);
+
+            ImageView iv_image = (ImageView) convertView.findViewById(R.id.iv_image);
+            iv_image.setVisibility(View.GONE);
+            if (item.Hskk.Part == 2 && item.Hskk.Rank == 2) {
+                iv_image.setVisibility(View.VISIBLE);
+                iv_image.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        listImage.clear();
+
+                        for (HskkQuestion hskk : listHskk) {
+                            listImage.add(NetworkUtil.getFullPath(hskk.Image));
+                        }
+
+                        viewPagerImageMessage.setAdapter(new AdapterImage());
+                        viewPagerImageMessage.setCurrentItem(index);
+                        dialogZoom.findViewById(R.id.tv_index).setVisibility(View.INVISIBLE);
+                        dialogZoom.show();
+                    }
+                });
+                CommonUtil.showIcon(getApplicationContext(), iv_image, item.Image);
+            }
+
+            return convertView;
         }
     }
 
@@ -1720,14 +1850,83 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             MessageText item = getItem(position);
-            View inflate = View.inflate(getApplication(), R.layout.listitem_text_message, null);
+            if (inflate == null) {
+                inflate = View.inflate(getApplication(), R.layout.listitem_text_message, null);
+            }
             TextView nickname = (TextView) inflate.findViewById(R.id.tv_nickname);
             TextView message = (TextView) inflate.findViewById(R.id.tv_message);
             nickname.setText(item.FromNickname);
             message.setText(item.Content);
             return inflate;
+        }
+    }
+
+    private class AdapterImage extends PagerAdapter {
+
+        @Override
+        public int getCount() {
+            return listImage.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view.equals(object);
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            //Log.i(TAG, "instantiateItem: ");
+            String urlImage = listImage.get(position);
+            FrameLayout fl = new FrameLayout(getApplication());
+            final ProgressBar pb = new ProgressBar(getApplication());
+            pb.setVisibility(View.VISIBLE);
+
+            PhotoView photoView = new PhotoView(container.getContext());
+            photoView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+                @Override
+                public void onPhotoTap(View view, float x, float y) {
+                    //Log.i(TAG, "onPhotoTap: ");
+                    dialogZoom.dismiss();
+                }
+
+                @Override
+                public void onOutsidePhotoTap() {
+                    Log.i(TAG, "onOutsidePhotoTap: ");
+                }
+            });
+            photoView.setImageResource(R.drawable.background);
+            new BitmapUtils(getApplicationContext(), getCacheDir().getAbsolutePath()).display(photoView, urlImage, new BitmapLoadCallBack<ImageView>() {
+                @Override
+                public void onLoadCompleted(ImageView container, String uri, Bitmap bitmap, BitmapDisplayConfig config, BitmapLoadFrom from) {
+                    //Log.i(TAG, "onLoadCompleted: " + container);
+                    BitmapDrawable bitmapDrawable = new BitmapDrawable(container.getResources(), bitmap);
+                    container.setImageDrawable(bitmapDrawable);
+                    pb.setVisibility(View.INVISIBLE);
+                }
+
+                @Override
+                public void onLoadFailed(ImageView container, String uri, Drawable drawable) {
+                    Log.i(TAG, "onLoadFailed: " + uri);
+                    container.setImageResource(ChineseChat.isStudent() ? R.drawable.ic_launcher_student : R.drawable.ic_launcher_teacher);
+                    pb.setVisibility(View.INVISIBLE);
+                }
+            });
+            fl.addView(photoView, new FrameLayout.LayoutParams(-1, -1));
+
+            int v = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(v, v);
+            params.gravity = Gravity.CENTER;
+            fl.addView(pb, params);
+
+            container.addView(fl);
+            return fl;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
         }
     }
 }

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.HttpUtil;
+import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
@@ -25,11 +26,11 @@ import com.hanwen.chinesechat.R;
 import java.io.File;
 
 public class ActivitySetting extends Activity implements View.OnClickListener {
-    private static final String TAG = "SettingActivity";
+    private static final String TAG = "ActivitySetting";
+    private static final int REQUEST_CODE_FINISH = 1;
     private TextView tv_login, tv_cache;
     private Dialog dialogWipeData;
     private AlertDialog dialogLogin;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,17 +40,17 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
         initData();
     }
 
-    private void initData() {
-        //清除缓存菜单数据,只显示两个文件的大小,一个是自己的下载文件夹,一个是数据库文件夹
-        long length = FileUtil.fileLength(new File(getFilesDir(), "File")) + FileUtil.fileLength(new File(getFilesDir().getParentFile(), "databases"));
-        tv_cache.setText(Formatter.formatFileSize(getApplicationContext(), length));
-    }
-
     @Override
     protected void onResume() {
         //登录菜单的文本显示
         tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
         super.onResume();
+    }
+
+    private void initData() {
+        //清除缓存菜单数据,只显示两个文件的大小,一个是自己的下载文件夹,一个是数据库文件夹
+        long length = FileUtil.fileLength(new File(getFilesDir(), "File")) + FileUtil.fileLength(new File(getFilesDir().getParentFile(), "databases"));
+        tv_cache.setText(Formatter.formatFileSize(getApplicationContext(), length));
     }
 
     private void initView() {
@@ -91,7 +92,6 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
         dialogLogin.show();
     }
 
-    @Override
     public void onClick(View v) {
 
         switch (v.getId()) {
@@ -168,9 +168,19 @@ public class ActivitySetting extends Activity implements View.OnClickListener {
                     CommonUtil.toast(getString(R.string.ActivitySetting_Toast_logout_success));
                     tv_login.setText(NIMClient.getStatus() == StatusCode.LOGINED ? getString(R.string.ActivitySetting_登出) : getString(R.string.ActivitySetting_登录));
                 } else {
-                    startActivity(new Intent(this, ActivitySignIn.class));
+                    Intent intent = new Intent(this, ActivitySignIn.class);
+                    startActivityForResult(intent, REQUEST_CODE_FINISH);
                 }
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "onActivityResult: ");
+        if (REQUEST_CODE_FINISH == requestCode && Activity.RESULT_OK == resultCode) {
+
         }
     }
 }

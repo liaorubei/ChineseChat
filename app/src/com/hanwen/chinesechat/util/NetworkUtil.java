@@ -3,9 +3,9 @@ package com.hanwen.chinesechat.util;
 import android.text.TextUtils;
 
 public class NetworkUtil {
-    //public static String domain = "http://192.168.3.121:801";
+    public static String domain = "https://www.chinesechat.cn/";
+    //public static String domain = "http://voc2015.azurewebsites.net";
     //public static String domain = "http://voc2015test.azurewebsites.net";
-    public static String domain = "http://voc2015.azurewebsites.net";
 
     public static final String callCreate = domain + "/Api/CallLog/Start";
     public static final String callFinish = domain + "/Api/CallLog/finish";
@@ -14,17 +14,20 @@ public class NetworkUtil {
     public static final String calllogRating = domain + "/Api/CallLog/Rating";
     public static final String callRefresh = domain + "/Api/CallLog/Refresh";
     public static final String chatAddTheme = domain + "/Api/CallLog/AddTheme";
-    public static final String checkUpdate = domain + "/NewClass/AndroidCheckUpdate";
+    public static final String checkUpdate = domain + "/NewClass/AndroidCheckUpdate";//versionType,0安卓学生端，1安卓教师端，2苹果学生端，3苹果老师端
     public static final String chooseTeacher = domain + "/Api/nimUser/ChooseTeacherV1";//Id,target
     public static final String documentGetById = domain + "/Api/Document/GetById";//id
-    public static final String documentGetListByLevelId = domain + "/Api/Document/GetListByLevelId";//levelId,skip,take
     public static final String documentGetListByFolderId = domain + "/Api/Document/GetListByFolderId";//folderId,userId,skip,take
     public static final String documentGetListByFolderIdWithoutCheck = domain + "/Api/Document/GetListByFolderIdWithoutCheck";//folderId,skip,take
+    public static final String documentGetListByLevelId = domain + "/Api/Document/GetListByLevelId";//levelId,skip,take
     public static final String feedbackCreate = domain + "/Api/Feedback/Create";
     public static final String folderCheckPermission = domain + "/Api/Folder/CheckPermission";//folderId,userId
     public static final String folderGetChildListByParentId = domain + "/Api/Folder/GetChildListByParentId";//folderId
+    public static final String folderGetList = domain + "/Api/Folder/GetList";//skip,take,userId,levelId,parentId
     public static final String folderGetListByLevelId = domain + "/Api/Folder/GetListByLevelIdV2";//levelId,skip,take
     public static final String getTeacherOnline = domain + "/Api/NimUser/GetTeacherOnline";//skip,take
+    public static final String hskkGetById = domain + "/Api/Hskk/GetById";//id
+    public static final String hskkGetListByRankAndPart = domain + "/Api/Hskk/GetListByRankAndPart";//rank,part,skip,take
     public static final String hsLevelAndTheme = domain + "/Api/Theme/HsLevelAndTheme";
     public static final String levelAndFolders = domain + "/Api/Level/SelectLevelAndFolders";
     public static final String levelSelect = domain + "/Api/Level/Select";
@@ -55,9 +58,6 @@ public class NetworkUtil {
     public static final String userSignIn = domain + "/Api/NimUser/Signin";//username,password,category,system,device
     public static final String userUpdate = domain + "/Api/NimUser/Update";
     public static final String userVerify = domain + "/Api/NimUser/Verify";
-    public static String hskkGetListByRankAndPart = domain + "/Api/Hskk/GetListByRankAndPart";//rank,part,skip,take
-    public static String hskkGetById = domain + "/Api/Hskk/GetById";//id
-    public static String folderGetList = domain + "/Api/Folder/GetList";
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {
@@ -77,10 +77,10 @@ public class NetworkUtil {
     /**
      * 把一个网站的相对路径转为这个网站的标准HTTP全路径
      *
-     * @param path
-     * @return
+     * @param relativePath 在服务器的相对路径
+     * @return absolutePath 在网络上的绝对路径
      */
-    public static String getFullPath(String path) {
-        return TextUtils.isEmpty(path) ? null : domain + path;
+    public static String getFullPath(String relativePath) {
+        return TextUtils.isEmpty(relativePath) ? null : domain + relativePath;
     }
 }

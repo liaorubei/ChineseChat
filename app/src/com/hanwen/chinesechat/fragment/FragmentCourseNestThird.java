@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
+import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.activity.ActivityChat;
 import com.hanwen.chinesechat.base.BaseAdapter;
@@ -43,8 +44,8 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class FragmentCourseNestThird extends Fragment implements View.OnClickListener {
-    private static final String KEY_FOLDER = "KEY_FOLDER";
     private static final String TAG = "FragmentCourseNestThird";
+    private static final String KEY_FOLDER = "KEY_FOLDER";
     private Folder folder;
     private List<Document> data = new ArrayList<>();
     private Adapter adapter = new Adapter(data);
@@ -113,7 +114,8 @@ public class FragmentCourseNestThird extends Fragment implements View.OnClickLis
             }
         });
         HttpUtil.Parameters params = new HttpUtil.Parameters();
-        params.add("folderId", folder.Id);
+        params.add("userId", ChineseChat.CurrentUser.Id);
+        params.add("folderId",folder.Id);
         HttpUtil.post(NetworkUtil.documentGetListByFolderIdWithoutCheck, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {

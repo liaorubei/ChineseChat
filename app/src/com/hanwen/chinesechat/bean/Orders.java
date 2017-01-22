@@ -20,6 +20,7 @@ public class Orders {
     public String LastOrderString;
     public Date CreateTime;
     public int Coin;
+    public float Hour;
 
 
     public Orders(BigDecimal amount, String currency, String main, String body) {

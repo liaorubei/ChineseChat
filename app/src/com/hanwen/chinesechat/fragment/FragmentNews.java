@@ -1,13 +1,17 @@
 package com.hanwen.chinesechat.fragment;
 
-
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
-
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,12 +31,15 @@ import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.activity.ActivityPlay;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Document;
+import com.hanwen.chinesechat.bean.DownloadInfo;
 import com.hanwen.chinesechat.bean.Response;
+import com.hanwen.chinesechat.service.DownloadService;
 import com.hanwen.chinesechat.util.FileUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.HttpUtil.Parameters;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
+import com.hanwen.chinesechat.view.CircularProgressBar;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
@@ -50,8 +57,6 @@ import java.util.Locale;
  * 主页面Listen模块的News界面，新闻显示中文/英文标题，并且要求显示文件大小，时长，发布日期
  */
 public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefreshListener {
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "FragmentNews";
     private List<Document> data = new ArrayList<>();
     private Integer take = 25;
@@ -60,27 +65,54 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
 
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private ServiceConnection conn;
+    private DownloadService.MyBinder binder;
+    private BroadcastReceiver receiver;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentNews.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentNews newInstance(String param1, String param2) {
-        FragmentNews fragment = new FragmentNews();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.i(TAG, "onCreate: ");
+        Intent service = new Intent(getContext(), DownloadService.class);
+        conn = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                binder = (DownloadService.MyBinder) service;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+
+            }
+        };
+        getContext().bindService(service, conn, Context.BIND_AUTO_CREATE);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                int documentId = intent.getIntExtra("documentId", 0);
+                int current = intent.getIntExtra("current", 0);
+
+                Log.i(TAG, "onReceive: " + intent.getAction() + ",document=" + documentId + ",current=" + current);
+                int firstVisiblePosition = swipe_target.getFirstVisiblePosition();
+                int lastVisiblePosition = swipe_target.getLastVisiblePosition();
+                for (int i = 0; i < data.size(); i++) {
+                    Document document = data.get(i);
+                    if (document.Id == documentId && firstVisiblePosition <= i && i <= lastVisiblePosition) {
+                        View childAt = swipe_target.getChildAt(i - firstVisiblePosition);
+                        ViewHolder holder = (ViewHolder) childAt.getTag();
+                        holder.iv_down.setVisibility(current == 100 ? View.VISIBLE : View.INVISIBLE);
+                        holder.pb_down.setVisibility(current == 100 ? View.INVISIBLE : View.VISIBLE);
+                        holder.pb_down.setProgress(current);
+                    }
+                }
+            }
+        };
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i(TAG, "onCreateView: ");
         return inflater.inflate(R.layout.fragment_news, container, false);
     }
 
@@ -95,6 +127,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 Document item = getItem(position);
+
                 if (convertView == null) {
                     convertView = View.inflate(getContext(), R.layout.listitem_news, null);
                     new ViewHolder(convertView);
@@ -105,6 +138,32 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
                 holder.tv_size.setText(FileUtil.formatFileSize(item.Length, FileUtil.SizeUnit.MB));
                 holder.tv_time.setText(item.LengthString);
                 holder.tv_date.setText(sdf.format(item.AuditDate));
+
+                DownloadInfo downloadInfo = ChineseChat.database().docsSelectById(item.Id);
+
+                holder.iv_down.setVisibility(downloadInfo != null && downloadInfo.IsDownload == 1 ? View.VISIBLE : View.INVISIBLE);
+                holder.pb_down.setVisibility(downloadInfo == null ? View.INVISIBLE : (downloadInfo.IsDownload == 1 ? View.INVISIBLE : View.VISIBLE));
+                holder.bt_down.setVisibility(downloadInfo == null ? View.VISIBLE : View.INVISIBLE);
+                holder.bt_down.setTag(item);
+                holder.bt_down.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Document tag = (Document) v.getTag();
+                        Log.i(TAG, "onClick: " + tag);
+                        DownloadInfo info = new DownloadInfo();
+                        info.SoundPath = tag.SoundPath;
+                        info.Id = tag.Id;
+                        info.IsDownload = 0;
+                        info.Title = tag.TitleCn;
+                        //添加到下载队列
+                        binder.getDownloadManager().enqueue(info);
+                        //添加到数据库
+                        ChineseChat.database().docsInsert(tag);
+                        //去掉下载按钮
+                        v.setVisibility(View.INVISIBLE);
+                    }
+                });
+
 
                 new BitmapUtils(getContext(), getContext().getCacheDir().getAbsolutePath()).display(holder.iv_cover, NetworkUtil.getFullPath(item.Cover), new BitmapLoadCallBack<ImageView>() {
                     @Override
@@ -158,6 +217,26 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        IntentFilter filter = new IntentFilter("音频下载");
+        LocalBroadcastManager.getInstance(getContext()).registerReceiver(receiver, filter);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(receiver);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onDestroy: ");
+        getContext().unbindService(conn);
+    }
+
+    @Override
     public void onLoadMore() {
         Parameters params = new Parameters();
         params.add("levelId", 6);
@@ -173,6 +252,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
 
                 if (info != null) {
                     for (Document d : info) {
+                        d.LevelId = 6;
                         data.add(d);
                     }
                 }
@@ -184,7 +264,6 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
                 swipe.setLoadingMore(false);
             }
         });
-
     }
 
     @Override
@@ -224,6 +303,9 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
         private TextView tv_time;
         public TextView tv_date;
         public ImageView iv_cover;
+        public View bt_down;
+        public CircularProgressBar pb_down;
+        public View iv_down;
 
         public ViewHolder(View convertView) {
             this.tv_title_cn = (TextView) convertView.findViewById(R.id.tv_title_cn);
@@ -232,6 +314,9 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
             this.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
             this.tv_date = (TextView) convertView.findViewById(R.id.tv_date);
             this.iv_cover = (ImageView) convertView.findViewById(R.id.iv_cover);
+            this.bt_down = convertView.findViewById(R.id.bt_down);
+            this.pb_down = (CircularProgressBar) convertView.findViewById(R.id.pb_down);
+            this.iv_down = convertView.findViewById(R.id.iv_down);
             convertView.setTag(this);
         }
     }

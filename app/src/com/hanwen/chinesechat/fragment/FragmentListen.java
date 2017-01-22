@@ -47,7 +47,7 @@ public class FragmentListen extends Fragment {
 
         //未下载      //已下载
         fragments.add(new FragmentLevels());
-        fragments.add(new FragmentHaveDownloaded());
+        fragments.add(new FragmentFolderDone());
         adapter = new FragmentPagerAdapter(getChildFragmentManager()) {
             @Override
             public Fragment getItem(int position) {
@@ -71,6 +71,10 @@ public class FragmentListen extends Fragment {
                 for (int i = 0; i < childCount; i++) {
                     ll_indicator.getChildAt(i).setSelected(i == position);
                 }
+
+                if (position == 1) {
+                    fragments.get(position).onResume();
+                }
             }
 
             @Override
@@ -89,10 +93,8 @@ public class FragmentListen extends Fragment {
         viewPager = (ViewPager) view.findViewById(R.id.viewpager);
         ll_indicator = (LinearLayout) view.findViewById(R.id.ll_indicator);
         ll_indicator.getChildAt(0).setSelected(true);
-        ll_indicator.setVisibility(View.INVISIBLE);
         viewPager.setAdapter(adapter);
         viewPager.addOnPageChangeListener(listener);
-
 
         //如果数据是空数据,加载新数据
         if (urlCache == null) {
@@ -160,14 +162,14 @@ public class FragmentListen extends Fragment {
                 ChineseChat.database().cacheInsertOrUpdate(urlCache);
 
                 //解析数据
-               // parseJsonData(urlCache.Json);
+                // parseJsonData(urlCache.Json);
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: msg=" + msg + " error=" + error.getMessage());
                 if (urlCache != null) {
-                  //  parseJsonData(urlCache.Json);
+                    //  parseJsonData(urlCache.Json);
                 }
             }
         });

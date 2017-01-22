@@ -51,7 +51,7 @@ public class ActivityRecord extends FragmentActivity {
         CalendarMy calendar = new CalendarMy();
         if (ChineseChat.isStudent()) {
             FragmentRecord.ParamsPage param = new FragmentRecord.ParamsPage();
-            param.to = calendar.toString();
+            param.to = calendar.add(Calendar.MONTH, 1).toString();
             param.from = calendar.set(Calendar.YEAR, 2015).toString();
             paramsPageList.add(param);
         } else {

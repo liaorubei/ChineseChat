@@ -87,16 +87,20 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         swipe = (SwipeToLoadLayout) view.findViewById(R.id.swipe);
-        if (level.ShowCover == 1) {
+        //20161220按要求去掉背景色
+/*        if (level.ShowCover == 1) {
             swipe.setBackgroundColor(Color.parseColor("#BEEDD5"));
-        }
+        }*/
         swipe.setOnRefreshListener(this);
         swipe.setRefreshing(level.Id > 0);//如果Id大于0，那么说明该数据来源于网络，会进行异步请求
         swipe.setLoadMoreEnabled(false);
 
         RecyclerView listView = (RecyclerView) view.findViewById(R.id.swipe_target);
         listView.setLayoutManager(level.ShowCover == 1 ? new GridLayoutManager(view.getContext(), 3) : new LinearLayoutManager(view.getContext()));
-        listView.addItemDecoration(level.ShowCover == 1 ? new DividerGridItemDecoration(view.getContext()) : new MyDecora(view.getContext(), LinearLayoutManager.VERTICAL));
+        //20161220 去掉GRID分隔线
+        if (level.ShowCover != 1) {
+            listView.addItemDecoration(new MyDecora(view.getContext(), LinearLayoutManager.VERTICAL));
+        }
 
         data.clear();
         adapter.notifyDataSetChanged();
@@ -127,11 +131,13 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
     public void onRefresh() {
         Log.i(TAG, "onRefresh: ");
         HttpUtil.Parameters params = new HttpUtil.Parameters();
+        params.add("userId", ChineseChat.CurrentUser.Id);
         params.add("levelId", level.Id);
-        HttpUtil.post(NetworkUtil.folderGetListByLevelId, params, new RequestCallBack<String>() {
+        params.add("parentId", 0);
+        HttpUtil.post(NetworkUtil.folderGetList, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                //Log.i(TAG, "onSuccess: " + responseInfo.result + " \r\n" + this.getRequestUrl());
+                Log.i(TAG, "onSuccess: " + responseInfo.result + " \r\n" + this.getRequestUrl());
 
                 Response<List<Folder>> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {}.getType());
                 if (200 == resp.code) {
@@ -139,6 +145,8 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                     for (Folder f : resp.info) {
                         FolderDoc object = new FolderDoc(f);
                         object.Name2 = level.ShowCover == 1 ? f.NameSubCn : String.format("课程：%1$2d", f.DocsCount);
+                        object.HasChildren = f.KidsCount > 0;
+                        object.Cover = f.Cover;
                         data.add(object);
                     }
                     adapter.notifyDataSetChanged();
@@ -188,12 +196,12 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                         }
                     }
                     //打开已下载
-                    else {
+/*                    else {
                         Folder folder = new Folder();
                         folder.Id = this.Data.Id;
                         folder.Name = this.Data.Name1;
                         ActivityDocsDone.start(getActivity(), folder);
-                    }
+                    }*/
                 }
             });
         }
@@ -210,6 +218,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
             HttpUtil.Parameters params = new HttpUtil.Parameters();
             params.add("folderId", data.Id);
             params.add("userId", ChineseChat.CurrentUser.Id);
+            params.add("parentId", 0);
             HttpUtil.post(NetworkUtil.folderCheckPermission, params, new RequestCallBack<String>() {
 
                 @Override
@@ -242,7 +251,7 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
         folder.Id = data.Id;
         folder.Name = data.Name1;
         intent.putExtra("folder", folder);
-        intent.putExtra("showDate", level.ShowCover == 1);
+        intent.putExtra("showDate", level.ShowCover != 1);
         startActivity(intent);
     }
 

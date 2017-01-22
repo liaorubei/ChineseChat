@@ -2,12 +2,17 @@ package com.hanwen.chinesechat.fragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -17,6 +22,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +42,9 @@ import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.Response;
 import com.hanwen.chinesechat.bean.TeacherQueue;
 import com.hanwen.chinesechat.bean.User;
+import com.hanwen.chinesechat.dialog.ProgressDialog;
+import com.hanwen.chinesechat.service.ServiceQueue;
+import com.hanwen.chinesechat.service.TeacherAutoRefreshService;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -90,6 +99,7 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
     private AlertDialog dialogLogin;
     private int documentId = -1;
     private boolean permissionCheck = false;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +140,9 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
         listview.setPullDownEnable(false);
         listview.setXListViewListener(this);
         listview.setOnItemClickListener(this);
+
+        progressDialog = new ProgressDialog(getContext());
+        //progressDialog.show();
     }
 
     @Override
@@ -241,12 +254,9 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.tv_line: {
-                if (NIMClient.getStatus() != StatusCode.LOGINED) {
-                    getActivity().startActivity(new Intent(getActivity(), ActivitySignIn.class));
-                    return;
-                }
-
+                Intent service = new Intent(getContext(), ServiceQueue.class);
                 if (tv_line.isSelected()) {
+                    getContext().stopService(service);
                     HttpUtil.Parameters parameters = new HttpUtil.Parameters();
                     parameters.add("id", ChineseChat.CurrentUser.Id);
                     HttpUtil.post(NetworkUtil.teacherDequeue, parameters, new RequestCallBack<String>() {
@@ -264,6 +274,7 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
                         }
                     });
                 } else {
+                    getContext().startService(service);
                     HttpUtil.Parameters parameters = new HttpUtil.Parameters();
                     parameters.add("id", ChineseChat.CurrentUser.Id);
                     HttpUtil.post(NetworkUtil.teacherEnqueue, parameters, new RequestCallBack<String>() {
@@ -409,6 +420,8 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
             return;
         }
 
+
+        progressDialog.show();
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
         parameters.add("id", ChineseChat.CurrentUser.Id);
         parameters.add("target", teacher.Id);
@@ -456,14 +469,19 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
                 } else {
                     CommonUtil.toast(R.string.network_error);
                 }
+
+                progressDialog.hide();
             }
 
             @Override
             public void onFailure(HttpException error, String msg) {
                 Log.i(TAG, "onFailure: " + msg);
                 CommonUtil.toast(R.string.network_error);
+
+                progressDialog.hide();
             }
         });
+
     }
 
     /**

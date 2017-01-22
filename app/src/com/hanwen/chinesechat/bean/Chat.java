@@ -11,6 +11,8 @@ public class Chat {
     public String Teacher;
     public String Student;
     public Date Start;
+    public Date UtcStart;
+    public Date UtcFinish;
     public int Duration;
     public int Coins;
 }

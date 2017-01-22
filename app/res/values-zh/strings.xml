@@ -3,7 +3,7 @@
     <string name="ActivityPayment_select_recharge_mode">请选择充值方式</string>
     <string name="ActivityPayment_recharge_records">充值记录</string>
     <string name="ActivityPayment_status">状态：</string>
-    <string name="ActivityPayment_amount">总价：%1$s</string>
+    <string name="ActivityPayment_amount">总价：%1$.0f %2$s</string>
     <string name="ActivityPayment_item">项目：ChineseChat coin</string>
     <string name="fragment_person_history">学习记录</string>
     <string name="FragmentPerson_balance">我的学币：%1$d 学币</string>
@@ -54,7 +54,7 @@
     <string name="ActivitySignIn_login">登录</string>
     <string name="ActivitySignIn_login_failure">登录失败</string>
     <string name="ActivitySignIn_network_error_login_failure">网络异常</string>
-    <string name="ActivitySignIn_type_email">请输入邮箱</string>
+    <string name="ActivitySignIn_type_email">请输入邮箱/专属账户</string>
     <string name="ActivitySignIn_type_password">请输入密码</string>
     <string name="ActivitySignIn_title">用户登录</string>
     <string name="ActivitySetting_title">设置</string>
@@ -206,7 +206,7 @@
     <string name="FragmentChoose_The_tutor_is_busy_now">教师通话中…</string>
     <string name="ActivityMain_has_download_message">更新包下载完毕,是否安装?</string>
     <string name="ActivityUseterm_title">用户协议</string>
-    <string name="ActivityPayment_number">数量：%1$d</string>
+    <string name="ActivityPayment_number">学时：%1$.0f分钟（%2$d学币）</string>
     <string name="ActivityLessons_title">授课记录</string>
     <string name="ActivityHistory_theme_unselected">未选择</string>
     <string name="ActivityHistory_title_teacher">授课记录</string>
@@ -216,7 +216,7 @@
     <string name="xlistview_footer_hint_empty">现在座席全忙，请稍后！</string>
     <string name="FragmentPerson_hours">当月授课情况：%1$d 分钟(%2$d次)</string>
     <string name="ActivityMain_negative_text">取消</string>
-    <string name="ActivityMain_new_versions_message">发现了最新版本,是否下载?</string>
+    <string name="ActivityMain_new_versions_message">发现了最新版本,是否下载?\n%1$s</string>
     <string name="ActivityMain_positive_text">确定</string>
     <string name="ActivityMain_upgrade_tips">更新提示</string>
     <string name="ActivityHistory_coin">扣费：%1$d 学币</string>
@@ -241,7 +241,6 @@
     <string name="ActivityTake_tab_lyric">课程</string>
     <string name="ActivityPayment_topup_confirm">知道了</string>
     <string name="ActivitySignIn_is_logging">正在登录，请稍候</string>
-    <string name="DOWNLOADED">已下载</string>
     <string name="ActivityFolder_title">课本列表</string>
     <string name="ActivityDocsTodo_soundPath_error">课程没有上传音频文件</string>
     <string name="FragmentLineUp_balance_negative">继续</string>
@@ -250,4 +249,5 @@
     <string name="ActivityChat_balance_tips">你的余额只剩%1$d个学币了（%2$d分钟），继续？</string>
     <string name="ActivityChat_text_album">相册</string>
     <string name="ActivityChat_text_camera">相机</string>
+    <string name="ActivitySignIn_title_teacher">教师登录</string>
 </resources>

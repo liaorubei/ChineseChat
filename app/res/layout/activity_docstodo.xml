@@ -80,6 +80,6 @@
         android:layout_marginBottom="25dp"
         android:background="@drawable/shape_oval_white"
         android:padding="10dp"
-        android:src="@drawable/selector_icon_dwonload"
+        android:src="@drawable/selector_icon_download"
         android:visibility="invisible" />
 </RelativeLayout>

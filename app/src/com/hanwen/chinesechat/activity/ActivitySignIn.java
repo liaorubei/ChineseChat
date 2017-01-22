@@ -66,11 +66,38 @@ public class ActivitySignIn extends Activity implements OnClickListener {
     private ProgressDialog progressDialog;
     private List<User> users;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_signin);
+        enter_main = getIntent().getBooleanExtra("enter_main", false);
+        int source = getIntent().getIntExtra(KEY_SOURCE, -1);
+
+        users = ChineseChat.database().userList();
+
+        initView();
+        switch (source) {
+            case FROM_KICK_OUT:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Note");
+                builder.setMessage(String.format("Another device is attempting to log in to your ChineseChat account via password at time %1$s.If you didn't intend to log in to your account from this device,you should change your ChineseChat password in.", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime())));
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.show();
+                break;
+        }
+    }
 
     private void initView() {
         View iv_home = findViewById(R.id.iv_home);
         iv_home.setOnClickListener(this);
         iv_home.setVisibility(enter_main ? View.INVISIBLE : View.VISIBLE);
+        TextView tv_title = (TextView) findViewById(R.id.tv_title);
+        tv_title.setText(ChineseChat.isStudent() ? R.string.ActivitySignIn_title : R.string.ActivitySignIn_title_teacher);
 
         et_username = (AutoCompleteTextView) findViewById(R.id.et_username);
         et_password = (EditText) findViewById(R.id.et_password);
@@ -174,32 +201,6 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signin);
-        enter_main = getIntent().getBooleanExtra("enter_main", false);
-        int source = getIntent().getIntExtra(KEY_SOURCE, -1);
-
-        users = ChineseChat.database().userList();
-
-        initView();
-        switch (source) {
-            case FROM_KICK_OUT:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Note");
-                builder.setMessage(String.format("Another device is attempting to log in to your ChineseChat account via password at time %1$s.If you didn't intend to log in to your account from this device,you should change your ChineseChat password in.", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Calendar.getInstance().getTime())));
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                builder.show();
-                break;
-        }
-    }
-
     public void signInApp(final String username, final String password) {
         HttpUtil.Parameters params = new HttpUtil.Parameters();
         params.add("username", username);
@@ -239,8 +240,6 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 }
 
                 ChineseChat.database().userInsertOrReplace(username, password);
-
-
             }
         });
     }
@@ -273,7 +272,8 @@ public class ActivitySignIn extends Activity implements OnClickListener {
 
                 if (enter_main) {
                     //进入到MainActivity主界面
-                    startActivity(new Intent(ActivitySignIn.this, ActivityMain.class));
+                    Intent intent = new Intent(ActivitySignIn.this, ActivityMain.class);
+                    startActivity(intent);
                 }
                 finish();
             }

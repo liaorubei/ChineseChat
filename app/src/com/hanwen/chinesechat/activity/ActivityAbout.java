@@ -2,7 +2,9 @@ package com.hanwen.chinesechat.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hanwen.chinesechat.service.AutoUpdateService;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -83,6 +86,10 @@ public class ActivityAbout extends Activity implements View.OnClickListener {
                 this.finish();
                 break;
             case R.id.rl_version: {
+                Intent service = new Intent(getApplicationContext(), AutoUpdateService.class);
+                startService(service);
+/*
+
                 if (TextUtils.equals(packageInfo.versionName, upgradePatch.VersionName) || TextUtils.isEmpty(upgradePatch.PackagePath)) {
                     CommonUtil.toast(R.string.ActivityAbout_already_up_to_date);
                 } else {
@@ -90,7 +97,7 @@ public class ActivityAbout extends Activity implements View.OnClickListener {
                         builderDownloadDialog(upgradePatch);
                     }
                     isDownloadDialog.show();
-                }
+                }*/
             }
             break;
             case R.id.rl_usehelp: {

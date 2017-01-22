@@ -1,6 +1,7 @@
 package com.hanwen.chinesechat.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -42,6 +43,10 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ActivitySplash extends Activity implements View.OnClickListener {
 
@@ -92,55 +97,33 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
         } else {
             handler.sendEmptyMessageDelayed(WHAT_SPLASH, 2500 - (System.currentTimeMillis() - first));
         }
-/*
 
-        //预加载首页数据
-        HttpUtil.post(NetworkUtil.levelAndFolders, null, new RequestCallBack<String>() {
-            @Override
-            public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
-                //保存到数据库
-                UrlCache urlCache = new UrlCache(this.getRequestUrl(), responseInfo.result, System.currentTimeMillis());
-                ChineseChat.database().cacheInsertOrUpdate(urlCache);
-
-                //再保存文件夹信息
-                Response<List<Level>> o = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Level>>>() {
-                }.getType());
-
-                for (Level l : o.info) {
-                    for (Folder f : l.Folders) {
-                        if (!ChineseChat.database().folderExists(f.Id)) {
-                            ChineseChat.database().folderInsert(f);
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "onFailure: " + msg);
-                CommonUtil.toast(getString(R.string.network_error));
-            }
-        });
-*/
-
-        // 自动升级服务
-        Intent service = new Intent(this, AutoUpdateService.class);
-        startService(service);
+        // 自动升级服务，不用每次都检查，只一天检查一次就可以了
+        SharedPreferences preferences = getSharedPreferences("version", Context.MODE_PRIVATE);
+        String lastCheck = preferences.getString("LastCheck", "");
+        String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(System.currentTimeMillis()));
+        Log.i(TAG, "onCreate: " + lastCheck + ",today=" + today);
+        if (!today.equals(lastCheck)) {
+            preferences.edit().putString("LastCheck", today).apply();
+            Intent service = new Intent(this, AutoUpdateService.class);
+            startService(service);
+        }
     }
 
     private void signInApp() {
         SharedPreferences user = getSharedPreferences("user", MODE_PRIVATE);
         String username = user.getString("username", null);
         String password = user.getString("password", null);
-
+        if (TextUtils.isEmpty(username)) {
+            handler.sendEmptyMessageDelayed(WHAT_SPLASH, 2500 - (System.currentTimeMillis() - first));
+            return;
+        }
         RequestParams params = new RequestParams();
         params.addBodyParameter("username", username);
         params.addBodyParameter("password", password);
         params.addBodyParameter("category", (ChineseChat.isStudent() ? 0 : 1) + "");
         params.addBodyParameter("system", 1 + "");
         params.addBodyParameter("device", SystemUtil.getDeviceName());
-
         new HttpUtils().send(HttpRequest.HttpMethod.POST, NetworkUtil.userSignIn, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
@@ -285,7 +268,8 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
             startActivity(intent);
         } else {
             Intent intent = new Intent(this, ActivityMain.class);
-            intent.putExtra(ActivityMain.KEY_TAB_INDEX, 1);
+            //20161214号要求，如果是教师端，首先进入Chat，如果是学生端面，首先进入Listen
+            intent.putExtra(ActivityMain.KEY_TAB_INDEX, ChineseChat.isStudent() ? 1 : 0);
             startActivity(intent);
         }
         finish();

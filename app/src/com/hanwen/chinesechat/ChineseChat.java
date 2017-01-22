@@ -13,8 +13,10 @@ import com.hanwen.chinesechat.activity.ActivitySignIn;
 import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.database.Database;
+import com.hanwen.chinesechat.service.ServiceChat;
 import com.hanwen.chinesechat.service.ServiceQueue;
 import com.hanwen.chinesechat.util.Log;
+import com.hanwen.chinesechat.util.SoundPlayer;
 import com.hanwen.chinesechat.util.SystemUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
@@ -25,13 +27,17 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.auth.OnlineClient;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
+import com.netease.nimlib.sdk.mixpush.NIMPushClient;
 import com.netease.nis.bugrpt.CrashHandler;
+import com.xiaomi.mipush.sdk.MiPushClient;
 
 import java.io.File;
 import java.util.List;
 
 public class ChineseChat extends Application {
     protected static final String TAG = "ChineseChat";
+    private static final String MI_APP_ID = "2882303761517534747";
+    private static final String MI_APP_KEY = "5461753418747";
     private static Context mContext = null;
     private static Database mDatabase = null;
     public static User CurrentUser;
@@ -46,6 +52,7 @@ public class ChineseChat extends Application {
         // 因此，如果需要在 onCreate 中调用除 init 接口外的其他接口，应先判断当前所属进程，并只有在当前是 UI 进程时才调用。
         NIMClient.init(this, getLoginInfo(), getOptions());
 
+        //主进程注册各种服务
         if (SystemUtil.inMainProcess(this)) {
             mContext = this;
             mDatabase = new Database(this);
@@ -57,13 +64,22 @@ public class ChineseChat extends Application {
             AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
                 @Override
                 public void onEvent(AVChatData chatData) {
-                    Log.i(TAG, "来电监听: " + chatData + " a=" + chatData.getAccount() + " c=" + chatData.getChatId() + " e=" + chatData.getExtra());
-                    ChatData chat = new ChatData();
-                    chat.setChatId(chatData.getChatId());
-                    chat.setAccid(chatData.getAccount());
-                    chat.setChatType(chatData.getChatType());
-                    chat.setExtra(chatData.getExtra());
-                    ActivityChat.start(getApplicationContext(), ActivityChat.CHAT_MODE_INCOMING, chat);
+                    Log.i(TAG, "来电监听: " + chatData + " ChatId=" + chatData.getChatId() + " Extra=" + chatData.getExtra());
+
+                    SoundPlayer.instance(getApplicationContext()).play(SoundPlayer.RingerTypeEnum.RING);
+
+                    //启动界面
+                    Intent activity = new Intent(getApplicationContext(), ActivityChat.class);
+                    activity.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    activity.putExtra(ActivityChat.KEY_CHAT_DATA, chatData);
+                    activity.putExtra(ActivityChat.KEY_CHAT_MODE, ActivityChat.CHAT_MODE_INCOMING);
+                    startActivity(activity);
+
+                    //启动服务
+                    Intent service = new Intent(getApplicationContext(), ServiceChat.class);
+                    service.putExtra(ActivityChat.KEY_CHAT_DATA, chatData);
+                    service.putExtra(ActivityChat.KEY_CHAT_MODE, ActivityChat.CHAT_MODE_INCOMING);
+                    startService(service);
                 }
             }, true);
 
@@ -79,13 +95,6 @@ public class ChineseChat extends Application {
             NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(new Observer<StatusCode>() {
                 @Override
                 public void onEvent(StatusCode statusCode) {
-
-                    if (!isStudent()) {
-                        Intent service = new Intent(ChineseChat.this, ServiceQueue.class);
-                        //service.addFlags(Intent.ACTION_GTALK_SERVICE_CONNECTED)
-                        startService(service);
-                    }
-
                     Log.i(TAG, "云信状态: " + statusCode);
                     switch (statusCode) {
 
@@ -108,6 +117,13 @@ public class ChineseChat extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+            //注册小米推送服务
+            //开发者应确保自身业务中推送的流程和逻辑完整，虽然已经调用了NIMPushClient.registerMiPush()，仍然要在合适的时机调用 MiPushClient.registerPush() 注册推送。
+            // 由于云信也会在小米设备上调用此方法，因此可能存在 MiPushMessageReceiver中 onReceiveRegisterResult 多次回调的情形。
+            // 此外，小米 SDK 在 5s内重复调用 MiPushClient.registerPush() 注册推送会被过滤，因此，请开发者不要在应用生命周期中反复调用注册方法。
+            //MiPushClient.registerPush(this, MI_APP_ID, MI_APP_KEY);
+            //NIMPushClient.registerMiPush(this, "xiaomicertificate", MI_APP_ID, MI_APP_KEY);
         }
 
     }

@@ -8,15 +8,38 @@ import java.util.List;
 public class Folder implements Parcelable {
     public int Id;
     public String Name;
+    public String NameEn;
+    public String NameSubCn;
+    public String NameSubEn;
+    public int Show;
     public int Sort;
     public int LevelId;
     public String Cover;
-    public boolean Permission;
-    public boolean HasChildren;
     public int KidsCount;
     public int DocsCount;
     public List<Folder> Children;
     public List<Document> Documents;
+    public int ParentId;
+    public int TargetId;
+
+    @Override
+    public String toString() {
+        return "Folder{" +
+                "Id=" + Id +
+                ", Name='" + Name + '\'' +
+                ", NameEn='" + NameEn + '\'' +
+                ", NameSubCn='" + NameSubCn + '\'' +
+                ", NameSubEn='" + NameSubEn + '\'' +
+                ", Show=" + Show +
+                ", Sort=" + Sort +
+                ", ParentId=" + ParentId +
+                ", TargetId=" + TargetId +
+                ", Cover='" + Cover + '\'' +
+                ", DocsCount=" + DocsCount +
+                ", KidsCount=" + KidsCount +
+                ", LevelId=" + LevelId +
+                '}';
+    }
 
     public static final Creator<Folder> CREATOR = new Creator<Folder>() {
         @Override
@@ -24,11 +47,17 @@ public class Folder implements Parcelable {
             Folder folder = new Folder();
             folder.Id = in.readInt();
             folder.Name = in.readString();
+            folder.NameEn = in.readString();
+            folder.NameSubCn = in.readString();
+            folder.NameSubEn = in.readString();
+            folder.Show = in.readInt();
             folder.Sort = in.readInt();
             folder.LevelId = in.readInt();
-            folder.DocsCount = in.readInt();
             folder.Cover = in.readString();
-            folder.Permission = in.readByte() != 0;
+            folder.KidsCount = in.readInt();
+            folder.DocsCount = in.readInt();
+            folder.ParentId = in.readInt();
+            folder.TargetId = in.readInt();
             return folder;
         }
 
@@ -37,23 +66,6 @@ public class Folder implements Parcelable {
             return new Folder[size];
         }
     };
-    public String NameEn;
-    public String NameSubCn;
-    public String NameSubEn;
-    public int Show;
-
-    @Override
-    public String toString() {
-        return "Folder{" +
-                "Id=" + Id +
-                ", Name='" + Name + '\'' +
-                ", Sort=" + Sort +
-                ", LevelId=" + LevelId +
-                ", DocsCount=" + DocsCount +
-                ", Cover='" + Cover + '\'' +
-                ", Permission=" + Permission +
-                '}';
-    }
 
     @Override
     public int describeContents() {
@@ -64,10 +76,16 @@ public class Folder implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(Id);
         dest.writeString(Name);
+        dest.writeString(NameEn);
+        dest.writeString(NameSubCn);
+        dest.writeString(NameSubEn);
+        dest.writeInt(Show);
         dest.writeInt(Sort);
         dest.writeInt(LevelId);
-        dest.writeInt(DocsCount);
         dest.writeString(Cover);
-        dest.writeByte((byte) (Permission ? 1 : 0));
+        dest.writeInt(KidsCount);
+        dest.writeInt(DocsCount);
+        dest.writeInt(ParentId);
+        dest.writeInt(TargetId);
     }
 }

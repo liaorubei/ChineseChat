@@ -6,16 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
 
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -27,6 +23,15 @@ import com.netease.nimlib.sdk.msg.MessageBuilder;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 //教师保持在线自动刷新服务,与教师排队界面的自动刷新服务相冲突
 public class TeacherAutoRefreshService extends Service {
@@ -62,6 +67,19 @@ public class TeacherAutoRefreshService extends Service {
                     }
                 });
 
+                RequestBody body = new FormBody.Builder().add("id", ChineseChat.CurrentUser.Id + "").add("isOnline", "1").build();
+                Request request = new Request.Builder().url(NetworkUtil.teacherRefresh).post(body).build();
+                new OkHttpClient.Builder().build().newCall(request).enqueue(new okhttp3.Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        Log.i(TAG, "onResponse: " + response);
+                    }
+                });
                 sendEmptyMessageDelayed(WHAT_REFRESH, 2 * 60 * 1000);
             }
         }
@@ -71,6 +89,7 @@ public class TeacherAutoRefreshService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.i(TAG, "onCreate: ");
         handler.sendEmptyMessageDelayed(WHAT_REFRESH, 0);
         receiver = new BroadcastReceiver() {
             @Override

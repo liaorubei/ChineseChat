@@ -52,6 +52,7 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.i(TAG, "onCreate: ");
 
         Intent intent = getIntent();
         tabIndex = intent.getIntExtra(KEY_TAB_INDEX, 1);
@@ -82,8 +83,6 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
             IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(receiver, filter);
         }
-        Intent i = new Intent(this, TeacherAutoRefreshService.class);
-        startService(i);
     }
 
     @Override

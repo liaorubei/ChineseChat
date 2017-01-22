@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author liaorubei
  */
 public class ActivityDocsDone extends Activity implements OnClickListener {
-    private static final String TAG = "ActivityDocument";
+    private static final String TAG = "ActivityDocsDone";
     private List<ViewHelper> list;
     private int folderId;
     private MyAdapter adapter;
@@ -49,17 +50,11 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
     private TextView tv_name;
     private View iv_menu;
 
-    public static void start(Context context, Folder folder) {
-        Intent intent = new Intent(context, ActivityDocsDone.class);
-        intent.putExtra("FolderId", folder.Id);
-        intent.putExtra("FolderName", folder.Name);
-        context.startActivity(intent);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_docsdone);
+        Log.i(TAG, "onCreate: ");
 
         initView();
 
@@ -93,6 +88,13 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         loadMore();
     }
 
+    public static void start(Context context, Folder folder) {
+        Intent intent = new Intent(context, ActivityDocsDone.class);
+        intent.putExtra("FolderId", folder.Id);
+        intent.putExtra("FolderName", folder.Name);
+        context.startActivity(intent);
+    }
+
     private void initView() {
         findViewById(R.id.iv_home).setOnClickListener(this);
         tv_folder = (RelativeLayout) findViewById(R.id.tv_folder);
@@ -119,20 +121,10 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                     h.isChecked = v.isSelected();
                 }
                 adapter.notifyDataSetChanged();
+                iv_delete.setVisibility(v.isSelected() ? View.VISIBLE : View.INVISIBLE);
                 iv_delete.setImageResource(v.isSelected() ? R.drawable.dustbin_checked : R.drawable.dustbin_uncheck);
             }
         });
-
-/*        cb_delete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                for (ViewHelper h : list) {
-                    h.isChecked = isChecked;
-                }
-                adapter.notifyDataSetChanged();
-                iv_delete.setImageResource(isChecked ? R.drawable.dustbin_checked : R.drawable.dustbin_uncheck);
-            }
-        });*/
     }
 
     @Override
@@ -146,30 +138,13 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                     i.isShow = true;
                 }
                 adapter.notifyDataSetChanged();
-
                 break;
-
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        //MenuInflater menuInflater = getMenuInflater();
-        //menuInflater.inflate(R.menu.menu_downdocs, menu);
-        menu.add(Menu.NONE, 1, 1, "删除").setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        return true;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        database.closeConnection();
-    }
-
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_home:
@@ -177,13 +152,11 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 break;
             case R.id.iv_menu:
                 deleteMode = !deleteMode;
-
                 for (ViewHelper i : list) {
                     i.isShow = deleteMode;
                 }
-
                 iv_menu.setSelected(deleteMode);
-                iv_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
+                iv_delete.setVisibility(View.INVISIBLE);
                 cb_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
                 adapter.notifyDataSetChanged();
                 break;
@@ -259,15 +232,19 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 holder.tv_size = (TextView) convertView.findViewById(R.id.tv_size);
                 holder.tv_time = (TextView) convertView.findViewById(R.id.tv_time);
 
+                holder.tv_title_sub = (TextView) convertView.findViewById(R.id.tv_title_sub_cn);
                 holder.cb_delete = (ImageView) convertView.findViewById(R.id.cb_delete);
                 convertView.setTag(holder);
             }
             ViewHolder holder = (ViewHolder) convertView.getTag();
             holder.tv_title_one.setText(item.document.Title);
             holder.tv_title_two.setText(item.document.TitleTwo);
+            holder.tv_title_two.setVisibility(TextUtils.isEmpty(item.document.TitleTwo) ? View.GONE : View.VISIBLE);
             holder.tv_date.setText(item.document.DateString);
             holder.tv_size.setText(Formatter.formatFileSize(ActivityDocsDone.this, item.document.Length));
             holder.tv_time.setText(item.document.LengthString);
+            holder.tv_title_sub.setText(item.document.TitleSubCn);
+            holder.tv_title_sub.setVisibility(TextUtils.isEmpty(item.document.TitleSubCn) ? View.GONE : View.VISIBLE);
 
             holder.cb_delete.setSelected(item.isChecked);
             holder.cb_delete.setVisibility(item.isShow ? View.VISIBLE : View.GONE);
@@ -282,6 +259,7 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                             c++;
                         }
                     }
+                    iv_delete.setVisibility(c > 0 ? View.VISIBLE : View.INVISIBLE);
                     iv_delete.setImageResource(c > 0 ? R.drawable.dustbin_checked : R.drawable.dustbin_uncheck);
 
                     //全选按钮
@@ -301,6 +279,7 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         public TextView tv_size;
         public TextView tv_time;
         public ImageView cb_delete;
+        public TextView tv_title_sub;
     }
 
     private class ViewHelper {

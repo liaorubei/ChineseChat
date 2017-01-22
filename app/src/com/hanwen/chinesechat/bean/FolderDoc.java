@@ -27,8 +27,8 @@ public class FolderDoc implements Parcelable {
         this.isFolder = true;
         this.Cover = f.Cover;
         this.Sort = f.Sort;
-        this.Permission = f.Permission;
-        this.HasChildren = f.HasChildren;
+        this.Permission = true;
+        this.HasChildren = f.KidsCount>0;
     }
 
     public FolderDoc(Parcel in) {

@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center_vertical"
-              android:orientation="horizontal"
-              android:padding="10dp">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="10dp">
 
     <ImageView
         android:id="@+id/iv_cover"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:layout_marginRight="10dp"
+        android:orientation="vertical"
         android:scaleType="centerCrop"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/iv_cover"
         android:orientation="vertical">
 
         <TextView
@@ -30,10 +35,9 @@
             android:layout_below="@+id/tv_title_cn"/>
 
         <TextView
-            android:id="@+id/tv_date"
+            android:id="@+id/tv_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_below="@+id/tv_title_en"/>
 
         <TextView
@@ -43,13 +47,41 @@
             android:layout_below="@+id/tv_title_en"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_toLeftOf="@+id/tv_date"/>
+            android:layout_toRightOf="@+id/tv_size"/>
 
         <TextView
-            android:id="@+id/tv_size"
+            android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_title_en"
-            android:layout_toLeftOf="@+id/tv_time"/>
+            android:layout_toRightOf="@+id/tv_time"/>
+
     </RelativeLayout>
-</LinearLayout>
+
+    <ImageView
+        android:id="@id/iv_down"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/download_finish"/>
+
+    <com.hanwen.chinesechat.view.CircularProgressBar
+        android:id="@+id/pb_down"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        app:roundColor="@color/color_app_normal"
+        app:roundProgressColor="@color/color_app"
+        app:textColor="@color/color_app"
+        app:textSize="10sp"/>
+
+    <Button
+        android:id="@+id/bt_down"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/selector_icon_download"/>
+</RelativeLayout>

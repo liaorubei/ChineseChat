@@ -12,4 +12,17 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
+    <style name="NoTitle_NoActionBar_BackgroundTransparent">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <style name="Test">
+ <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+<!--
+        <item name="android:windowBackground">@color/transparent</item>-->
+    </style>
+
 </resources>

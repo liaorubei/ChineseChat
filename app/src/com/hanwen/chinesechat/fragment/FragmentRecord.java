@@ -32,8 +32,10 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * 教师月份授课记录,要求有开始时间和结束时间
@@ -71,9 +73,11 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
         to = arguments.getString(KEY_TO, instance.toString("yyyy-MM-dd HH:ss:mm"));
         from = arguments.getString(KEY_FROM, instance.add(Calendar.YEAR, 2015).toString("yyyy-MM-dd HH:ss:mm"));
         Log.i(TAG, "onCreate: from:" + from + " to:" + to);
-
         list = new ArrayList<>();
         adapter = new MyAdapter(list);
+
+        Date date = new Date(System.currentTimeMillis());
+
     }
 
     @Override
@@ -126,6 +130,8 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
                     tv_summary.setText(String.format("当月授课情况:%1$d分钟（%2$d次）", resp.info.duration, resp.info.count));
                     List<Chat> logs = resp.info.list;
                     for (Chat callLog : logs) {
+
+
                         list.add(callLog);
                     }
                     listview.stopLoadMore(logs.size() < take ? XListViewFooter.STATE_NOMORE : XListViewFooter.STATE_NORMAL);
@@ -195,8 +201,8 @@ public class FragmentRecord extends Fragment implements SwipeRefreshLayout.OnRef
             holder.tv_cost.setText(getString(item.Coins > 1 ? R.string.ActivityHistory_coins : R.string.ActivityHistory_coin, item.Coins));
             holder.tv_time.setText(getString(item.Duration > 1 ? R.string.ActivityHistory_durations : R.string.ActivityHistory_duration, item.Duration));
 
-            holder.tv_date.setText(sdfE.format(item.Start));
-
+            //服务器采用UTC时间，在本地显示的时候要加上时区偏移的时间
+            holder.tv_date.setText(sdfE.format(new Date(item.UtcStart.getTime() + TimeZone.getDefault().getRawOffset())));
             return convertView;
         }
     }

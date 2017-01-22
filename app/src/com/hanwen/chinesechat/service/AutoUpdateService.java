@@ -1,7 +1,5 @@
 package com.hanwen.chinesechat.service;
 
-import java.io.File;
-
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.NotificationManager;
@@ -12,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
@@ -19,17 +18,19 @@ import android.support.v4.app.NotificationCompat;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.hanwen.chinesechat.ChineseChat;
+import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.bean.UpgradePatch;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
-import com.hanwen.chinesechat.R;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+
+import java.io.File;
 
 /**
  * 自动更新服务
@@ -44,11 +45,9 @@ public class AutoUpdateService extends Service {
     private UpgradePatch upgradePatch;
 
     private void builderDownloadDialog() {
-        Builder builder = new AlertDialog.Builder(AutoUpdateService.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+        AlertDialog.Builder builder = new AlertDialog.Builder(AutoUpdateService.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
         builder.setTitle(R.string.ActivityMain_upgrade_tips);
-        String string = getResources().getString(R.string.ActivityMain_new_versions_message);
-        string += "\r\n" + upgradePatch.UpgradeInfo;
-        builder.setMessage(string);
+        builder.setMessage(getString(R.string.ActivityMain_new_versions_message, upgradePatch.UpgradeInfo));
         builder.setPositiveButton(R.string.ActivityMain_positive_text, new OnClickListener() {
 
             @Override
@@ -63,7 +62,6 @@ public class AutoUpdateService extends Service {
                     isNowSetupDialog.show();
                 } else {
                     // 如果还没有下载最新安装包,则开始下载最新安装包
-
                     boolean autoResume = true; // 如果目标文件存在，接着未完成的部分继续下载。服务器不支持RANGE时将从新下载。
                     boolean autoRename = false; // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
                     new HttpUtils().download(NetworkUtil.getFullPath(upgradePatch.PackagePath), installPack.getAbsolutePath(), autoResume, autoRename, new RequestCallBack<File>() {
@@ -97,7 +95,9 @@ public class AutoUpdateService extends Service {
                         public void onStart() {
                             notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                             builder = new NotificationCompat.Builder(AutoUpdateService.this);
-                            builder.setSmallIcon(ChineseChat.isStudent() ? R.drawable.ic_launcher_student : R.drawable.ic_launcher_teacher);
+                            builder.setTicker("开始下载更新包...");
+                            builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), ChineseChat.isStudent() ? R.drawable.ic_launcher_student : R.drawable.ic_launcher_teacher));
+                            builder.setSmallIcon(R.drawable.download_normal);
                             builder.setContentTitle("ChineseChat");
                             builder.setContentText(getString(R.string.AutoUpdateService_app_update));
                             builder.setProgress(100, 0, false);
@@ -109,12 +109,14 @@ public class AutoUpdateService extends Service {
                 }
 
             }
-        });
-        builder.setNegativeButton(R.string.ActivityMain_negative_text, new OnClickListener() {
+        }).setNegativeButton(R.string.ActivityMain_negative_text, new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 isDownloadDialog.dismiss();
+
+                //如果取消更新，退出本服务
+                stopSelf();
             }
         });
         isDownloadDialog = builder.create();
@@ -142,6 +144,7 @@ public class AutoUpdateService extends Service {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 isNowSetupDialog.dismiss();
+                stopSelf();
             }
         });
         isNowSetupDialog = builder.create();
@@ -160,20 +163,18 @@ public class AutoUpdateService extends Service {
         // 3.如果要下载,根据PackageName与VersionName检查本地是否已经下载有安装包,如果有安装包,则直接弹出安装界面
         // 3.如果之前没有下载到最新的安装包,则下载并重命名安装包,再弹出安装界面
 
-
-        // 1.请求网络---升级数据请求,建议放到spash界面
+        // 1.请求网络---升级数据请求,取得所有的升级数据，
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
         parameters.add("versionType", (ChineseChat.isStudent() ? 0 : 1) + "");
         HttpUtil.post(NetworkUtil.checkUpdate, parameters, new RequestCallBack<String>() {
-
             @Override
             public void onFailure(HttpException error, String msg) {
-                Log.i(TAG, "onFailure: " + "查询更新失败" + msg);
+                Log.i(TAG, "版本检查失败," + msg);
+                stopSelf();
             }
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + responseInfo.result);
                 try {
                     upgradePatch = new Gson().fromJson(responseInfo.result, UpgradePatch.class);
                     //把网上的版本信息保存起来，在关于的时候会用到，
@@ -185,20 +186,24 @@ public class AutoUpdateService extends Service {
                     editor.apply();
 
                     PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_CONFIGURATIONS);
+
+                    File download = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
                     installPack = new File(Environment.getExternalStorageDirectory(), "Download/" + packageInfo.packageName + "_" + upgradePatch.VersionName + (ChineseChat.isStudent() ? "_Student" : "_Teacher") + ".apk");
                     if (!installPack.getParentFile().exists()) {
                         installPack.getParentFile().mkdirs();
                     }
+                    Log.i(TAG, "版本检查成功,网络VersionName=" + upgradePatch.VersionName + ",本身versionName=" + packageInfo.versionName + ",更新地址=" + upgradePatch.PackagePath);
 
                     // 检查当前versionName与网络上最新的VersionName是否一致,如果不一致则进入
                     if (!packageInfo.versionName.equals(upgradePatch.VersionName)) {
-                        // 询问是否要下载最新版本
                         if (isDownloadDialog == null) {
                             builderDownloadDialog();
                         }
                         isDownloadDialog.show();
                     } else {
-                        Log.i("logi", "最新版本 RequestUrl:" + this.getRequestUrl());
+                        //如果是最新版本，则不用更新，退出本服务
+                        stopSelf();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -206,7 +211,6 @@ public class AutoUpdateService extends Service {
 
             }
         });
-
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_NOT_STICKY;
     }
 }

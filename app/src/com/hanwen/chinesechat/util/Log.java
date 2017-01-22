@@ -2,7 +2,7 @@ package com.hanwen.chinesechat.util;
 
 public class Log {
 
-    private static boolean logOn = true;
+    private static boolean logOn = false;
 
     public static void i(String tag, String msg) {
         if (logOn) {

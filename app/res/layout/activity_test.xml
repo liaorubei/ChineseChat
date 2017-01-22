@@ -1,50 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<com.aspsine.swipetoloadlayout.SwipeToLoadLayout
+    android:id="@+id/swipeToLoadLayout"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:text="TITLE"
-        android:textColor="#00f"/>
+    <com.hanwen.chinesechat.view.RefreshHeaderView
+        android:id="@id/swipe_refresh_header"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"/>
 
-    <RelativeLayout
-        android:layout_marginTop="25dp"
+    <LinearLayout
+        android:id="@id/swipe_target"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true">
+        android:background="#f00"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:background="#ff0"
+            android:text="1080"/>
 
         <ListView
             android:id="@+id/listView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="50dp"
-            android:background="#f00"/>
+            android:layout_height="match_parent"/>
+    </LinearLayout>
 
+    <com.hanwen.chinesechat.view.LoadMoreFooterView
+        android:id="@id/swipe_load_more_footer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:gravity="center"/>
 
-        <TextView
-            android:id="@+id/tv_center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="END"/>
-
-        <EditText
-            android:id="@id/et_code"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentBottom="true"
-            android:background="#10f0"
-            android:fitsSystemWindows="true"/>
-
-
-    </RelativeLayout>
-
-</RelativeLayout>
-
-
-
+</com.aspsine.swipetoloadlayout.SwipeToLoadLayout>

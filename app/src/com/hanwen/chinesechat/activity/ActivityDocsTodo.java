@@ -65,6 +65,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
     private ImageView iv_menu;
     private ImageView iv_delete;
     private ImageView cb_check_all;
+    private boolean showDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         // 取得传递过来的数据
         Intent intent = getIntent();
         folder = intent.getParcelableExtra("folder");
+        showDate = intent.getBooleanExtra("showDate", false);
 
         initView();
 
@@ -100,13 +102,26 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         bindService(new Intent(this, DownloadService.class), conn, Service.BIND_AUTO_CREATE);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        // 移除观察者,让下载服务后台自行下载
+        myBinder.getDownloadManager().deleteObserver(adapter);
+
+        // 移除服务绑定,避免内存泄漏
+        unbindService(conn);
+    }
+
     private void initData() {
         //防异常处理
         int id = -1;
         if (ChineseChat.CurrentUser != null) {
             id = ChineseChat.CurrentUser.Id;
         }
-        String url = NetworkUtil.documentGetListByFolderId + String.format("?folderId=%1$d&userId=%2$d", folder.Id, id);
+
+        //请求课文列表时，如果有TargetId，则优先显示，因为其本身只是一个指向作用，有一定可能其本身没有内容
+        String url = NetworkUtil.documentGetListByFolderId + String.format("?folderId=%1$d&userId=%2$d", folder.TargetId > 0 ? folder.TargetId : folder.Id, id);
         Log.i(TAG, "initData: " + url);
 
         UrlCache cache = ChineseChat.database().cacheSelectByUrl(url);
@@ -207,17 +222,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         });
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // 移除观察者,让下载服务后台自行下载
-        myBinder.getDownloadManager().deleteObserver(adapter);
-
-        // 移除服务绑定,避免内存泄漏
-        unbindService(conn);
-    }
-
     private void download(Document doc) {
         if (TextUtils.isEmpty(doc.SoundPath)) {
             CommonUtil.toast(R.string.ActivityDocsTodo_soundPath_error);
@@ -234,7 +238,6 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         ChineseChat.database().docsInsert(doc);
     }
 
-    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_menu:
@@ -257,13 +260,12 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
                     }
                     adapter.notifyDataSetChanged();
 
-                    iv_delete.setVisibility(View.VISIBLE);
+                    //iv_delete.setVisibility(View.VISIBLE);
                     iv_delete.setSelected(false);
 
                     cb_check_all.setVisibility(View.VISIBLE);
                 }
                 iv_menu.setSelected(!iv_menu.isSelected());
-
                 break;
             case R.id.cb_check_all:
                 cb_check_all.setSelected(!cb_check_all.isSelected());
@@ -310,8 +312,10 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
             holder.tv_title_two.setVisibility(TextUtils.isEmpty(item.TitleEn) ? View.GONE : View.VISIBLE);
             holder.tv_title_sub_cn.setText(item.TitleSubCn);
             holder.tv_title_sub_cn.setVisibility(item.Category == 2 ? View.VISIBLE : View.GONE);
-            holder.tv_date.setText(sdf.format(item.Date));
-            holder.tv_date.setVisibility(item.Category == 2 ? View.GONE : View.VISIBLE);
+            if (item.Date != null) {
+                holder.tv_date.setText(sdf.format(item.Date));
+            }
+            holder.tv_date.setVisibility(showDate ? View.VISIBLE : View.GONE);
             holder.tv_size.setText(FileUtil.formatFileSize(item.Length, FileUtil.SizeUnit.MB));
             holder.tv_time.setText(item.LengthString);
 
@@ -420,6 +424,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         }
 
         iv_delete.setSelected(down.size() > 0);
+        iv_delete.setVisibility(down.size() > 0 ? View.VISIBLE : View.INVISIBLE);
         cb_check_all.setSelected(down.size() == check);
     }
 

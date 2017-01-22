@@ -11,7 +11,7 @@
     <string name="ActivityMain_has_download_message">Update package is downloaded,update it now?</string>
     <string name="ActivityMain_negative_text">Cancel</string>
     <string name="ActivityMain_positive_text">OK</string>
-    <string name="ActivityMain_new_versions_message">Have a latest version,would you like to update?</string>
+    <string name="ActivityMain_new_versions_message">Have a latest version,would you like to update?\n%1$s</string>
     <string name="ActivityMain_upgrade_tips">Update</string>
 
     <!-- 下拉刷新与上拉加载 -->
@@ -411,8 +411,8 @@
     <!--价格条,充值记录-->
     <string name="ActivityPayment_confirm">Confirm</string>
     <string name="ActivityPayment_item">Item：ChineseChat coin</string>
-    <string name="ActivityPayment_number">Quantity：%1$d</string>
-    <string name="ActivityPayment_amount">Amount：%1$s</string>
+    <string name="ActivityPayment_number">Class hour：%1$.0f mins（%2$d coins）</string>
+    <string name="ActivityPayment_amount">Amount：%1$.0f %2$s</string>
     <string name="ActivityPayment_status">Status：</string>
 
     <string name="ActivityPayment_topup_title">Charge and top-ups</string>
@@ -555,7 +555,8 @@
 
     <!--ActivitySignIn-->
     <string name="ActivitySignIn_title">Login</string>
-    <string name="ActivitySignIn_type_email">E-mail</string>
+    <string name="ActivitySignIn_title_teacher">Login</string>
+    <string name="ActivitySignIn_type_email">E-mail/Exclusive account</string>
     <string name="ActivitySignIn_type_password">Password</string>
     <string name="ActivitySignIn_login">Login</string>
     <string name="ActivitySignIn_forgot_password">Forgot password?</string>

@@ -170,7 +170,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 listPay.clear();
                 if (resp.code == 200) {
                     for (Product p : resp.info) {
-                        listPay.add(new Pay(p.Coin, p.USD, p.CNY));
+                        listPay.add(new Pay(p.Coin, p.USD, p.CNY, p.Hour));
                     }
                 }
                 adapterPay.notifyDataSetChanged();
@@ -332,8 +332,8 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
             iv_radio.setSelected(currentPosition == position);
 
-            tv_coins.setText(getString(R.string.ActivityPayment_number, item.coin));
-            tv_price.setText(getString(R.string.ActivityPayment_amount, rb_paypal.isChecked() ? (item.usd + " USD") : (item.cny + " CNY")));
+            tv_coins.setText(getString(R.string.ActivityPayment_number, item.hour, item.coin));
+            tv_price.setText(getString(R.string.ActivityPayment_amount, rb_paypal.isChecked() ? item.usd : item.cny, rb_paypal.isChecked() ? " USD" : " CNY"));
             return inflate;
         }
     }
@@ -352,8 +352,8 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             TextView tv_status = (TextView) inflate.findViewById(R.id.tv_status);
             TextView tv_create = (TextView) inflate.findViewById(R.id.tv_create);
 
-            tv_number.setText(getString(R.string.ActivityPayment_number, item.Coin));
-            tv_amount.setText(getString(R.string.ActivityPayment_amount, (item.Amount + item.Currency)));
+            tv_number.setText(getString(R.string.ActivityPayment_number, item.Hour, item.Coin));
+            tv_amount.setText(getString(R.string.ActivityPayment_amount, item.Amount, item.Currency));
             tv_status.setText(Html.fromHtml(getString(R.string.ActivityPayment_status) + "<font " + ("SUCCESS".equals(item.TradeStatus) ? ">" : " color='#ff0000'>") + ("SUCCESS".equals(item.TradeStatus) ? "Completed" : "Failed") + "</font>"));
             tv_create.setText(sdf.format(item.CreateTime));
             return inflate;
@@ -362,12 +362,14 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
     private class Pay {
         int coin;
+        float hour;
         String subject;
         BigDecimal usd;
         BigDecimal cny;
 
-        public Pay(int coin, BigDecimal us, BigDecimal cn) {
+        public Pay(int coin, BigDecimal us, BigDecimal cn, float hour) {
             this.coin = coin;
+            this.hour = hour;
             this.subject = "Coin " + coin;
             this.usd = us;
             this.cny = cn;

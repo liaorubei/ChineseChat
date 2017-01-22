@@ -9,4 +9,5 @@ public class Product {
     public int Coin;
     public BigDecimal USD;
     public BigDecimal CNY;
+    public float Hour;
 }

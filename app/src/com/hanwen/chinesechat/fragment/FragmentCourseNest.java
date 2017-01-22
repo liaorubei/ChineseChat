@@ -76,7 +76,7 @@ public class FragmentCourseNest extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.i(TAG, "onViewCreated: ");
+        //Log.i(TAG, "onViewCreated: ");
         GridView gridView = (GridView) view.findViewById(R.id.gridView);
 
         data.clear();
@@ -88,16 +88,18 @@ public class FragmentCourseNest extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Folder folder = data.get(position);
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.fl_content, folder.HasChildren ? FragmentCourseNestSecond.newInstance(folder) : FragmentCourseNestThird.newInstance(folder), folder.Name);
+                fragmentTransaction.replace(R.id.fl_content, folder.KidsCount > 0 ? FragmentCourseNestSecond.newInstance(folder) : FragmentCourseNestThird.newInstance(folder), folder.Name);
                 fragmentTransaction.addToBackStack("FragmentCourseClear").commit();
             }
         });
         HttpUtil.Parameters params = new HttpUtil.Parameters();
+        params.add("userId", ChineseChat.CurrentUser.Id);
         params.add("levelId", 8);
-        HttpUtil.post(NetworkUtil.folderGetListByLevelId, params, new RequestCallBack<String>() {
+        params.add("parentId", 0);
+        HttpUtil.post(NetworkUtil.folderGetList, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "onSuccess: " + this.getRequestUrl() + "   " + responseInfo.result);
+                //Log.i(TAG, "onSuccess: " + this.getRequestUrl() + "   " + responseInfo.result);
                 Response<List<Folder>> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {}.getType());
                 for (Folder f : resp.info) {
                     data.add(f);
@@ -131,7 +133,6 @@ public class FragmentCourseNest extends Fragment {
             TextView tv_name_sub = (TextView) inflate.findViewById(R.id.tv_count);
             tv_name_sub.setText(item.NameSubCn);
             tv_name_sub.setGravity(Gravity.CENTER);
-            //tv_name_sub.setVisibility(TextUtils.isEmpty(item.NameSubCn) ? View.GONE : View.VISIBLE);
             inflate.findViewById(R.id.tv_title_sub).setVisibility(View.GONE);
             return inflate;
         }

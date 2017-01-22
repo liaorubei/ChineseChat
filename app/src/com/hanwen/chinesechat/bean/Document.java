@@ -30,15 +30,22 @@ public class Document {
     public String DateString;
     public String Cover;
     public Folder Folder;
+    public int IsDownload;
 
+    @Override
     public String toString() {
         return "Document{" +
-                "Id=" + Id +
+                "Title='" + Title + '\'' +
+                ", TitleTwo='" + TitleTwo + '\'' +
+                ", Id=" + Id +
+                ", LevelId=" + LevelId +
                 ", FolderId=" + FolderId +
                 ", TitleCn='" + TitleCn + '\'' +
                 ", TitleEn='" + TitleEn + '\'' +
+                ", TitlePy='" + TitlePy + '\'' +
                 ", TitleSubCn='" + TitleSubCn + '\'' +
                 ", TitleSubEn='" + TitleSubEn + '\'' +
+                ", TitleSubPy='" + TitleSubPy + '\'' +
                 ", Category=" + Category +
                 ", SoundPath='" + SoundPath + '\'' +
                 ", Cover='" + Cover + '\'' +
