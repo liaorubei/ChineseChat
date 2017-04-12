@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/ActivitySetting_投诉建议" />
+            android:text="@string/ActivitySetting_feedback" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -71,48 +71,6 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:src="@drawable/icon_menu_arrow" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:text="@string/ActivitySetting_请在WIFI下使用" />
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rl_wipedata"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginBottom="10dp"
-        android:background="#fff"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:text="@string/ActivitySetting_清理缓存" />
-
-        <TextView
-            android:id="@+id/tv_cache"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:text="0.00B"
-            android:visibility="visible" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -127,7 +85,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="@string/ActivitySetting_关于汉问" />
+            android:text="@string/ActivitySetting_aboutapp" />
 
         <ImageView
             android:layout_width="wrap_content"
@@ -151,7 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
-            android:text="@string/ActivitySetting_登录" />
+            android:text="@string/ActivitySetting_sginin" />
 
         <ImageView
             android:layout_width="wrap_content"

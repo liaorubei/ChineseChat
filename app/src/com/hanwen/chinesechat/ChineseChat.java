@@ -5,16 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.text.TextUtils;
 
 import com.hanwen.chinesechat.activity.ActivityChat;
 import com.hanwen.chinesechat.activity.ActivitySignIn;
-import com.hanwen.chinesechat.bean.ChatData;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.service.ServiceChat;
-import com.hanwen.chinesechat.service.ServiceQueue;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.SoundPlayer;
 import com.hanwen.chinesechat.util.SystemUtil;
@@ -27,9 +24,8 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.auth.OnlineClient;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
-import com.netease.nimlib.sdk.mixpush.NIMPushClient;
 import com.netease.nis.bugrpt.CrashHandler;
-import com.xiaomi.mipush.sdk.MiPushClient;
+import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 import java.util.List;
@@ -47,10 +43,21 @@ public class ChineseChat extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
+
         // 注意：除了 NIMClient.init 接口外，其他 SDK 暴露的接口都只能在 UI 进程调用。
         // 如果 APP 包含远程 service，该 APP 的 Application 的 onCreate 会多次调用。
         // 因此，如果需要在 onCreate 中调用除 init 接口外的其他接口，应先判断当前所属进程，并只有在当前是 UI 进程时才调用。
         NIMClient.init(this, getLoginInfo(), getOptions());
+
+       // Log.i(TAG, "onCreate: " + new Gson().toJson(new DeviceUtil()));
+
 
         //主进程注册各种服务
         if (SystemUtil.inMainProcess(this)) {

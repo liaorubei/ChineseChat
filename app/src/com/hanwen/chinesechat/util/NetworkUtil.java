@@ -3,7 +3,8 @@ package com.hanwen.chinesechat.util;
 import android.text.TextUtils;
 
 public class NetworkUtil {
-    public static String domain = "https://www.chinesechat.cn/";
+    public static String domain = "https://www.chinesechat.cn";
+    //public static String domain = "http://192.168.0.150:1025/";
     //public static String domain = "http://voc2015.azurewebsites.net";
     //public static String domain = "http://voc2015test.azurewebsites.net";
 
@@ -44,7 +45,7 @@ public class NetworkUtil {
     public static final String paymentOrderRecords = domain + "/Api/Payment/OrderRecords";
     public static final String paymentVerifyAliPay = domain + "/Api/Payment/VerifyAliPay";
     public static final String paymentVerifyPayPal = domain + "/Api/Payment/VerifyPayPal";
-    public static final String productSelect = domain + "/Api/Product/Select";
+    public static final String productSelect = domain + "/Api/Product/Select";//userId
     public static final String studentCall = domain + "/Api/student/call";
     public static final String teacherDequeue = domain + "/Api/NimUser/TeacherDequeue";//Id
     public static final String teacherEnqueue = domain + "/Api/NimUser/TeacherEnqueue";
@@ -58,6 +59,8 @@ public class NetworkUtil {
     public static final String userSignIn = domain + "/Api/NimUser/Signin";//username,password,category,system,device
     public static final String userUpdate = domain + "/Api/NimUser/Update";
     public static final String userVerify = domain + "/Api/NimUser/Verify";
+    public static final String documentCount = domain + "/Api/Document/Count";//Id,userId
+    public static final String nimUserTeacherRegister = domain + "/Api/NimUser/TeacherRegister";
 
     public static String format(String text, Object... para) {
         for (int i = 0; i < para.length; i++) {

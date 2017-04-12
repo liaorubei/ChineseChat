@@ -6,10 +6,8 @@ import android.widget.TextView;
 
 import com.aspsine.swipetoloadlayout.SwipeRefreshTrigger;
 import com.aspsine.swipetoloadlayout.SwipeTrigger;
+import com.hanwen.chinesechat.R;
 
-/**
- * Created by ChineseChat on 2016/9/20.
- */
 public class RefreshHeaderView extends TextView implements SwipeRefreshTrigger, SwipeTrigger {
 
     public RefreshHeaderView(Context context) {
@@ -22,7 +20,7 @@ public class RefreshHeaderView extends TextView implements SwipeRefreshTrigger, 
 
     @Override
     public void onRefresh() {
-        setText("REFRESHING");
+        setText(R.string.xlistview_header_hint_loading);
     }
 
     @Override
@@ -34,12 +32,12 @@ public class RefreshHeaderView extends TextView implements SwipeRefreshTrigger, 
     public void onMove(int yScrolled, boolean isComplete, boolean automatic) {
         if (!isComplete) {
             if (yScrolled >= getHeight()) {
-                setText("RELEASE TO REFRESH");
+                setText(R.string.xlistview_header_hint_ready);
             } else {
-                setText("SWIPE TO REFRESH");
+                setText(R.string.xlistview_header_hint_normal);
             }
         } else {
-            setText("REFRESH RETURNING");
+            setText(R.string.xlistview_header_hint_loading);
         }
     }
 
@@ -49,7 +47,7 @@ public class RefreshHeaderView extends TextView implements SwipeRefreshTrigger, 
 
     @Override
     public void onComplete() {
-        setText("COMPLETE");
+        setText(R.string.xlistview_header_hint_loading);
     }
 
     @Override

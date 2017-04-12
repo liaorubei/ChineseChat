@@ -7,8 +7,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.Formatter;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -19,16 +17,18 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hanwen.chinesechat.ChineseChat;
+import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.base.BaseAdapter;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.Folder;
-import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.util.Log;
-import com.hanwen.chinesechat.R;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 我的下载--文档列表显示界面
@@ -38,17 +38,16 @@ import java.util.List;
 public class ActivityDocsDone extends Activity implements OnClickListener {
     private static final String TAG = "ActivityDocsDone";
     private List<ViewHelper> list;
-    private int folderId;
     private MyAdapter adapter;
-    private Database database;
     private ListView listview;
-    private int levelId;
     protected RelativeLayout tv_folder;
     private ImageView iv_delete;
     private boolean deleteMode = false;
     private ImageView cb_delete;
     private TextView tv_name;
     private View iv_menu;
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private Folder folder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,12 +57,9 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
 
         initView();
 
-        database = new Database(this);
-
         // 取得传递过来的数据
         Intent intent = getIntent();
-        levelId = intent.getIntExtra("LevelId", 0);
-        folderId = intent.getIntExtra("FolderId", 16);
+        folder = intent.getParcelableExtra("folder");
         String folderName = intent.getStringExtra("FolderName");
         tv_name.setText(folderName);
 
@@ -85,11 +81,25 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
-        loadMore();
+        new AsyncTask<Integer, Integer, List<Document>>() {
+
+            @Override
+            protected List<Document> doInBackground(Integer... params) {
+                return ChineseChat.database().docsSelectListByFolderId(params[0]);
+            }
+
+            protected void onPostExecute(List<Document> result) {
+                for (Document document : result) {
+                    list.add(new ViewHelper(document, false, false));
+                }
+                adapter.notifyDataSetChanged();
+            }
+        }.execute(folder.Id);
     }
 
     public static void start(Context context, Folder folder) {
         Intent intent = new Intent(context, ActivityDocsDone.class);
+        intent.putExtra("folder", folder);
         intent.putExtra("FolderId", folder.Id);
         intent.putExtra("FolderName", folder.Name);
         context.startActivity(intent);
@@ -127,24 +137,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                this.finish();
-                break;
-            case 1:
-                for (ViewHelper i : list) {
-                    i.isShow = true;
-                }
-                adapter.notifyDataSetChanged();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_home:
@@ -154,10 +146,13 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 deleteMode = !deleteMode;
                 for (ViewHelper i : list) {
                     i.isShow = deleteMode;
+                    i.isChecked = false;
                 }
                 iv_menu.setSelected(deleteMode);
                 iv_delete.setVisibility(View.INVISIBLE);
                 cb_delete.setVisibility(deleteMode ? View.VISIBLE : View.INVISIBLE);
+                cb_delete.setSelected(false);
+
                 adapter.notifyDataSetChanged();
                 break;
             case R.id.iv_delete:
@@ -174,7 +169,7 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 // 清除数据库及文件夹里面的数据
                 for (ViewHelper viewHelper : removeList) {
                     // 从数据库移除
-                    database.docsDeleteById(viewHelper.document.Id);
+                    ChineseChat.database().docsDeleteById(viewHelper.document.Id);
 
                     // 从文件夹移除
                     File file = new File(getFilesDir(), viewHelper.document.SoundPath);
@@ -197,23 +192,6 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         }
     }
 
-    private void loadMore() {
-        new AsyncTask<Integer, Integer, List<Document>>() {
-
-            @Override
-            protected List<Document> doInBackground(Integer... params) {
-                return database.docsSelectListByFolderId(params[0]);
-            }
-
-            protected void onPostExecute(List<Document> result) {
-                for (Document document : result) {
-                    list.add(new ViewHelper(document, false, false));
-                }
-                adapter.notifyDataSetChanged();
-            }
-        }.execute(folderId);
-    }
-
     private class MyAdapter extends BaseAdapter<ViewHelper> {
 
         public MyAdapter(List<ViewHelper> list) {
@@ -223,6 +201,7 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHelper item = getItem(position);
+            //Log.i(TAG, "getView: " + sdf.format(item.document.AuditDate));
             if (convertView == null) {
                 convertView = View.inflate(ActivityDocsDone.this, R.layout.listitem_downdocs, null);
                 ViewHolder holder = new ViewHolder();
@@ -237,10 +216,11 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                 convertView.setTag(holder);
             }
             ViewHolder holder = (ViewHolder) convertView.getTag();
-            holder.tv_title_one.setText(item.document.Title);
-            holder.tv_title_two.setText(item.document.TitleTwo);
-            holder.tv_title_two.setVisibility(TextUtils.isEmpty(item.document.TitleTwo) ? View.GONE : View.VISIBLE);
-            holder.tv_date.setText(item.document.DateString);
+            holder.tv_title_one.setText(item.document.TitleCn);
+            holder.tv_title_two.setText(item.document.TitleEn);
+            holder.tv_title_two.setVisibility(TextUtils.isEmpty(item.document.TitleEn) ? View.GONE : View.VISIBLE);
+            holder.tv_date.setText(sdf.format(item.document.AuditDate));
+            holder.tv_date.setVisibility(folder.LevelId == 6 ? View.VISIBLE : View.GONE);
             holder.tv_size.setText(Formatter.formatFileSize(ActivityDocsDone.this, item.document.Length));
             holder.tv_time.setText(item.document.LengthString);
             holder.tv_title_sub.setText(item.document.TitleSubCn);
@@ -266,10 +246,8 @@ public class ActivityDocsDone extends Activity implements OnClickListener {
                     cb_delete.setSelected(c == list.size());
                 }
             });
-
             return convertView;
         }
-
     }
 
     private class ViewHolder {

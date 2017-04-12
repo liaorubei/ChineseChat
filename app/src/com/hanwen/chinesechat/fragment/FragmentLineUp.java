@@ -2,19 +2,16 @@ package com.hanwen.chinesechat.fragment;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v13.app.FragmentCompat;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -22,7 +19,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,7 +40,6 @@ import com.hanwen.chinesechat.bean.TeacherQueue;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.dialog.ProgressDialog;
 import com.hanwen.chinesechat.service.ServiceQueue;
-import com.hanwen.chinesechat.service.TeacherAutoRefreshService;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -63,7 +58,6 @@ import java.util.List;
 
 /**
  * 教师排队列表，学生端和教师端都可用，学生端显示拨打按钮，教师端显示入队按钮
- * Created by liaorubei on 2016/1/14.
  */
 public class FragmentLineUp extends Fragment implements View.OnClickListener, XListView.IXListViewListener, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemClickListener {
     private static final String TAG = "FragmentLineUp";
@@ -79,6 +73,11 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
     private int take = 50;
     private TextView tv_nickname, tv_line;
     private boolean resume = false;
+    private User teacher;
+    private AlertDialog dialogLogin;
+    private int documentId = -1;
+    private ProgressDialog progressDialog;
+
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -95,11 +94,6 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
             }
         }
     };
-    private User teacher;
-    private AlertDialog dialogLogin;
-    private int documentId = -1;
-    private boolean permissionCheck = false;
-    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -166,16 +160,16 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
     private void showLoginDialog() {
         if (dialogLogin == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.fragment_person_dialog_title);
-            builder.setMessage(R.string.fragment_person_dialog_message);
-            builder.setPositiveButton(R.string.fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.Fragment_person_dialog_title);
+            builder.setMessage(R.string.Fragment_person_dialog_message);
+            builder.setPositiveButton(R.string.Fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     dialog.dismiss();
                 }
             });
-            builder.setNegativeButton(R.string.fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.Fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
@@ -305,7 +299,7 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         int index = position - 1;
-        if (index < dataSet.size()) {
+        if (0 <= index && index < dataSet.size()) {
             ActivityProfile.start(getActivity(), dataSet.get(index), ChineseChat.isStudent());
         }
     }
@@ -329,32 +323,6 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
             holder.tv_nickname.setText(String.format("%1$s%2$s", TextUtils.isEmpty(user.Nickname) ? "" : user.Nickname, TextUtils.equals(user.Username, ChineseChat.CurrentUser.Username) ? "[本人]" : ""));
             holder.tv_nickname.setTextColor(user.IsEnable ? getResources().getColor(R.color.color_app) : Color.RED);
             holder.tv_spoken.setText(user.Spoken);
-
-/*            if (user.IsOnline) {
-                if (user.IsEnable) {
-                    holder.tv_nickname.setTextColor(getResources().getColor(R.color.color_app));
-                    holder.tv_status.setText(R.string.FragmentChoose_tips_online);
-                    holder.tv_status.setTextColor(getResources().getColor(R.color.color_app));
-                    holder.iv_status.setBackgroundResource(R.color.color_app);
-                    holder.iv_status.setImageResource(R.drawable.teacher_online);
-                    holder.tv_nickname.setTextColor(getResources().getColor(R.color.color_app));
-                } else {
-                    holder.tv_nickname.setTextColor(getResources().getColor(R.color.teacher_busy));
-                    holder.tv_status.setText(R.string.FragmentChoose_tips_busy);
-                    holder.tv_status.setTextColor(getResources().getColor(R.color.teacher_busy));
-                    holder.iv_status.setBackgroundResource(R.color.teacher_busy);
-                    holder.iv_status.setImageResource(R.drawable.teacher_busy);
-                    holder.tv_nickname.setTextColor(getResources().getColor(R.color.teacher_busy));
-                }
-            } else {
-                holder.tv_nickname.setTextColor(getResources().getColor(R.color.color_app_normal));
-                holder.tv_status.setText(R.string.FragmentChoose_tips_offline);
-                holder.tv_status.setTextColor(getResources().getColor(R.color.color_app_normal));
-                holder.iv_status.setBackgroundResource(R.color.color_app_normal);
-                holder.iv_status.setImageResource(R.drawable.teacher_offline);
-                holder.tv_nickname.setTextColor(getResources().getColor(R.color.color_app_normal));
-            }*/
-
             if (!TextUtils.isEmpty(user.Avatar)) {
                 CommonUtil.showBitmap(holder.iv_avatar, NetworkUtil.getFullPath(user.Avatar));
             } else {
@@ -381,7 +349,13 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
                     //安卓6.0运行时权限检查
                     boolean isGranted = ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 
-                    if (!isGranted) {
+                    if (isGranted) {
+                        callTeacher(teacher);
+                    } else {
+                        requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUESTCODE_RECORD_AUDIO);
+                    }
+
+/*                    if (!isGranted) {
                         if (!permissionCheck) {
                             permissionCheck = true;
                             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -394,15 +368,15 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
                         ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUESTCODE_RECORD_AUDIO);
                     } else {
                         callTeacher(user);
-                    }
+                    }*/
                 }
             });
             return convertView;
         }
     }
 
-    /*
-     *学生选择教师返回来的JSON帮忙类
+    /**
+     * 学生选择教师返回来的JSON帮忙类
      */
     private class ChooseTeacherModel {
         public User Student;
@@ -419,8 +393,6 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
             CommonUtil.toast(R.string.FragmentChoose_busy);
             return;
         }
-
-
         progressDialog.show();
         HttpUtil.Parameters parameters = new HttpUtil.Parameters();
         parameters.add("id", ChineseChat.CurrentUser.Id);
@@ -526,9 +498,10 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
         teacherJson.add("Summary", teacherSummary);
         json.add("Teacher", teacherJson);
 
-        ChatData chatData = new ChatData();
+        //ChatData chatData = new ChatData();
+        //chatData.setExtra(json.toString());
+        ChatData chatData = ActivityChat.buildChat(teacher, student);
         chatData.setAccid(teacher.Accid);
-        chatData.setExtra(json.toString());
         chatData.setChatType(AVChatType.AUDIO);
 
         Log.i(TAG, "onSuccess: " + documentId);
@@ -544,7 +517,7 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
         }
     }
 
-    private static final int PERMISSION_REQUESTCODE_RECORD_AUDIO = 1;
+    private static final int PERMISSION_REQUESTCODE_RECORD_AUDIO = 5;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -555,12 +528,36 @@ public class FragmentLineUp extends Fragment implements View.OnClickListener, XL
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        Log.i(TAG, "onRequestPermissionsResult: ");
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.i(TAG, "onRequestPermissionsResult: +" + grantResults[0]);
+
         if (requestCode == PERMISSION_REQUESTCODE_RECORD_AUDIO) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 callTeacher(teacher);
             } else {
-                Toast.makeText(getActivity(), "when you call a teacher you must open the microphone!", Toast.LENGTH_SHORT).show();
+                new AlertDialog
+                        .Builder(getContext())
+                        .setMessage("when you call a teacher you must open the microphone!")
+                        .setNegativeButton("取消", null)
+                        .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                boolean b = shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO);
+                                if (b) {
+                                    Log.i(TAG, "请求: ");
+                                    requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_REQUESTCODE_RECORD_AUDIO);
+                                } else {
+                                    Log.i(TAG, "跳转: ");
+                                    Intent settingIntent = new Intent();
+                                    settingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    settingIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                                    settingIntent.setData(Uri.fromParts("package", getContext().getPackageName(), null));
+                                    startActivity(settingIntent);
+                                }
+                            }
+                        })
+                        .show();
             }
         }
     }

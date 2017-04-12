@@ -41,6 +41,9 @@ import com.hanwen.chinesechat.util.FileUtil;
 import com.hanwen.chinesechat.util.Log;
 import com.hanwen.chinesechat.util.NetworkUtil;
 import com.hanwen.chinesechat.R;
+import com.yuyh.library.imgsel.ImageLoader;
+import com.yuyh.library.imgsel.ImgSelActivity;
+import com.yuyh.library.imgsel.ImgSelConfig;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -89,6 +92,12 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
     private View viewOperation;//要操作的照片
     private List<String> deletedPhotos;
     private RadioGroup rg_gender;
+    private ImageLoader loader = new ImageLoader() {
+        @Override
+        public void displayImage(Context context, String path, ImageView imageView) {
+            CommonUtil.showBitmap(imageView, path);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +116,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         if (getActionBar() != null) {
             getActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+
     }
 
     @Override
@@ -249,9 +260,14 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                    startActivityForResult(intent, REQUEST_CODE_PHOTOS_PICK);
+                    ImgSelConfig config = new ImgSelConfig.Builder(ActivityPerson.this, loader)
+                            .multiSelect(false).rememberSelected(false).build();
+                    ImgSelActivity.startActivity(ActivityPerson.this, config, REQUEST_CODE_PHOTOS_PICK);
+
+
+/*                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image*//*");
+                    startActivityForResult(intent, REQUEST_CODE_PHOTOS_PICK);*/
                 }
             });
 
@@ -340,23 +356,17 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
             }
             break;
             case R.id.iv_avatar:
-                if (dialogPick == null) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    View inflate = getLayoutInflater().inflate(R.layout.dialog_pick, null);
-                    builder.setView(inflate);
-                    inflate.findViewById(R.id.tv_album).setOnClickListener(this);
-                    inflate.findViewById(R.id.tv_camera).setOnClickListener(this);
-                    dialogPick = builder.create();
-                    dialogPick.setCancelable(true);
-                    dialogPick.setCanceledOnTouchOutside(true);
-                }
-                dialogPick.show();
+                ImgSelConfig aconfig = new ImgSelConfig.Builder(this, loader)
+                        .needCrop(true)
+                        .rememberSelected(true)
+                        .multiSelect(false).build();
+                ImgSelActivity.startActivity(this, aconfig, REQUEST_CODE_AVATAR_CROP);
                 break;
             case R.id.tv_album: {
-                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                startActivityForResult(intent, REQUEST_CODE_AVATAR_PICK);
-                dialogPick.dismiss();
+                ImgSelConfig bconfig = new ImgSelConfig.Builder(this, loader)
+                        .multiSelect(false).maxNum(1)
+                        .rememberSelected(false).build();
+                ImgSelActivity.startActivity(this, bconfig, REQUEST_CODE_PHOTOS_PICK);
             }
             break;
 
@@ -508,14 +518,15 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
                 break;
             case REQUEST_CODE_AVATAR_CROP:
                 if (resultCode == Activity.RESULT_OK) {
+                    String s = data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT).get(0);
+                    fileAvatarCrop = new File(s);
+                    CommonUtil.showBitmap(iv_avatar, s);
                     isIconSwitch = true;//如果裁剪成功,说明头像要更换了
-                    iv_avatar.setImageURI(Uri.fromFile(fileAvatarCrop));
-
                 }
                 break;
             case REQUEST_CODE_PHOTOS_PICK: {
                 if (resultCode == Activity.RESULT_OK) {
-                    File photoPick = new File(FileUtil.getPath(this, data.getData()));
+                    File photoPick = new File(data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT).get(0));
                     filePhotos.add(photoPick);
 
                     ImageView photoAdd = new ImageView(this);
@@ -548,8 +559,7 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
 
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
-        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-        return mediaFile;
+        return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
     }
 
     private File getCropOutputMediaFile() {
@@ -569,9 +579,8 @@ public class ActivityPerson extends Activity implements View.OnClickListener {
         }
 
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
-        return mediaFile;
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
+        return new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".jpg");
     }
 
     private void createDatePickerDialog(String birth) {

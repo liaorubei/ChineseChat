@@ -155,6 +155,7 @@ public class FragmentNews extends Fragment implements OnLoadMoreListener, OnRefr
                         info.Id = tag.Id;
                         info.IsDownload = 0;
                         info.Title = tag.TitleCn;
+
                         //添加到下载队列
                         binder.getDownloadManager().enqueue(info);
                         //添加到数据库

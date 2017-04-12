@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="25dp"
                 android:gravity="center"
-                android:text="@string/FragmentPerson_unlogin"
+                android:text="@string/Fragment_person_unlogin"
                 android:textSize="18sp"/>
 
             <ImageView
@@ -52,7 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="25dp"
             android:gravity="center"
-            android:text="@string/fragment_person_history"
+            android:text="@string/Fragment_person_history"
             android:textSize="15sp"/>
     </LinearLayout>
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_topup"
-            android:text="@string/fragment_person_recharge"/>
+            android:text="@string/Fragment_person_recharge"/>
 
 
         <ImageView
@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_record"
-            android:text="@string/fragment_person_history"/>
+            android:text="@string/Fragment_person_history"/>
 
         <ImageView
             android:layout_width="40dp"
@@ -135,7 +135,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_setting"
-            android:text="@string/fragment_person_setting"/>
+            android:text="@string/Fragment_person_setting"/>
 
         <ImageView
             android:layout_width="40dp"

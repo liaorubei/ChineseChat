@@ -1,6 +1,7 @@
 package com.hanwen.chinesechat.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,7 +35,6 @@ import java.util.List;
  * 同时，如果该合集或文件夹有指向Id，则优先显示指向Id所包含的内容，即TargetId>0
  */
 public class ActivityFolder extends Activity {
-
     private static final String TAG = "ActivityFolder";
     private ListView listView;
     private List<Folder> data;
@@ -48,10 +49,24 @@ public class ActivityFolder extends Activity {
         initData();
     }
 
+    public static void start(Context context, Folder folder, boolean showDate) {
+        Intent intent = new Intent(context, ActivityFolder.class);
+        //不直接在intent里面传递实体，因为由于安卓系统兼容性的问题，有好多手机在传递实体时都容易出现异常
+        intent.putExtra("id", folder.Id);
+        intent.putExtra("name", folder.Name);
+        intent.putExtra("targetId", folder.TargetId);
+        intent.putExtra("showDate", showDate);
+        context.startActivity(intent);
+    }
+
     private void initData() {
         Intent intent = getIntent();
-        Folder folder = intent.getParcelableExtra("folder");
+        Folder folder = new Folder();
+        folder.Id = intent.getIntExtra("id", 0);
+        folder.Name = intent.getStringExtra("name");
+        folder.TargetId = intent.getIntExtra("targetId", 0);
         showDate = intent.getBooleanExtra("showDate", false);
+
         tv_title.setText(folder.Name);
         data = new ArrayList<>();
         listView.setAdapter(new BaseAdapter<Folder>(data) {
@@ -71,20 +86,14 @@ public class ActivityFolder extends Activity {
                 return inflate;
             }
         });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Folder item = (Folder) parent.getItemAtPosition(position);
                 if (item.KidsCount > 0) {
-                    Intent kidsIntent = new Intent(getApplicationContext(), ActivityFolder.class);
-                    kidsIntent.putExtra("folder", item);
-                    kidsIntent.putExtra("showDate", showDate);
-                    startActivity(kidsIntent);
+                    ActivityFolder.start(ActivityFolder.this, item, showDate);
                 } else {
-                    Intent docsIntent = new Intent(getApplicationContext(), ActivityDocsTodo.class);
-                    docsIntent.putExtra("folder", item);
-                    docsIntent.putExtra("showDate", showDate);
-                    startActivity(docsIntent);
+                    ActivityDocsTodo.start(ActivityFolder.this, item, showDate);
                 }
             }
         });
@@ -100,6 +109,8 @@ public class ActivityFolder extends Activity {
                 Response<List<Folder>> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<List<Folder>>>() {}.getType());
                 for (Folder f : resp.info) {
                     data.add(f);
+                    //保存文件夹信息到本地，方便下载的时候显示文件夹。在FragmentListen有预下载，这里再保存一次
+                    ChineseChat.database().folderInsertOrReplace(f);
                 }
                 android.widget.BaseAdapter adapter = (android.widget.BaseAdapter) listView.getAdapter();
                 adapter.notifyDataSetChanged();

@@ -10,7 +10,7 @@ import com.hanwen.chinesechat.R;
 import java.math.BigDecimal;
 
 /**
- * Created by 儒北 on 2016/3/23.
+ * 用户协议
  */
 public class ActivityUseterm extends Activity implements View.OnClickListener {
     @Override
@@ -19,7 +19,7 @@ public class ActivityUseterm extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_useterm);
         WebView webview = (WebView) findViewById(R.id.webview);
         findViewById(R.id.iv_home).setOnClickListener(this);
-        webview.loadUrl("http://voc2015.azurewebsites.net/home/UserServiceAgreement");
+        webview.loadUrl("https://www.chinesechat.cn/home/UserServiceAgreement");
     }
 
     @Override

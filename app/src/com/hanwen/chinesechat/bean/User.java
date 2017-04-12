@@ -2,15 +2,15 @@ package com.hanwen.chinesechat.bean;
 
 import java.util.Set;
 
-public class User {
-    public int Id;
-    public String Token;
-    public String Accid;
-    public String Nickname;
-    public String Username;
+public class User extends UserLite {
+    //public int Id;
+    //public String Token;
+    //public String Accid;
+    //public String Nickname;
+    //public String Username;
     public String PassWord;
     public String Icon;
-    public String Avatar;
+    //public String Avatar;
     public int Gender = -1;
     public int Category;
     public String Email;
@@ -21,7 +21,7 @@ public class User {
 
     public String About;
     public String Voice;
-    public String Country;
+    //public String Country;
     public String Language;
     public String Job;
     public boolean IsEnable;
@@ -32,7 +32,7 @@ public class User {
     public String Spoken;
     public String Hobbies;
 
-    public Summary Summary = new Summary();
+    //public Summary Summary = new Summary();
 
     @Override
     public String toString() {

@@ -141,11 +141,14 @@ public class ActivitySignIn extends Activity implements OnClickListener {
         });
 
         findViewById(R.id.bt_login).setOnClickListener(this);
-        findViewById(R.id.tv_signup).setOnClickListener(this);
+        TextView tv_signup = (TextView) findViewById(R.id.tv_signup);
+        if (!ChineseChat.isStudent()) {
+            tv_signup.setText(R.string.ActivitySignIn_teacher_register);
+        }
+        tv_signup.setOnClickListener(this);
         findViewById(R.id.tv_password).setOnClickListener(this);
 
         MyAdapter myAdapter = new MyAdapter(new ArrayList<String>());
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new String[]{"12315", "12316"});
         et_username.setAdapter(myAdapter);
     }
 
@@ -192,7 +195,8 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 if (ChineseChat.isStudent()) {
                     startActivityForResult(new Intent(ActivitySignIn.this, ActivitySignUp.class), SignUp);
                 } else {
-                    CommonUtil.toast("教师端暂时无法注册");
+                    startActivity(new Intent(ActivitySignIn.this, ActivitySignUpTeacher.class));
+                    //  CommonUtil.toast("教师端暂时无法注册");
                 }
                 break;
             case R.id.tv_password:
@@ -213,14 +217,15 @@ public class ActivitySignIn extends Activity implements OnClickListener {
             @Override
             public void onFailure(HttpException error, String msg) {
                 CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);
-                progressDialog.dismiss();
+
+                if (progressDialog != null)
+                    progressDialog.dismiss();
             }
 
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
-                Response<User> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
-                }.getType());
+                Response<User> response = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {}.getType());
                 if (response.code == 200) {
                     Log.i(TAG, "汉问登录成功,Account=" + response.info.Accid + " token=" + response.info.Token);
                     // 登录云信
@@ -234,7 +239,8 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                     getSharedPreferences("user", MODE_PRIVATE).edit().putString("userJson", new Gson().toJson(ChineseChat.CurrentUser)).apply();
                     CommonUtil.saveUserToSP(ActivitySignIn.this, response.info, true);
                 } else {
-                    progressDialog.dismiss();
+                    if (progressDialog != null)
+                        progressDialog.dismiss();
                     //CommonUtil.toastCENTER(R.string.ActivitySignIn_login_failure);
                     CommonUtil.toast(response.desc);
                 }
@@ -313,7 +319,7 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 protected FilterResults performFiltering(CharSequence constraint) {
                     list.clear();
                     for (User u : users) {
-                        if (u.Username.contains(constraint)) {
+                        if (!TextUtils.isEmpty(u.Username) && u.Username.contains(constraint)) {
                             list.add(u.Username);
                         }
                     }
@@ -326,5 +332,11 @@ public class ActivitySignIn extends Activity implements OnClickListener {
                 }
             };
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        progressDialog = null;
     }
 }

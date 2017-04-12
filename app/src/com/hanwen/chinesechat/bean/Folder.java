@@ -17,6 +17,7 @@ public class Folder implements Parcelable {
     public String Cover;
     public int KidsCount;
     public int DocsCount;
+    public int NewsCount;//辅助字段，用于Sqlite
     public List<Folder> Children;
     public List<Document> Documents;
     public int ParentId;
@@ -37,6 +38,7 @@ public class Folder implements Parcelable {
                 ", Cover='" + Cover + '\'' +
                 ", DocsCount=" + DocsCount +
                 ", KidsCount=" + KidsCount +
+                ", NewCount=" + NewsCount +
                 ", LevelId=" + LevelId +
                 '}';
     }

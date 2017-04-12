@@ -1,41 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <!--AutoUpdateService-->
-    <string name="AutoUpdateService_download_success">Download success</string>
-    <string name="AutoUpdateService_download_failed">Download failed</string>
-    <string name="AutoUpdateService_download_start">Download start</string>
-    <string name="AutoUpdateService_app_update">Update</string>
-
-    <!-- MainActivity更新对话框 -->
-    <string name="ActivityMain_has_download_message">Update package is downloaded,update it now?</string>
-    <string name="ActivityMain_negative_text">Cancel</string>
-    <string name="ActivityMain_positive_text">OK</string>
-    <string name="ActivityMain_new_versions_message">Have a latest version,would you like to update?\n%1$s</string>
-    <string name="ActivityMain_upgrade_tips">Update</string>
-
-    <!-- 下拉刷新与上拉加载 -->
-
-    <!-- 菜单项 -->
-
-
-    <string name="title_activity_main">MainActivity</string>
-    <string name="hello_world">Hello world!</string>
-
-    <!-- Strings related to Settings -->
-
-    <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
-
-    <string name="pref_title_social_recommendations">Enable social recommendations</string>
-    <string name="pref_description_social_recommendations">Recommendations for people to contact
-        based on your message history
-    </string>
-
-    <string name="pref_title_display_name">Display name</string>
-    <string name="pref_default_display_name">John Smith</string>
-
-    <string name="pref_title_add_friends_to_messages">Add friends to messages</string>
     <string-array name="pref_example_list_titles">
         <item>Always</item>
         <item>When possible</item>
@@ -46,11 +10,6 @@
         <item>0</item>
         <item>-1</item>
     </string-array>
-
-    <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">Data &amp; sync</string>
-
-    <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>15 minutes</item>
         <item>30 minutes</item>
@@ -308,30 +267,27 @@
         <item>한국어</item>
     </string-array>
 
-    <string name="pref_title_system_sync_settings">System sync settings</string>
-
-    <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">Notifications</string>
-
-    <string name="pref_title_new_message_notifications">New message notifications</string>
-
-    <string name="pref_title_ringtone">Ringtone</string>
-    <string name="pref_ringtone_silent">Silent</string>
-
-    <string name="pref_title_vibrate">Vibrate</string>
-    <string name="title_activity_records">a</string>/
-
     <!-- - -   - - - - -->
     <string name="network_error">Network unavailable</string>
     <string name="network_error_try">Network unavailable,Please try again</string>
 
+    <!--AutoUpdateService-->
+    <string name="AutoUpdateService_download_success">Download success</string>
+    <string name="AutoUpdateService_download_failed">Download failed</string>
+    <string name="AutoUpdateService_download_start">Download start</string>
+    <string name="AutoUpdateService_app_update">Update</string>
+
+    <!-- MainActivity更新对话框 -->
+    <string name="ActivityMain_has_download_message">Update package is downloaded,update it now?</string>
+    <string name="ActivityMain_negative_text">Cancel</string>
+    <string name="ActivityMain_positive_text">OK</string>
+    <string name="ActivityMain_new_versions_message">Have a latest version,would you like to update?\n%1$s</string>
+    <string name="ActivityMain_upgrade_tips">Update</string>
 
     <!---->
     <string name="ActivitySplash_enter">Enter App</string>
 
     <!--ActivityMain-->
-    <string name="MainActivity_Refresh">Refresh</string>
-    <string name="MainActivity_Delete">Delete</string>
     <string name="MainActivity_one_more_time_quit">Click one more time to quit</string>
 
     <!--FragmentListen-->
@@ -355,46 +311,42 @@
     <string name="ActivityCall_topic_choose_failed">Topic selection failure</string>
 
     <!--ActivityChat-->
-    <string name="ActivityTake_can_not_back">Return key invalid</string>
-    <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
-    <string name="ActivityTake_cancel">Cancel</string>
-    <string name="ActivityTake_confirm">OK</string>
-
-    <string name="ActivityTake_send_texts">Send</string>
-    <string name="ActivityTake_pick_image">Pick</string>
-
-    <string name="ActivityTake_text_hint_send_text">enter</string>
-    <string name="ActivityTake_show_student_nickname">"Nickname：%1$s&#160;&#160;&#160;&#160;Country：%2$s"</string>
-    <string name="ActivityTake_show_teacher_nickname">%1$s</string>
-    <string name="ActivityTake_show_student_summary">Summary：%1$dmins（%2$dtimes）</string>
-    <string name="ActivityTake_show_teacher_summary">Summary：%1$d分钟（%2$d次/%3$d月份）</string>
-
-    <string name="ActivityTake_tab_topic_pick">Topic bank</string>
-    <string name="ActivityTake_tab_topic_switch">Change</string>
-    <string name="ActivityTake_tab_lyric">Course</string>
-    <string name="ActivityTake_tab_board">Board</string>
-    <string name="ActivityTake_tab_texts">Text</string>
-    <string name="ActivityTake_tab_image">Image</string>
-    <string name="ActivityTake_tab_hskk">HSKK</string>
     <string name="ActivityChat_balance_tips">Your current balance is only %1$d coins(%2$d mins).Continue</string>
     <string name="ActivityChat_text_album">Album</string>
     <string name="ActivityChat_text_camera">Camera</string>
-    <!--FragmentThemes-->
+    <string name="ActivityChat_status_waitingfor">Waiting for response</string>
+    <string name="ActivityChat_status_connecting">Connecting</string>
 
+    <string name="ActivityTake_can_not_back">Return key invalid</string>
+    <string name="ActivityTake_cancel">Cancel</string>
+    <string name="ActivityTake_confirm">OK</string>
+    <string name="ActivityTake_hangup">Are you sure you want to hang up?</string>
+    <string name="ActivityTake_pick_image">Pick</string>
+    <string name="ActivityTake_send_texts">Send</string>
+    <string name="ActivityTake_show_student_nickname">Nickname：%1$s&#160;&#160;&#160;&#160;Country：%2$s</string>
+    <string name="ActivityTake_show_student_summary">Summary：%1$dmins（%2$dtimes）</string>
+    <string name="ActivityTake_show_teacher_nickname">%1$s</string>
+    <string name="ActivityTake_show_teacher_summary">Summary：%1$d分钟（%2$d次/%3$d月份）</string>
+    <string name="ActivityTake_tab_board">Board</string>
+    <string name="ActivityTake_tab_hskk">HSKK</string>
+    <string name="ActivityTake_tab_image">Image</string>
+    <string name="ActivityTake_tab_lyric">Course</string>
+    <string name="ActivityTake_tab_texts">Text</string>
+    <string name="ActivityTake_tab_topic_pick">Topic bank</string>
+    <string name="ActivityTake_tab_topic_switch">Change</string>
+    <string name="ActivityTake_text_hint_send_text">enter</string>
 
     <!--FragmentPerson-->
-    <string name="FragmentPerson_unlogin">Login</string>
-    <string name="FragmentPerson_balance">Balance:%1$d coins</string>
-    <string name="FragmentPerson_hours">当月授课情况：%1$d 分钟(%2$d次)</string>
-    <string name="fragment_person_recharge">Recharge</string>
-    <string name="fragment_person_setting">Settings</string>
-    <string name="fragment_person_history">Study history</string>
-    <string name="fragment_person_lessons">Lessons history</string>
-
-    <string name="fragment_person_dialog_title">Tips</string>
-    <string name="fragment_person_dialog_message">Please log in first</string>
-    <string name="fragment_person_dialog_positive">OK</string>
-    <string name="fragment_person_dialog_negative">Cancel</string>
+    <string name="Fragment_person_balance">Balance:%1$d coins</string>
+    <string name="Fragment_person_dialog_message">Please log in first</string>
+    <string name="Fragment_person_dialog_negative">Cancel</string>
+    <string name="Fragment_person_dialog_positive">OK</string>
+    <string name="Fragment_person_dialog_title">Tips</string>
+    <string name="Fragment_person_history">Study history</string>
+    <string name="Fragment_person_hours">当月授课情况：%1$d 分钟(%2$d次)</string>
+    <string name="Fragment_person_recharge">Recharge</string>
+    <string name="Fragment_person_setting">Settings</string>
+    <string name="Fragment_person_unlogin">Login</string>
 
     <!--ActivityPayment-->
     <string name="ActivityPayment_title">Recharge</string>
@@ -410,31 +362,22 @@
 
     <!--价格条,充值记录-->
     <string name="ActivityPayment_confirm">Confirm</string>
-    <string name="ActivityPayment_item">Item：ChineseChat coin</string>
-    <string name="ActivityPayment_number">Class hour：%1$.0f mins（%2$d coins）</string>
-    <string name="ActivityPayment_amount">Amount：%1$.0f %2$s</string>
-    <string name="ActivityPayment_status">Status：</string>
+    <string name="ActivityPayment_item">Item:ChineseChat coin</string>
+    <string name="ActivityPayment_number">Class hour:%1$.0f mins（%2$d coins）</string>
+    <string name="ActivityPayment_amount">Amount:%1$.2f %2$s</string>
+    <string name="ActivityPayment_status">Status:</string>
 
     <string name="ActivityPayment_topup_title">Charge and top-ups</string>
-    <string name="ActivityPayment_topup_message" formatted="false">1.ChineseChat APP Chat charges at 10 coins/min. (“Coins” = ChineseChat coin)\r\n2.Top-ups has the four following price categories: \r\nCategory 1: 0.27 USD/10 coins as the original price;\r\nCategory 2: a   5% discount\r\nCategory 3: a   8% discount\r\nCategory 4: a 12% discount\r\nFor more details please refer to the tariff on the pop-up; choose a price category and you can pay a top-up immediately. </string>
     <string name="ActivityPayment_topup_confirm">I known</string>
 
     <!--ActivitySetting-->
     <string name="ActivitySetting_title">Settings</string>
     <string name="ActivitySetting_change_password">Change your password</string>
-    <string name="ActivitySetting_投诉建议">Complaints</string>
-    <string name="ActivitySetting_请在WIFI下使用">Please use under the WIFI</string>
-    <string name="ActivitySetting_清理缓存">Clean Cache</string>
-    <string name="ActivitySetting_关于汉问">About ChineseChat</string>
-    <string name="ActivitySetting_登出">Logout</string>
-    <string name="ActivitySetting_登录">Login</string>
+    <string name="ActivitySetting_feedback">Complaints</string>
+    <string name="ActivitySetting_aboutapp">About ChineseChat</string>
+    <string name="ActivitySetting_logout">Logout</string>
+    <string name="ActivitySetting_sginin">Login</string>
     <string name="ActivitySetting_Toast_logout_success">Log out completed</string>
-    <string name="ActivitySetting_Toast_清理完毕">Finished</string>
-
-    <string name="ActivitySetting_dialog_title">Clean Cache</string>
-    <string name="ActivitySetting_dialog_message">Will clean you downloaded document and Login data,do you want to continue?</string>
-    <string name="ActivitySetting_dialog_positive">OK</string>
-    <string name="ActivitySetting_dialog_negative">Cancel</string>
 
     <!--ActivitySecurity-->
     <string name="ActivitySecurity_title">Change your password</string>
@@ -531,7 +474,7 @@
 
     <string name="ActivityAbout_app_update">Downloading the installing package</string>
     <string name="ActivityAbout_download_failure">Update package download failed</string>
-    <string name="ActivityAbout_download_start">Downloading...</string>
+    <string name="ActivityAbout_download_start">Downloading&#8230;</string>
 
     <string name="ActivityAbout_check_sdcard">SD card access exception</string>
     <string name="ActivityAbout_already_latest">This is the latest version</string>
@@ -561,6 +504,7 @@
     <string name="ActivitySignIn_login">Login</string>
     <string name="ActivitySignIn_forgot_password">Forgot password?</string>
     <string name="ActivitySignIn_user_register">Registration</string>
+    <string name="ActivitySignIn_teacher_register">Register as a teacher</string>
     <string name="ActivitySignIn_login_failure">Login failed</string>
     <string name="ActivitySignIn_email_or_password_not_null">E-mail or password cannot be empty</string>
     <string name="ActivitySignIn_network_error_login_failure">Network unavailable</string>
@@ -572,11 +516,10 @@
     <string name="ActivitySignUp_password">Password no less than 8 digits</string>
     <string name="ActivitySignUp_re_password">Confirm password</string>
     <string name="ActivitySignUp_read_and_agreed">I have read and accept</string>
-    <string name="ActivitySignUp_registered_users">"Registered users, please "</string>
+    <string name="ActivitySignUp_registered_users">Registered users, please</string>
     <string name="ActivitySignUp_login">Login</string>
     <string name="ActivitySignUp_user_registration_agreement">Users Agreement</string>
     <string name="ActivitySignUp_next">Register</string>
-
     <string name="ActivitySignUp_email_password_can_not_null">Please fill out all the information required</string>
     <string name="ActivitySignUp_email_format_wrong">Please enter the correct e-mail address</string>
     <string name="ActivitySignUp_password_less_than">Password no less than 8 characters</string>
@@ -599,7 +542,7 @@
     <string name="ActivityProfile_languages">Spoken Languages</string>
     <string name="ActivityProfile_hobbies">Hobbies</string>
     <string name="ActivityProfile_album">Album</string>
-    <string name="ActivityProfile_loading">Loading...</string>
+    <string name="ActivityProfile_loading">Loading&#8230;</string>
 
     <!--FragmentChoose-->
     <string name="FragmentChoose_busy">The tutor is busy now</string>
@@ -619,8 +562,8 @@
     <string name="FragmentLineUp_dequeue_failure">退出失败</string>
     <string name="FragmentLineUp_enqueue_success">入队成功</string>
     <string name="FragmentLineUp_enqueue_failure">入队失败</string>
-    <string name="FragmentLineUp_nickname">排队中</string>
-    <string name="FragmentLineUp_in_the_line">排队中</string>
+
+
     <string name="FragmentLineUp_i_need_enqueue">我要入队</string>
     <string name="FragmentLineUp_i_need_dequeue">我要出队</string>
     <string name="FragmentLineUp_balance_tips">Your current balance is %1$d coins.Continue?</string>
@@ -649,14 +592,15 @@
 
     <string name="xlistview_footer_hint_errors">Failed to load</string>
     <string name="xlistview_footer_hint_nomore">The end</string>
-    <string name="xlistview_footer_hint_normal">View more...</string>
+    <string name="xlistview_footer_hint_normal">View more&#8230;</string>
     <string name="xlistview_footer_hint_empty">No tutors are available now, please wait!</string>
-    <string name="xlistview_footer_hint_ready">Release load more...</string>
-    <string name="xlistview_header_hint_loading">Loading...</string>
+    <string name="xlistview_footer_hint_ready">Release load more&#8230;</string>
+    <string name="xlistview_header_hint_loading">Loading&#8230;</string>
     <string name="xlistview_header_hint_normal">Pull down refresh</string>
     <string name="xlistview_header_hint_ready">Release refersh</string>
     <string name="xlistview_header_last_time">Last update time</string>
     <string name="ActivityAbout_already_up_to_date">This is the latest version</string>
     <string name="ActivityPerson_hint_location">Region</string>
     <string name="action_settings">Settings</string>
+    <string name="ActivityLessons_title">History</string>
 </resources>

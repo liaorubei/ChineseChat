@@ -22,12 +22,25 @@ public class Orders {
     public int Coin;
     public float Hour;
 
-
     public Orders(BigDecimal amount, String currency, String main, String body) {
         this.Amount = amount;
         this.Currency = currency;
         this.Main = main;
         this.Body = body;
+    }
+
+    @Override
+    public String toString() {
+        return "Orders{" +
+                "Id='" + Id + '\'' +
+                ", Currency='" + Currency + '\'' +
+                ", Amount=" + Amount +
+                ", Quantity=" + Quantity +
+                ", Price=" + Price +
+                ", CreateTime=" + CreateTime +
+                ", Coin=" + Coin +
+                ", Hour=" + Hour +
+                '}';
     }
 }
 

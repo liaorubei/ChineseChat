@@ -101,8 +101,9 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
         // 自动升级服务，不用每次都检查，只一天检查一次就可以了
         SharedPreferences preferences = getSharedPreferences("version", Context.MODE_PRIVATE);
         String lastCheck = preferences.getString("LastCheck", "");
+
         String today = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(System.currentTimeMillis()));
-        Log.i(TAG, "onCreate: " + lastCheck + ",today=" + today);
+        Log.i(TAG, "onCreate: lastCheck=" + lastCheck + ",today=" + today);
         if (!today.equals(lastCheck)) {
             preferences.edit().putString("LastCheck", today).apply();
             Intent service = new Intent(this, AutoUpdateService.class);
@@ -128,8 +129,7 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "汉问登录成功: " + responseInfo.result);
-                Response<User> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {
-                }.getType());
+                Response<User> resp = new Gson().fromJson(responseInfo.result, new TypeToken<Response<User>>() {}.getType());
 
                 if (resp.code == 200) {
                     ChineseChat.CurrentUser = resp.info;
@@ -299,5 +299,11 @@ public class ActivitySplash extends Activity implements View.OnClickListener {
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
     }
 }

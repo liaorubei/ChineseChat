@@ -41,7 +41,7 @@ public class FragmentListen extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.i(TAG, "onCreate: " + viewPager);
+        Log.i(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
         urlCache = ChineseChat.database().cacheSelectByUrl(NetworkUtil.levelAndFolders);
 
@@ -116,7 +116,11 @@ public class FragmentListen extends Fragment {
         String folderGetList = NetworkUtil.folderGetList;
         UrlCache urlCache = ChineseChat.database().cacheSelectByUrl(folderGetList);
         if (urlCache == null || urlCache.UpdateAt < (System.currentTimeMillis() - 24 * 60 * 60 * 1000)) {
-            HttpUtil.post(folderGetList, null, new RequestCallBack<String>() {
+            HttpUtil.Parameters params = new HttpUtil.Parameters();
+            params.add("userId", ChineseChat.CurrentUser.Id);
+            params.add("levelId", null);
+            params.add("parentId", null);
+            HttpUtil.post(folderGetList, params, new RequestCallBack<String>() {
                 @Override
                 public void onSuccess(ResponseInfo<String> responseInfo) {
                     Log.i(TAG, "onSuccess: " + responseInfo.result);

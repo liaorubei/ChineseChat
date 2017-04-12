@@ -47,6 +47,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.hanwen.chinesechat.ChineseChat;
@@ -100,6 +101,9 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.AttachmentProgress;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
+import com.yuyh.library.imgsel.ImageLoader;
+import com.yuyh.library.imgsel.ImgSelActivity;
+import com.yuyh.library.imgsel.ImgSelConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -439,38 +443,50 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
                 //endregion
                 break;
             case R.id.iv_image_send:
+                ImageLoader loader = new ImageLoader() {
+                    @Override
+                    public void displayImage(Context context, String path, ImageView imageView) {
+                        CommonUtil.showBitmap(imageView, path);
+                    }
+                };
+                ImgSelConfig select = new ImgSelConfig.Builder(this, loader)
+                        .maxNum(1)
+                        .multiSelect(false)
+                        .rememberSelected(false).build();
+                ImgSelActivity.startActivity(this, select, REQUEST_CODE_IMAGE);
+
                 //region图片消息发送按钮
-                if (dialog_chat_image == null) {
-                    Builder builder = new Builder(this);
-                    View inflate = getLayoutInflater().inflate(R.layout.dialog_chat_image, null);
-                    inflate.findViewById(R.id.ll_album).setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-                            startActivityForResult(intent, REQUEST_CODE_IMAGE);
+/*            if (dialog_chat_image == null) {
+                Builder builder = new Builder(this);
+                View inflate = getLayoutInflater().inflate(R.layout.dialog_chat_image, null);
+                inflate.findViewById(R.id.ll_album).setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image*//*");
+                        startActivityForResult(intent, REQUEST_CODE_IMAGE);
+                        dialog_chat_image.dismiss();
+                    }
+                });
+                inflate.findViewById(R.id.ll_camera).setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        File image = getExternalFilesDir("image");
+                        if (image != null && image.exists()) {
+                            fileImageCapture = new File(image, String.format("%1$s.jpg", UUID.randomUUID()));
+                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileImageCapture));
+                            startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
                             dialog_chat_image.dismiss();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "SDCard异常，无法保存照片！", Toast.LENGTH_SHORT).show();
                         }
-                    });
-                    inflate.findViewById(R.id.ll_camera).setOnClickListener(new OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            File image = getExternalFilesDir("image");
-                            if (image != null && image.exists()) {
-                                fileImageCapture = new File(image, String.format("%1$s.jpg", UUID.randomUUID()));
-                                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(fileImageCapture));
-                                startActivityForResult(intent, REQUEST_CODE_IMAGE_CAPTURE);
-                                dialog_chat_image.dismiss();
-                            } else {
-                                Toast.makeText(getApplicationContext(), "SDCard异常，无法保存照片！", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
-                    builder.setView(inflate);
-                    dialog_chat_image = builder.create();
-                }
-                dialog_chat_image.show();
+                    }
+                });
+                builder.setView(inflate);
+                dialog_chat_image = builder.create();
+            }
+            dialog_chat_image.show();*/
                 //endregion
                 break;
             case R.id.bt_reject:
@@ -818,7 +834,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             tv_name.setText(getString(R.string.ActivityTake_show_teacher_nickname, chatDataExtra.Teacher.Nickname));
             tv_nick.setText(chatDataExtra.Teacher.Nickname);
             tv_case.setText(getString(R.string.ActivityTake_show_teacher_summary, chatDataExtra.Teacher.Summary.duration, chatDataExtra.Teacher.Summary.count, chatDataExtra.Teacher.Summary.month));
-            tv_status.setText("Waiting for response");
+            tv_status.setText(R.string.ActivityChat_status_waitingfor);
             CommonUtil.showIcon(getApplicationContext(), iv_icon, chatDataExtra.Teacher.Avatar);
             CommonUtil.showIcon(getApplicationContext(), iv_avatar, chatDataExtra.Teacher.Avatar);
 
@@ -982,7 +998,8 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         } else if (requestCode == REQUEST_CODE_IMAGE) {
             //region选择图片,发送图片
             if (resultCode == Activity.RESULT_OK) {
-                File photoPick = new File(FileUtil.getPath(this, data.getData()));
+
+                File photoPick = new File(data.getStringArrayListExtra(ImgSelActivity.INTENT_RESULT).get(0));
                 File newFile = new File(getExternalFilesDir("image/thumb"), photoPick.getName());
                 FileOutputStream out = null;
 
@@ -1208,7 +1225,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             SoundPlayer.instance(ChineseChat.getContext()).stop();
 
             //定时挂断
-            tv_status.setText("Connecting...");
+            tv_status.setText(R.string.ActivityChat_status_connecting);
         }
 
         @Override
@@ -1439,7 +1456,7 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         public void onEvent(AVChatCalleeAckEvent event) {
             Log.i(TAG, "对方回应监听: ChatId=" + event.getChatId() + " Event=" + event.getEvent() + " account=" + event.getAccount() + " extra=" + event.getExtra());
 
-            tv_status.setText("Connecting...");
+            tv_status.setText(R.string.ActivityChat_status_connecting);
 
             SoundPlayer.instance(ChineseChat.getContext()).stop();
             handler.removeMessages(WHAT_PLAY_SOUND);
@@ -1760,6 +1777,49 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
         });
     }
 
+    public static ChatData buildChat(UserLite teacher, UserLite student) {
+        ChatData data = new ChatData();
+        JsonObject object = new JsonObject();
+
+        //教师部分
+        JsonObject t = new JsonObject();
+        t.addProperty("Id", teacher.Id);
+        t.addProperty("Avatar", teacher.Avatar);
+        t.addProperty("Country", teacher.Country);
+        t.addProperty("Nickname", teacher.Nickname);
+        //数据统计
+        JsonObject ts = new JsonObject();
+        ts.addProperty("count", teacher.Summary.count);
+        ts.addProperty("month", teacher.Summary.month);
+        ts.addProperty("duration", teacher.Summary.duration);
+        t.add("Summary", ts);
+        object.add("Teacher", t);
+
+        //学生部分
+        JsonObject s = new JsonObject();
+        s.addProperty("Id", student.Id);
+        s.addProperty("Avatar", student.Avatar);
+        s.addProperty("Country", student.Country);
+        s.addProperty("Nickname", student.Nickname);
+        //数据统计
+        JsonObject ss = new JsonObject();
+        ss.addProperty("count", student.Summary.count);
+        ss.addProperty("month", student.Summary.month);
+        ss.addProperty("duration", student.Summary.duration);
+        s.add("Summary", ss);
+        object.add("Student", s);
+
+        //兼容处理，因为老版本没有以上没有属性,直接设置的就是学生的信息
+        object.addProperty("Id", student.Id);
+        object.addProperty("Accid", student.Accid);
+        object.addProperty("Avatar", student.Avatar);
+        object.addProperty("Country", student.Country);
+        object.addProperty("Nickname", student.Nickname);
+
+        data.setExtra(object.toString());
+        return data;
+    }
+
     private class AdapterThemes extends BaseAdapter<String> {
 
         public AdapterThemes(List<String> list) {
@@ -1884,14 +1944,13 @@ public class ActivityChat extends FragmentActivity implements OnClickListener {
             pb.setVisibility(View.VISIBLE);
 
             PhotoView photoView = new PhotoView(container.getContext());
-            photoView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+            photoView.setOnPhotoTapListener(new uk.co.senab.photoview.PhotoViewAttacher.OnPhotoTapListener() {
                 @Override
                 public void onPhotoTap(View view, float x, float y) {
                     //Log.i(TAG, "onPhotoTap: ");
                     dialogZoom.dismiss();
                 }
 
-                @Override
                 public void onOutsidePhotoTap() {
                     Log.i(TAG, "onOutsidePhotoTap: ");
                 }

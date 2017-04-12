@@ -6,6 +6,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.hanwen.chinesechat.R;
+import com.hanwen.chinesechat.util.NetworkUtil;
 
 public class ActivityUsehelp extends Activity implements View.OnClickListener {
 
@@ -14,7 +15,7 @@ public class ActivityUsehelp extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_usehelp);
         WebView webview = (WebView) findViewById(R.id.webview);
-        webview.loadUrl("http://voc2015.azurewebsites.net/home/UserHelp");
+        webview.loadUrl(String.format("%1$s%2$s", NetworkUtil.domain, "/Home/UserHelp"));
         findViewById(R.id.iv_home).setOnClickListener(this);
     }
 

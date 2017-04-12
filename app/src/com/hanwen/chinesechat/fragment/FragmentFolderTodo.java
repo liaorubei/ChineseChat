@@ -104,9 +104,7 @@ public class FragmentFolderTodo extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Folder folder = list.get(position);
-                Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
-                intent.putExtra("folder", gson.toJson(folder));
-                startActivity(intent);
+                ActivityDocsTodo.start(getContext(), folder, level.ShowCover != 1);
             }
         });
     }

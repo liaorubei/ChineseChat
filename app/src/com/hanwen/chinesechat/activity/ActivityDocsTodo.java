@@ -3,6 +3,7 @@ package com.hanwen.chinesechat.activity;
 import android.app.Activity;
 import android.app.Service;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -76,14 +77,16 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
 
         // 取得传递过来的数据
         Intent intent = getIntent();
-        folder = intent.getParcelableExtra("folder");
+
+        folder = new Folder();
+        folder.Id = intent.getIntExtra("id", 0);
+        folder.Name = intent.getStringExtra("name");
+        folder.TargetId = intent.getIntExtra("targetId", 0);
         showDate = intent.getBooleanExtra("showDate", false);
 
         initView();
 
         initData();
-
-        tv_folder.setText(folder.Name);
 
         conn = new ServiceConnection() {
 
@@ -113,7 +116,19 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         unbindService(conn);
     }
 
+    public static void start(Context context, Folder folder, boolean showDate) {
+        //当传递Parcelable类型数据时，最好拆开来传递，而不是直接使用Intent，因为在某类华为和三星手机中Activity在直接传递Parcelable时会出现某些“迷之异常”
+        Intent intent = new Intent(context, ActivityDocsTodo.class);
+        intent.putExtra("id", folder.Id);
+        intent.putExtra("name", folder.Name);
+        intent.putExtra("targetId", folder.TargetId);
+        intent.putExtra("showDate", showDate);
+        context.startActivity(intent);
+    }
+
     private void initData() {
+        tv_folder.setText(folder.Name);
+
         //防异常处理
         int id = -1;
         if (ChineseChat.CurrentUser != null) {
@@ -124,7 +139,7 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         String url = NetworkUtil.documentGetListByFolderId + String.format("?folderId=%1$d&userId=%2$d", folder.TargetId > 0 ? folder.TargetId : folder.Id, id);
         Log.i(TAG, "initData: " + url);
 
-        UrlCache cache = ChineseChat.database().cacheSelectByUrl(url);
+        UrlCache cache = null;// ChineseChat.database().cacheSelectByUrl(url);
         if (cache == null) {
             HttpUtil.post(url, null, new RequestCallBack<String>() {
                 @Override
@@ -233,11 +248,12 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
         info.SoundPath = doc.SoundPath;
         myBinder.getDownloadManager().enqueue(info);
 
-        // doc.LevelId = levelId;
+        Log.i(TAG, "download: " + doc);
         doc.FolderId = folder.Id;
         ChineseChat.database().docsInsert(doc);
     }
 
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.iv_menu:
@@ -247,25 +263,19 @@ public class ActivityDocsTodo extends Activity implements OnClickListener {
                         helper.isSelected = false;
                     }
                     adapter.notifyDataSetChanged();
-
-                    iv_delete.setVisibility(View.INVISIBLE);
-                    iv_delete.setSelected(false);
-
-                    cb_check_all.setVisibility(View.INVISIBLE);
-
                 } else {
                     for (ViewHelper helper : data) {
                         helper.checkBoxShow = true;
                         helper.isSelected = false;
                     }
                     adapter.notifyDataSetChanged();
-
-                    //iv_delete.setVisibility(View.VISIBLE);
-                    iv_delete.setSelected(false);
-
-                    cb_check_all.setVisibility(View.VISIBLE);
                 }
+
                 iv_menu.setSelected(!iv_menu.isSelected());
+                iv_delete.setSelected(false);
+                cb_check_all.setSelected(false);
+                iv_delete.setVisibility(iv_menu.isSelected() ? View.VISIBLE : View.INVISIBLE);
+                cb_check_all.setVisibility(iv_menu.isSelected() ? View.VISIBLE : View.INVISIBLE);
                 break;
             case R.id.cb_check_all:
                 cb_check_all.setSelected(!cb_check_all.isSelected());

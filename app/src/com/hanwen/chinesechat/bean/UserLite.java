@@ -6,10 +6,11 @@ package com.hanwen.chinesechat.bean;
  */
 public class UserLite {
     public int Id;
+    public String Accid;
+    public String Token;
+    public String Avatar;
+    public String Country;
     public String Nickname;
     public String Username;
-    public String Avatar;
     public Summary Summary;
-    public String Accid;
-    public String Country;
 }

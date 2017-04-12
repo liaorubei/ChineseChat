@@ -148,6 +148,9 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
                         object.HasChildren = f.KidsCount > 0;
                         object.Cover = f.Cover;
                         data.add(object);
+
+                        //保存文件夹信息到本地，方便下载的时候显示文件夹。在FragmentListen有预下载，这里再保存一次
+                        ChineseChat.database().folderInsertOrReplace(f);
                     }
                     adapter.notifyDataSetChanged();
                 }
@@ -246,23 +249,19 @@ public class FragmentFolder extends Fragment implements OnRefreshListener {
     }
 
     private void openDocs(FolderDoc data) {
-        Intent intent = new Intent(getActivity(), ActivityDocsTodo.class);
         Folder folder = new Folder();
         folder.Id = data.Id;
         folder.Name = data.Name1;
-        intent.putExtra("folder", folder);
-        intent.putExtra("showDate", level.ShowCover != 1);
-        startActivity(intent);
+        folder.LevelId = level.Id;
+        ActivityDocsTodo.start(this.getContext(), folder, level.ShowCover != 1);
     }
 
     private void openKids(FolderDoc data) {
-        Intent intent = new Intent(getActivity(), ActivityFolder.class);
         Folder folder = new Folder();
         folder.Id = data.Id;
         folder.Name = data.Name1;
-        intent.putExtra("folder", folder);
-        intent.putExtra("showDate", level.ShowCover != 1);
-        startActivity(intent);
+        folder.LevelId = level.Id;
+        ActivityFolder.start(getContext(), folder, level.ShowCover != 1);
     }
 
     private abstract class MyOnClickListener implements View.OnClickListener {

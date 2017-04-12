@@ -88,7 +88,6 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
 
     private void initView() {
         findViewById(R.id.iv_home).setOnClickListener(this);
-        findViewById(R.id.iv_help).setOnClickListener(this);
 
         srl = (SwipeRefreshLayout) findViewById(R.id.srl);
         srl.setColorSchemeResources(R.color.color_app);
@@ -143,6 +142,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 currentPosition = position;
                 adapterPay.notifyDataSetChanged();
+                paymentDialog.findViewById(R.id.bt_positive).setEnabled(true);
             }
         });
 
@@ -160,8 +160,10 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         //取得充值记录
         load(true);
 
-        //取得价目表
-        HttpUtil.post(NetworkUtil.productSelect, null, new RequestCallBack<String>() {
+        //取得价目表,20170210起要求发送userId
+        HttpUtil.Parameters params = new HttpUtil.Parameters();
+        params.add("userId", ChineseChat.CurrentUser.Id);
+        HttpUtil.post(NetworkUtil.productSelect, params, new RequestCallBack<String>() {
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
                 Log.i(TAG, "onSuccess: " + responseInfo.result);
@@ -223,7 +225,6 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 srl.setRefreshing(false);
             }
         });
-
     }
 
     @Override
@@ -232,17 +233,11 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
             case R.id.iv_home:
                 finish();
                 break;
-            case R.id.iv_help:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle(R.string.ActivityPayment_topup_title);
-                builder.setMessage(R.string.ActivityPayment_topup_message);
-                builder.setPositiveButton(R.string.ActivityPayment_topup_confirm, null);
-                builder.show();
-                break;
             case R.id.ll_paypal:
                 rb_paypal.setChecked(true);
                 rb_alipay.setChecked(false);
                 currentPosition = -1;
+                paymentDialog.findViewById(R.id.bt_positive).setEnabled(false);
                 priceListView.setSelection(currentPosition);
                 paymentDialog.show();
                 break;
@@ -250,6 +245,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 rb_paypal.setChecked(false);
                 rb_alipay.setChecked(true);
                 currentPosition = -1;
+                paymentDialog.findViewById(R.id.bt_positive).setEnabled(false);
                 priceListView.setSelection(currentPosition);
                 paymentDialog.show();
                 break;
@@ -268,7 +264,7 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
                 progressDialog.show();
 
                 Pay pay = adapterPay.getItem(currentPosition);
-                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : pay.cny, rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat coin Qty:" + pay.coin, "ChineseChat coin Qty:" + pay.coin);
+                final Orders order = new Orders(rb_paypal.isChecked() ? pay.usd : pay.cny, rb_paypal.isChecked() ? "USD" : "CNY", "ChineseChat coin,Qty:" + pay.coin, "ChineseChat coin,Qty:" + pay.coin);
                 HttpUtil.Parameters p = new HttpUtil.Parameters();
                 p.add("id", 0 + "");
                 p.add("username", ChineseChat.CurrentUser.Username);
@@ -324,14 +320,15 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Pay item = getItem(position);
-            View inflate = View.inflate(ActivityPayment.this, R.layout.listitem_payment, null);
+            if (inflate == null) {
+                inflate = View.inflate(ActivityPayment.this, R.layout.listitem_payment, null);
+            }
             View iv_radio = inflate.findViewById(R.id.iv_radio);
             TextView tv_coins = (TextView) inflate.findViewById(R.id.tv_coins);
             TextView tv_price = (TextView) inflate.findViewById(R.id.tv_price);
             iv_radio.setSelected(currentPosition == position);
-
             tv_coins.setText(getString(R.string.ActivityPayment_number, item.hour, item.coin));
             tv_price.setText(getString(R.string.ActivityPayment_amount, rb_paypal.isChecked() ? item.usd : item.cny, rb_paypal.isChecked() ? " USD" : " CNY"));
             return inflate;
@@ -344,15 +341,17 @@ public class ActivityPayment extends Activity implements View.OnClickListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View inflate, ViewGroup parent) {
             Orders item = getItem(position);
-            View inflate = getLayoutInflater().inflate(R.layout.listitem_records, null);
+            if (inflate == null) {
+                inflate = getLayoutInflater().inflate(R.layout.listitem_records, null);
+            }
             TextView tv_number = (TextView) inflate.findViewById(R.id.tv_number);
             TextView tv_amount = (TextView) inflate.findViewById(R.id.tv_amount);
             TextView tv_status = (TextView) inflate.findViewById(R.id.tv_status);
             TextView tv_create = (TextView) inflate.findViewById(R.id.tv_create);
 
-            tv_number.setText(getString(R.string.ActivityPayment_number, item.Hour, item.Coin));
+            tv_number.setText(getString(R.string.ActivityPayment_number, item.Coin / 10.00, item.Coin));
             tv_amount.setText(getString(R.string.ActivityPayment_amount, item.Amount, item.Currency));
             tv_status.setText(Html.fromHtml(getString(R.string.ActivityPayment_status) + "<font " + ("SUCCESS".equals(item.TradeStatus) ? ">" : " color='#ff0000'>") + ("SUCCESS".equals(item.TradeStatus) ? "Completed" : "Failed") + "</font>"));
             tv_create.setText(sdf.format(item.CreateTime));

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.activity.ActivityRecord;
+import com.hanwen.chinesechat.bean.Summary;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -42,7 +43,7 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-   Log.i(TAG, "onCreate: ");
+        Log.i(TAG, "onCreate: ");
         super.onCreate(savedInstanceState);
     }
 
@@ -79,18 +80,24 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
         //如果是学生端,显示充值,如果是教师端,不显示
         User user = ChineseChat.CurrentUser;
         Log.i(TAG, "onResume: " + user);
-        boolean logined = NIMClient.getStatus() == StatusCode.LOGINED;
+        if (user.Summary == null) {
+            user.Summary = new Summary();
+            user.Summary.month = 0;
+            user.Summary.count = 0;
+            user.Summary.duration = 0;
+        }
+        boolean isLogin = NIMClient.getStatus() == StatusCode.LOGINED;
         boolean student = ChineseChat.isStudent();
         if (TextUtils.isEmpty(user.Avatar)) {
             iv_avatar.setImageResource(R.drawable.ic_launcher_student);
         } else {
             CommonUtil.showBitmap(iv_avatar, NetworkUtil.getFullPath(user.Avatar));
         }
-        tv_nickname.setText(logined ? user.Nickname : getString(R.string.FragmentPerson_unlogin));
+        tv_nickname.setText(isLogin ? user.Nickname : getString(R.string.Fragment_person_unlogin));
         iv_gender.setVisibility(user.Gender == -1 ? View.GONE : View.VISIBLE);
         iv_gender.setImageResource(user.Gender == 0 ? R.drawable.gender_female : R.drawable.gender_male);
-        tv_balance.setVisibility(logined ? View.VISIBLE : View.GONE);
-        tv_balance.setText(student ? getString(R.string.FragmentPerson_balance, user.Coins) : getString(R.string.FragmentPerson_hours, user.Summary.duration, user.Summary.count));
+        tv_balance.setVisibility(isLogin ? View.VISIBLE : View.GONE);
+        tv_balance.setText(student ? getString(R.string.Fragment_person_balance, user.Coins) : getString(R.string.Fragment_person_hours, user.Summary.duration, user.Summary.count));
         rl_payment.setVisibility(student ? View.VISIBLE : View.GONE);
         tv_history.setText(student ? R.string.ActivityHistory_title_student : R.string.ActivityHistory_title_teacher);
     }
@@ -128,16 +135,16 @@ public class FragmentPerson extends Fragment implements View.OnClickListener {
     private void showLoginDialog() {
         if (dialogLogin == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.fragment_person_dialog_title);
-            builder.setMessage(R.string.fragment_person_dialog_message);
-            builder.setPositiveButton(R.string.fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.Fragment_person_dialog_title);
+            builder.setMessage(R.string.Fragment_person_dialog_message);
+            builder.setPositiveButton(R.string.Fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     dialog.dismiss();
                 }
             });
-            builder.setNegativeButton(R.string.fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.Fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();

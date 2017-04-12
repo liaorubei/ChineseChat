@@ -1,11 +1,13 @@
 package com.hanwen.chinesechat.activity;
 
+import android.Manifest;
 import android.animation.ValueAnimator;
 import android.animation.ValueAnimator.AnimatorUpdateListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -13,18 +15,17 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnInfoListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,7 +42,6 @@ import com.hanwen.chinesechat.R;
 import com.hanwen.chinesechat.bean.Document;
 import com.hanwen.chinesechat.bean.DownloadInfo;
 import com.hanwen.chinesechat.bean.Lyric;
-import com.hanwen.chinesechat.database.Database;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.HttpUtil;
 import com.hanwen.chinesechat.util.Log;
@@ -52,16 +52,25 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class ActivityPlay extends Activity implements OnClickListener, OnPreparedListener, OnErrorListener, OnInfoListener, OnCompletionListener {
-    private static final String TAG = "PlayActivity";
+    private static final String TAG = "ActivityPlay";
+    private static final int REQUEST_CODE_RECORD_AUDIO = 1;
     private ArrayList<Integer> subTitleIcons;
     private boolean isOneLineLoop = false; // 是否单句循环
     private boolean playSingleLineState;
-    private Database database;
     private DisplayMetrics outMetrics = new DisplayMetrics();
     private File recordFile;// 录音文件对象
     private FrameLayout.LayoutParams playParams, recordParams;// 控制按钮布局的布局参数
@@ -106,7 +115,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         tv_bSide.setText("");
         tv_title.setText("");
 
-        database = new Database(this);
         initData();
 
         recorder = new MediaRecorder();
@@ -144,6 +152,21 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 recordParams.leftMargin = outMetrics.widthPixels - value;
             }
         });
+
+        //统计播放次数
+        RequestBody body = new FormBody.Builder().add("Id", documentId + "").add("userId", ChineseChat.CurrentUser.Id + "").build();
+        Request request = new Request.Builder().url(NetworkUtil.documentCount).post(body).build();
+        new OkHttpClient.Builder().build().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.i(TAG, "onFailure: ");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Log.i(TAG, "onResponse: 播放统计成功：" + response.toString());
+            }
+        });
     }
 
     @Override
@@ -176,10 +199,6 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         if (recorder != null) {
             recorder.release();
             recorder = null;
-        }
-        if (database != null) {
-            database.closeConnection();
-            database = null;
         }
     }
 
@@ -276,7 +295,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
         //根据mode来判断,如果Mode=Online,则只能访问网络上的资源,只有Mode=Offline时,才会使用本地资源
         if ("Offline".equals(mode)) {
-            DownloadInfo info = database.docsSelectById(documentId);
+            DownloadInfo info = ChineseChat.database().docsSelectById(documentId);
             if (info != null && info.IsDownload == 1 && !TextUtils.isEmpty(info.Json)) {
                 Document document = gson.fromJson(info.Json, Document.class);
                 fillData(document);
@@ -484,6 +503,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 seekToPrevLine();
                 break;
             case R.id.iv_play:
+                if (playerOrigin == null) {
+                    //防空处理，啊哈哈，真纠结
+                    return;
+                }
                 if (playerOrigin.isPlaying()) {
                     playerOrigin.pause();
                     iv_play.setSelected(true);
@@ -498,33 +521,13 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 seekToNextLine();
                 break;
             case R.id.iv_tape:
-                //播放状态下的单句循环模式保存
-                playSingleLineState = isOneLineLoop;
-
-                // 控制栏左移动,切换到录音模式
-                toLAnimator.start();
-                isOneLineLoop = true;// 自动进入单句循环
-                iv_line.setSelected(true);
-                tv_play_record_time.setVisibility(View.VISIBLE);
-
-                // 初始化音频录音对播放录音的对象,这两个对象操作的是同一个文件
-                if (recordFile == null) {
-                    recordFile = new File(getFilesDir(), "record.tmp");
+                boolean isPermissionGranted = ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                if (isPermissionGranted) {
+                    goToRecord();
+                } else {
+                    Log.i(TAG, "跳转: ");
+                    ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE_RECORD_AUDIO);
                 }
-                if (playerRecord == null) {
-                    initRecordPlayer(recordFile.getAbsolutePath(), recordFile.length() > 0);
-                }
-                if (recorder == null) {
-                    initMediaRecorder(recordFile.getAbsolutePath());
-                }
-
-                // 播放当前的原音单句,并把录音栏的暂停按钮重置为"可以暂停"
-                elapsedTime = 0;
-                if (!playerOrigin.isPlaying()) {
-                    iv_rec_pause.setSelected(true);
-                }
-                tv_play_record_time.setText(currentState + ":" + millisecondsFormat(elapsedTime));
-                seekToCurrentLine();
                 break;
 
             case R.id.iv_rec_pause: {
@@ -560,6 +563,9 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
             }
             break;
             case R.id.iv_rec_origin:
+                if (playerRecord == null || playerOrigin == null || recorder == null) {
+                    return;
+                }
                 switch (currentState) {
                     case 播放原音:
                         seekToCurrentLine();
@@ -579,6 +585,9 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 iv_rec_pause.setSelected(false);
                 break;
             case R.id.iv_rec_prev:
+                if (playerOrigin == null || playerRecord == null || recorder == null)
+                    return;
+
                 switch (currentState) {
                     case 播放原音:
                         seekToPrevLine();
@@ -599,7 +608,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 iv_rec_pause.setSelected(false);
                 break;
             case R.id.iv_rec_button:
-                Log.i(TAG, "onClick: iv_rec_button=" + iv_rec_button.isSelected());
+                if (playerOrigin == null || playerRecord == null || recorder == null)
+                    return;
 
                 int currentIndex = getCurrentIndex();
                 Log.i(TAG, "onClick: " + currentIndex);
@@ -634,6 +644,8 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
 
                 break;
             case R.id.iv_rec_next:
+                if (playerOrigin == null || playerRecord == null || recorder == null)
+                    return;
                 switch (currentState) {
                     case 播放原音:
                         seekToNextLine();
@@ -642,9 +654,13 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                         playerRecord.stop();
                         break;
                     case 正在录音:
-                        recorder.stop();
-                        iv_rec_button.setSelected(false);
-                        iv_rec_button.setImageResource(R.drawable.play_btn_recording_uncheck);
+                        try {
+                            recorder.stop();
+                            iv_rec_button.setSelected(false);
+                            iv_rec_button.setImageResource(R.drawable.play_btn_recording_uncheck);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                         break;
                 }
                 playerOrigin.start();
@@ -677,6 +693,10 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 }
                 break;
             case R.id.iv_rec_back:
+                if (playerOrigin == null || playerRecord == null || recorder == null) {
+                    return;
+                }
+
                 //播放状态下的单句循环状态复原,包括单句循环按钮
                 isOneLineLoop = playSingleLineState;
                 iv_line.setSelected(playSingleLineState);
@@ -698,6 +718,39 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 tv_play_record_time.setVisibility(View.INVISIBLE);
                 break;
         }
+    }
+
+    /**
+     * 录音界面
+     */
+    private void goToRecord() {
+        //播放状态下的单句循环模式保存
+        playSingleLineState = isOneLineLoop;
+
+        // 控制栏左移动,切换到录音模式
+        toLAnimator.start();
+        isOneLineLoop = true;// 自动进入单句循环
+        iv_line.setSelected(true);
+        tv_play_record_time.setVisibility(View.VISIBLE);
+
+        // 初始化音频录音对播放录音的对象,这两个对象操作的是同一个文件
+        if (recordFile == null) {
+            recordFile = new File(getFilesDir(), "record.tmp");
+        }
+        if (playerRecord == null) {
+            initRecordPlayer(recordFile.getAbsolutePath(), recordFile.length() > 0);
+        }
+        if (recorder == null) {
+            initMediaRecorder(recordFile.getAbsolutePath());
+        }
+
+        // 播放当前的原音单句,并把录音栏的暂停按钮重置为"可以暂停"
+        elapsedTime = 0;
+        if (playerOrigin != null && !playerOrigin.isPlaying()) {
+            iv_rec_pause.setSelected(true);
+        }
+        tv_play_record_time.setText(currentState + ":" + millisecondsFormat(elapsedTime));
+        seekToCurrentLine();
     }
 
     @Override
@@ -846,7 +899,7 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
         if (index > 0) {
             SpecialLyricView c = specialLyricViews.get(index);
             sideA = c.getTimeLabel();
-            if (index < specialLyricViews.size()) {
+            if (index < specialLyricViews.size() - 1) {
                 SpecialLyricView n = specialLyricViews.get(index + 1);
                 sideB = n.getTimeLabel();
             } else {
@@ -945,5 +998,42 @@ public class ActivityPlay extends Activity implements OnClickListener, OnPrepare
                 break;
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_RECORD_AUDIO:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    goToRecord();
+                } else {
+                    new AlertDialog
+                            .Builder(this)
+                            .setMessage("这个功能需要使用麦克风!")
+                            .setNegativeButton("取消", null)
+                            .setPositiveButton("设置", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    boolean b = ActivityCompat.shouldShowRequestPermissionRationale(ActivityPlay.this, Manifest.permission.RECORD_AUDIO);
+                                    if (b) {
+                                        Log.i(TAG, "请求: ");
+                                        ActivityCompat.requestPermissions(ActivityPlay.this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE_RECORD_AUDIO);
+                                    } else {
+                                        Log.i(TAG, "跳转: ");
+                                        Intent settingIntent = new Intent();
+                                        settingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        settingIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
+                                        //settingIntent.setAction("android.settings.APPLICATION_SETTINGS");
+                                        settingIntent.setData(Uri.fromParts("package", getPackageName(), null));
+                                        startActivity(settingIntent);
+                                    }
+                                }
+                            })
+                            .show();
+                }
+                break;
+        }
     }
 }

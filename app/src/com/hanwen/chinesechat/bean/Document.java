@@ -30,7 +30,10 @@ public class Document {
     public String DateString;
     public String Cover;
     public Folder Folder;
+
+    //客户端辅助相关,int32位4字节，因为Cursor取不出来1个字节的整数，只有2，3，4个字节的整数，分别是Short，Integer，Long，所以这是取了一个Integer做布尔值
     public int IsDownload;
+    public int IsNew;
 
     @Override
     public String toString() {

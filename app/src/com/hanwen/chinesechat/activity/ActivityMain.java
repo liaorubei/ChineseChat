@@ -1,11 +1,14 @@
 package com.hanwen.chinesechat.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
@@ -18,15 +21,19 @@ import android.widget.TextView;
 
 import com.hanwen.chinesechat.ChineseChat;
 import com.hanwen.chinesechat.R;
-import com.hanwen.chinesechat.fragment.FragmentChoose;
 import com.hanwen.chinesechat.fragment.FragmentLineUp;
 import com.hanwen.chinesechat.fragment.FragmentListen;
 import com.hanwen.chinesechat.fragment.FragmentPerson;
 import com.hanwen.chinesechat.receiver.NetworkReceiver;
 import com.hanwen.chinesechat.service.DownloadService;
-import com.hanwen.chinesechat.service.TeacherAutoRefreshService;
 import com.hanwen.chinesechat.util.CommonUtil;
 import com.hanwen.chinesechat.util.Log;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ActivityMain extends FragmentActivity implements View.OnClickListener {
     //Monkey测试代码
@@ -40,6 +47,7 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
     public static final String TAG = "ActivityMain";
     public static final String KEY_TAB_INDEX = "KEY_TAB_INDEX";
     public static final String KEY_DOCUMENT_ID = "KEY_DOCUMENT_ID";
+    private static final int REQUEST_CODE_STORAGE = 1;
     private RelativeLayout rl_main;
     private long lastTime = 0;
     private View tv_refresh;
@@ -60,19 +68,9 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
 
         initView();
 
-        //初始化云信铃声及添加来电观察者(注:不要放在Application里面,有些机子会出现异常)
-        // enableAVChat();
-        //文件夹情况
-/*        File[] files = getFilesDir().getParentFile().listFiles();
-        for (File f : files) {
-            Log.i(TAG, "onCreate: File=" + f.getAbsolutePath());
+        //check();
 
-            File[] files1 = f.listFiles();
-            for (File f1 : files1) {
-                Log.i(TAG, "onCreate: __File=" + f1.getAbsolutePath());
-            }
-        }*/
-
+        //exportDatabase();
 
         // 下载任务服务
         Intent sIntent = new Intent(this, DownloadService.class);
@@ -83,6 +81,49 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
             IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(receiver, filter);
         }
+    }
+
+    private void check() {
+        boolean b = ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        Log.i(TAG, "check是否有权限: " + b);
+
+        boolean b1 = ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        Log.i(TAG, "check弹出对话框: " + b1);
+
+        List<String> ps = new ArrayList<>();
+        ps.add(Manifest.permission.RECORD_AUDIO);
+        ps.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        ActivityCompat.requestPermissions(this, ps.toArray(new String[ps.size()]), REQUEST_CODE_STORAGE);
+        if (b) {
+
+
+        } else {
+        }
+    }
+
+    private void exportDatabase() {
+        File[] files = getFilesDir().getParentFile().listFiles();
+        Log.i(TAG, "exportDatabase: " + files.length);
+        for (File f : files) {
+            Log.i(TAG, "exportDatabase: " + f.getAbsolutePath());
+        }
+
+        try {
+            FileInputStream fis = new FileInputStream(new File(getFilesDir().getParentFile(), "databases/woyaoxue.db"));
+            FileOutputStream fos = new FileOutputStream(new File(getExternalFilesDir("database"), "chinesechat.db"));
+            byte[] buffer = new byte[1024];
+            int read = 0;
+            while ((read = fis.read(buffer)) > 0) {
+                fos.write(buffer, 0, read);
+            }
+            fos.close();
+            fis.close();
+            Log.i(TAG, "exportDatabase: " + fos.getFD().toString());
+        } catch (Exception ex) {
+
+        }
+
     }
 
     @Override
@@ -173,6 +214,17 @@ public class ActivityMain extends FragmentActivity implements View.OnClickListen
         super.onDestroy();
         if (receiver != null) {
             unregisterReceiver(receiver);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.i(TAG, "onRequestPermissionsResult: ");
+        switch (requestCode) {
+            case REQUEST_CODE_STORAGE:
+                Log.i(TAG, "Result: " + grantResults[0]);
+                break;
         }
     }
 }

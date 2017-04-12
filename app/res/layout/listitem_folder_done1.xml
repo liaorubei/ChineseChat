@@ -13,6 +13,13 @@
         android:scaleType="fitXY"
         android:src="@drawable/ic_launcher_student"/>
 
+    <ImageView
+        android:id="@+id/iv_isnew"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignRight="@+id/iv_cover"
+        android:src="@drawable/shape_red_point"/>
+
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="match_parent"

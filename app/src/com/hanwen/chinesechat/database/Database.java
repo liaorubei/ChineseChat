@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -14,9 +15,13 @@ import com.hanwen.chinesechat.bean.Level;
 import com.hanwen.chinesechat.bean.UrlCache;
 import com.hanwen.chinesechat.bean.User;
 import com.hanwen.chinesechat.util.Log;
+import com.hanwen.chinesechat.util.TextUtil;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class Database {
     private static final String TAG = "Database";
@@ -70,6 +75,7 @@ public class Database {
         if (cursor.moveToNext()) {
             count = cursor.getInt(0);
         }
+        cursor.close();
         return count;
     }
 
@@ -77,29 +83,58 @@ public class Database {
         mWritable.delete("document", "Id=?", new String[]{id + ""});
     }
 
+    /*
+    @params item 要求TitleCn,TitleEn不能为空
+     */
     public void docsInsert(Document item) {
         ContentValues values = new ContentValues();
         values.put("Id", item.Id);
-        values.put("TitleCn", item.Title);
+        values.put("TitleCn", item.TitleCn);
         values.put("TitleEn", item.TitleEn);
         values.put("TitleSubCn", item.TitleSubCn);
         values.put("TitleSubEn", item.TitleSubEn);
         values.put("FolderId", item.FolderId);
         values.put("SoundPath", item.SoundPath);
         values.put("Category", item.Category);
-        values.put("IsDownload", 0);
+        values.put("IsDownload", 0);//是否下载完成
+        values.put("IsNew", 1);//是否是新下载的，没有播放过的
+        values.put("AuditDate", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(item.AuditDate));
+        values.put("Length", item.Length);
+        values.put("Duration", item.Duration);
         Log.i(TAG, "docsInsert: insert=" + mWritable.insert("document", null, values));
     }
 
     public List<Document> docsSelectListByFolderId(int folderId) {
-        Cursor cursor = mReadable.rawQuery("select Json,TitleEn,TitleSubCn from document where IsDownload=1 and FolderId=?", new String[]{folderId + ""});
+        Cursor cursor = mReadable.query("Document", new String[]{"Id", "TitleCn", "TitleEn", "TitleSubCn", "TitleSubEn", "Category", "AuditDate", "IsNew", "Json", "FolderId", "Length", "Duration", "SoundPath"}, "IsDownload=? and FolderId=?", new String[]{"1", folderId + ""}, null, null, "AuditDate desc");
         List<Document> list = new ArrayList<Document>();
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
         while (cursor.moveToNext()) {
-            Document document = gson.fromJson(cursor.getString(0), Document.class);
-            document.TitleEn = cursor.getString(1);
-            document.TitleTwo = document.TitleEn;
-            document.TitleSubCn = cursor.getString(2);
+            Document document = new Document();
+            document.Id = cursor.getInt(0);
+            document.TitleCn = cursor.getString(1);
+            document.TitleEn = cursor.getString(2);
+            document.TitleSubCn = cursor.getString(3);
+            document.TitleSubEn = cursor.getString(4);
+            document.Category = cursor.getInt(5);
+            document.IsNew = cursor.getInt(7);
+            document.FolderId = cursor.getInt(9);
+            document.Length = cursor.getLong(10);
+            document.Duration = cursor.getDouble(11);
+            document.SoundPath = cursor.getString(12);
+            if (TextUtils.isEmpty(document.TitleCn) || document.Duration == 0) {
+                Document d = gson.fromJson(cursor.getString(8), Document.class);
+                document.TitleCn = d.TitleCn;
+                document.Length = d.Length;
+                document.Duration = d.Duration;
+                document.LengthString=d.LengthString;
+            }
+            try {
+                document.AuditDate = s.parse(cursor.getString(6));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
             list.add(document);
         }
         cursor.close();
@@ -150,16 +185,30 @@ public class Database {
      * @return select Id,Name,(select count(FolderId) from document where FolderId=folder.Id) as DocsCount from folder order by folder.Id
      */
     public List<Folder> folderSelectListWithDocsCount() {
-        Cursor cursor = mReadable.rawQuery("select Id,Name,(select count(document.FolderId) From Document where Document.IsDownload=1 and Document.FolderId=Folder.Id) as DocsCount,Sort,Cover,LevelId From Folder where Folder.Id in (select distinct FolderId From Document) order by Name desc", null);
+        StringBuilder builder = new StringBuilder();
+        builder.append("  SELECT  ");
+        builder.append("  Id,     ");
+        builder.append("  Name,   ");
+        builder.append("  Sort,   ");
+        builder.append("  Show,   ");
+        builder.append("  Cover,  ");
+        builder.append("  LevelId,");
+        builder.append(" (SELECT COUNT(Document.Id) FROM Document WHERE Document.FolderId=Folder.Id AND Document.IsDownload=1) AS DocsCount,");
+        builder.append(" (SELECT COUNT(Document.Id) FROM Document WHERE Document.FolderId=Folder.Id AND Document.IsNew=1     ) AS NewsCount ");
+        builder.append("  From Folder WHERE Id IN (SELECT DISTINCT(FolderId) FROM Document) ORDER BY Name                                   ");
+
+        Cursor cursor = mReadable.rawQuery(builder.toString(), null);
         List<Folder> list = new ArrayList<Folder>();
         while (cursor.moveToNext()) {
             Folder folder = new Folder();
             folder.Id = cursor.getInt(0);
             folder.Name = cursor.getString(1);
-            folder.DocsCount = cursor.getInt(2);
-            folder.Sort = cursor.getInt(3);
+            folder.Sort = cursor.getInt(2);
+            folder.Show = cursor.getInt(3);
             folder.Cover = cursor.getString(4);
             folder.LevelId = cursor.getInt(5);
+            folder.DocsCount = cursor.getInt(6);
+            folder.NewsCount = cursor.getInt(7);
             list.add(folder);
         }
         cursor.close();
@@ -264,7 +313,6 @@ public class Database {
         return list;
     }
 
-
     public List<Document> docsGetListDownloaded() {
         List<Document> list = new ArrayList<>();
         Cursor cursor = mReadable.query("Document", new String[]{"Id", "TitleCn", "TitleEn", "TitleSubCn", "TitleSubEn", "Category", "SoundPath", "FolderId"}, "IsDownload=1", null, null, null, null);
@@ -336,5 +384,12 @@ public class Database {
         }
         cursor.close();
         return list;
+    }
+
+    /*
+    标明这个文件夹下载的文件已经查验过了，可以把小红点去掉了
+     */
+    public void folderHasCheck(int folderId) {
+        mWritable.execSQL("UPDATE Document SET IsNew=0 where FolderId=?", new Object[]{folderId});
     }
 }

@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@id/layout_title"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/color_app"
+        android:gravity="center"
+        android:text="注册成为教师"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"/>
+
+    <ImageView
+        android:id="@+id/iv_home"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
+        android:src="@drawable/home_back"/>
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="45dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_username"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="用户名（邮箱）："/>
+
+                <EditText
+                    android:id="@+id/et_username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="请填写有效的邮箱"
+                    android:inputType="textEmailAddress"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="username@email.com"/>
+
+                <TextView
+                    android:id="@+id/tv_error_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_username"
+                    android:layout_alignParentRight="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <EditText
+                    android:id="@+id/et_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_username"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="不少于8位"
+                    android:inputType="textPassword"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="12345678"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_password"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="密码："/>
+
+                <TextView
+                    android:id="@+id/tv_error_password"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_password"
+                    android:layout_alignParentRight="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <EditText
+                    android:id="@+id/et_repassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_password"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="不少于8位"
+                    android:inputType="textPassword"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="12345678"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_repassword"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="确认密码："/>
+
+                <TextView
+                    android:id="@+id/tv_error_repassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_repassword"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <EditText
+                    android:id="@+id/et_realname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_repassword"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="必填项"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="realname"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_realname"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="姓名："/>
+
+                <TextView
+                    android:id="@+id/tv_error_realname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_realname"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_mobile"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:text="手机号："/>
+
+                <EditText
+                    android:id="@+id/et_mobile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_realname"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="推荐填写"
+                    android:inputType="phone"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="13512345678"/>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_wechat"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:text="微信号："/>
+
+                <EditText
+                    android:id="@+id/et_wechat"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_mobile"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="推荐填写"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="wechat"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_school"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="毕业院校："/>
+
+                <EditText
+                    android:id="@+id/et_school"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_wechat"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@+id/tv_error_school"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="你的毕业院校"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="school"/>
+
+                <TextView
+                    android:id="@+id/tv_error_school"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_school"
+                    android:layout_alignParentRight="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_language"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="掌握的外语："/>
+
+                <EditText
+                    android:id="@+id/et_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_school"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@+id/tv_error_language"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="多项用逗号分隔"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="language"/>
+
+                <TextView
+                    android:id="@+id/tv_error_language"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_language"
+                    android:layout_alignParentRight="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <EditText
+                    android:id="@+id/et_length"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/et_language"
+                    android:layout_margin="3dp"
+                    android:layout_toLeftOf="@id/tv_error_username"
+                    android:layout_toRightOf="@+id/tv_name"
+                    android:background="@drawable/shape_text_teacher"
+                    android:hint="授课时长,如：3个月，1年"
+                    android:padding="5dp"
+                    android:textColorHint="#1000"
+                    android:textSize="15sp"
+                    tools:text="teaching time"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/et_length"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:text="中文授课经验："/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_avatar"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="教师头像："/>
+
+                <Button
+                    android:id="@+id/bt_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="false"
+                    android:layout_below="@+id/et_length"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:text="选择文件"/>
+
+                <TextView
+                    android:id="@+id/tv_error_avatar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_avatar"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <RelativeLayout
+                    android:id="@+id/rl_avatar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/et_length"
+                    android:layout_toLeftOf="@+id/bt_others"
+                    android:layout_toRightOf="@+id/tv_name">
+
+                    <ImageView
+                        android:id="@+id/iv_avatar"
+                        android:layout_width="60dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        tools:src="@drawable/ic_launcher_teacher"/>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/bt_proofs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="false"
+                    android:layout_below="@+id/bt_card_b"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:text="选择文件"/>
+
+                <TextView
+                    android:id="@+id/tv_error_proofs"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_proofs"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_proofs"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="学历证明："/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_alignTop="@+id/bt_proofs"
+                    android:layout_toLeftOf="@+id/bt_proofs"
+                    android:layout_toRightOf="@+id/tv_name">
+
+                    <ImageView
+                        android:id="@+id/iv_proofs"
+                        android:layout_width="60dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        tools:src="@drawable/ic_launcher_teacher"/>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/bt_card_a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="false"
+                    android:layout_below="@id/bt_avatar"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:text="选择文件"/>
+
+                <TextView
+                    android:id="@+id/tv_card"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_card_a"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="身份证正面："/>
+
+                <TextView
+                    android:id="@+id/tv_error_card_a"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_card_a"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignTop="@id/bt_card_a"
+                    android:layout_toLeftOf="@+id/bt_card_a"
+                    android:layout_toRightOf="@+id/tv_card">
+
+                    <ImageView
+                        android:id="@+id/iv_card_a"
+                        android:layout_width="60dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        tools:src="@drawable/ic_launcher_teacher"/>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/bt_card_b"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="false"
+                    android:layout_below="@id/bt_card_a"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:text="选择文件"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_card_b"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:drawableLeft="@drawable/asterisk_32px"
+                    android:text="身份证反面："/>
+
+                <TextView
+                    android:id="@+id/tv_error_card_b"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_card_b"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerHorizontal="true"
+                    android:drawableLeft="@drawable/cancel_32px"
+                    android:visibility="invisible"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@+id/bt_card_a"
+                    android:layout_toLeftOf="@+id/bt_card_b"
+                    android:layout_toRightOf="@+id/tv_name">
+
+                    <ImageView
+                        android:id="@+id/iv_card_b"
+                        android:layout_width="60dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        tools:src="@drawable/ic_launcher_teacher"/>
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_others"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:text="其他证书："/>
+
+                <Button
+                    android:id="@+id/bt_others"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_below="@id/bt_proofs"
+                    android:layout_toLeftOf="@id/tv_error_username"
+                    android:text="选择文件"/>
+
+                <RelativeLayout
+                    android:id="@+id/rl_others"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_alignTop="@+id/bt_others"
+                    android:layout_toLeftOf="@+id/bt_others"
+                    android:layout_toRightOf="@+id/tv_name">
+
+                    <ImageView
+                        android:id="@+id/iv_others"
+                        android:layout_width="60dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        tools:src="@drawable/ic_launcher_teacher"/>
+                </RelativeLayout>
+
+                <Button
+                    android:id="@+id/bt_record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:layout_alignParentRight="false"
+                    android:layout_below="@id/bt_others"
+                    android:layout_toLeftOf="@+id/tv_error_username"
+                    android:text="选择文件"
+                    android:visibility="invisible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/bt_record"
+                    android:layout_alignRight="@+id/tv_name"
+                    android:text="音频文件："
+                    android:visibility="invisible"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_below="@id/bt_others"
+                    android:layout_toLeftOf="@+id/bt_record"
+                    android:layout_toRightOf="@id/tv_name"
+                    android:visibility="invisible">
+
+                    <ImageView
+                        android:id="@+id/iv_record"
+                        android:layout_width="60dp"
+                        android:layout_height="48dp"
+                        android:layout_centerInParent="true"
+                        android:scaleType="fitXY"
+                        tools:src="@drawable/ic_launcher_teacher"/>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/bt_submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="50dp"
+                android:paddingRight="50dp"
+                android:text="提交"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="5dp"
+                android:text="注：*为必填项。\n\n如有其它补充证书文件，可发送至info_teacher@chinesechat.cn"
+                android:textSize="12sp"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

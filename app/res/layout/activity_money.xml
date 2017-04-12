@@ -28,26 +28,12 @@
             android:textSize="20sp"/>
     </RelativeLayout>
 
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="35dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="35dp"
-            android:background="#FFFFFF"
-            android:gravity="center"
-            android:text="@string/ActivityPayment_select_recharge_mode"/>
-
-        <ImageView
-            android:id="@+id/iv_help"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentRight="true"
-            android:padding="5dp"
-            android:visibility="invisible"
-            android:src="@drawable/icon_help"/>
-    </RelativeLayout>
+        android:layout_height="35dp"
+        android:background="#FFFFFF"
+        android:gravity="center"
+        android:text="@string/ActivityPayment_select_recharge_mode"/>
 
     <LinearLayout
         android:id="@+id/ll_ctrl"
@@ -58,7 +44,6 @@
         android:layout_marginTop="2dp"
         android:background="#FFFFFF"
         android:orientation="vertical">
-
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -436,16 +436,16 @@ public class FragmentChoose extends Fragment {
     private void showLoginDialog() {
         if (dialogLogin == null) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.fragment_person_dialog_title);
-            builder.setMessage(R.string.fragment_person_dialog_message);
-            builder.setPositiveButton(R.string.fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
+            builder.setTitle(R.string.Fragment_person_dialog_title);
+            builder.setMessage(R.string.Fragment_person_dialog_message);
+            builder.setPositiveButton(R.string.Fragment_person_dialog_positive, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     startActivity(new Intent(getActivity(), ActivitySignIn.class));
                     dialog.dismiss();
                 }
             });
-            builder.setNegativeButton(R.string.fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton(R.string.Fragment_person_dialog_negative, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();

@@ -197,15 +197,10 @@ public class ActivityProfile extends Activity implements View.OnClickListener {
                     public void onSuccess(ResponseInfo<String> responseInfo) {
                         Response<ChatDataExtra> resp = gson.fromJson(responseInfo.result, new TypeToken<Response<ChatDataExtra>>() {}.getType());
                         if (resp.code == 200) {
-                            ChatDataExtra extra = resp.info;
-                            extra.Id = extra.Teacher.Id;
-                            extra.Avatar = extra.Teacher.Avatar;
-                            extra.Nickname = extra.Teacher.Nickname;
-                            extra.Username = extra.Teacher.Username;
-
-                            ChatData chatData = new ChatData();
+                            //ChatData chatData = new ChatData();
+                            //chatData.setExtra(gson.toJson(extra));
+                            ChatData chatData = ActivityChat.buildChat(resp.info.Teacher, resp.info.Student);
                             chatData.setAccid(resp.info.Teacher.Accid);
-                            chatData.setExtra(gson.toJson(extra));
                             chatData.setChatType(AVChatType.AUDIO);
                             ActivityChat.start(ActivityProfile.this, ActivityChat.CHAT_MODE_OUTGOING, chatData);
                         } else {

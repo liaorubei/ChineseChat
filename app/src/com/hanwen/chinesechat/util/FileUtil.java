@@ -92,20 +92,6 @@ public class FileUtil {
     }
 
     /**
-     * 清除本应用所有的数据 * * @param context * @param filepath
-     */
-    public static void cleanApplicationData(Context context, String... filepath) {
-        cleanInternalCache(context);
-        cleanExternalCache(context);
-        cleanDatabases(context);
-        cleanSharedPreference(context);
-        cleanFiles(context);
-        for (String filePath : filepath) {
-            cleanCustomCache(filePath);
-        }
-    }
-
-    /**
      * 删除方法 这里只会删除某个文件夹下的文件，如果传入的directory是个文件，将不做处理 * * @param directory
      */
     private static void deleteFilesByDirectory(File directory) {
@@ -129,16 +115,8 @@ public class FileUtil {
         return length;
     }
 
-    public static void cleanMyDatabase() {
-        Database database = ChineseChat.database();
-        database.deleteTable("document");
-        database.deleteTable("UrlCache");
-    }
-
     public static String getPath(final Context context, final Uri uri) {
-
         final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
-
         // DocumentProvider
         if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
