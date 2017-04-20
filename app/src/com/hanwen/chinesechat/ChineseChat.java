@@ -25,7 +25,6 @@ import com.netease.nimlib.sdk.auth.OnlineClient;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nis.bugrpt.CrashHandler;
-import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 import java.util.List;
@@ -44,12 +43,12 @@ public class ChineseChat extends Application {
     public void onCreate() {
         super.onCreate();
 
-        if (LeakCanary.isInAnalyzerProcess(this)) {
+/*        if (LeakCanary.isInAnalyzerProcess(this)) {
             // This process is dedicated to LeakCanary for heap analysis.
             // You should not init your app in this process.
             return;
         }
-        LeakCanary.install(this);
+        LeakCanary.install(this);*/
 
         // 注意：除了 NIMClient.init 接口外，其他 SDK 暴露的接口都只能在 UI 进程调用。
         // 如果 APP 包含远程 service，该 APP 的 Application 的 onCreate 会多次调用。

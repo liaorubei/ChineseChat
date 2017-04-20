@@ -125,10 +125,10 @@ public class Database {
             document.SoundPath = cursor.getString(12);
             if (TextUtils.isEmpty(document.TitleCn) || document.Duration == 0) {
                 Document d = gson.fromJson(cursor.getString(8), Document.class);
-                document.TitleCn = d.TitleCn;
+                if (d!=null){ document.TitleCn = d.TitleCn;
                 document.Length = d.Length;
                 document.Duration = d.Duration;
-                document.LengthString=d.LengthString;
+                document.LengthString=d.LengthString;}
             }
             try {
                 document.AuditDate = s.parse(cursor.getString(6));
